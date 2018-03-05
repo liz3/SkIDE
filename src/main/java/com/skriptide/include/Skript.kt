@@ -97,14 +97,17 @@ class Node(val parent: Node? = null, val content: String, var tabLevel: Int, val
         val params = content.split("(")[1].split(")")[0].split(",")
         var returnType = "void"
         params.forEach {
-            val paramName = it.trim().split(":").first()
-            var paramType = it.trim().split(":")[1]
-            var value = ""
-            if(paramType.contains("=")) {
-                value = paramType.split("=")[1].trim().replace("\"","")
-                paramType = paramType.split("=").first().trim()
-            }
-            paramList.add(MethodParameter(paramName, paramType, value))
+
+           if(it != "") {
+               val paramName = it.trim().split(":").first()
+               var paramType = it.trim().split(":")[1]
+               var value = ""
+               if(paramType.contains("=")) {
+                   value = paramType.split("=")[1].trim().replace("\"","")
+                   paramType = paramType.split("=").first().trim()
+               }
+               paramList.add(MethodParameter(paramName, paramType, value))
+           }
         }
         fields.put("name", name)
         fields.put("params", paramList)

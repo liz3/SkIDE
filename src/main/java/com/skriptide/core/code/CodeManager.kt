@@ -46,11 +46,11 @@ class CodeManager {
 
 
         result.forEach {
-            add(rootStructureItem, it)
+            addNodeToItemTree(rootStructureItem, it)
         }
     }
 
-    private fun add(parent: TreeItem<String>, node: Node) {
+    private fun addNodeToItemTree(parent: TreeItem<String>, node: Node) {
 
 
         val name = {
@@ -72,7 +72,7 @@ class CodeManager {
         val item = TreeItem<String>(name)
 
         node.childNodes.forEach {
-            add(item, it)
+            addNodeToItemTree(item, it)
         }
 
         if (node.nodeType != NodeType.COMMENT) parent.children.add(item)

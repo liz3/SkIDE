@@ -93,8 +93,8 @@ class CreateProjectGuiController {
             manager.configManager.defaultProjectPath = File(rootProjectFolder)
             manager.projectManager.createNewProject(projectNameField?.text!!,projectPathField?.text!!, skriptVersionComboBox?.selectionModel?.selectedItem!!, openAfterCreation?.isSelected!!)
 
-            if(!openAfterCreation?.isSelected!!) {
                 thisWindow.close()
+            if(!openAfterCreation?.isSelected!!) {
                 returnWindow.stage.show()
             }
         }
