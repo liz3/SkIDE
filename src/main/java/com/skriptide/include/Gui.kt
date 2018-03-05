@@ -1,5 +1,6 @@
 package com.skriptide.include
 
+import com.skriptide.CoreManager
 import com.skriptide.core.code.CodeManager
 import com.skriptide.gui.GuiManager
 import com.skriptide.utils.writeFile
@@ -25,7 +26,7 @@ class ActiveWindow(val stage:Stage, val scene:Scene, val loader:FXMLLoader, val 
     }
 }
 
-class OpenFileHolder(val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea, val codeManager:CodeManager = CodeManager()) {
+class OpenFileHolder(val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea, val coreManager: CoreManager, val codeManager:CodeManager = CodeManager()) {
 
 
 

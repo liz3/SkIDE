@@ -9,7 +9,7 @@ import java.util.*
 
 class OpenProject(val project: Project, val coreManager: CoreManager) {
 
-    val guiHandler = OpenProjectGuiManager(this)
+    val guiHandler = OpenProjectGuiManager(this, coreManager)
     val eventManager = guiHandler.startGui()
 
 
@@ -37,7 +37,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             guiHandler.openFiles.remove(it.f)
 
             it.tab.text = newName
-            val holder = OpenFileHolder(project.fileManager.projectFiles[newName]!!, it.name, it.tab, it.tabPane, it.borderPane, it.area, it.codeManager)
+            val holder = OpenFileHolder(project.fileManager.projectFiles[newName]!!, it.name, it.tab, it.tabPane, it.borderPane, it.area,  coreManager, it.codeManager)
             guiHandler.openFiles.put(project.fileManager.projectFiles[newName]!!, holder)
             eventManager.registerEventsForNewFile(holder)
         }

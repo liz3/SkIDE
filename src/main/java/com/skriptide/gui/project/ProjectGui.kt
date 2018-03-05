@@ -1,5 +1,6 @@
 package com.skriptide.gui.project
 
+import com.skriptide.CoreManager
 import com.skriptide.core.management.OpenProject
 import com.skriptide.gui.GuiManager
 import com.skriptide.gui.Menus
@@ -15,7 +16,7 @@ import java.io.File
 import java.util.*
 
 
-class OpenProjectGuiManager(val openProject: OpenProject) {
+class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreManager) {
 
     val openFiles = HashMap<File, OpenFileHolder>()
 
@@ -25,7 +26,7 @@ class OpenProjectGuiManager(val openProject: OpenProject) {
 
         val window = GuiManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
         val controller = window.controller as ProjectGuiController
-        val eventManager = ProjectGuiEventListeners(this, controller)
+        val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
         eventManager.guiReady = {
             window.stage.show()
         }
@@ -37,7 +38,7 @@ class OpenProjectGuiManager(val openProject: OpenProject) {
     val projectFiles = openProject.project.fileManager.projectFiles
 }
 
-class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGuiManager, private val controller: ProjectGuiController) {
+class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGuiManager, private val controller: ProjectGuiController, val coreManager: CoreManager) {
 
 
     var guiReady = {}
@@ -109,7 +110,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             return
         }
-        val holder = OpenFileHolder(f, f.name, Tab(f.name), controller.editorMainTabPane!!, BorderPane(), CodeArea())
+        val holder = OpenFileHolder(f, f.name, Tab(f.name), controller.editorMainTabPane!!, BorderPane(), CodeArea(), coreManager)
         openProjectGuiManager.openFiles.put(f, holder)
         setupNewTabForDisplay(holder)
     }

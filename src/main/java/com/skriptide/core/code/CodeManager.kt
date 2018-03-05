@@ -20,6 +20,7 @@ class CodeManager {
         area = project.area
         area.appendText(content)
         parseStructure(content, rootStructureItem)
+
     }
 
     fun gotoItem(item: TreeItem<String>) {
