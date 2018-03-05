@@ -12,11 +12,14 @@ import javafx.scene.layout.BorderPane
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
 import java.io.File
+import java.util.*
 
 
 class OpenProjectGuiManager(val openProject: OpenProject) {
 
     val openFiles = HashMap<File, OpenFileHolder>()
+
+
 
     fun startGui(): ProjectGuiEventListeners {
 
@@ -49,13 +52,16 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         treeView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
 
 
-            if(newValue == null) return@addListener
+            if (newValue == null) return@addListener
             val selectedItem = newValue as TreeItem<String>
 
             if (selectedItem != treeView.root) {
 
                 if (openProjectGuiManager.projectFiles.containsKey(selectedItem.value)) {
-                    openFile(openProjectGuiManager.projectFiles[selectedItem.value]!!)
+
+                    Thread {
+                        openFile(openProjectGuiManager.projectFiles[selectedItem.value]!!)
+                    }.start()
                 }
             }
         }
@@ -90,11 +96,14 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
 
+
             for ((file, holder) in openProjectGuiManager.openFiles) {
 
-                if (file == f) {
-                    holder.tabPane.selectionModel.select(holder.tab)
-                    break
+                if (file === f) {
+
+                        holder.tabPane.selectionModel.select(holder.tab)
+                        break
+
                 }
             }
 
@@ -128,7 +137,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             holder.tab.content = holder.borderPane
             holder.area.paragraphGraphicFactory = LineNumberFactory.get(holder.area)
             //setup the code management
-            holder.codeManager.setup()
+            holder.codeManager.setup(holder)
             registerEventsForNewFile(holder)
             holder.tabPane.tabs.add(holder.tab)
 
@@ -140,12 +149,16 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     }
 
-    private fun registerEventsForNewFile(holder: OpenFileHolder) {
+     fun registerEventsForNewFile(holder: OpenFileHolder) {
 
         holder.tab.setOnCloseRequest {
             holder.saveCode()
             openProjectGuiManager.openFiles.remove(holder.f)
             System.gc()
+            if(openProjectGuiManager.openFiles.size == 0) {
+                controller.browserTabPane!!.selectionModel.select(0)
+                structureTab.first.isDisable = true
+            }
         }
     }
 
@@ -160,7 +173,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private fun updateStructureTab(holder: OpenFileHolder) {
 
-        if(structureTab.first.isDisabled) structureTab.first.isDisable = false
+        if (structureTab.first.isDisabled) structureTab.first.isDisable = false
 
         structureTab.second.root = holder.codeManager.rootStructureItem
     }
@@ -175,7 +188,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         filesTab.second.setOnMouseReleased { ev ->
             if (contextMenuVisible == null) {
                 if (ev.button == MouseButton.SECONDARY) {
-                    if(filesTab.second.selectionModel.selectedItem == null) return@setOnMouseReleased
+                    if (filesTab.second.selectionModel.selectedItem == null) return@setOnMouseReleased
                     val selectedItem = filesTab.second.selectionModel.selectedItem as TreeItem<String>
 
 
@@ -196,7 +209,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         controller.browserTabPane!!.tabs.addAll(filesTab.first, structureTab.first)
 
 
-
     }
 
     private fun registerBrowserEvents() {
@@ -206,14 +218,34 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private fun registerEditorEvents() {
 
+        structureTab.second.selectionModel.selectedItemProperty().addListener {observable, oldValue, newValue ->
+
+            if(newValue != null) {
+
+                val item = newValue as TreeItem<String>
+
+                val tab = controller.editorMainTabPane!!.selectionModel.selectedItem
+
+                openProjectGuiManager.openFiles.values
+                        .filter { it.tab == tab }
+                        .forEach { it.codeManager.gotoItem(item) }
+
+            }
+        }
         controller.editorMainTabPane!!.selectionModelProperty().addListener { observable, oldValue, newValue ->
 
-            if(controller.editorMainTabPane!!.selectionModel.selectedItem != null) {
+            if (controller.editorMainTabPane!!.selectionModel.selectedItem != null) {
+
                 val tab = controller.editorMainTabPane!!.selectionModel.selectedItem
 
                 openProjectGuiManager.openFiles.values
                         .filter { it.tab == tab }
                         .forEach { updateStructureTab(it) }
+
+
+            } else {
+                controller.browserTabPane!!.selectionModel.select(0)
+                structureTab.first.isDisable = true
             }
 
         }

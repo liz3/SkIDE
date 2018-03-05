@@ -114,6 +114,5 @@ class Node(val parent: Node? = null, val content: String, var tabLevel: Int, val
             fields.put("return", returnType)
         }
         fields.put("return", "void")
-        println(name)
     }
 }

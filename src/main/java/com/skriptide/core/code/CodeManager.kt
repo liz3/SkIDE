@@ -5,20 +5,39 @@ import com.skriptide.include.Node
 import com.skriptide.include.NodeType
 import com.skriptide.include.OpenFileHolder
 import com.skriptide.utils.readFile
+import javafx.application.Platform
 import javafx.scene.control.TreeItem
+import org.fxmisc.richtext.CodeArea
 
-class CodeManager(val project: OpenFileHolder) {
+class CodeManager {
+    var rootStructureItem = TreeItem<String>("")
+    private var area = CodeArea()
+    private var content = ""
+    fun setup(project: OpenFileHolder) {
 
-    val rootStructureItem = TreeItem<String>(project.name)
-    val content = readFile(project.f).second
-
-    fun setup() {
-        val area = project.area
+        rootStructureItem = TreeItem(project.name)
+        content = readFile(project.f).second
+        area = project.area
         area.appendText(content)
-        parseStructure(content)
+        parseStructure(content, rootStructureItem)
     }
 
-    fun parseStructure(content: String) {
+    fun gotoItem(item: TreeItem<String>) {
+
+        if (item == rootStructureItem) return
+        val lineSearched = item.value.split(" ")[0].toInt()
+        val split = content.split("\n")
+        val count = (0 until lineSearched-1).sumBy { split[it].length + 1 }
+
+        Platform.runLater {
+            area.requestFocus()
+            area.moveTo(count)
+            //TODO still needs some adjustment
+            area.scrollYToPixel((lineSearched * 14.95))
+        }
+    }
+
+    fun parseStructure(content: String, rootStructureItem: TreeItem<String>) {
 
         rootStructureItem.children.clear()
         val result = SkriptParser().superParse(content)
@@ -30,32 +49,32 @@ class CodeManager(val project: OpenFileHolder) {
         }
     }
 
-   private fun add(parent: TreeItem<String>, node: Node) {
+    private fun add(parent: TreeItem<String>, node: Node) {
 
 
-       val name = {
-           var name = (node.linenumber).toString() + " " +node.nodeType.toString()
+        val name = {
+            var name = (node.linenumber).toString() + " " + node.nodeType.toString()
 
-           if(node.nodeType == NodeType.COMMAND) {
-               name += ": " + node.fields["name"]
-           }
-           if(node.nodeType == NodeType.EVENT) {
-               name += ": " + node.fields["name"]
-           }
-           if(node.nodeType == NodeType.FUNCTION) {
-               name += ": " + node.fields["name"] + " :" + node.fields["return"]
-           }
+            if (node.nodeType == NodeType.COMMAND) {
+                name += ": " + node.fields["name"]
+            }
+            if (node.nodeType == NodeType.EVENT) {
+                name += ": " + node.fields["name"]
+            }
+            if (node.nodeType == NodeType.FUNCTION) {
+                name += ": " + node.fields["name"] + " :" + node.fields["return"]
+            }
 
-           name
-       }.invoke()
+            name
+        }.invoke()
 
-       val item = TreeItem<String>(name)
+        val item = TreeItem<String>(name)
 
-       node.childNodes.forEach {
-           add(item, it)
-       }
+        node.childNodes.forEach {
+            add(item, it)
+        }
 
-       if(node.nodeType != NodeType.COMMENT) parent.children.add(item)
+        if (node.nodeType != NodeType.COMMENT) parent.children.add(item)
     }
 
 }

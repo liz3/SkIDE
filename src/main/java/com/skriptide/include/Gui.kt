@@ -25,9 +25,9 @@ class ActiveWindow(val stage:Stage, val scene:Scene, val loader:FXMLLoader, val 
     }
 }
 
-class OpenFileHolder(val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea) {
+class OpenFileHolder(val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea, val codeManager:CodeManager = CodeManager()) {
 
-    val codeManager = CodeManager(this)
+
 
 
     fun saveCode() {
