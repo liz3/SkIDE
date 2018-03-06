@@ -1,18 +1,24 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
+import com.skide.include.Node
 import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
 import com.skide.utils.EditorUtils
 import com.skide.utils.getCaretLine
-import javafx.application.Platform
+import javafx.stage.Popup
 
 class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder) {
 
     val area = manager.area
 
+    val popUp = Popup()
+
     var currentLine = 0
     var lineBefore = 0
+
+    var colPos = 0
+    var coldPosOld = 0
 
     init {
 
@@ -27,8 +33,13 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             lineBefore = currentLine
             currentLine = area.getCaretLine()
-
-            if (lineBefore != currentLine) onLineChange()
+            coldPosOld = colPos
+            colPos = area.caretColumn
+            if (lineBefore != currentLine) {
+                onLineChange()
+            } else {
+                onColumnChange()
+            }
 
         }
         area.textProperty().addListener { observable, oldValue, newValue ->
@@ -36,9 +47,22 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         }
     }
 
+    private fun onColumnChange() {
+
+        if(colPos == (coldPosOld + 1)) {
+            println("moved one to right")
+        }
+        if(colPos == (coldPosOld - 1)) {
+            println("moved one to left")
+        }
+
+    }
+    private fun showAutoCompleteList(node:Node) {
+
+    }
     private fun onLineChange() {
 
-     Platform.runLater {
+
          val parseResult = manager.parseStructure()
          manager.parseResult = parseResult
 
@@ -58,21 +82,23 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
                      if(old.nodeType != NodeType.EXECUTION && old.nodeType != NodeType.UNDEFINED && old.nodeType != NodeType.COMMENT && old.nodeType != NodeType.SET_VAR) str += "\t"
                      area.replaceText(area.caretPosition, area.caretPosition, str)
+
                  }
 
 
-                 return@runLater
+
+                 return
              }
              if(old.linenumber == current.linenumber + 1) {
                 // println("moved one up")
 
 
-                 return@runLater
+                 return
              }
 
          }
      }
-    }
+
 
 
 

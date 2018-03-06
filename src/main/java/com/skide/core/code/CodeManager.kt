@@ -58,7 +58,7 @@ class CodeManager {
 
         if (item == rootStructureItem) return
         val lineSearched = item.value.split(" ")[0].toInt()
-        val split = content.split("\n")
+        val split = area.text.split("\n")
         val count = (0 until lineSearched - 1).sumBy { split[it].length + 1 }
 
         Platform.runLater {
@@ -66,6 +66,7 @@ class CodeManager {
             area.moveTo(count)
             //TODO still needs some adjustment
             area.scrollYToPixel((lineSearched * 14.95))
+            area.selectLine()
         }
     }
 

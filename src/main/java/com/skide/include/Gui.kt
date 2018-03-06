@@ -23,6 +23,7 @@ class ActiveWindow(val stage:Stage, val scene:Scene, val loader:FXMLLoader, val 
         stage.setOnCloseRequest {
             closeListener()
         }
+
     }
 }
 
