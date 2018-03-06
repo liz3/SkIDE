@@ -67,11 +67,20 @@ class SkriptParser{
     private fun getTabCount(str: String): Int {
         var count = 0
         var cp = str
-        while (cp.startsWith("\t")) {
-            count++
-            cp = cp.substring(1)
+
+        return if(str.startsWith("    ")) {
+            while (cp.startsWith("    ")) {
+                count++
+                cp = cp.substring(4)
+            }
+            count
+        } else {
+            while (cp.startsWith("\t")) {
+                count++
+                cp = cp.substring(1)
+            }
+            count
         }
-        return count
     }
 
 }

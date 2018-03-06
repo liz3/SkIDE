@@ -40,7 +40,7 @@ class CreateProjectGuiController {
 
     var rootProjectFolder = ""
 
-    fun initGui(manager: CoreManager, thisWindow: ActiveWindow, returnWindow: ActiveWindow) {
+    fun initGui(manager: CoreManager, thisWindow: ActiveWindow, returnWindow: ActiveWindow? = null) {
 
         openAfterCreation!!.isSelected = true
         openAfterCreation!!.isDisable = true
@@ -94,13 +94,13 @@ class CreateProjectGuiController {
 
                 thisWindow.close()
             if(!openAfterCreation?.isSelected!!) {
-                returnWindow.stage.show()
+                returnWindow?.stage?.show()
             }
         }
 
         cancelButton!!.setOnAction {
             thisWindow.close()
-            returnWindow.stage.show()
+            returnWindow?.stage?.show()
         }
     }
 }

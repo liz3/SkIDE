@@ -1,6 +1,7 @@
 package com.skide.core.code
 
 import com.skide.core.code.autocomplete.AutoCompleteCompute
+import com.skide.core.code.highlighting.Highlighting
 import com.skide.core.skript.SkriptParser
 import com.skide.include.Node
 import com.skide.include.NodeType
@@ -8,8 +9,20 @@ import com.skide.include.OpenFileHolder
 import com.skide.utils.readFile
 import javafx.application.Platform
 import javafx.scene.control.TreeItem
+import javafx.scene.input.KeyEvent
 import org.fxmisc.richtext.CodeArea
+import org.fxmisc.wellbehaved.event.EventPattern.keyPressed
+import org.fxmisc.wellbehaved.event.InputMap.consume
+import org.fxmisc.wellbehaved.event.template.InputMapTemplate
+import org.fxmisc.wellbehaved.event.template.InputMapTemplate.sequence
+
+import java.awt.Event.TAB
 import java.util.*
+
+
+
+
+
 
 class CodeManager {
 
@@ -17,6 +30,7 @@ class CodeManager {
     lateinit var area: CodeArea
     lateinit var content: String
     lateinit var autoComplete: AutoCompleteCompute
+    lateinit var highlighter:Highlighting
     lateinit var parseResult: Vector<Node>
 
     private val parser = SkriptParser()
@@ -24,9 +38,16 @@ class CodeManager {
 
     fun setup(project: OpenFileHolder) {
 
+
+
         rootStructureItem = TreeItem(project.name)
         content = readFile(project.f).second
         area = project.area
+        highlighter = Highlighting(this)
+        if(this::highlighter.isInitialized) highlighter.computeHighlighting()
+
+
+
         area.appendText(content)
         if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
         autoComplete = AutoCompleteCompute(this, project)

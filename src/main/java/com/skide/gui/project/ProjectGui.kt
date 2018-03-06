@@ -4,6 +4,7 @@ import com.skide.CoreManager
 import com.skide.core.management.OpenProject
 import com.skide.gui.GuiManager
 import com.skide.gui.Menus
+import com.skide.gui.controllers.CreateProjectGuiController
 import com.skide.gui.controllers.ProjectGuiController
 import com.skide.include.OpenFileHolder
 import javafx.application.Platform
@@ -22,14 +23,20 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     val openFiles = HashMap<File, OpenFileHolder>()
 
 
-
     fun startGui(): ProjectGuiEventListeners {
 
         val window = GuiManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
+        window.scene.stylesheets.add("HighlightingLight.css")
         val controller = window.controller as ProjectGuiController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
         eventManager.guiReady = {
             window.stage.show()
+        }
+        window.closeListener = {
+            openFiles.values.forEach {
+                it.saveCode()
+            }
+            coreManager.projectManager.openProjects.remove(this.openProject)
         }
         eventManager.setup()
 
@@ -88,8 +95,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         replaceTemplateElements()
         registerBrowserEvents()
         registerEditorEvents()
-
-
+        setupMainMenu()
         updateProjectFilesTreeView()
         guiReady()
     }
@@ -103,8 +109,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
                 if (file === f) {
 
-                        holder.tabPane.selectionModel.select(holder.tab)
-                        break
+                    holder.tabPane.selectionModel.select(holder.tab)
+                    break
 
                 }
             }
@@ -152,13 +158,13 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     }
 
-     fun registerEventsForNewFile(holder: OpenFileHolder) {
+    fun registerEventsForNewFile(holder: OpenFileHolder) {
 
         holder.tab.setOnCloseRequest {
             holder.saveCode()
             openProjectGuiManager.openFiles.remove(holder.f)
             System.gc()
-            if(openProjectGuiManager.openFiles.size == 0) {
+            if (openProjectGuiManager.openFiles.size == 0) {
                 controller.browserTabPane!!.selectionModel.select(0)
                 structureTab.first.isDisable = true
             }
@@ -214,6 +220,42 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     }
 
+    private fun setupMainMenu() {
+
+        val fileMenu = controller.mainBenuBar!!.menus[0]
+        val closeItem = fileMenu.items.first()
+        fileMenu.items.remove(closeItem)
+
+        val otherProjects = Menu("Other projects")
+
+        fileMenu.setOnShowing {
+            otherProjects.items.clear()
+            coreManager.configManager.projects.values.forEach {
+                val open = coreManager.projectManager.openProjects.any { openProject -> it.id == openProject.project.id }
+                if (!open) {
+                    val item = MenuItem(it.name)
+                    val pr = it
+                    item.setOnAction {
+                        coreManager.projectManager.openProject(pr)
+                    }
+                    otherProjects.items.add(item)
+                }
+            }
+        }
+
+        val newProject = MenuItem("New Project")
+        newProject.setOnAction {
+            val window = GuiManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
+            window.controller as CreateProjectGuiController
+            window.controller.initGui(coreManager, window)
+            window.stage.isResizable = false
+
+
+            window.stage.show()
+        }
+        fileMenu.items.addAll(newProject, otherProjects, closeItem)
+    }
+
     private fun registerBrowserEvents() {
 
 
@@ -221,9 +263,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private fun registerEditorEvents() {
 
-        structureTab.second.selectionModel.selectedItemProperty().addListener {observable, oldValue, newValue ->
+        structureTab.second.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
 
-            if(newValue != null) {
+            if (newValue != null) {
 
                 val item = newValue as TreeItem<String>
 
