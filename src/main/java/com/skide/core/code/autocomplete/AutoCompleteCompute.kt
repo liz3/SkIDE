@@ -1,6 +1,7 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
+import com.skide.gui.Prompts
 import com.skide.include.MethodParameter
 import com.skide.include.Node
 import com.skide.include.NodeType
@@ -136,6 +137,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
         }
     }
+
 
     fun showLocalAutoComplete(movedRight: Boolean) {
 
@@ -355,6 +357,67 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         }
         popUp.show(project.openProject.guiHandler.window.stage)
 
+    }
+
+    fun showGlobalAutoGenerate(node: Node) {
+
+        manager.parseResult = manager.parseStructure()
+        val vars = Arrays.asList("test", "test")
+
+        fillList.items.clear()
+        removed.clear()
+
+        addItem("Generate Command") {
+            popUp.hide()
+            val textPrompt = Prompts.textPrompt("Command Name", "Please type command name");
+            val permission = Prompts.textPrompt("Command Permission", "Please type command permission");
+            area.replaceText(area.caretPosition, area.caretPosition, "command /" + textPrompt + ":\n  permission: " + permission + "\n  trigger:\n    send \"hi\" to player")
+            area.moveTo(area.caretPosition - 2)
+
+            //  area.selectRange(area.caretPosition, area.caretPosition + 4)
+
+        }
+        addItem("Generate Event") {
+
+            //  area.selectRange(area.caretPosition, area.caretPosition + 4)
+            fillList.items.clear()
+            for (s in Arrays.asList("Join", "Quit")) {
+                addItem("On " + s, {
+                    popUp.hide()
+                    area.replaceText(area.caretPosition, area.caretPosition, "on " + s.toLowerCase() + ":\n")
+                    area.moveTo(area.caretPosition - 1)
+
+                })
+            }
+
+
+        }
+        
+        manager.parseResult.forEach {
+            if (it.nodeType == NodeType.FUNCTION) {
+                val name = it.fields["name"] as String
+                val returnType = it.fields["return"] as String
+                var paramsStr = ""
+                var insertParams = ""
+                (it.fields["params"] as Vector<MethodParameter>).forEach {
+                    paramsStr += ",${it.name}:${it.type}"
+                    insertParams += ",${it.name}"
+                }
+                paramsStr = paramsStr.substring(1)
+                insertParams = insertParams.substring(1)
+                val con = "FUNC: $name($paramsStr):$returnType"
+
+                val insert = "$name($insertParams)"
+                addItem(con, {
+                    area.replaceText(area.caretPosition, area.caretPosition, insert)
+                })
+
+            }
+        }
+
+
+
+        popUp.show(project.openProject.guiHandler.window.stage)
     }
 
     fun showGlobalAutoComplete(node: Node) {

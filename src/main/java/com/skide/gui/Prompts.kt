@@ -10,6 +10,7 @@ object Prompts {
         val input = TextInputDialog()
         input.title = title
         input.headerText = header
+
         return try {
             input.showAndWait().get()
         }catch (e:Exception) {

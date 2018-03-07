@@ -14,9 +14,6 @@ import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
 import org.fxmisc.richtext.CodeArea
 import java.util.*
-import org.fxmisc.wellbehaved.event.Nodes
-import org.fxmisc.wellbehaved.event.EventPattern
-import org.fxmisc.wellbehaved.event.InputMap
 
 
 class CodeManager {
@@ -25,6 +22,7 @@ class CodeManager {
     lateinit var area: CodeArea
     lateinit var content: String
     lateinit var autoComplete: AutoCompleteCompute
+    lateinit var generateComplete: AutoCompleteCompute
     lateinit var highlighter:Highlighting
     lateinit var parseResult: Vector<Node>
 
@@ -51,6 +49,7 @@ class CodeManager {
         area.appendText(content)
         if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
         autoComplete = AutoCompleteCompute(this, project)
+        generateComplete = AutoCompleteCompute(this, project)
 
         registerEvents()
     }
@@ -61,9 +60,24 @@ class CodeManager {
             if(ev.code == KeyCode.ESCAPE) {
 
                 autoComplete.popUp.hide()
+                generateComplete.popUp.hide()
             }
 
+            if (ev.isAltDown) {
+                if (ev.code==KeyCode.INSERT) {
+                    if(!generateComplete.popUp.isShowing) {
+                        parseResult = parseStructure()
+                        val node = EditorUtils.getLineNode(area.getCaretLine(), parseResult)
+
+                        if(node != null) {
+                            if (node.tabLevel == 0)
+                                generateComplete.showGlobalAutoGenerate(node)
+                        }
+                    }
+                }
+            }
             if(ev.isControlDown) {
+
                 if (ev.code == KeyCode.SPACE) {
                     if(!autoComplete.popUp.isShowing) {
                         parseResult = parseStructure()
@@ -82,6 +96,7 @@ class CodeManager {
         }
         area.setOnMouseClicked { ev ->
             if(autoComplete.popUp.isShowing) autoComplete.popUp.hide()
+            if(generateComplete.popUp.isShowing) generateComplete.popUp.hide()
 
 
         }
