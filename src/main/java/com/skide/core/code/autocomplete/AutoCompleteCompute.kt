@@ -82,16 +82,15 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 }
             }
         }
-        /*
-         fillList.setOnKeyPressed { ev ->
-             if (ev.code == KeyCode.ENTER) {
-                 if (fillList.selectionModel.selectedItem != null) {
-                     val value = fillList.selectionModel.selectedItem as ListHolderItem
-                     value.caller.invoke()
-                 }
-             }
-         }
-         */
+
+        fillList.setOnKeyPressed { ev ->
+            if (ev.code == KeyCode.ESCAPE) {
+                popUp.hide()
+
+            }
+
+
+        }
 
 
     }
@@ -127,7 +126,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 wasJustCalled = false
             } else {
 
-                    showLocalAutoComplete(true)
+                showLocalAutoComplete(true)
 
             }
         }
@@ -140,9 +139,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     fun showLocalAutoComplete(movedRight: Boolean) {
 
-        manager.parseResult = manager.parseStructure()
-        fillList.items.clear()
-        removed.clear()
         val currentNode = EditorUtils.getLineNode(currentLine, manager.parseResult)
         val actualCurrentString = area.paragraphs[currentLine - 1].text
         val column = area.caretColumn
@@ -196,37 +192,57 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     popUp.hide()
                     fillList.items.clear()
                 }
+                println("WTTTTTTTTTTT")
                 return
             }
         }
 
 
         if (popUp.isShowing) {
-            if (currentWord == "") {
-                removed.clear()
-                popUp.hide()
-                fillList.items.clear()
-            }
+            /*
+             if (currentWord == "") {
+                 removed.clear()
+                 popUp.hide()
+                 fillList.items.clear()
+                 return
+             }
+             */
 
             val toRemove = Vector<ListHolderItem>()
-            fillList.items.filterNotTo(toRemove) { it.name.contains(currentWord, true) }
+
+            for (item in fillList.items) {
+                if (!item.name.contains(currentWord, true)) {
+                    println("Removed " + item.name + " : " + currentWord)
+                    toRemove.add(item)
+                }
+            }
             toRemove.forEach {
+                println("removed " + it.name + " on re-scan")
                 fillList.items.remove(it)
                 removed.add(it)
             }
             toRemove.clear()
-            removed.filterTo(toRemove) { it.name.contains(currentWord, true) }
+            for (item in removed) {
+                if (item.name.contains(currentWord, true)) {
+                    toRemove.add(item)
+                }
+            }
 
             toRemove.forEach {
-                fillList.items.add(it)
                 removed.remove(it)
+                fillList.items.add(it)
             }
             fillList.refresh()
+            println(fillList.items.size.toString() + " on re-scan")
 
 
             return
         } else {
 
+
+            manager.parseResult = manager.parseStructure()
+            fillList.items.clear()
+            removed.clear()
             println("ADDING ELEMENTS===================")
             val toAdd = HashMap<String, Pair<NodeType, () -> Unit>>()
             val root = EditorUtils.getRootOf(currentNode!!)
@@ -272,7 +288,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
 
 
-            if(root.nodeType == NodeType.FUNCTION) {
+            if (root.nodeType == NodeType.FUNCTION) {
 
                 vars.forEach {
                     if (it.fields["visibility"] == "global") {
@@ -309,20 +325,33 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 }
             }
 
+
             val toRemove = Vector<ListHolderItem>()
-            fillList.items.filterNotTo(toRemove) { it.name.contains(currentWord, true) }
+
+            for (item in fillList.items) {
+                if (!item.name.contains(currentWord, true)) {
+                    println("Removed(create) " + item.name + " : " + currentWord)
+                    toRemove.add(item)
+                }
+            }
             toRemove.forEach {
+                println("removed " + it.name + " on create")
                 fillList.items.remove(it)
                 removed.add(it)
             }
             toRemove.clear()
-            removed.filterTo(toRemove) { it.name.contains(currentWord, true) }
+            for (item in removed) {
+                if (item.name.contains(currentWord, true)) {
+                    toRemove.add(item)
+                }
+            }
 
             toRemove.forEach {
-                fillList.items.add(it)
                 removed.remove(it)
+                fillList.items.add(it)
             }
             fillList.refresh()
+
         }
         popUp.show(project.openProject.guiHandler.window.stage)
 
@@ -332,6 +361,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
         manager.parseResult = manager.parseStructure()
         val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, manager.parseResult, node)
+
         fillList.items.clear()
         removed.clear()
 

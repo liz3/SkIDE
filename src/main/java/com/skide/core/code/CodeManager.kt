@@ -60,7 +60,7 @@ class CodeManager {
         area.setOnKeyPressed { ev ->
             if(ev.code == KeyCode.ESCAPE) {
 
-                if(autoComplete.popUp.isShowing) autoComplete.popUp.hide()
+                autoComplete.popUp.hide()
             }
 
             if(ev.isControlDown) {
