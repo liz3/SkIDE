@@ -211,7 +211,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             val toRemove = Vector<ListHolderItem>()
 
             for (item in fillList.items) {
-                if (!item.name.contains(currentWord, true)) {
+                if (!item.name.startsWith(currentWord, true)) {
                     println("Removed " + item.name + " : " + currentWord)
                     toRemove.add(item)
                 }
@@ -223,7 +223,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
             toRemove.clear()
             for (item in removed) {
-                if (item.name.contains(currentWord, true)) {
+                if (item.name.startsWith(currentWord, true)) {
                     toRemove.add(item)
                 }
             }
@@ -329,7 +329,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             val toRemove = Vector<ListHolderItem>()
 
             for (item in fillList.items) {
-                if (!item.name.contains(currentWord, true)) {
+                if (!item.name.startsWith(currentWord, true)) {
                     println("Removed(create) " + item.name + " : " + currentWord)
                     toRemove.add(item)
                 }
@@ -341,7 +341,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
             toRemove.clear()
             for (item in removed) {
-                if (item.name.contains(currentWord, true)) {
+                if (item.name.startsWith(currentWord, true)) {
                     toRemove.add(item)
                 }
             }
