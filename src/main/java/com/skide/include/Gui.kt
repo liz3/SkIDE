@@ -2,6 +2,7 @@ package com.skide.include
 
 import com.skide.CoreManager
 import com.skide.core.code.CodeManager
+import com.skide.core.management.OpenProject
 import com.skide.gui.GuiManager
 import com.skide.utils.writeFile
 import javafx.fxml.FXMLLoader
@@ -27,7 +28,7 @@ class ActiveWindow(val stage:Stage, val scene:Scene, val loader:FXMLLoader, val 
     }
 }
 
-class OpenFileHolder(val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea, val coreManager: CoreManager,  val codeManager:CodeManager = CodeManager()) {
+class OpenFileHolder(val openProject: OpenProject, val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea, val coreManager: CoreManager,  val codeManager:CodeManager = CodeManager()) {
 
 
 

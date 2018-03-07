@@ -6,22 +6,17 @@ import com.skide.core.skript.SkriptParser
 import com.skide.include.Node
 import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
+import com.skide.utils.EditorUtils
+import com.skide.utils.getCaretLine
 import com.skide.utils.readFile
 import javafx.application.Platform
 import javafx.scene.control.TreeItem
-import javafx.scene.input.KeyEvent
+import javafx.scene.input.KeyCode
 import org.fxmisc.richtext.CodeArea
-import org.fxmisc.wellbehaved.event.EventPattern.keyPressed
-import org.fxmisc.wellbehaved.event.InputMap.consume
-import org.fxmisc.wellbehaved.event.template.InputMapTemplate
-import org.fxmisc.wellbehaved.event.template.InputMapTemplate.sequence
-
-import java.awt.Event.TAB
 import java.util.*
-
-
-
-
+import org.fxmisc.wellbehaved.event.Nodes
+import org.fxmisc.wellbehaved.event.EventPattern
+import org.fxmisc.wellbehaved.event.InputMap
 
 
 class CodeManager {
@@ -46,12 +41,50 @@ class CodeManager {
         highlighter = Highlighting(this)
         if(this::highlighter.isInitialized) highlighter.computeHighlighting()
 
-
-
+/*
+        val im = InputMap.consume(
+                EventPattern.keyTyped("\t"),
+                { area.replaceSelection("    ") }
+        )
+        Nodes.addInputMap(area, im)
+ */
         area.appendText(content)
         if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
         autoComplete = AutoCompleteCompute(this, project)
 
+        registerEvents()
+    }
+
+    private fun registerEvents() {
+
+        area.setOnKeyPressed { ev ->
+            if(ev.code == KeyCode.ESCAPE) {
+
+                if(autoComplete.popUp.isShowing) autoComplete.popUp.hide()
+            }
+
+            if(ev.isControlDown) {
+                if (ev.code == KeyCode.SPACE) {
+                    if(!autoComplete.popUp.isShowing) {
+                        parseResult = parseStructure()
+                        val node = EditorUtils.getLineNode(area.getCaretLine(), parseResult)
+
+                        if(node != null) {
+                            if(node.tabLevel == 0)
+                                autoComplete.showGlobalAutoComplete(node)
+                            else
+                                autoComplete.showLocalAutoComplete(false)
+
+                        }
+                    }
+                }
+            }
+        }
+        area.setOnMouseClicked { ev ->
+            if(autoComplete.popUp.isShowing) autoComplete.popUp.hide()
+
+
+        }
     }
 
     fun gotoItem(item: TreeItem<String>) {

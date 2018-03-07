@@ -6,6 +6,7 @@ import com.skide.gui.GuiManager
 import com.skide.gui.Menus
 import com.skide.gui.controllers.CreateProjectGuiController
 import com.skide.gui.controllers.ProjectGuiController
+import com.skide.include.ActiveWindow
 import com.skide.include.OpenFileHolder
 import javafx.application.Platform
 import javafx.scene.control.*
@@ -21,11 +22,12 @@ import java.util.*
 class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreManager) {
 
     val openFiles = HashMap<File, OpenFileHolder>()
+    val window = GuiManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
 
 
     fun startGui(): ProjectGuiEventListeners {
 
-        val window = GuiManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
+
         window.scene.stylesheets.add("HighlightingLight.css")
         val controller = window.controller as ProjectGuiController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
@@ -117,7 +119,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             return
         }
-        val holder = OpenFileHolder(f, f.name, Tab(f.name), controller.editorMainTabPane!!, BorderPane(), CodeArea(), coreManager)
+        val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), controller.editorMainTabPane!!, BorderPane(), CodeArea(), coreManager)
         openProjectGuiManager.openFiles.put(f, holder)
         setupNewTabForDisplay(holder)
     }

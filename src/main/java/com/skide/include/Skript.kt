@@ -79,7 +79,13 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
                     val listOrMapPath = content.split("(")[1].split(")").first().split("::")
                     fields.put("path", listOrMapPath)
                 }
+                if(name.startsWith("_") || name.startsWith("@")) {
+
                 fields.put("name", name.substring(1))
+                } else {
+                fields.put("name", name)
+
+                }
                 fields.put("set_value", content.split("to")[1])
             } catch (e: Exception) {
             }
