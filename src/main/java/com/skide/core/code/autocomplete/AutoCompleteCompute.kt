@@ -392,7 +392,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
 
         }
-        
+
         manager.parseResult.forEach {
             if (it.nodeType == NodeType.FUNCTION) {
                 val name = it.fields["name"] as String
