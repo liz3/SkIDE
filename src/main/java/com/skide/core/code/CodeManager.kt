@@ -97,7 +97,15 @@ class CodeManager {
 
                 autoComplete.hideList()
             }
+            if (ev.isControlDown) {
+                if (ev.code == KeyCode.SLASH) {
+                    if (!autoComplete.popUp.isShowing) {
+                        area.replaceSelection("#"+content);
 
+
+                    }
+                }
+            }
             if (ev.isControlDown) {
                 if (ev.code == KeyCode.SPACE) {
                     if (!autoComplete.popUp.isShowing) {
