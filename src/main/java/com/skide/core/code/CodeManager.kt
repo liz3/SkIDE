@@ -12,12 +12,8 @@ import com.skide.utils.readFile
 import javafx.application.Platform
 import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyCombination
 import org.fxmisc.richtext.CodeArea
 import java.util.*
-import org.fxmisc.wellbehaved.event.Nodes
-import org.fxmisc.wellbehaved.event.EventPattern
-import org.fxmisc.wellbehaved.event.InputMap
 
 
 class CodeManager {
@@ -30,6 +26,8 @@ class CodeManager {
     lateinit var parseResult: Vector<Node>
 
     private val parser = SkriptParser()
+
+    var mousePressed = false
 
 
     fun setup(project: OpenFileHolder) {
@@ -104,6 +102,7 @@ class CodeManager {
                 if (ev.code == KeyCode.SPACE) {
                     if (!autoComplete.popUp.isShowing) {
                         parseResult = parseStructure()
+                        println(area.getCaretLine())
                         val node = EditorUtils.getLineNode(area.getCaretLine(), parseResult)
 
                         if (node != null) {
@@ -112,12 +111,20 @@ class CodeManager {
                             else
                                 autoComplete.showLocalAutoComplete(false)
 
+                        } else {
+                            println("its null")
                         }
                     }
                 }
             }
         }
 
+        area.setOnMousePressed {
+            mousePressed = true
+        }
+        area.setOnMouseReleased {
+            mousePressed = false
+        }
         area.setOnMouseClicked { ev ->
             if (autoComplete.popUp.isShowing) autoComplete.popUp.hide()
 
@@ -147,7 +154,7 @@ class CodeManager {
         val parseResult = parser.superParse(area.text)
 
         parseResult.forEach {
-            addNodeToItemTree(rootStructureItem, it)
+          if(it.nodeType != NodeType.UNDEFINED)  addNodeToItemTree(rootStructureItem, it)
         }
 
         return parseResult

@@ -3,7 +3,7 @@ package com.skide.core.skript
 import com.skide.include.Node
 import java.util.*
 
-class SkriptParser{
+class SkriptParser {
 
     fun superParse(content: String): Vector<Node> {
 
@@ -13,6 +13,8 @@ class SkriptParser{
         val added = Vector<Int>()
 
         val split = content.split("\n")
+
+        println(split.size)
 
         for (x in 0 until split.size) {
             if (toSkip != 0) {
@@ -25,8 +27,11 @@ class SkriptParser{
                 val node = Node(null, split[x], 0, x + 1)
                 toSkip += parse(x, node, split, added) - 1
                 nodes.addElement(node)
+            } else {
+              if(!added.contains(x+ 1))  nodes.addElement(Node(null, split[x], getTabCount(current), x + 1))
             }
         }
+        println(added.size)
         return nodes
     }
 
@@ -34,7 +39,7 @@ class SkriptParser{
 
         var looped = 0
         var toSkip = 0
-        var before = Node(parent, "", 0,0)
+        var before = Node(parent, "", 0, 0)
         for (x in index + 1 until split.size) {
             looped++
             if (toSkip != 0) {
@@ -51,7 +56,7 @@ class SkriptParser{
                 continue
             }
             if (currentTabCount > (parent.tabLevel + 1)) {
-                val node = Node(parent, current, currentTabCount, x+ 1)
+                val node = Node(parent, current, currentTabCount, x + 1)
                 toSkip += parse(x, node, split, added) - 1
                 before.childNodes.add(node)
                 added.add(x)
@@ -68,7 +73,7 @@ class SkriptParser{
         var count = 0
         var cp = str
 
-        return if(str.startsWith("    ")) {
+        return if (str.startsWith("    ")) {
             while (cp.startsWith("    ")) {
                 count++
                 cp = cp.substring(4)

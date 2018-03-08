@@ -17,7 +17,8 @@ enum class NodeType {
     ROOT,
     OPTION,
     FUNCTION,
-    UNDEFINED
+    UNDEFINED,
+    INVALID
 }
 
 class MethodParameter(val name: String, val type: String, val value:String)
@@ -122,6 +123,7 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
             } catch (e: Exception) {
                 fields.put("visibility", "global")
                 fields.put("name", "")
+                fields.put("invalid", true)
             }
             theType = NodeType.SET_VAR
         }

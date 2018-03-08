@@ -114,6 +114,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
         area.caretPositionProperty().addListener { observable, oldValue, newValue ->
 
+            if(manager.mousePressed) return@addListener
             lineBefore = currentLine
             currentLine = area.getCaretLine()
             coldPosOld = colPos
@@ -252,22 +253,30 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     }))
                 }
             }
-            if (root.nodeType == NodeType.FUNCTION) {
+
                 vars.forEach {
-                    if (it.fields["visibility"] == "global") {
-                        addItem("VAR " + it.fields["name"], { info ->
-                            area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
-                        })
+                    if (it.fields["visibility"] == "global" && !it.fields.containsKey("invalid")) {
+
+                        if(it.fields.contains("from_option")) {
+                            val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
+                           if(!found) {
+                               addItem((it.fields["name"] as String) + " [from option]", { info ->
+                                   area.replaceText(area.caretPosition, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
+
+                                   //TODO add path items as
+                               })
+                           }
+                        } else {
+                            val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
+                            if(!found) {
+                                addItem(it.fields["name"] as String, { info ->
+                                    area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
+                                })
+                            }
+                        }
                     }
                 }
-            } else {
-                vars.forEach {
-                    toAdd.put((it.fields["name"] as String) + ":Unkown", Pair(NodeType.SET_VAR, { info ->
-                        area.replaceText(area.caretPosition -info.currentWord.length, area.caretPosition, "{" + it.fields["name"] + "}")
-                    }))
 
-                }
-            }
             if (movedRight) {
                 toAdd.forEach {
                     if (it.key.startsWith(currentInfo.beforeString, true))
