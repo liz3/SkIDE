@@ -363,13 +363,13 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             val window = GuiManager.getWindow("GenerateCommand.fxml", "Generate command", true)
             val generate: GenerateCommandController = window.controller as GenerateCommandController;
-            generate.createButton.setOnMouseClicked(EventHandler<MouseEvent> { event ->
+            generate.createButton.onMouseClicked = EventHandler<MouseEvent> { event ->
                 run {
-                    area.replaceText(area.caretPosition, area.caretPosition, "command /" + generate.commandNameField.text + ":\n  description: " + generate.descriptionField.text + "\n" + "  permission: " + generate.permissionField.text + "\n  trigger:\n    send \"hi\" to player")
+                    area.replaceText(area.caretPosition, area.caretPosition, "command /" + generate.commandNameField.text + ":\n\tdescription: " + generate.descriptionField.text + "\n" + "\tpermission: " + generate.permissionField.text + "\n\ttrigger:\n\t\tsend \"hi\" to player")
 
                     GuiManager.closeGui(window.id);
                 }
-            })
+            }
 
 //            project.coreManager.configManager.
         }
