@@ -13,41 +13,41 @@ import javafx.scene.layout.HBox;
 class ProjectGuiController {
 
     @FXML
-    var rootBorderPane: BorderPane? = null
+    lateinit var rootBorderPane: BorderPane
 
     @FXML
-    var mainRightBorderPane: BorderPane? = null
+    lateinit var mainRightBorderPane: BorderPane
 
     @FXML
-    var mainLeftBorderPane: BorderPane? = null
+    lateinit var mainLeftBorderPane: BorderPane
 
     @FXML
-    var browserTabPane: TabPane? = null
+    lateinit var browserTabPane: TabPane
 
     @FXML
-    var mainUpperBorderPane: BorderPane? = null
+    lateinit var mainUpperBorderPane: BorderPane
 
     @FXML
-    var mainBenuBar: MenuBar? = null
+    lateinit var mainBenuBar: MenuBar
 
     @FXML
-    var controlsHBox: HBox? = null
+    lateinit var controlsHBox: HBox
 
     @FXML
-    var mainCenterAnchorPane: AnchorPane? = null
+    lateinit var mainCenterAnchorPane: AnchorPane
 
     @FXML
-    var editorMainTabPane: TabPane? = null
+    lateinit var editorMainTabPane: TabPane
 
     @FXML
-    var templateTab: Tab? = null
+    lateinit var templateTab: Tab
 
     @FXML
-    var templateTabBorderPane: BorderPane? = null
+    lateinit var templateTabBorderPane: BorderPane
 
     @FXML
-    var templateEditorTextArea: TextArea? = null
+    lateinit var templateEditorTextArea: TextArea
 
     @FXML
-    var herachieLabel: Label? = null
+    lateinit var herachieLabel: Label
 }

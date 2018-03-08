@@ -6,7 +6,6 @@ import com.skide.gui.GuiManager
 import com.skide.gui.Menus
 import com.skide.gui.controllers.CreateProjectGuiController
 import com.skide.gui.controllers.ProjectGuiController
-import com.skide.include.ActiveWindow
 import com.skide.include.OpenFileHolder
 import javafx.application.Platform
 import javafx.scene.control.*
@@ -167,7 +166,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             openProjectGuiManager.openFiles.remove(holder.f)
             System.gc()
             if (openProjectGuiManager.openFiles.size == 0) {
-                controller.browserTabPane!!.selectionModel.select(0)
+                controller.browserTabPane.selectionModel.select(0)
                 structureTab.first.isDisable = true
             }
         }
@@ -176,7 +175,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     private fun replaceTemplateElements() {
 
         val templateTab = controller.templateTab
-        controller.editorMainTabPane!!.tabs.remove(templateTab)
+        controller.editorMainTabPane.tabs.remove(templateTab)
         setupBrowser()
 
 

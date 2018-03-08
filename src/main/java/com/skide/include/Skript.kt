@@ -65,29 +65,63 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
         if (content.toLowerCase().startsWith("set ")) {
             try {
                 //get var name
-                val name = content.split("{")[1].split("}").first()
 
-                when {
-                    name.startsWith("_") -> fields.put("visibility", "local")
-                    name.startsWith("@") -> {
-                        fields.put("visibility", "global")
-                        fields.put("from_option", true)
+
+                if(content.substring(3).trim().startsWith("{{")) {
+                    val name = content.split("{")[2].split("}").first()
+                    println(name)
+                    when {
+                        name.startsWith("_") -> fields.put("visibility", "local")
+                        name.startsWith("@") -> {
+                            fields.put("visibility", "global")
+                            fields.put("from_option", true)
+                        }
+                        else -> fields.put("visibility", "global")
                     }
-                    else -> fields.put("visibility", "global")
-                }
-                if(content.contains("::") && content.contains("(")) {
-                    val listOrMapPath = content.split("(")[1].split(")").first().split("::")
-                    fields.put("path", listOrMapPath)
-                }
-                if(name.startsWith("_") || name.startsWith("@")) {
+                    if(name.startsWith("_") || name.startsWith("@")) {
 
-                fields.put("name", name.substring(1))
+                        fields.put("name", name.substring(1))
+                    } else {
+                        fields.put("name", name)
+
+                    }
+                    fields.put("set_value", content.split("to")[1])
+
+
+            if(content.contains("::")) {
+                val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
+                println(listOrMapPath)
+                fields.put("path", listOrMapPath)
+            }
+
                 } else {
-                fields.put("name", name)
+                    val name = content.split("{")[1].split("}").first()
 
+                    when {
+                        name.startsWith("_") -> fields.put("visibility", "local")
+                        name.startsWith("@") -> {
+                            fields.put("visibility", "global")
+                            fields.put("from_option", true)
+                        }
+                        else -> fields.put("visibility", "global")
+                    }
+                    if(name.startsWith("_") || name.startsWith("@")) {
+
+                        fields.put("name", name.substring(1))
+                    } else {
+                        fields.put("name", name)
+
+                    }
+                    fields.put("set_value", content.split("to")[1])
+                    if(content.contains("::")) {
+                        val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
+                        println(listOrMapPath)
+                        fields.put("path", listOrMapPath)
+                    }
                 }
-                fields.put("set_value", content.split("to")[1])
             } catch (e: Exception) {
+                fields.put("visibility", "global")
+                fields.put("name", "")
             }
             theType = NodeType.SET_VAR
         }

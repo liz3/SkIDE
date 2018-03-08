@@ -12,8 +12,12 @@ import com.skide.utils.readFile
 import javafx.application.Platform
 import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyCombination
 import org.fxmisc.richtext.CodeArea
 import java.util.*
+import org.fxmisc.wellbehaved.event.Nodes
+import org.fxmisc.wellbehaved.event.EventPattern
+import org.fxmisc.wellbehaved.event.InputMap
 
 
 class CodeManager {
@@ -22,8 +26,7 @@ class CodeManager {
     lateinit var area: CodeArea
     lateinit var content: String
     lateinit var autoComplete: AutoCompleteCompute
-    lateinit var generateComplete: AutoCompleteCompute
-    lateinit var highlighter:Highlighting
+    lateinit var highlighter: Highlighting
     lateinit var parseResult: Vector<Node>
 
     private val parser = SkriptParser()
@@ -32,12 +35,11 @@ class CodeManager {
     fun setup(project: OpenFileHolder) {
 
 
-
         rootStructureItem = TreeItem(project.name)
         content = readFile(project.f).second
         area = project.area
         highlighter = Highlighting(this)
-        if(this::highlighter.isInitialized) highlighter.computeHighlighting()
+        if (this::highlighter.isInitialized) highlighter.computeHighlighting()
 
 /*
         val im = InputMap.consume(
@@ -49,42 +51,63 @@ class CodeManager {
         area.appendText(content)
         if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
         autoComplete = AutoCompleteCompute(this, project)
-        generateComplete = AutoCompleteCompute(this, project)
 
         registerEvents()
     }
 
     private fun registerEvents() {
-
         area.setOnKeyPressed { ev ->
-            if(ev.code == KeyCode.ESCAPE) {
 
-                autoComplete.popUp.hide()
-                generateComplete.popUp.hide()
-            }
+            if (ev.isShiftDown) {
 
-            if (ev.isAltDown) {
-                if (ev.code==KeyCode.INSERT) {
-                    if(!generateComplete.popUp.isShowing) {
-                        parseResult = parseStructure()
-                        val node = EditorUtils.getLineNode(area.getCaretLine(), parseResult)
+                val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
+                if (ev.code == KeyCode.DIGIT8) {
 
-                        if(node != null) {
-                            if (node.tabLevel == 0)
-                                generateComplete.showGlobalAutoGenerate(node)
-                        }
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, ")")
+                    area.moveTo(area.caretPosition - 1)
+                    if (autoComplete.popUp.isShowing) {
+                        autoComplete.removed.clear()
+                        autoComplete.popUp.hide()
+                        autoComplete.fillList.items.clear()
                     }
                 }
-            }
-            if(ev.isControlDown) {
+                if (ev.code == KeyCode.DIGIT2) {
 
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, "\"")
+                    area.moveTo(area.caretPosition - 1)
+                }
+            }
+            if (ev.isAltDown) {
+
+                val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
+                if (ev.code == KeyCode.DIGIT7) {
+
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, "}")
+                    area.moveTo(area.caretPosition - 1)
+                }
+                if (ev.code == KeyCode.DIGIT8) {
+
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, "]")
+                    area.moveTo(area.caretPosition - 1)
+                }
+            }
+            if (ev.code == KeyCode.ESCAPE) {
+
+                autoComplete.hideList()
+            }
+
+            if (ev.isControlDown) {
                 if (ev.code == KeyCode.SPACE) {
-                    if(!autoComplete.popUp.isShowing) {
+                    if (!autoComplete.popUp.isShowing) {
                         parseResult = parseStructure()
                         val node = EditorUtils.getLineNode(area.getCaretLine(), parseResult)
 
-                        if(node != null) {
-                            if(node.tabLevel == 0)
+                        if (node != null) {
+                            if (node.tabLevel == 0)
                                 autoComplete.showGlobalAutoComplete(node)
                             else
                                 autoComplete.showLocalAutoComplete(false)
@@ -94,9 +117,9 @@ class CodeManager {
                 }
             }
         }
+
         area.setOnMouseClicked { ev ->
-            if(autoComplete.popUp.isShowing) autoComplete.popUp.hide()
-            if(generateComplete.popUp.isShowing) generateComplete.popUp.hide()
+            if (autoComplete.popUp.isShowing) autoComplete.popUp.hide()
 
 
         }

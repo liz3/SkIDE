@@ -26,13 +26,7 @@ object Prompts {
         alert.contentText = body
         alert.isResizable = false
         alert.graphic = null
-        /*
-        if (Main.settings.getTheme() === 1) {
 
-            val dialogPane = alert.dialogPane
-            dialogPane.stylesheets.add("ThemeDark.css")
-        }
-        */
         val result = alert.showAndWait() ?: return false
         return result.get() == ButtonType.OK
 

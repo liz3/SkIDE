@@ -1,5 +1,6 @@
 package com.skide.utils
 
+import com.skide.core.code.CodeManager
 import com.skide.include.Node
 import com.skide.include.NodeType
 import org.fxmisc.richtext.CodeArea
@@ -100,3 +101,59 @@ object EditorUtils {
 }
 
 fun CodeArea.getCaretLine() = this.caretSelectionBind.paragraphIndex + 1
+
+class CurrentStateInfo(val currentNode: Node, val actualCurrentString:String, val column:Int, val currentWord:String,
+                       val beforeString: String, val afterString: String, val charBeforeCaret:String, val charAfterCaret:String, val inString:Boolean)
+
+fun CodeArea.getInfo(manager:CodeManager, currentLine:Int): CurrentStateInfo {
+
+
+    val currentNode = EditorUtils.getLineNode(currentLine, manager.parseResult)
+    val actualCurrentString = this.paragraphs[currentLine - 1].text
+    val column = this.caretColumn
+    var currentWord = ""
+    var beforeStr = ""
+    var inString = false
+    var afterStr = ""
+    var charBeforeCaret = {
+        if (column == 0) {
+            ""
+        } else {
+            actualCurrentString[column - 1].toString()
+        }
+    }.invoke()
+    var charAfterCaret = {
+        if (column == actualCurrentString.length) {
+            ""
+        } else {
+            actualCurrentString[column].toString()
+        }
+    }.invoke()
+
+    for(x in 0 until actualCurrentString.length) {
+        if(x == column) break
+        val c = actualCurrentString[x]
+        if(c == '"') inString = !inString
+    }
+    if (charBeforeCaret != "") {
+        var count = column
+        while (count > 0 && actualCurrentString[count - 1].toString() != " " && actualCurrentString[count - 1].toString() != "\n") {
+
+            count--
+            beforeStr = actualCurrentString[count].toString() + beforeStr
+        }
+        count = column - 1
+        while (count < actualCurrentString.length - 1 && actualCurrentString[count].toString() != " " && actualCurrentString[count].toString() != "\n") {
+            count++
+            afterStr += actualCurrentString[count].toString()
+        }
+
+        beforeStr = beforeStr.replace("\t", "").replace(" ", "")
+        afterStr = afterStr.replace("\t", "").replace(" ", "")
+        currentWord = beforeStr + afterStr
+
+
+    }
+
+    return CurrentStateInfo(currentNode!!, actualCurrentString, column, currentWord, beforeStr, afterStr, charBeforeCaret, charAfterCaret, inString)
+}

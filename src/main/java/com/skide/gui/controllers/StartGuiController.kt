@@ -14,22 +14,22 @@ class StartGuiController {
 
 
     @FXML
-    private var projectsList: ListView<String>? = null
+    private lateinit var projectsList: ListView<String>
 
     @FXML
-    private var createNewProject: Label? = null
+    private lateinit var createNewProject: Label
 
     @FXML
-    private var iconImage: ImageView? = null
+    private lateinit var iconImage: ImageView
 
     @FXML
-    private var importProject: Label? = null
+    private lateinit var importProject: Label
 
     fun initGui(manager: CoreManager, thisWindow: ActiveWindow, firstRun:Boolean) {
 
-        iconImage?.image = Image(javaClass.getResource("/icon.png").toExternalForm())
+        iconImage.image = Image(javaClass.getResource("/icon.png").toExternalForm())
 
-        createNewProject?.setOnMouseClicked {
+        createNewProject.setOnMouseClicked {
 
             val window = GuiManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
             window.controller as CreateProjectGuiController
@@ -42,8 +42,8 @@ class StartGuiController {
             window.stage.show()
 
         }
-        projectsList!!.setOnMouseReleased {
-            val selection = projectsList!!.selectionModel.selectedItem
+        projectsList.setOnMouseReleased {
+            val selection = projectsList.selectionModel.selectedItem
 
             if(selection != null) {
                 manager.configManager.projects.values.forEach {
@@ -55,7 +55,7 @@ class StartGuiController {
                 }
             }
         }
-        importProject?.setOnMouseClicked {
+        importProject.setOnMouseClicked {
 
             val window = GuiManager.getWindow("ImportProjectGui.fxml", "Import Project", false)
             window.controller as ImportProjectGuiController
@@ -71,7 +71,7 @@ class StartGuiController {
         if(!firstRun) {
 
             manager.configManager.projects.values.forEach {
-                projectsList!!.items.add("${it.name}\n${it.path}")
+                projectsList.items.add("${it.name}\n${it.path}")
             }
         }
     }
