@@ -1,7 +1,8 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
-import com.skide.gui.Prompts
+import com.skide.gui.GuiManager
+import com.skide.gui.controllers.GenerateCommandController
 import com.skide.include.MethodParameter
 import com.skide.include.Node
 import com.skide.include.NodeType
@@ -11,9 +12,11 @@ import com.skide.utils.EditorUtils
 import com.skide.utils.getCaretLine
 import com.skide.utils.getInfo
 import javafx.application.Platform
+import javafx.event.EventHandler
 import javafx.geometry.Bounds
 import javafx.scene.control.ListView
 import javafx.scene.input.KeyCode
+import javafx.scene.input.MouseEvent
 import javafx.stage.Popup
 import org.reactfx.EventStreams
 import org.reactfx.EventStreams.nonNullValuesOf
@@ -336,16 +339,32 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         }
 
 
+//        addItem("Generate Command") {
+//            popUp.hide()
+//            val textPrompt = Prompts.textPrompt("Command Name", "Please type command name")
+//            val permission = Prompts.textPrompt("Command Permission", "Please type command permission")
+//            area.replaceText(area.caretPosition, area.caretPosition, "command /$textPrompt:\n\tpermission: $permission\n\ttrigger:\n\t\tsend \"hi\" to player")
+//            area.moveTo(area.caretPosition - 2)
+//
+//            //  area.selectRange(area.caretPosition, area.caretPosition + 4)
+//
+//        }
         addItem("Generate Command") {
             popUp.hide()
-            val textPrompt = Prompts.textPrompt("Command Name", "Please type command name")
-            val permission = Prompts.textPrompt("Command Permission", "Please type command permission")
-            area.replaceText(area.caretPosition, area.caretPosition, "command /$textPrompt:\n\tpermission: $permission\n\ttrigger:\n\t\tsend \"hi\" to player")
-            area.moveTo(area.caretPosition - 2)
 
-            //  area.selectRange(area.caretPosition, area.caretPosition + 4)
+            val window = GuiManager.getWindow("GenerateCommand.fxml", "Generate command", true)
+            val generate: GenerateCommandController = window.controller as GenerateCommandController;
+            generate.createButton.setOnMouseClicked(EventHandler<MouseEvent> { event ->
+                run {
+                    area.replaceText(area.caretPosition, area.caretPosition, "command /" + generate.commandNameField.text + ":\n  description: " + generate.descriptionField.text + "\n" + "  permission: " + generate.permissionField.text + "\n  trigger:\n    send \"hi\" to player")
 
+                    GuiManager.closeGui(window.id);
+                }
+            })
+
+//            project.coreManager.configManager.
         }
+
         addItem("Generate Event") {
 
             //  area.selectRange(area.caretPosition, area.caretPosition + 4)

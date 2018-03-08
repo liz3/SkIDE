@@ -1,7 +1,6 @@
 package com.skide.core.code.highlighting
 
 import com.skide.core.code.CodeManager
-import javafx.application.Platform
 import org.fxmisc.richtext.model.StyleSpans
 import org.fxmisc.richtext.model.StyleSpansBuilder
 import java.util.regex.Pattern
@@ -60,7 +59,7 @@ class Highlighting(val manager: CodeManager) {
 
 object HightlighterStatics {
 
-    val KEYWORDS = arrayOf("set", "if", "stop", "loop", "trigger", "return", "function", "options", "true", "false")
+    val KEYWORDS = arrayOf("set", "if", "stop", "loop", "trigger", "permission","permission-message","description", "return", "function", "options", "true", "false", "cancel", "else", "else if")
     const val COMMENT_PATTERN = "#[^\n]*"
     const val VAR_PATTERN = "\\{\\S*}"
     const val PAREN_PATTERN = "\\(|\\)"

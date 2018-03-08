@@ -12,12 +12,8 @@ import com.skide.utils.readFile
 import javafx.application.Platform
 import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyCombination
 import org.fxmisc.richtext.CodeArea
 import java.util.*
-import org.fxmisc.wellbehaved.event.Nodes
-import org.fxmisc.wellbehaved.event.EventPattern
-import org.fxmisc.wellbehaved.event.InputMap
 
 
 class CodeManager {
@@ -99,7 +95,15 @@ class CodeManager {
 
                 autoComplete.hideList()
             }
+            if (ev.isControlDown) {
+                if (ev.code == KeyCode.SLASH) {
+                    if (!autoComplete.popUp.isShowing) {
+                        area.replaceSelection("#"+content);
 
+
+                    }
+                }
+            }
             if (ev.isControlDown) {
                 if (ev.code == KeyCode.SPACE) {
                     if (!autoComplete.popUp.isShowing) {
