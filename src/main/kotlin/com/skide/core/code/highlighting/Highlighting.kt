@@ -8,19 +8,55 @@ import java.util.regex.Pattern
 class Highlighting(val manager: CodeManager) {
 
     val area = manager.area
+    private val x = area.richChanges().filter({ ch -> ch.inserted != ch.removed })
+    var sub = x.subscribe({ area.setStyleSpans(0, computHighlighting(area.text)) })
 
     fun computeHighlighting() {
 
 
-            area.richChanges()
-                    .filter({ ch -> ch.inserted != ch.removed }).subscribe({ area.setStyleSpans(0, computHightlighting(area.text)) })
-
-            area.replaceText(0, 0, area.text)
+        area.replaceText(0, 0, area.text)
 
     }
 
-// This is a comment
-    private fun computHightlighting(text: String): StyleSpans<Collection<String>> {
+    fun searchHighlighting(searched: String, case:Boolean, regex:Boolean) {
+
+
+        val pos = area.caretPosition
+        sub.unsubscribe()
+        sub = x.subscribe({ area.setStyleSpans(0, computeSearchHightlighting(area.text, searched, case, regex)) })
+        val text = area.text
+
+        area.clear()
+        area.appendText(text)
+        area.moveTo(pos)
+
+    }
+
+    fun restartHighlighting() {
+
+        val pos = area.caretPosition
+        sub.unsubscribe()
+
+        sub = x.subscribe({ area.setStyleSpans(0, computHighlighting(area.text)) })
+        val text = area.text
+        area.clear()
+        area.appendText(text)
+        area.moveTo(pos)
+    }
+
+    fun stopHighLighting() {
+
+        val pos = area.caretPosition
+        sub.unsubscribe()
+        area.clearStyle(0, area.text.length)
+        val text = area.text
+        area.clear()
+        area.appendText(text)
+        area.moveTo(pos)
+    }
+
+
+    private fun computHighlighting(text: String): StyleSpans<Collection<String>> {
 
         val matcher = patternCompiler.matcher(text)
         var lastKwEnd = 0
@@ -29,7 +65,7 @@ class Highlighting(val manager: CodeManager) {
         while (matcher.find()) {
             val styleClass = when {
                 matcher.group("PAREN") != null -> "paren"
-             //   matcher.group("BRACE") != null -> "brace"
+            //   matcher.group("BRACE") != null -> "brace"
                 matcher.group("BRACKET") != null -> "bracket"
                 matcher.group("STRING") != null -> "string"
                 matcher.group("COMMENT") != null -> "comment"
@@ -47,19 +83,48 @@ class Highlighting(val manager: CodeManager) {
         return spansBuilder.create()
     }
 
+    // This is a comment
+    private fun computeSearchHightlighting(text: String, search: String, case: Boolean, regex: Boolean): StyleSpans<Collection<String>> {
+
+        val matcher = searchPatternCompiler(search, case, regex).matcher(text)
+        var lastKwEnd = 0
+        val spansBuilder = StyleSpansBuilder<Collection<String>>()
+
+        while (matcher.find()) {
+            val styleClass = when {
+                matcher.group("SEARCH") != null -> "marked"
+                else -> null
+            }!!
+
+
+            spansBuilder.add(emptyList(), matcher.start() - lastKwEnd)
+            spansBuilder.add(setOf(styleClass), matcher.end() - matcher.start())
+            lastKwEnd = matcher.end()
+        }
+        spansBuilder.add(emptyList(), text.length - lastKwEnd)
+        return spansBuilder.create()
+    }
+
+    private fun searchPatternCompiler(word: String, case: Boolean, regex: Boolean): Pattern {
+
+        val content = if(regex) word else Pattern.quote(word)
+
+        return if(!case) Pattern.compile("(?<SEARCH>$content)", Pattern.CASE_INSENSITIVE) else Pattern.compile("(?<SEARCH>$content)")
+    }
+
     private val patternCompiler = Pattern.compile(
-            "(?<PAREN>" + HightlighterStatics.PAREN_PATTERN + ")"
-                //    + "|(?<BRACE>" + HightlighterStatics.BRACE_PATTERN + ")"
-                    + "|(?<BRACKET>" + HightlighterStatics.BRACKET_PATTERN + ")"
-                    + "|(?<STRING>" + HightlighterStatics.STRING_PATTERN + ")"
-                    + "|(?<COMMENT>" + HightlighterStatics.COMMENT_PATTERN + ")"
-                    + "|(?<VARS>" + HightlighterStatics.VAR_PATTERN + ")"
-                    + "|(?<KEYWORDS>" + HightlighterStatics.joinBoundaryPattern(HightlighterStatics.KEYWORDS) + ")")
+            "(?<PAREN>" + HighlighterStatics.PAREN_PATTERN + ")"
+                    //    + "|(?<BRACE>" + HighlighterStatics.BRACE_PATTERN + ")"
+                    + "|(?<BRACKET>" + HighlighterStatics.BRACKET_PATTERN + ")"
+                    + "|(?<STRING>" + HighlighterStatics.STRING_PATTERN + ")"
+                    + "|(?<COMMENT>" + HighlighterStatics.COMMENT_PATTERN + ")"
+                    + "|(?<VARS>" + HighlighterStatics.VAR_PATTERN + ")"
+                    + "|(?<KEYWORDS>" + HighlighterStatics.joinBoundaryPattern(HighlighterStatics.KEYWORDS) + ")")
 }
 
-object HightlighterStatics {
+object HighlighterStatics {
 
-    val KEYWORDS = arrayOf("set", "if", "stop", "loop", "trigger", "permission","permission-message","description", "return", "function", "options", "true", "false", "cancel", "else", "else if")
+    val KEYWORDS = arrayOf("set", "if", "stop", "loop", "trigger", "permission", "permission-message", "description", "return", "function", "options", "true", "false", "cancel", "else", "else if")
     const val COMMENT_PATTERN = "#[^\n]*"
     const val VAR_PATTERN = "\\{\\S*}"
     const val PAREN_PATTERN = "\\(|\\)"

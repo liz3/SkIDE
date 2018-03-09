@@ -32,6 +32,15 @@ object GuiManager {
         return window
     }
 
+    fun getScene(fxFilePath:String): Pair<Parent, Any> {
+
+        val loader = FXMLLoader()
+        val rootNode:Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
+        val controller = loader.getController<Any>()
+
+
+        return Pair(rootNode, controller)
+    }
     var bootstrapCallback : (Stage) -> Unit = { stage ->
 
 

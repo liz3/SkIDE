@@ -5,22 +5,35 @@ import com.skide.include.Node
 import com.skide.include.NodeType
 import org.fxmisc.richtext.CodeArea
 import java.util.*
+import java.util.regex.Pattern
 
 object EditorUtils {
 
     fun getLineNode(line: Int, all: Vector<Node>): Node? {
 
-        return all
-                .map { searchNode(line, it) }
-                .firstOrNull { it != null }
+        all.forEach {
+            if (it.linenumber == line) return it
+
+            it.childNodes.forEach { c ->
+                val r = searchNode(line, c)
+                if (r != null) return r
+            }
+        }
+
+        return null
     }
 
 
     private fun searchNode(line: Int, node: Node): Node? {
-        if (node.linenumber == line) return node
-        return node.childNodes
-                .map { searchNode(line, it) }
-                .firstOrNull { it != null }
+
+        if(node.linenumber == line) return node
+
+        node.childNodes.forEach { c ->
+            val r = searchNode(line, c)
+            if (r != null) return r
+        }
+
+        return null
     }
 
 
@@ -37,23 +50,23 @@ object EditorUtils {
         return found
     }
 
-    fun getRootOf(node:Node): Node {
+    fun getRootOf(node: Node): Node {
 
-        if(node.parent == null) return node
+        if (node.parent == null) return node
         var n = node
         while (n.parent != null) n = n.parent!!
         return n
     }
 
-    fun filterByNodeType(type: NodeType, list: Vector<Node>, limiter:Node): Vector<Node> {
+    fun filterByNodeType(type: NodeType, list: Vector<Node>, limiter: Node): Vector<Node> {
 
         val found = Vector<Node>()
 
-        for(item in list) {
+        for (item in list) {
             val result = filterByNodeTypeIterator(type, item, limiter)
 
-            for(resultItem in result) {
-                if(resultItem.first) return found
+            for (resultItem in result) {
+                if (resultItem.first) return found
                 found.addElement(resultItem.second)
             }
         }
@@ -102,10 +115,12 @@ object EditorUtils {
 
 fun CodeArea.getCaretLine() = this.caretSelectionBind.paragraphIndex + 1
 
-class CurrentStateInfo(val currentNode: Node, val actualCurrentString:String, val column:Int, val currentWord:String,
-                       val beforeString: String, val afterString: String, val charBeforeCaret:String, val charAfterCaret:String, val inString:Boolean)
+class StringSearchResult(val start: Int, val end: Int, val str: String)
 
-fun CodeArea.getInfo(manager:CodeManager, currentLine:Int): CurrentStateInfo {
+class CurrentStateInfo(val currentNode: Node, val actualCurrentString: String, val column: Int, val currentWord: String,
+                       val beforeString: String, val afterString: String, val charBeforeCaret: String, val charAfterCaret: String, val inString: Boolean)
+
+fun CodeArea.getInfo(manager: CodeManager, currentLine: Int): CurrentStateInfo {
 
 
     val currentNode = EditorUtils.getLineNode(currentLine, manager.parseResult)
@@ -115,14 +130,14 @@ fun CodeArea.getInfo(manager:CodeManager, currentLine:Int): CurrentStateInfo {
     var beforeStr = ""
     var inString = false
     var afterStr = ""
-    var charBeforeCaret = {
+    val charBeforeCaret = {
         if (column == 0) {
             ""
         } else {
             actualCurrentString[column - 1].toString()
         }
     }.invoke()
-    var charAfterCaret = {
+    val charAfterCaret = {
         if (column == actualCurrentString.length) {
             ""
         } else {
@@ -130,10 +145,10 @@ fun CodeArea.getInfo(manager:CodeManager, currentLine:Int): CurrentStateInfo {
         }
     }.invoke()
 
-    for(x in 0 until actualCurrentString.length) {
-        if(x == column) break
+    for (x in 0 until actualCurrentString.length) {
+        if (x == column) break
         val c = actualCurrentString[x]
-        if(c == '"') inString = !inString
+        if (c == '"') inString = !inString
     }
     if (charBeforeCaret != "") {
         var count = column
@@ -156,4 +171,37 @@ fun CodeArea.getInfo(manager:CodeManager, currentLine:Int): CurrentStateInfo {
     }
 
     return CurrentStateInfo(currentNode!!, actualCurrentString, column, currentWord, beforeStr, afterStr, charBeforeCaret, charAfterCaret, inString)
+}
+
+fun String.search(what: String, ignoreCase: Boolean, regex: Boolean): List<StringSearchResult> {
+    val found = java.util.ArrayList<StringSearchResult>()
+
+    if (regex) {
+        if (!ignoreCase) {
+            val matcher = Pattern.compile(what).matcher(this)
+            while (matcher.find()) {
+                found.add(StringSearchResult(matcher.start(), matcher.end(), matcher.group()))
+            }
+        } else {
+            val matcher = Pattern.compile(what, Pattern.CASE_INSENSITIVE).matcher(this)
+            while (matcher.find()) {
+                found.add(StringSearchResult(matcher.start(), matcher.end(), matcher.group()))
+            }
+        }
+
+    } else {
+        if (!ignoreCase) {
+            val matcher = Pattern.compile(Pattern.quote(what)).matcher(this)
+            while (matcher.find()) {
+                found.add(StringSearchResult(matcher.start(), matcher.end(), matcher.group()))
+            }
+        } else {
+            val matcher = Pattern.compile(Pattern.quote(what), Pattern.CASE_INSENSITIVE).matcher(this)
+            while (matcher.find()) {
+                found.add(StringSearchResult(matcher.start(), matcher.end(), matcher.group()))
+            }
+        }
+
+    }
+    return found
 }

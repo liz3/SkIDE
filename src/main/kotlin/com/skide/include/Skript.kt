@@ -18,7 +18,8 @@ enum class NodeType {
     OPTION,
     FUNCTION,
     UNDEFINED,
-    INVALID
+    INVALID,
+    CLASS
 }
 
 class MethodParameter(val name: String, val type: String, val value:String)
@@ -60,8 +61,16 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
         if (content.toLowerCase().startsWith("loop ")) {
             theType = NodeType.LOOP
         }
+        if (content.toLowerCase().startsWith("trigger:")) {
+            theType = NodeType.TRIGGER
+        }
+        if (content.toLowerCase().startsWith("class ")) {
+            fields.put("name", content.split(" ")[1].replace(":", ""))
+            theType = NodeType.CLASS
+
+        }
         if (content.toLowerCase().startsWith("stop ")) {
-            theType = NodeType.LOOP
+            theType = NodeType.STOP
         }
         if (content.toLowerCase().startsWith("set ")) {
             try {

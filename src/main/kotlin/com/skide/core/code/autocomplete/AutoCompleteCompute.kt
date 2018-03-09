@@ -36,6 +36,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     val area = manager.area
 
+    var stopped = false
 
     val removed = Vector<ListHolderItem>()
     val fillList = ListView<ListHolderItem>()
@@ -117,7 +118,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
         area.caretPositionProperty().addListener { observable, oldValue, newValue ->
 
-            if(manager.mousePressed) return@addListener
+
+
+            if(manager.mousePressed ||stopped) return@addListener
             lineBefore = currentLine
             currentLine = area.getCaretLine()
             coldPosOld = colPos

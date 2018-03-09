@@ -32,14 +32,14 @@ class CoreManager {
         val configLoadResult = configManager.load()
 
         //Check if config load failed
-        if(configLoadResult == ConfigLoadResult.ERROR) {
+        if (configLoadResult == ConfigLoadResult.ERROR) {
             //TODO handle ERROR
             return
         }
 
 
 
-         guiManager.bootstrapCallback = {stage ->
+        guiManager.bootstrapCallback = { stage ->
 
 
             val window = guiManager.getWindow("StartGui.fxml", "Welcome to SkIde", false, stage)

@@ -24,6 +24,8 @@ class CodeManager {
     lateinit var autoComplete: AutoCompleteCompute
     lateinit var highlighter: Highlighting
     lateinit var parseResult: Vector<Node>
+    lateinit var findHandler:FindHandler
+    lateinit var replaceHandler:ReplaceHandler
 
     private val parser = SkriptParser()
 
@@ -37,6 +39,8 @@ class CodeManager {
         content = readFile(project.f).second
         area = project.area
         highlighter = Highlighting(this)
+        findHandler = FindHandler(this, project)
+        replaceHandler= ReplaceHandler(this, project)
         if (this::highlighter.isInitialized) highlighter.computeHighlighting()
 
 /*
@@ -51,6 +55,8 @@ class CodeManager {
         autoComplete = AutoCompleteCompute(this, project)
 
         registerEvents()
+
+        area.moveTo(0)
     }
 
     private fun registerEvents() {
@@ -79,6 +85,7 @@ class CodeManager {
             }
             if (ev.isAltDown) {
 
+
                 val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
                 if (ev.code == KeyCode.DIGIT7) {
 
@@ -100,17 +107,23 @@ class CodeManager {
             if (ev.isControlDown) {
                 if (ev.code == KeyCode.SLASH) {
                     if (!autoComplete.popUp.isShowing) {
-                        area.replaceSelection("#"+content);
+                        area.replaceSelection("#" + content);
 
 
                     }
                 }
             }
             if (ev.isControlDown) {
+
+                if(ev.code == KeyCode.F) {
+                    findHandler.switchGui()
+                }
+                if(ev.code == KeyCode.R) {
+                    replaceHandler.switchGui()
+                }
                 if (ev.code == KeyCode.SPACE) {
                     if (!autoComplete.popUp.isShowing) {
                         parseResult = parseStructure()
-                        println(area.getCaretLine())
                         val node = EditorUtils.getLineNode(area.getCaretLine(), parseResult)
 
                         if (node != null) {
@@ -162,7 +175,7 @@ class CodeManager {
         val parseResult = parser.superParse(area.text)
 
         parseResult.forEach {
-          if(it.nodeType != NodeType.UNDEFINED)  addNodeToItemTree(rootStructureItem, it)
+            if (it.nodeType != NodeType.UNDEFINED) addNodeToItemTree(rootStructureItem, it)
         }
 
         return parseResult
