@@ -71,7 +71,7 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
             area.selectRange(0, 0)
 
             area.moveTo(entries[currentPoint].start)
-            area.selectRange(entries[currentPoint].start, entries[currentPoint + 1].end)
+            area.selectRange(entries[currentPoint].start, entries[currentPoint].end)
             currentPoint++
 
         } else {
