@@ -18,6 +18,18 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
 
     }
 
+
+    fun renameProject(name:String) {
+        coreManager.configManager.alterProject(project.id, PointerHolder(project.id, name, project.folder.absolutePath))
+        project.name = name
+        guiHandler.window.stage.title = name
+        project.fileManager.rewriteConfig()
+
+    }
+    fun changeSkriptVersion(version:String) {
+        project.skriptVersion = version
+        project.fileManager.rewriteConfig()
+    }
     fun createNewFile(name: String) {
         project.fileManager.addFile(name)
         eventManager.updateProjectFilesTreeView()

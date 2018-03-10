@@ -54,12 +54,19 @@ class CodeManager {
         if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
         autoComplete = AutoCompleteCompute(this, project)
 
-        registerEvents()
+        registerEvents(project)
 
         area.moveTo(0)
     }
 
-    private fun registerEvents() {
+    private fun registerEvents(project: OpenFileHolder) {
+
+        area.focusedProperty().addListener { _, _, newValue ->
+
+            if(!newValue) {
+                project.saveCode()
+            }
+        }
         area.setOnKeyPressed { ev ->
 
             if (ev.isShiftDown) {

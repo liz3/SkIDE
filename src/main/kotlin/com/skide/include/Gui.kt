@@ -34,6 +34,8 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name:String,
 
 
     fun saveCode() {
-        writeFile(area.text.toByteArray(), f)
+        Thread {
+            writeFile(area.text.toByteArray(), f)
+        }.start()
     }
 }

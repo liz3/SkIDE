@@ -2,6 +2,7 @@ package com.skide.utils
 
 import java.io.File
 import java.io.FileInputStream
+import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.nio.file.StandardOpenOption
@@ -24,11 +25,10 @@ fun readFile(file: File): Pair<FileReturnResult, String> {
     if (file.isDirectory) return Pair(FileReturnResult.IS_DIR, "")
     return try {
 
-        val stream = FileInputStream(file)
-        val buff = ByteArray(stream.available())
-        stream.read(buff)
-        stream.close()
-        Pair(FileReturnResult.SUCCESS, String(buff))
+
+        val array = Files.readAllBytes(file.toPath())
+        println(array.size)
+        Pair(FileReturnResult.SUCCESS, String(array, Charset.forName("UTF-8")))
     } catch (e: Exception) {
         e.printStackTrace()
         Pair(FileReturnResult.ERROR, "")

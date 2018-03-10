@@ -217,11 +217,14 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             return
         } else {
+            if(currentInfo.currentNode.nodeType == NodeType.COMMENT) return
+            if(currentInfo.charAfterCaret == " ") return
             manager.parseResult = manager.parseStructure()
             fillList.items.clear()
             removed.clear()
             val toAdd = HashMap<String, Pair<NodeType, (info: CurrentStateInfo) -> Unit>>()
             val root = EditorUtils.getRootOf(currentInfo.currentNode)
+
 
             val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, manager.parseResult, currentInfo.currentNode)
 

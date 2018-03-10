@@ -7,7 +7,9 @@ import com.skide.core.management.ServerManager
 import com.skide.gui.GuiManager
 import com.skide.gui.JavaFXBootstrapper
 import com.skide.gui.controllers.StartGuiController
+import com.skide.utils.AutoSaver
 import com.skide.utils.DebugLevel
+import com.skide.utils.ResourceManager
 
 
 class CoreManager {
@@ -15,7 +17,9 @@ class CoreManager {
     val configManager = ConfigManager(this)
     val projectManager = ProjectManager(this)
     val serverManager = ServerManager(this)
+    val resourceManager = ResourceManager(this)
     val guiManager = GuiManager
+    val saver = AutoSaver(this)
     private var debugLevel = DebugLevel.INFORMATION
 
 
@@ -49,7 +53,7 @@ class CoreManager {
 
 
         }
-
+        resourceManager.loadResources()
 
         //Launch the JavaFX Process Thread
         JavaFXBootstrapper.bootstrap()

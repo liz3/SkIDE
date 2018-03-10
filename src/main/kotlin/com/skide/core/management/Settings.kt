@@ -1,7 +1,6 @@
 package com.skide.core.management
 
 import com.skide.CoreManager
-import com.skide.include.Addon
 import com.skide.utils.FileReturnResult
 import com.skide.utils.readFile
 import com.skide.utils.writeFile
@@ -51,7 +50,6 @@ class ConfigManager(val coreManager: CoreManager) {
     val projects = HashMap<Long, PointerHolder>()
     val servers = HashMap<Long, PointerHolder>()
     val apis = HashMap<Long, PointerHolder>()
-    val addons = HashMap<Long, Addon>()
 
 
     fun load(): ConfigLoadResult {
@@ -69,7 +67,6 @@ class ConfigManager(val coreManager: CoreManager) {
 
         val projectsFileResult = readFile(projectsFile)
         val serversFileResult = readFile(serversFile)
-        val addonFileResult = readFile(addonFile)
 
         //For Projects
         if (projectsFileResult.first == FileReturnResult.SUCCESS) {
@@ -90,14 +87,6 @@ class ConfigManager(val coreManager: CoreManager) {
             serversArray.forEach {
                 it as JSONObject
                 servers.put(it.getLong("id"), PointerHolder(it.getLong("id"), it.getString("name"), it.getString("path")))
-            }
-        }
-        if (addonFileResult.first == FileReturnResult.SUCCESS) {
-            val addonsArray = JSONArray(addonFileResult.second)
-
-            addonsArray.forEach {
-                it as JSONObject
-                addons.put(it.getLong("id"), Addon(it.getLong("id"), it.getString("name"), it.getString("version"), File(it.getString("path"))))
             }
         }
 
@@ -142,21 +131,6 @@ class ConfigManager(val coreManager: CoreManager) {
         return writeFile(obj.toString().toByteArray(), serversFile, false, false).first == FileReturnResult.SUCCESS
     }
 
-    fun writeAddonFile(): Boolean {
-
-        val array = JSONArray()
-
-        for ((id, addon) in addons) {
-            val obj = JSONObject()
-            obj.put("id", id)
-            obj.put("name", addon.name)
-            obj.put("version", addon.version)
-            obj.put("path", addon.file.absolutePath)
-            array.put(obj)
-        }
-
-        return writeFile(array.toString().toByteArray(), addonFile, false, false).first == FileReturnResult.SUCCESS
-    }
 
     //PROJECTS
     fun addProject(holder: PointerHolder): Boolean {
@@ -173,7 +147,7 @@ class ConfigManager(val coreManager: CoreManager) {
 
     fun alterProject(id: Long, holder: PointerHolder): Boolean {
         if (!projects.containsKey(id)) return false
-        projects.put(id, holder)
+        projects[id] = holder
 
         return writeMapToFile(projectsFile, projects)
     }
@@ -220,27 +194,6 @@ class ConfigManager(val coreManager: CoreManager) {
         return writeServersFile()
     }
 
-    //ADDON
-    fun addAddon(addon: Addon): Boolean {
-        if (addons.containsKey(addon.id)) return false
-        addons.put(addon.id, addon)
-
-        return writeAddonFile()
-    }
-
-    fun deleteAddon(id: Long): Boolean {
-        if (!addons.containsKey(id)) return false
-        addons.remove(id)
-        return writeAddonFile()
-    }
-
-    fun alterAddon(id: Long, addon: Addon): Boolean {
-        if (!addons.containsKey(id)) return false
-        addons.put(id, addon)
-
-        return writeServersFile()
-    }
-
     private fun readConfig(): Boolean {
 
         val readResult = readFile(configFile)
@@ -265,15 +218,12 @@ class ConfigManager(val coreManager: CoreManager) {
     private fun createFiles(): Boolean {
 
         val brackets = "[]".toByteArray()
-        val braces = "{}".toByteArray()
 
         val objForServer = JSONObject()
         objForServer.put("servers", JSONArray())
         objForServer.put("apis", JSONArray())
 
         if (!rootFolder.exists()) if (!rootFolder.mkdir()) return false
-
-
         if (!defaultProjectPath.exists()) defaultProjectPath.mkdir()
         if (!defaultServerPath.exists()) defaultServerPath.mkdir()
 
@@ -281,7 +231,6 @@ class ConfigManager(val coreManager: CoreManager) {
         if (writeFile(brackets, projectsFile, false, true).first != FileReturnResult.SUCCESS) return false
         if (writeFile(objForServer.toString().toByteArray(), serversFile, false, true).first != FileReturnResult.SUCCESS) return false
         if (writeFile(brackets, hostsFile, false, true).first != FileReturnResult.SUCCESS) return false
-        if (writeFile(brackets, addonFile, false, true).first != FileReturnResult.SUCCESS) return false
 
         configLoaded = true
         return true

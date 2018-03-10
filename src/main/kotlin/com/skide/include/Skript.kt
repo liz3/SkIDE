@@ -52,7 +52,7 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
             theType = NodeType.COMMENT
         }
         if (content.toLowerCase().startsWith("on ")) {
-            fields.put("name", content.split(" ")[1].replace(":",""))
+            fields.put("name", content.replace(":","").replace("on ", ""))
             theType = NodeType.EVENT
         }
         if (content.toLowerCase().startsWith("if ")) {
@@ -72,7 +72,7 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
         if (content.toLowerCase().startsWith("stop ")) {
             theType = NodeType.STOP
         }
-        if (content.toLowerCase().startsWith("set ")) {
+        if (content.toLowerCase().startsWith("set {")) {
             try {
                 //get var name
 

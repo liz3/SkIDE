@@ -21,6 +21,7 @@ import java.util.*
 class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreManager) {
 
     val openFiles = HashMap<File, OpenFileHolder>()
+    val settings = SettingsGui(coreManager, this)
     val window = GuiManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
 
 
@@ -34,16 +35,19 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             window.stage.show()
         }
         window.closeListener = {
-            openFiles.values.forEach {
-                it.saveCode()
-            }
-            coreManager.projectManager.openProjects.remove(this.openProject)
+          closeHook()
         }
         eventManager.setup()
 
         return eventManager
     }
 
+    fun closeHook() {
+        openFiles.values.forEach {
+            it.saveCode()
+        }
+        coreManager.projectManager.openProjects.remove(this.openProject)
+    }
     val projectFiles = openProject.project.fileManager.projectFiles
 }
 
@@ -229,6 +233,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         val otherProjects = Menu("Other projects")
 
+        closeItem.setOnAction {
+            openProjectGuiManager.window.close()
+            openProjectGuiManager.closeHook()
+        }
         fileMenu.setOnShowing {
             otherProjects.items.clear()
             coreManager.configManager.projects.values.forEach {
@@ -254,7 +262,11 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             window.stage.show()
         }
-        fileMenu.items.addAll(newProject, otherProjects, closeItem)
+        val projectSettings = MenuItem("Project Settings")
+        projectSettings.setOnAction {
+            openProjectGuiManager.settings.show()
+        }
+        fileMenu.items.addAll(newProject, projectSettings, otherProjects, closeItem)
     }
 
     private fun registerBrowserEvents() {
