@@ -31,7 +31,10 @@ class SkriptParser {
                 toSkip += parse(x, node, split, added) - 1
                 nodes.addElement(node)
             } else {
-              if(!added.contains(x+ 1))  nodes.addElement(Node(null, split[x], getTabCount(current), x + 1))
+              if(!added.contains(x))  {
+                  added.add(x)
+                  nodes.addElement(Node(null, split[x], getTabCount(current), x + 1))
+              }
             }
         }
         println(added.size)

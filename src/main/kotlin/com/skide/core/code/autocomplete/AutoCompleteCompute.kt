@@ -359,7 +359,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         if (!popUp.isShowing) {
 
             manager.parseResult = manager.parseStructure()
-            if (area.getInfo(manager, currentLine).inString) return
+         //   if (area.getInfo(manager, currentLine).inString) return
 
             val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, manager.parseResult, node)
 

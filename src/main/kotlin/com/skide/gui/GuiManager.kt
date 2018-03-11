@@ -17,6 +17,7 @@ object GuiManager {
         idCounter++
         stage.title = name
 
+
         val loader = FXMLLoader()
         val rootNode:Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
         val controller = loader.getController<Any>()
