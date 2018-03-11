@@ -1,4 +1,9 @@
 # SkIDE
+---
+[![Join the Discord](https://discordapp.com/api/guilds/324602899839844352/widget.png?style=shield)](https://discord.gg/Ac6Q34e)
+
+
+
 Development Repository for SkIDE.
 
 # Description
