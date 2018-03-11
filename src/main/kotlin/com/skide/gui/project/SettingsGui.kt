@@ -175,6 +175,7 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGu
         gui.projGuiManager.openProject.project.fileManager.rewriteConfig()
         changes.clear()
         alterValues.clear()
+        gui.projGuiManager.openProject.updateAddons()
     }
     private fun currItem() = ctrl.plListView.selectionModel.selectedItem
 }

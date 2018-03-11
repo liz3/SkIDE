@@ -1,6 +1,7 @@
 package com.skide.core.code
 
 import com.skide.core.code.autocomplete.AutoCompleteCompute
+import com.skide.core.code.autocomplete.ReplaceSequence
 import com.skide.core.code.highlighting.Highlighting
 import com.skide.core.skript.SkriptParser
 import com.skide.include.Node
@@ -13,6 +14,7 @@ import javafx.application.Platform
 import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
 import org.fxmisc.richtext.CodeArea
+
 import java.util.*
 
 
@@ -26,6 +28,7 @@ class CodeManager {
     lateinit var parseResult: Vector<Node>
     lateinit var findHandler:FindHandler
     lateinit var replaceHandler:ReplaceHandler
+    lateinit var sequenceReplaceHandler: ReplaceSequence
 
     private val parser = SkriptParser()
 
@@ -42,14 +45,12 @@ class CodeManager {
         findHandler = FindHandler(this, project)
         replaceHandler= ReplaceHandler(this, project)
         if (this::highlighter.isInitialized) highlighter.computeHighlighting()
+        sequenceReplaceHandler = ReplaceSequence(this)
 
-/*
-        val im = InputMap.consume(
-                EventPattern.keyTyped("\t"),
-                { area.replaceSelection("    ") }
-        )
-        Nodes.addInputMap(area, im)
- */
+
+
+
+
         area.appendText(content)
         if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
         autoComplete = AutoCompleteCompute(this, project)
@@ -69,6 +70,15 @@ class CodeManager {
         }
         area.setOnKeyPressed { ev ->
 
+            if(ev.code == KeyCode.TAB) {
+                if(sequenceReplaceHandler.computing) {
+                    ev.consume()
+                    area.replaceText(area.caretPosition - 1, area.caretPosition, "")
+                    sequenceReplaceHandler.fire()
+
+                    return@setOnKeyPressed
+                }
+            }
             if (ev.isShiftDown) {
 
                 val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
@@ -109,7 +119,8 @@ class CodeManager {
             }
             if (ev.code == KeyCode.ESCAPE) {
 
-                autoComplete.hideList()
+                if(autoComplete.popUp.isShowing)autoComplete.hideList()
+                if(sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
             }
             if (ev.isControlDown) {
                 if (ev.code == KeyCode.SLASH) {
@@ -134,7 +145,8 @@ class CodeManager {
                         val node = EditorUtils.getLineNode(area.getCaretLine(), parseResult)
 
                         if (node != null) {
-                            if (node.tabLevel == 0)
+                            println(node.raw)
+                            if (node.raw.replace("\t", "").isEmpty() && area.caretColumn == 0)
                                 autoComplete.showGlobalAutoComplete(node)
                             else
                                 autoComplete.showLocalAutoComplete(false)
@@ -149,11 +161,13 @@ class CodeManager {
 
         area.setOnMousePressed {
             mousePressed = true
+
         }
         area.setOnMouseReleased {
             mousePressed = false
         }
         area.setOnMouseClicked { ev ->
+            if(sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
             if (autoComplete.popUp.isShowing) autoComplete.popUp.hide()
 
 

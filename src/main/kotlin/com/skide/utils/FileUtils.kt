@@ -27,7 +27,6 @@ fun readFile(file: File): Pair<FileReturnResult, String> {
 
 
         val array = Files.readAllBytes(file.toPath())
-        println(array.size)
         Pair(FileReturnResult.SUCCESS, String(array, Charset.forName("UTF-8")))
     } catch (e: Exception) {
         e.printStackTrace()

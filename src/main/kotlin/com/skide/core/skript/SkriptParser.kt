@@ -12,7 +12,10 @@ class SkriptParser {
 
         val added = Vector<Int>()
 
-        val split = content.split("\n")
+        val split = content.split("\n").toMutableList()
+
+
+
 
         println(split.size)
 
@@ -63,6 +66,16 @@ class SkriptParser {
                 continue
             }
             if (currentTabCount < (parent.tabLevel + 1)) {
+                if(current.replace("\t", " ").isBlank()) {
+                    if(x < split.size -1) {
+                        if(getTabCount(split[x + 1]) > currentTabCount) {
+                            before = Node(parent, current, currentTabCount, x + 1)
+                            parent.childNodes.add(before)
+                            added.add(x)
+                            continue
+                        }
+                    }
+                }
                 break
             }
         }

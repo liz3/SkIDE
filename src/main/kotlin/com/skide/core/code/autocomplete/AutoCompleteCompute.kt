@@ -3,10 +3,7 @@ package com.skide.core.code.autocomplete
 import com.skide.core.code.CodeManager
 import com.skide.gui.GuiManager
 import com.skide.gui.controllers.GenerateCommandController
-import com.skide.include.MethodParameter
-import com.skide.include.Node
-import com.skide.include.NodeType
-import com.skide.include.OpenFileHolder
+import com.skide.include.*
 import com.skide.utils.CurrentStateInfo
 import com.skide.utils.EditorUtils
 import com.skide.utils.getCaretLine
@@ -38,6 +35,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     var stopped = false
 
+    var globalCompleteVisible = false
+
+    val addonSupported = project.openProject.addons
     val removed = Vector<ListHolderItem>()
     val fillList = ListView<ListHolderItem>()
     val popUp = Popup()
@@ -71,7 +71,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         popUp.x = b.maxX + caretXOffset
                         popUp.y = b.maxY + caretYOffset
                     } else {
-                        hideList()
+                        if (!globalCompleteVisible) hideList()
                     }
                 }
 
@@ -111,6 +111,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     }
 
+
     private fun addItem(label: String, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller))
 
 
@@ -119,8 +120,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         area.caretPositionProperty().addListener { observable, oldValue, newValue ->
 
 
-
-            if(manager.mousePressed ||stopped) return@addListener
+            if (manager.mousePressed || stopped) return@addListener
             lineBefore = currentLine
             currentLine = area.getCaretLine()
             coldPosOld = colPos
@@ -151,7 +151,11 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 } else {
 
                     val curr = EditorUtils.getLineNode(currentLine, manager.parseResult)
-                   if(curr?.content != "") showLocalAutoComplete(true) else manager.parseResult = manager.parseStructure()
+                    if (globalCompleteVisible) {
+                        showGlobalAutoComplete(curr!!)
+                        return
+                    }
+                    if (curr?.content != "") showLocalAutoComplete(true) else manager.parseResult = manager.parseStructure()
                 }
 
 
@@ -166,6 +170,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
 
     fun hideList() {
+        globalCompleteVisible = false
         if (popUp.isShowing) {
             removed.clear()
             popUp.hide()
@@ -175,17 +180,21 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
         }
     }
+
     fun showLocalAutoComplete(movedRight: Boolean) {
 
 
         val currentInfo = area.getInfo(manager, currentLine)
 
-        if (currentInfo.inString) return
-        if(currentInfo.currentWord.endsWith("\"")) return
+        if (globalCompleteVisible) {
+            showGlobalAutoComplete(currentInfo.currentNode)
+            return
+        }
+
         if ((currentInfo.column - 2) >= 0) {
 
             if (currentInfo.actualCurrentString[currentInfo.column - 2] == ' ' && currentInfo.charBeforeCaret == " ") {
-              hideList()
+                hideList()
                 return
             }
         }
@@ -217,8 +226,10 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             return
         } else {
-            if(currentInfo.currentNode.nodeType == NodeType.COMMENT) return
-            if(currentInfo.charAfterCaret == " ") return
+            if (currentInfo.inString) return
+            if (currentInfo.currentWord.endsWith("\"")) return
+            if (currentInfo.currentNode.nodeType == NodeType.COMMENT) return
+            if (currentInfo.charAfterCaret == " ") return
             manager.parseResult = manager.parseStructure()
             fillList.items.clear()
             removed.clear()
@@ -232,15 +243,15 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 val params = root.fields["params"] as Vector<MethodParameter>
 
                 params.forEach {
-                    toAdd.put("_" + it.name + " :" + it.type, Pair(NodeType.SET_VAR, { info ->
+                    toAdd["_" + it.name + " :" + it.type] = Pair(NodeType.SET_VAR, { _ ->
                         area.replaceText(area.caretPosition, area.caretPosition, "{" + it.name + "}")
-                    }))
+                    })
                 }
             }
             if (root.nodeType == NodeType.EVENT || root.nodeType == NodeType.COMMAND) {
-                toAdd.put("player:Player", Pair(NodeType.SET_VAR, { info ->
+                toAdd["player:Player"] = Pair(NodeType.SET_VAR, { info ->
                     area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "player")
-                }))
+                })
             }
             manager.parseResult.forEach {
                 if (it.nodeType == NodeType.FUNCTION) {
@@ -263,29 +274,48 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 }
             }
 
-                vars.forEach {
-                    if (it.fields["visibility"] == "global" && !it.fields.containsKey("invalid")) {
 
-                        if(it.fields.contains("from_option")) {
-                            val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
-                           if(!found) {
-                               addItem((it.fields["name"] as String) + " [from option]", { info ->
-                                   area.replaceText(area.caretPosition, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
+            vars.forEach {
+                if (it.fields["visibility"] == "global" && !it.fields.containsKey("invalid")) {
 
-                                   //TODO add path items as
-                               })
-                           }
-                        } else {
-                            val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
-                            if(!found) {
-                                addItem(it.fields["name"] as String, { info ->
-                                    area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
-                                })
-                            }
+                    if (it.fields.contains("from_option")) {
+                        val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
+                        if (!found) {
+                            addItem((it.fields["name"] as String) + " [from option]", { info ->
+                                area.replaceText(area.caretPosition, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
+
+                                //TODO add path items as
+                            })
+                        }
+                    } else {
+                        val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
+                        if (!found) {
+                            addItem(it.fields["name"] as String, { info ->
+                                area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
+                            })
                         }
                     }
                 }
+            }
 
+            addonSupported.values.forEach {
+                it.forEach { item ->
+                    if (item.type != DocType.EVENT) {
+
+                        addItem("${item.name} - ${item.addon.name}", { currInfo ->
+                            val toRem = currInfo.actualCurrentString.replace("\t", "").length
+                            var adder = if(item.pattern == "") item.name else item.pattern
+                            if(item.type == DocType.CONDITION) if(!currInfo.actualCurrentString.contains("if ")) adder = "if $adder"
+                            adder += ":"
+                            area.replaceText(area.caretPosition - toRem, area.caretPosition, adder)
+                            manager.parseResult = manager.parseStructure()
+                            manager.sequenceReplaceHandler.compute(area.getInfo(manager, area.getCaretLine()), adder.length)
+
+                        })
+
+                    }
+                }
+            }
             if (movedRight) {
                 toAdd.forEach {
                     if (it.key.startsWith(currentInfo.beforeString, true))
@@ -296,7 +326,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     addItem(it.key, it.value.second)
                 }
                 if (fillList.items.size == 0) {
-                   hideList()
+                    hideList()
                     return
                 }
             }
@@ -317,6 +347,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
         }
         popUp.show(project.openProject.guiHandler.window.stage)
+        fillList.selectionModel.select(0)
 
     }
 
@@ -324,132 +355,132 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     fun showGlobalAutoComplete(node: Node) {
 
 
-        if (area.getInfo(manager, currentLine).inString) return
+        area.replaceText(area.caretPosition, area.caretPosition + node.raw.length, "")
+        if (!popUp.isShowing) {
 
-        manager.parseResult = manager.parseStructure()
-        val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, manager.parseResult, node)
+            manager.parseResult = manager.parseStructure()
+            if (area.getInfo(manager, currentLine).inString) return
 
-        fillList.items.clear()
-        removed.clear()
+            val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, manager.parseResult, node)
 
-        /*
-        addItem("Command") {
-            area.replaceText(area.caretPosition, area.caretPosition, "command / :")
-            area.moveTo(area.caretPosition - 2)
-            //  area.selectRange(area.caretPosition, area.caretPosition + 4)
-
-        }
-        addItem("Event") {
-            area.replaceText(area.caretPosition, area.caretPosition, "on :")
-            area.moveTo(area.caretPosition - 1)
-            //  area.selectRange(area.caretPosition, area.caretPosition + 4)
-
-        }
-         */
-        addItem("Function") {
-            area.replaceText(area.caretPosition, area.caretPosition, "function () :: :")
-            area.moveTo(area.caretPosition - 7)
-            //  area.selectRange(area.caretPosition, area.caretPosition + 4)
-
-        }
-
-
-//        addItem("Generate Command") {
-//            popUp.hide()
-//            val textPrompt = Prompts.textPrompt("Command Name", "Please type command name")
-//            val permission = Prompts.textPrompt("Command Permission", "Please type command permission")
-//            area.replaceText(area.caretPosition, area.caretPosition, "command /$textPrompt:\n\tpermission: $permission\n\ttrigger:\n\t\tsend \"hi\" to player")
-//            area.moveTo(area.caretPosition - 2)
-//
-//            //  area.selectRange(area.caretPosition, area.caretPosition + 4)
-//
-//        }
-        addItem("Generate Command") {
-            popUp.hide()
-
-            val window = GuiManager.getWindow("GenerateCommand.fxml", "Generate command", true)
-            val generate: GenerateCommandController = window.controller as GenerateCommandController;
-            generate.createButton.onMouseClicked = EventHandler<MouseEvent> { event ->
-                run {
-                    area.replaceText(area.caretPosition, area.caretPosition, "command /" + generate.commandNameField.text + ":\n\tdescription: " + generate.descriptionField.text + "\n" + "\tpermission: " + generate.permissionField.text + "\n\ttrigger:\n\t\tsend \"hi\" to player")
-
-                    GuiManager.closeGui(window.id);
-                }
-            }
-
-//            project.coreManager.configManager.
-        }
-
-        addItem("Generate Event") {
-
-            //  area.selectRange(area.caretPosition, area.caretPosition + 4)
             fillList.items.clear()
-            for (s in Arrays.asList("Join", "Quit")) {
-                addItem("On " + s, {
-                    popUp.hide()
-                    area.replaceText(area.caretPosition, area.caretPosition, "on " + s.toLowerCase() + ":\n\t")
-                    area.moveTo(area.caretPosition - 1)
+            removed.clear()
 
-                })
+            addItem("Function") {
+                area.replaceText(area.caretPosition, area.caretPosition, "function () :: :")
+                area.moveTo(area.caretPosition - 7)
             }
 
 
-        }
 
-        manager.parseResult.forEach {
-            if (it.nodeType == NodeType.FUNCTION) {
-                val name = it.fields["name"] as String
-                val returnType = it.fields["return"] as String
-                var paramsStr = ""
-                var insertParams = ""
-                (it.fields["params"] as Vector<MethodParameter>).forEach {
-                    paramsStr += ",${it.name}:${it.type}"
-                    insertParams += ",${it.name}"
+            addItem("Generate Command") {
+                popUp.hide()
+
+                val window = GuiManager.getWindow("GenerateCommand.fxml", "Generate command", true)
+                val generate: GenerateCommandController = window.controller as GenerateCommandController;
+                generate.createButton.onMouseClicked = EventHandler<MouseEvent> { event ->
+                    run {
+                        area.replaceText(area.caretPosition, area.caretPosition, "command /" + generate.commandNameField.text + ":\n\tdescription: " + generate.descriptionField.text + "\n" + "\tpermission: " + generate.permissionField.text + "\n\ttrigger:\n\t\tsend \"hi\" to player")
+
+                        GuiManager.closeGui(window.id);
+                    }
                 }
-                if (paramsStr != "") paramsStr = paramsStr.substring(1)
-                if (insertParams != "") insertParams = insertParams.substring(1)
-                val con = "FUNC: $name($paramsStr):$returnType"
-
-                val insert = "$name($insertParams)"
-                addItem(con, {
-                    area.replaceText(area.caretPosition, area.caretPosition, insert)
-                })
 
             }
-        }
 
-        manager.parseResult.forEach {
-            if (it.nodeType == NodeType.FUNCTION) {
-                val name = it.fields["name"] as String
-                val returnType = it.fields["return"] as String
-                var paramsStr = ""
-                var insertParams = ""
-                (it.fields["params"] as Vector<MethodParameter>).forEach {
-                    paramsStr += ",${it.name}:${it.type}"
-                    insertParams += ",${it.name}"
+            addItem("Generate Event") {
+
+
+                fillList.items.clear()
+                removed.clear()
+                for (s in Arrays.asList("Join", "Quit")) {
+                    addItem("On $s", {
+                        hideList()
+                        area.replaceText(area.caretPosition - it.actualCurrentString.length, area.caretPosition, "on " + s.toLowerCase() + ":\n\t")
+                        area.moveTo(area.caretPosition - it.actualCurrentString.length + s.length + 2)
+                    })
                 }
-                if (paramsStr != "") paramsStr = paramsStr.substring(1)
-                if (insertParams != "") insertParams = insertParams.substring(1)
-                val con = "FUNC: $name($paramsStr):$returnType"
+                addonSupported.values.forEach {
+                    it.forEach { item ->
+                        if (item.type == DocType.EVENT) {
 
-                val insert = "$name($insertParams)"
-                addItem(con, {
-                    area.replaceText(area.caretPosition, area.caretPosition, insert)
-                })
+                            addItem(item.name + " Addon: ${item.addon.name}", { info ->
+                                hideList()
+                                area.replaceText(area.caretPosition - info.actualCurrentString.length, area.caretPosition, {
+                                    var text = item.pattern
+                                    if (text.isEmpty()) text = item.name
+                                    text
+                                }.invoke().replace("[on]", "on") + ":\n")
+                                println(item)
+                            })
+                        }
+                    }
+                }
+            }
+
+            manager.parseResult.forEach {
+                if (it.nodeType == NodeType.FUNCTION) {
+                    val name = it.fields["name"] as String
+                    val returnType = it.fields["return"] as String
+                    var paramsStr = ""
+                    var insertParams = ""
+                    (it.fields["params"] as Vector<MethodParameter>).forEach {
+                        paramsStr += ",${it.name}:${it.type}"
+                        insertParams += ",${it.name}"
+                    }
+                    if (paramsStr != "") paramsStr = paramsStr.substring(1)
+                    if (insertParams != "") insertParams = insertParams.substring(1)
+                    val con = "FUNC: $name($paramsStr):$returnType"
+
+                    val insert = "$name($insertParams)"
+                    addItem(con, {
+                        area.replaceText(area.caretPosition, area.caretPosition, insert)
+                    })
+
+                }
+            }
+
+
+            vars.forEach {
+                if (it.fields["visibility"] == "global") {
+                    addItem("VAR " + it.fields["name"], { info ->
+                        area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
+                    })
+                }
+            }
+
+
+
+            globalCompleteVisible = true
+            popUp.show(project.openProject.guiHandler.window.stage)
+            fillList.selectionModel.select(0)
+
+        } else {
+
+            val currentInfo = area.getInfo(manager, currentLine)
+
+            val toRemove = Vector<ListHolderItem>()
+
+            fillList.items.filterNotTo(toRemove) { it.name.startsWith(currentInfo.actualCurrentString, true) }
+            toRemove.forEach {
+                fillList.items.remove(it)
+                removed.add(it)
+            }
+            toRemove.clear()
+            removed.filterTo(toRemove) { it.name.startsWith(currentInfo.actualCurrentString, true) }
+
+            toRemove.forEach {
+                removed.remove(it)
+                fillList.items.add(it)
+            }
+            fillList.refresh()
+
+            if (fillList.items.size == 0) {
+                hideList()
 
             }
+
         }
-
-        vars.forEach {
-            if (it.fields["visibility"] == "global") {
-                addItem("VAR " + it.fields["name"], { info ->
-                    area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
-                })
-            }
-        }
-
-
-        popUp.show(project.openProject.guiHandler.window.stage)
     }
 
 
@@ -479,9 +510,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 return
             }
             if (old.linenumber == current.linenumber + 1) {
-              if(popUp.isShowing) {
-                 hideList()
-              }
+                if (popUp.isShowing) {
+                    hideList()
+                }
             }
         }
     }

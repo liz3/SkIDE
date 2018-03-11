@@ -36,6 +36,7 @@ class ResourceManager(val coreManager: CoreManager) {
 
         obj.getJSONArray("result").forEach {
             it as JSONObject
+            val id = it.getInt("id")
             val name = it.getString("name")
             val addonName = it.getString("addon")
             var addonVersion = it.getString("version")
@@ -47,16 +48,17 @@ class ResourceManager(val coreManager: CoreManager) {
 
                 addonDevs.forEach {dev ->
                    dev as JSONObject
-                    if(dev.getString("addon") == addonName) devName = dev.getString("author")
+                    if(dev.getString("addon") == addonName.split(" ").first()) devName = dev.getString("author")
                 }
 
                 devName
             }.invoke()
+            if(author == "") println("dev null for $id $addonName in allSyntaxes")
             val eventValues = if( it.has("eventvalues")) it.getString("eventvalues")  else ""
             val changers = if( it.has("changers")) it.getString("changers")  else ""
             val tags = if( it.has("tags")) it.getString("tags")  else ""
             val returnType = if( it.has("returntype")) it.getString("returntype")  else ""
-            val id = it.getInt("id")
+
 
             if (!addons.containsKey(addonName)) addons[addonName] = Addon((addons.size + 1).toLong(), addonName, author)
             val addon = addons[addonName]!!
@@ -75,7 +77,5 @@ class ResourceManager(val coreManager: CoreManager) {
 
             addonVer!!.addElement(AddonItem(id, name,  type, addon, reviewed, addonVersion, pattern, plugin, eventValues, changers, tags, returnType))
         }
-        println("")
-
     }
 }

@@ -2,17 +2,48 @@ package com.skide.core.management
 
 import com.skide.CoreManager
 import com.skide.gui.project.OpenProjectGuiManager
+import com.skide.include.Addon
+import com.skide.include.AddonItem
 import com.skide.include.OpenFileHolder
 import com.skide.include.Project
+import com.skide.utils.Version
+import com.skide.utils.adjustVersion
 import java.io.File
 import java.util.*
+import kotlin.collections.HashMap
 
 class OpenProject(val project: Project, val coreManager: CoreManager) {
 
     val guiHandler = OpenProjectGuiManager(this, coreManager)
     val eventManager = guiHandler.startGui()
+    val addons = HashMap<String, Vector<AddonItem>>()
 
 
+    init {
+        updateAddons()
+    }
+    fun updateAddons() {
+
+        addons.clear()
+
+        project.fileManager.addons.forEach {
+            val addonName = it.key
+            val version =  Version(adjustVersion(it.value))
+            addons[addonName] = Vector()
+
+            coreManager.resourceManager.addons[addonName]!!.versions.forEach { currAddonVersion ->
+                val addonVersion = Version(adjustVersion(currAddonVersion.key))
+                val  result = version.compareTo(addonVersion)
+
+                if(result < 0) {
+                } else {
+                    addons[addonName]!! += currAddonVersion.value
+                }
+
+            }
+        }
+        println(addons.size)
+    }
     //TODO missing param for which file
     fun runFile() {
 
