@@ -9,6 +9,8 @@ import com.skide.gui.controllers.ProjectGuiController
 import com.skide.include.OpenFileHolder
 import javafx.application.Platform
 import javafx.scene.control.*
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.BorderPane
 import org.fxmisc.flowless.VirtualizedScrollPane
@@ -35,7 +37,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             window.stage.show()
         }
         window.closeListener = {
-          closeHook()
+            closeHook()
         }
         eventManager.setup()
 
@@ -48,6 +50,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
         }
         coreManager.projectManager.openProjects.remove(this.openProject)
     }
+
     val projectFiles = openProject.project.fileManager.projectFiles
 }
 
@@ -134,6 +137,13 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         for ((name, _) in openProjectGuiManager.projectFiles) {
             val item = TreeItem<String>(name)
+            if (name.endsWith(".sk")) {
+                val openIcon = Image(javaClass.getResource("/icon.png").toExternalForm())
+                val openView = ImageView(openIcon)
+                openView.fitWidth = 15.0
+                openView.fitHeight = 15.0
+                item.graphic = openView
+            }
             rootItem.children.add(item)
         }
 

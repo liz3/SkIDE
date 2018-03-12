@@ -5,6 +5,8 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.MenuItem
 import javafx.scene.control.TreeView
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import java.io.File
 
 object Menus {
@@ -13,16 +15,30 @@ object Menus {
 
         val menu = ContextMenu()
 
-        val newFileItem = MenuItem("Create new File")
+        val openIcon = Image(javaClass.getResource("/icon.png").toExternalForm())
+        val openView = ImageView(openIcon)
+        openView.fitWidth = 15.0
+        openView.fitHeight = 15.0
+
+        val newFileItem = MenuItem("New Skript File")
+        newFileItem.graphic = openView
 
         newFileItem.setOnAction {
 
-            val name = Prompts.textPrompt("Create new File", "Enter File name Here")
+            val name = Prompts.textPrompt("New Skript File", "Enter File name Here")
 
             if (name.isNotEmpty()) project.createNewFile(name)
 
         }
-        menu.items.addAll(newFileItem)
+        val newYamlFile = MenuItem("New Yaml File")
+        newYamlFile.setOnAction {
+
+            val name = Prompts.textPrompt("New Yaml File", "Enter File name Here")
+
+            if (name.isNotEmpty()) project.createNewFile(name + ".yml")
+
+        }
+        menu.items.addAll(newFileItem,newYamlFile)
 
 
 
