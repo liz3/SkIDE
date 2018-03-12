@@ -208,8 +208,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             println("Char is ${currentInfo.charAfterCaret}")
             if (currentInfo.charAfterCaret != "") {
-                hideList()
-                return
+             //   hideList()
+              //  return
 
             }
             val toRemove = Vector<ListHolderItem>()
