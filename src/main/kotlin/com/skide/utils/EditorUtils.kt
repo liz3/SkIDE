@@ -120,11 +120,17 @@ class StringSearchResult(val start: Int, val end: Int, val str: String)
 class CurrentStateInfo(val currentNode: Node, val actualCurrentString: String, val column: Int, val currentWord: String,
                        val beforeString: String, val afterString: String, val charBeforeCaret: String, val charAfterCaret: String, val inString: Boolean)
 
-fun CodeArea.getInfo(manager: CodeManager, currentLine: Int): CurrentStateInfo {
+fun CodeArea.getInfo(manager: CodeManager): CurrentStateInfo {
+    val currentLine = manager.area.getCaretLine()
 
+    println("Current line: " + currentLine)
 
+    var currentNode = EditorUtils.getLineNode(currentLine, manager.parseResult)
 
-    val currentNode = EditorUtils.getLineNode(currentLine, manager.parseResult)
+    if(currentNode == null) {
+        currentNode = EditorUtils.getLineNode(currentLine - 1, manager.parseResult)
+    }
+    println(currentNode == null)
     val actualCurrentString = if(currentLine == 0) this.paragraphs[currentLine].text else this.paragraphs[currentLine - 1].text
     val column = this.caretColumn
     var currentWord = ""

@@ -62,7 +62,6 @@ object GuiManager {
 
         val stage = Stage()
         val pane = BorderPane()
-        //   pane.setPrefSize(800.0, 450.0)
         val view = WebView()
         pane.center = view
         stage.isResizable = false

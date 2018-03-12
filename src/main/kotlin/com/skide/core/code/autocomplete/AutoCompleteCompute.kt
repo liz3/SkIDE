@@ -85,7 +85,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             if (e.clickCount == 2) {
                 if (fillList.selectionModel.selectedItem != null) {
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
-                    value.caller.invoke(area.getInfo(manager, currentLine))
+                    value.caller.invoke(area.getInfo(manager))
 
                 }
             }
@@ -100,7 +100,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 ev.consume()
                 if (fillList.selectionModel.selectedItem != null) {
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
-                    value.caller.invoke(area.getInfo(manager, currentLine))
+                    value.caller.invoke(area.getInfo(manager))
                     hideList()
                 }
             }
@@ -187,7 +187,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
 
         println(currentLine)
-        val currentInfo = area.getInfo(manager, currentLine)
+        val currentInfo = area.getInfo(manager)
 
         if (globalCompleteVisible) {
             showGlobalAutoComplete(currentInfo.currentNode)
@@ -289,7 +289,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
 
             vars.forEach {
-                if (it.fields["visibility"] == "global" && !it.fields.containsKey("invalid")) {
+                if (!it.fields.containsKey("invalid")) {
 
                     if (it.fields.contains("from_option")) {
                         val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
@@ -322,7 +322,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                             adder += ":"
                             area.replaceText(area.caretPosition - toRem, area.caretPosition, adder)
                             manager.parseResult = manager.parseStructure()
-                            manager.sequenceReplaceHandler.compute(area.getInfo(manager, area.getCaretLine()), adder.length)
+                            manager.sequenceReplaceHandler.compute(area.getInfo(manager), adder.length)
 
                         })
 
@@ -368,8 +368,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     fun showGlobalAutoComplete(node: Node) {
 
 
-        area.replaceText(area.caretPosition, area.caretPosition + node.raw.length, "")
         if (!popUp.isShowing) {
+        area.replaceText(area.caretPosition, area.caretPosition + node.raw.length, "")
 
             manager.parseResult = manager.parseStructure()
          //   if (area.getInfo(manager, currentLine).inString) return
@@ -409,8 +409,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 for (s in Arrays.asList("Join", "Quit")) {
                     addItem("On $s", {
                         hideList()
-                        area.replaceText(area.caretPosition - it.actualCurrentString.length, area.caretPosition, "on " + s.toLowerCase() + ":\n\t")
-                        area.moveTo(area.caretPosition - it.actualCurrentString.length + s.length + 2)
+                        area.moveTo(area.caretPosition -it.actualCurrentString.length)
+                        area.replaceText(area.caretPosition, area.caretPosition + it.actualCurrentString.length, "on " + s.toLowerCase() + ":\n\t")
+                        area.moveTo(area.caretPosition - 1)
                     })
                 }
                 addonSupported.values.forEach {
@@ -473,7 +474,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
         } else {
 
-            val currentInfo = area.getInfo(manager, currentLine)
+            val currentInfo = area.getInfo(manager)
 
             val toRemove = Vector<ListHolderItem>()
 

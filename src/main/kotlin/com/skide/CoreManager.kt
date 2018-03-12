@@ -51,6 +51,7 @@ class CoreManager {
         guiManager.bootstrapCallback = { stage ->
 
             val window = guiManager.getWindow("StartGui.fxml", "Welcome to SkIde", false, stage)
+            stage.isResizable = false
             val controller = window.controller as StartGuiController
             controller.initGui(this, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
             window.stage.show()
