@@ -63,7 +63,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         val tab = Tab("Project files")
         val treeView = TreeView<String>()
         //set the root item
-        treeView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        treeView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
 
 
             if (newValue == null) return@addListener
@@ -122,7 +122,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             return
         }
-        val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), controller.editorMainTabPane!!, BorderPane(), CodeArea(), coreManager)
+        val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), controller.editorMainTabPane, BorderPane(), CodeArea(), coreManager)
         openProjectGuiManager.openFiles.put(f, holder)
         setupNewTabForDisplay(holder)
     }
@@ -194,7 +194,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private fun setupBrowser() {
 
-        filesTab.first.onSelectionChangedProperty().addListener { observable, oldValue, newValue ->
+        filesTab.first.onSelectionChangedProperty().addListener { _, _, _ ->
 
             //TODO
         }
@@ -220,16 +220,20 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         }
 
-        controller.browserTabPane!!.tabs.addAll(filesTab.first, structureTab.first)
+        controller.browserTabPane.tabs.addAll(filesTab.first, structureTab.first)
 
 
     }
 
     private fun setupMainMenu() {
 
-        val fileMenu = controller.mainBenuBar!!.menus[0]
+        val fileMenu = controller.mainBenuBar.menus[0]
         val closeItem = fileMenu.items.first()
         fileMenu.items.remove(closeItem)
+
+        controller.mainBenuBar.menus[2].items[0].setOnAction {
+            GuiManager.showAbout()
+        }
 
         val otherProjects = Menu("Other projects")
 
@@ -276,13 +280,13 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private fun registerEditorEvents() {
 
-        structureTab.second.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        structureTab.second.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
 
             if (newValue != null) {
 
                 val item = newValue as TreeItem<String>
 
-                val tab = controller.editorMainTabPane!!.selectionModel.selectedItem
+                val tab = controller.editorMainTabPane.selectionModel.selectedItem
 
                 openProjectGuiManager.openFiles.values
                         .filter { it.tab == tab }
@@ -290,11 +294,11 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             }
         }
-        controller.editorMainTabPane!!.selectionModelProperty().addListener { observable, oldValue, newValue ->
+        controller.editorMainTabPane.selectionModelProperty().addListener { _, _, _ ->
 
-            if (controller.editorMainTabPane!!.selectionModel.selectedItem != null) {
+            if (controller.editorMainTabPane.selectionModel.selectedItem != null) {
 
-                val tab = controller.editorMainTabPane!!.selectionModel.selectedItem
+                val tab = controller.editorMainTabPane.selectionModel.selectedItem
 
                 openProjectGuiManager.openFiles.values
                         .filter { it.tab == tab }
@@ -302,7 +306,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
 
             } else {
-                controller.browserTabPane!!.selectionModel.select(0)
+                controller.browserTabPane.selectionModel.select(0)
                 structureTab.first.isDisable = true
             }
 

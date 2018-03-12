@@ -49,7 +49,7 @@ class CreateProjectGuiController {
         skriptVersionComboBox.items.add("2.2 bensku-dev33")
         skriptVersionComboBox.selectionModel.select(0)
 
-        projectNameField.setOnKeyReleased { ev ->
+        projectNameField.setOnKeyReleased { _ ->
 
 
             projectPathField.text = File(rootProjectFolder, projectNameField.text).absolutePath

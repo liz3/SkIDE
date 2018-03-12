@@ -4,8 +4,15 @@ public class Version implements Comparable<Version> {
 
     private String version;
 
+    static{
+        System.out.println("test message");
+    }
     public final String get() {
         return this.version;
+    }
+
+    public static void xD() {
+
     }
 
     public Version(String version) {
@@ -36,12 +43,6 @@ public class Version implements Comparable<Version> {
     }
 
     @Override public boolean equals(Object that) {
-        if(this == that)
-            return true;
-        if(that == null)
-            return false;
-        if(this.getClass() != that.getClass())
-            return false;
-        return this.compareTo((Version) that) == 0;
+        return this == that || that != null && this.getClass() == that.getClass() && this.compareTo((Version) that) == 0;
     }
 }

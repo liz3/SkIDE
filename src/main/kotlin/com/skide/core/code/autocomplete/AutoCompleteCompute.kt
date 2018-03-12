@@ -117,7 +117,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     private fun registerEventListener() {
 
-        area.caretPositionProperty().addListener { observable, oldValue, newValue ->
+        area.caretPositionProperty().addListener { _, _, _ ->
 
 
             if (manager.mousePressed || stopped) return@addListener
@@ -132,9 +132,11 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
 
         }
+       /*
         area.textProperty().addListener { observable, oldValue, newValue ->
 
         }
+        */
     }
 
     private fun onColumnChange() {
@@ -184,6 +186,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     fun showLocalAutoComplete(movedRight: Boolean) {
 
 
+        println(currentLine)
         val currentInfo = area.getInfo(manager, currentLine)
 
         if (globalCompleteVisible) {
@@ -203,6 +206,12 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         if (popUp.isShowing) {
 
 
+            println("Char is ${currentInfo.charAfterCaret}")
+            if (currentInfo.charAfterCaret != "") {
+                hideList()
+                return
+
+            }
             val toRemove = Vector<ListHolderItem>()
 
             fillList.items.filterNotTo(toRemove) { it.name.startsWith(currentInfo.currentWord, true) }
@@ -226,10 +235,12 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             return
         } else {
+            println("Before is: " + currentInfo.beforeString)
             if (currentInfo.inString) return
             if (currentInfo.currentWord.endsWith("\"")) return
             if (currentInfo.currentNode.nodeType == NodeType.COMMENT) return
-            if (currentInfo.charAfterCaret == " ") return
+            if (currentInfo.beforeString.endsWith(":") ||
+                    currentInfo.beforeString.endsWith(")") ||currentInfo.beforeString.endsWith("(")) return
             manager.parseResult = manager.parseStructure()
             fillList.items.clear()
             removed.clear()
@@ -239,10 +250,11 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, manager.parseResult, currentInfo.currentNode)
 
-            if (root.nodeType == NodeType.FUNCTION) {
-                val params = root.fields["params"] as Vector<MethodParameter>
+            if (root.nodeType == NodeType.FUNCTION && root.fields.contains("ready")) {
+                val params = root.fields["params"] as Vector<*>
 
                 params.forEach {
+                    it as MethodParameter
                     toAdd["_" + it.name + " :" + it.type] = Pair(NodeType.SET_VAR, { _ ->
                         area.replaceText(area.caretPosition, area.caretPosition, "{" + it.name + "}")
                     })
@@ -254,12 +266,13 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 })
             }
             manager.parseResult.forEach {
-                if (it.nodeType == NodeType.FUNCTION) {
+                if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
                     val name = it.fields["name"] as String
                     val returnType = it.fields["return"] as String
                     var paramsStr = ""
                     var insertParams = ""
-                    (it.fields["params"] as Vector<MethodParameter>).forEach {
+                    (it.fields["params"] as Vector<*>).forEach {
+                        it as MethodParameter
                         paramsStr += ",${it.name}:${it.type}"
                         insertParams += ",${it.name}"
                     }
@@ -268,7 +281,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     val con = "$name($paramsStr):$returnType"
 
                     val insert = "$name($insertParams)"
-                    toAdd.put(con, Pair(NodeType.FUNCTION, { info ->
+                    toAdd.put(con, Pair(NodeType.FUNCTION, { _ ->
                         area.replaceText(area.caretPosition, area.caretPosition, insert)
                     }))
                 }
@@ -281,7 +294,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     if (it.fields.contains("from_option")) {
                         val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
                         if (!found) {
-                            addItem((it.fields["name"] as String) + " [from option]", { info ->
+                            addItem((it.fields["name"] as String) + " [from option]", { _ ->
                                 area.replaceText(area.caretPosition, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
 
                                 //TODO add path items as
@@ -290,7 +303,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     } else {
                         val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
                         if (!found) {
-                            addItem(it.fields["name"] as String, { info ->
+                            addItem(it.fields["name"] as String, { _ ->
                                 area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
                             })
                         }
@@ -378,7 +391,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
                 val window = GuiManager.getWindow("GenerateCommand.fxml", "Generate command", true)
                 val generate: GenerateCommandController = window.controller as GenerateCommandController;
-                generate.createButton.onMouseClicked = EventHandler<MouseEvent> { event ->
+                generate.createButton.onMouseClicked = EventHandler<MouseEvent> { _ ->
                     run {
                         area.replaceText(area.caretPosition, area.caretPosition, "command /" + generate.commandNameField.text + ":\n\tdescription: " + generate.descriptionField.text + "\n" + "\tpermission: " + generate.permissionField.text + "\n\ttrigger:\n\t\tsend \"hi\" to player")
 
@@ -417,6 +430,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     }
                 }
             }
+/*
 
             manager.parseResult.forEach {
                 if (it.nodeType == NodeType.FUNCTION) {
@@ -424,7 +438,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     val returnType = it.fields["return"] as String
                     var paramsStr = ""
                     var insertParams = ""
-                    (it.fields["params"] as Vector<MethodParameter>).forEach {
+                    (it.fields["params"] as Vector<*>).forEach {
+                        it as MethodParameter
                         paramsStr += ",${it.name}:${it.type}"
                         insertParams += ",${it.name}"
                     }
@@ -443,13 +458,14 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             vars.forEach {
                 if (it.fields["visibility"] == "global") {
-                    addItem("VAR " + it.fields["name"], { info ->
+                    addItem("VAR " + it.fields["name"], { _ ->
                         area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
                     })
                 }
             }
 
 
+ */
 
             globalCompleteVisible = true
             popUp.show(project.openProject.guiHandler.window.stage)

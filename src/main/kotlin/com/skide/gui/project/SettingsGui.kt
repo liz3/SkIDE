@@ -66,7 +66,7 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGu
             loaded = true
 
             ctrl.skriptVersionComboBox.isDisable = true
-            ctrl.plListView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+            ctrl.plListView.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
                 if (currItem() != null) {
 
@@ -122,7 +122,7 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGu
                     if(toRemove != null) changes.remove(toRemove)
                     changes.addElement(Pair(currItem(), SettingsChangeType.ADDON_REMOVE))                }
             }
-            ctrl.plVersionsComboBox.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+            ctrl.plVersionsComboBox.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
                 ctrl.enableSupportCheckBox.isDisable = false
                 if(ctrl.plVersionsComboBox.selectionModel.selectedItem == null) return@addListener

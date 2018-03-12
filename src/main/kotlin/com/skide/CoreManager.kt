@@ -1,5 +1,6 @@
 package com.skide
 
+import com.skide.core.code.debugger.Debugger
 import com.skide.core.management.ConfigLoadResult
 import com.skide.core.management.ConfigManager
 import com.skide.core.management.ProjectManager
@@ -10,6 +11,7 @@ import com.skide.gui.controllers.StartGuiController
 import com.skide.utils.AutoSaver
 import com.skide.utils.DebugLevel
 import com.skide.utils.ResourceManager
+import javafx.application.Platform
 
 
 class CoreManager {
@@ -21,6 +23,9 @@ class CoreManager {
     val guiManager = GuiManager
     val saver = AutoSaver(this)
     private var debugLevel = DebugLevel.INFORMATION
+
+
+
 
 
     fun bootstrap(args: Array<String>) {
@@ -44,7 +49,6 @@ class CoreManager {
 
 
         guiManager.bootstrapCallback = { stage ->
-
 
             val window = guiManager.getWindow("StartGui.fxml", "Welcome to SkIde", false, stage)
             val controller = window.controller as StartGuiController

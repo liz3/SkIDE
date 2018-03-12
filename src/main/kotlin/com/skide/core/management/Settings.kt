@@ -63,7 +63,7 @@ class ConfigManager(val coreManager: CoreManager) {
 
 
         //read the main Config
-        val configResult = readConfig()
+        readConfig()
 
         val projectsFileResult = readFile(projectsFile)
         val serversFileResult = readFile(serversFile)
@@ -112,18 +112,18 @@ class ConfigManager(val coreManager: CoreManager) {
         val serverArr = JSONArray()
         val apisObArr = JSONArray()
         for ((id, server) in servers) {
-            val obj = JSONObject()
-            obj.put("id", id)
-            obj.put("name", server.name)
-            obj.put("path", server.path)
-            serverArr.put(obj)
+            val serverObj = JSONObject()
+            serverObj.put("id", id)
+            serverObj.put("name", server.name)
+            serverObj.put("path", server.path)
+            serverArr.put(serverObj)
         }
         for ((id, api) in apis) {
-            val obj = JSONObject()
-            obj.put("id", id)
-            obj.put("name", api.name)
-            obj.put("path", api.path)
-            apisObArr.put(obj)
+            val apiObject = JSONObject()
+            apiObject.put("id", id)
+            apiObject.put("name", api.name)
+            apiObject.put("path", api.path)
+            apisObArr.put(apiObject)
         }
         obj.put("servers", serverArr)
         obj.put("apis", apis)

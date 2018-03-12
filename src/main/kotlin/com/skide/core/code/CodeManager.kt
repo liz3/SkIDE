@@ -37,7 +37,6 @@ class CodeManager {
 
     fun setup(project: OpenFileHolder) {
 
-
         rootStructureItem = TreeItem(project.name)
         content = readFile(project.f).second
         area = project.area
@@ -166,7 +165,7 @@ class CodeManager {
         area.setOnMouseReleased {
             mousePressed = false
         }
-        area.setOnMouseClicked { ev ->
+        area.setOnMouseClicked {
             if(sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
             if (autoComplete.popUp.isShowing) autoComplete.popUp.hide()
 

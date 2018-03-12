@@ -123,6 +123,7 @@ class CurrentStateInfo(val currentNode: Node, val actualCurrentString: String, v
 fun CodeArea.getInfo(manager: CodeManager, currentLine: Int): CurrentStateInfo {
 
 
+
     val currentNode = EditorUtils.getLineNode(currentLine, manager.parseResult)
     val actualCurrentString = if(currentLine == 0) this.paragraphs[currentLine].text else this.paragraphs[currentLine - 1].text
     val column = this.caretColumn

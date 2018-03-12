@@ -2,7 +2,6 @@ package com.skide.core.management
 
 import com.skide.CoreManager
 import com.skide.gui.project.OpenProjectGuiManager
-import com.skide.include.Addon
 import com.skide.include.AddonItem
 import com.skide.include.OpenFileHolder
 import com.skide.include.Project
@@ -28,7 +27,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
 
         project.fileManager.addons.forEach {
             val addonName = it.key
-            val version =  Version(adjustVersion(it.value))
+            val version = Version(adjustVersion(it.value))
             addons[addonName] = Vector()
 
             coreManager.resourceManager.addons[addonName]!!.versions.forEach { currAddonVersion ->

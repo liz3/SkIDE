@@ -1,0 +1,100 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>About</title>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-3">
+            <img src="https://liz3.net/sk/about/images/icon.png" alt="SKIde Logo" class="img-thumbnail">
+        </div>
+        <div class="col-9" id="about">
+            <h1>About</h1>
+            <p>This project was founded by me Liz3, i am a passionated Developer who actually loves to make tools for others. <br />
+                From a Minecraft Server Team i learned about Skript.<br />
+                Ans when i found out that there are not ONE for Skript, the idea for SkIde was born</p>
+            <p>The Target of SkIde is to provide you with a powerful tool to develop Skript.</p>
+
+            <hr >
+
+        </div>
+    </div>
+    <div style="margin-top: 50px">
+        <h1>Members</h1>
+        <div id="member">
+
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script type="application/javascript">
+
+    function openLink(link) {
+
+
+        window.skide.open(link)
+    }
+    function getLinks(arr) {
+
+        var toAdd = "<div>"
+
+        for(var i = 0; i < arr.length; i++) {
+            const current = arr[i];
+
+            const link = current.link
+            toAdd += "<a href='#' onclick='openLink(\"" + link + "\")'>" + current.name + "</a>"
+        }
+
+        toAdd += "</div>"
+
+        return toAdd;
+    }
+
+    $.get("https://liz3.net/sk/about/images/contrs.json", function (arr) {
+
+
+
+        for(var i = 0; i < arr.length; i++) {
+            const current = arr[i];
+
+            var toAdd = '<div class="row">'
+
+            const lks = getLinks(current.links);
+
+            toAdd += '<div class="col-3">\n' + '<img src="' + current.icon +'" alt="Logo" class="img-thumbnail">\n';
+
+
+            toAdd += lks;
+            toAdd += "</div>";
+
+            toAdd += '<div class="col-9">\n'
+
+            toAdd += '<h1>' + current.name + '</h1>'
+            toAdd += '<p>' + current.description + '</p>'
+            toAdd += "</div>"
+            toAdd += "</div>"
+
+            $("#member").append(toAdd);
+        }
+
+        $("#about").append("            <a onclick=\"openLink('https://github.com/Sk-IDE/SkIDE')\" href=\"#\">Github</a>\n" +
+            "            <a onclick=\"openLink('https://discord.gg/Ac6Q34e')\" href=\"#\">Discord</a>")
+    })
+
+</script>
+</body>
+</html>

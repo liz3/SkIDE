@@ -160,12 +160,13 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
 
     private fun parseMethodParameters() {
         val paramList = Vector<MethodParameter>()
+        if(!content.contains("(") || !content.contains(")")) return
         val name = content.split(" ")[1].split("(")[0]
         val params = content.split("(")[1].split(")")[0].split(",")
-        var returnType = "void"
+        val returnType: String
         params.forEach {
 
-           if(it != "") {
+           if(it != "" && it.contains(":")) {
                val paramName = it.trim().split(":").first()
                var paramType = it.trim().split(":")[1]
                var value = ""
@@ -176,15 +177,17 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
                paramList.add(MethodParameter(paramName, paramType, value))
            }
         }
-        fields.put("name", name)
-        fields.put("params", paramList)
+        fields["name"] = name
+        fields["params"] = paramList
 
         if (content.contains("::")) {
             returnType = content.split("::")[1].trim().replace(":", "")
-            fields.put("return", returnType)
+            fields["return"] = returnType
         } else {
 
-        fields.put("return", "void")
+            fields["return"] = "void"
         }
+
+        fields["ready"] = true
     }
 }

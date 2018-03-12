@@ -254,7 +254,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
         entries = area.text.search(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected) as ArrayList<StringSearchResult>
 
         if (index < 0) index = 0
-        if (entries.size != 0 && entries[index] != null) {
+        if (entries.size != 0) {
             area.moveTo(entries[index].start)
             area.selectRange(entries[index].start, entries[index].end)
             if (currentPoint < 0) currentPoint = 0

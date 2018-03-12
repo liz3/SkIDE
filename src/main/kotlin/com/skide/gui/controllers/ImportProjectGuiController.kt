@@ -49,7 +49,7 @@ class ImportProjectGuiController {
         skriptVersionComboBox.items.add("2.2 bensku-dev33")
         skriptVersionComboBox.selectionModel.select(0)
 
-        projectNameField.setOnKeyReleased { ev ->
+        projectNameField.setOnKeyReleased { _ ->
 
             if(projectNameField.text == "") {
                 if(!createButton.isDisabled) createButton.isDisable = true
