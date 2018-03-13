@@ -207,11 +207,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
 
             println("Char is ${currentInfo.charAfterCaret}")
-            if (currentInfo.charAfterCaret != "") {
-             //   hideList()
-              //  return
 
-            }
             val toRemove = Vector<ListHolderItem>()
 
             fillList.items.filterNotTo(toRemove) { it.name.startsWith(currentInfo.currentWord, true) }
@@ -256,7 +252,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 params.forEach {
                     it as MethodParameter
                     toAdd["_" + it.name + " :" + it.type] = Pair(NodeType.SET_VAR, { _ ->
-                        area.replaceText(area.caretPosition, area.caretPosition, "{" + it.name + "}")
+                        area.replaceText(area.caretPosition, area.caretPosition, "{_" + it.name + "}")
                     })
                 }
             }
@@ -294,8 +290,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     if (it.fields.contains("from_option")) {
                         val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
                         if (!found) {
-                            addItem((it.fields["name"] as String) + " [from option]", { _ ->
-                                area.replaceText(area.caretPosition, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
+                            addItem((it.fields["name"] as String) + " [from option]", { info ->
+                                area.replaceText(area.caretPosition  - info.beforeString.length, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
 
                                 //TODO add path items as
                             })
@@ -303,8 +299,19 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     } else {
                         val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
                         if (!found) {
-                            addItem(it.fields["name"] as String, { _ ->
-                                area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
+                            addItem({
+                                if(it.fields["visibility"] == "global") {
+                                    ""
+                                } else {
+                                    "_"
+                                }
+                            }.invoke() + it.fields["name"] as String, { info ->
+                               if(it.fields["visibility"] == "global") {
+                                   area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{" + it.fields["name"] + "}")
+
+                               } else {
+                                   area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.fields["name"] + "}")
+                               }
                             })
                         }
                     }

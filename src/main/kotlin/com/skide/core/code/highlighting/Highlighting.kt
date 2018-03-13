@@ -124,7 +124,8 @@ class Highlighting(val manager: CodeManager) {
 
 object HighlighterStatics {
 
-    val KEYWORDS = arrayOf("set", "if", "stop", "loop", "trigger", "permission", "permission-message", "description", "return", "function", "options", "true", "false", "cancel", "else", "else if")
+    val KEYWORDS = arrayOf("set" +
+            "", "if", "stop", "loop", "trigger", "permission", "permission-message", "description", "return", "function", "options", "true", "false", "cancel", "else", "else if")
     const val COMMENT_PATTERN = "#[^\n]*"
     const val VAR_PATTERN = "\\{\\S*}"
     const val PAREN_PATTERN = "\\(|\\)"

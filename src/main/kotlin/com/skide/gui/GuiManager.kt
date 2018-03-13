@@ -32,6 +32,7 @@ object GuiManager {
         val controller = loader.getController<Any>()
 
         val scene = Scene(rootNode)
+        scene.stylesheets.add("ThemeDark.css")
         stage.scene = scene
         stage.sizeToScene()
 

@@ -57,6 +57,7 @@ class CodeManager {
         registerEvents(project)
 
         area.moveTo(0)
+
     }
 
     private fun registerEvents(project: OpenFileHolder) {

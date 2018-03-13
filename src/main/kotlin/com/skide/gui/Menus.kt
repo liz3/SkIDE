@@ -33,9 +33,10 @@ object Menus {
         val newYamlFile = MenuItem("New Yaml File")
         newYamlFile.setOnAction {
 
-            val name = Prompts.textPrompt("New Yaml File", "Enter File name Here")
+            var name = Prompts.textPrompt("New Yaml File", "Enter File name Here")
 
-            if (name.isNotEmpty()) project.createNewFile(name + ".yml")
+            if(!name.endsWith(".yml") && !name.endsWith(".yaml")) name += ".yml"
+            if (name.isNotEmpty()) project.createNewFile(name)
 
         }
         menu.items.addAll(newFileItem,newYamlFile)
