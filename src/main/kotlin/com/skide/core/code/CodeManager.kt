@@ -11,9 +11,14 @@ import com.skide.utils.EditorUtils
 import com.skide.utils.getCaretLine
 import com.skide.utils.readFile
 import javafx.application.Platform
+import javafx.scene.control.Button
 import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
+import javafx.scene.layout.HBox
 import org.fxmisc.richtext.CodeArea
+import org.fxmisc.wellbehaved.event.EventPattern
+import org.fxmisc.wellbehaved.event.InputMap
+import org.fxmisc.wellbehaved.event.Nodes
 
 import java.util.*
 
@@ -29,8 +34,10 @@ class CodeManager {
     lateinit var findHandler:FindHandler
     lateinit var replaceHandler:ReplaceHandler
     lateinit var sequenceReplaceHandler: ReplaceSequence
-
+    lateinit var hBox:HBox
     private val parser = SkriptParser()
+
+
 
     var mousePressed = false
 
@@ -45,7 +52,7 @@ class CodeManager {
         replaceHandler= ReplaceHandler(this, project)
         if (this::highlighter.isInitialized) highlighter.computeHighlighting()
         sequenceReplaceHandler = ReplaceSequence(this)
-
+        hBox = project.currentStackBox
 
 
 
@@ -195,6 +202,33 @@ class CodeManager {
         rootStructureItem.children.clear()
         val parseResult = parser.superParse(area.text)
 
+        Platform.runLater {
+            val stack = Vector<Node>()
+            var currNode: Node? = EditorUtils.getLineNode(area.getCaretLine(), parseResult) ?: return@runLater
+            stack.addElement(currNode)
+
+            while (currNode!!.parent != null) {
+                stack.add(currNode.parent)
+                currNode = currNode.parent!!
+            }
+
+            stack.reverse()
+
+            hBox.children.clear()
+            stack.forEach {node ->
+                val b = Button(node.content)
+                b.setPrefSize(80.0, 23.0)
+                b.setOnAction {
+
+                   area.moveTo(area.text.indexOf(node.raw))
+                    area.selectLine()
+                   area.scrollYToPixel(node.linenumber * 14.95)
+
+                }
+
+                hBox.children.add(b)
+            }
+        }
         parseResult.forEach {
             if (it.nodeType != NodeType.UNDEFINED) addNodeToItemTree(rootStructureItem, it)
         }

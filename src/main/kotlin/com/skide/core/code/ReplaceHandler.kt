@@ -135,7 +135,8 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 area.selectRange(0, 0)
 
                 if (entries.size == 1) {
-
+                    area.moveTo(entries.first().start)
+                    area.selectRange(entries.first().start, entries.first().end)
                     return@setOnAction
                 }
                 if (currentPoint == entries.size - 1) {
@@ -159,18 +160,20 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 return@setOnAction
             }
             currentPoint = 0
-            executed
+            executed = false
             entries.clear()
             manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
+            check()
         }
         ctrl.regexEnableCheck.setOnAction {
             if (ctrl.searchField.text == "") {
                 return@setOnAction
             }
             currentPoint = 0
-            executed
+            executed = false
             entries.clear()
             manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
+            check()
         }
         ctrl.replaceBtn.setOnAction {
             replace()
@@ -217,7 +220,8 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 area.selectRange(0, 0)
 
                 if (entries.size == 1) {
-
+                    area.moveTo(entries.first().start)
+                    area.selectRange(entries.first().start, entries.first().end)
                     return@setOnAction
                 }
                 if (currentPoint == 0) {

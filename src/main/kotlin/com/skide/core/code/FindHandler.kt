@@ -100,7 +100,7 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 return@addListener
             }
             currentPoint = 0
-            executed
+            executed = false
             entries.clear()
             manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
 
@@ -133,7 +133,8 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 area.selectRange(0,0)
 
                 if(entries.size == 1) {
-
+                    area.moveTo(entries[0].start)
+                    area.selectRange(entries[0].start, entries[0].end)
                     return@setOnAction
                 }
                 if(currentPoint == entries.size - 1) {
@@ -152,18 +153,20 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 return@setOnAction
             }
             currentPoint = 0
-            executed
+            executed = false
             entries.clear()
             manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
+            check()
         }
         ctrl.regexEnableCheck.setOnAction {
             if (ctrl.searchField.text == "") {
                 return@setOnAction
             }
             currentPoint = 0
-            executed
+            executed = false
             entries.clear()
             manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
+            check()
         }
         ctrl.prevEntry.setOnAction {
 
@@ -191,6 +194,8 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
                 if(entries.size == 1) {
 
+                    area.moveTo(entries[0].start)
+                    area.selectRange(entries[0].start, entries[0].end)
                     return@setOnAction
                 }
                 if(currentPoint == 0) {

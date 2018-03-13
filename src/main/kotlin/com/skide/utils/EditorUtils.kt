@@ -3,6 +3,8 @@ package com.skide.utils
 import com.skide.core.code.CodeManager
 import com.skide.include.Node
 import com.skide.include.NodeType
+import javafx.application.Platform
+import javafx.scene.control.Button
 import org.fxmisc.richtext.CodeArea
 import java.util.*
 import java.util.regex.Pattern
@@ -26,7 +28,7 @@ object EditorUtils {
 
     private fun searchNode(line: Int, node: Node): Node? {
 
-        if(node.linenumber == line) return node
+        if (node.linenumber == line) return node
 
         node.childNodes.forEach { c ->
             val r = searchNode(line, c)
@@ -127,11 +129,11 @@ fun CodeArea.getInfo(manager: CodeManager): CurrentStateInfo {
 
     var currentNode = EditorUtils.getLineNode(currentLine, manager.parseResult)
 
-    if(currentNode == null) {
+    if (currentNode == null) {
         currentNode = EditorUtils.getLineNode(currentLine - 1, manager.parseResult)
     }
     println(currentNode == null)
-    val actualCurrentString = if(currentLine == 0) this.paragraphs[currentLine].text else this.paragraphs[currentLine - 1].text
+    val actualCurrentString = if (currentLine == 0) this.paragraphs[currentLine].text else this.paragraphs[currentLine - 1].text
     val column = this.caretColumn
     var currentWord = ""
     var beforeStr = ""
@@ -177,6 +179,7 @@ fun CodeArea.getInfo(manager: CodeManager): CurrentStateInfo {
 
     }
 
+
     return CurrentStateInfo(currentNode!!, actualCurrentString, column, currentWord, beforeStr, afterStr, charBeforeCaret, charAfterCaret, inString)
 }
 
@@ -184,7 +187,7 @@ fun String.search(what: String, ignoreCase: Boolean, regex: Boolean): List<Strin
     val found = java.util.ArrayList<StringSearchResult>()
 
     if (regex) {
-        if (!ignoreCase) {
+        if (ignoreCase) {
             val matcher = Pattern.compile(what).matcher(this)
             while (matcher.find()) {
                 found.add(StringSearchResult(matcher.start(), matcher.end(), matcher.group()))
@@ -197,7 +200,7 @@ fun String.search(what: String, ignoreCase: Boolean, regex: Boolean): List<Strin
         }
 
     } else {
-        if (!ignoreCase) {
+        if (ignoreCase) {
             val matcher = Pattern.compile(Pattern.quote(what)).matcher(this)
             while (matcher.find()) {
                 found.add(StringSearchResult(matcher.start(), matcher.end(), matcher.group()))

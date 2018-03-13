@@ -64,7 +64,7 @@ class ReplaceSequence(val manager: CodeManager) {
                 continue
             }
             if (currentChar == '%') {
-                val start = absBegin + currPointer
+                val start = absBegin + currPointer + 2 - info.currentNode.tabLevel
                 var expression = ""
                 currPointer++
                 currentChar = str[currPointer]
@@ -74,21 +74,21 @@ class ReplaceSequence(val manager: CodeManager) {
                     currentChar = str[currPointer]
                     expression += currentChar
                 }
-                val end = absBegin + currPointer + 1
+                val end = absBegin + currPointer + 1 - info.currentNode.tabLevel
                 val value = ReplaceSeuenceItem(start, end, ReplaceSequenceType.VALUE)
                 value.fields["name"] = expression.substring(0, expression.length - 1)
                 list.add(value)
             }
             if (currentChar == '[') {
                 val hasMultiple = str[currPointer + 1] == '('
-                val start = absBegin + currPointer
+                val start = absBegin + currPointer + 1 - info.currentNode.tabLevel
                 var expression = ""
                 while (currentChar != ']') {
                     currPointer++
                     currentChar = str[currPointer]
                     expression += currentChar
                 }
-                val end = absBegin + currPointer + 1
+                val end = absBegin + currPointer + 1 + 1 - info.currentNode.tabLevel
                 val entry = ReplaceSeuenceItem(start, end, if (hasMultiple) ReplaceSequenceType.OPTIONAL_GROUP else ReplaceSequenceType.OPTIONAL)
 
                 if (hasMultiple) {
@@ -101,7 +101,7 @@ class ReplaceSequence(val manager: CodeManager) {
                 list.addElement(entry)
             }
             if (currentChar == '(') {
-                val start = absBegin + currPointer
+                val start = absBegin + currPointer + 1 - info.currentNode.tabLevel
                 var expression = ""
                 currPointer++
                 currentChar = str[currPointer]
@@ -111,7 +111,7 @@ class ReplaceSequence(val manager: CodeManager) {
                     currentChar = str[currPointer]
                     expression += currentChar
                 }
-                val end = absBegin + currPointer + 1
+                val end = absBegin + currPointer + 1 + 1 - info.currentNode.tabLevel
                 val value = ReplaceSeuenceItem(start, end, ReplaceSequenceType.GROUP)
 
                 if (expression.contains("|")) {
@@ -154,6 +154,7 @@ class ReplaceSequence(val manager: CodeManager) {
     fun cancel() {
         if (!computing) return
         Nodes.removeInputMap(area, im)
+
         computing = false
         manager.autoComplete.stopped = false
         list.clear()

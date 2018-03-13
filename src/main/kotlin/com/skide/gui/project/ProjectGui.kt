@@ -13,6 +13,7 @@ import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
 import org.fxmisc.flowless.VirtualizedScrollPane
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
@@ -159,6 +160,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             holder.tab.isClosable = true
             holder.borderPane.center = VirtualizedScrollPane(holder.area)
+            holder.borderPane.bottom = holder.currentStackBox
+            holder.currentStackBox.prefHeight = 35.0
             holder.tab.content = holder.borderPane
             holder.area.paragraphGraphicFactory = LineNumberFactory.get(holder.area)
 

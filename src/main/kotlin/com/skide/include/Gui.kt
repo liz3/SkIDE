@@ -10,6 +10,7 @@ import javafx.scene.Scene
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
 import javafx.stage.Stage
 import org.fxmisc.richtext.CodeArea
 import java.io.File
@@ -30,6 +31,7 @@ class ActiveWindow(val stage:Stage, val scene:Scene, val loader:FXMLLoader, val 
 
 class OpenFileHolder(val openProject: OpenProject, val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea, val coreManager: CoreManager,  val codeManager:CodeManager = CodeManager()) {
 
+    val currentStackBox = HBox()
 
 
 

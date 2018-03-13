@@ -134,7 +134,7 @@ class ProjectFileManager(val project: Project) {
     val configFile = File(project.folder, ".project.skide")
     val projectFiles = HashMap<String, File>()
     val addons = HashMap<String, String>()
-
+    val openFilesForSave = Vector<String>()
 
     init {
         project.files.forEach {

@@ -234,8 +234,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             println("Before is: " + currentInfo.beforeString)
             if (currentInfo.inString) return
             if (currentInfo.currentWord.endsWith("\"")) return
+            if (currentInfo.currentWord.endsWith("{")) return
             if (currentInfo.currentNode.nodeType == NodeType.COMMENT) return
-            if (currentInfo.beforeString.endsWith(":") ||
+            if (currentInfo.currentWord.endsWith(":") ||
                     currentInfo.beforeString.endsWith(")") ||currentInfo.beforeString.endsWith("(")) return
             manager.parseResult = manager.parseStructure()
             fillList.items.clear()
