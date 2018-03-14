@@ -7,7 +7,9 @@ import com.skide.gui.Menus
 import com.skide.gui.controllers.CreateProjectGuiController
 import com.skide.gui.controllers.ProjectGuiController
 import com.skide.include.OpenFileHolder
+import com.terminalfx.TerminalBuilder
 import javafx.application.Platform
+import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -108,6 +110,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         registerEditorEvents()
         setupMainMenu()
         updateProjectFilesTreeView()
+        controller.rootBorderPane.bottom = getLowerTabPane()
         guiReady()
     }
 
@@ -164,7 +167,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             holder.currentStackBox.prefHeight = 35.0
             holder.tab.content = holder.borderPane
             holder.area.paragraphGraphicFactory = LineNumberFactory.get(holder.area)
-
             //setup the code management
             holder.codeManager.setup(holder)
             registerEventsForNewFile(holder)
@@ -178,6 +180,23 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     }
 
+    fun getLowerTabPane() : TabPane{
+
+        val terminalBuilder = TerminalBuilder()
+        terminalBuilder.terminalPath = openProjectGuiManager.openProject.project.folder.toPath()
+        terminalBuilder.terminalConfig.backgroundColor = "#2B2B2B"
+        terminalBuilder.terminalConfig.foregroundColor = "#dbe0dc"
+        val terminalTab = terminalBuilder.newTerminal()
+        terminalTab.text = "Console"
+        terminalTab.isClosable = false
+
+        val tabPane = TabPane()
+        tabPane.prefHeight = 250.0
+
+        tabPane.tabs.add(terminalTab)
+
+        return tabPane;
+    }
     fun registerEventsForNewFile(holder: OpenFileHolder) {
 
         holder.tab.setOnCloseRequest {
@@ -206,6 +225,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         structureTab.second.root = holder.codeManager.rootStructureItem
     }
+
 
     private fun setupBrowser() {
 

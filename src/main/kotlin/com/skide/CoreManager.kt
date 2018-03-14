@@ -14,6 +14,11 @@ import com.skide.utils.DebugLevel
 import com.skide.utils.ResourceManager
 import com.skide.utils.SkUnity
 import javafx.application.Platform
+import javafx.scene.control.TabPane
+import com.terminalfx.TerminalTab
+import com.terminalfx.TerminalBuilder
+import javafx.scene.Scene
+import javafx.stage.Stage
 
 
 class CoreManager {
@@ -55,12 +60,12 @@ class CoreManager {
 
         guiManager.bootstrapCallback = { stage ->
 
-
             val window = guiManager.getWindow("StartGui.fxml", "Welcome to SkIde", false, stage)
             stage.isResizable = false
             val controller = window.controller as StartGuiController
             controller.initGui(this, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
             window.stage.show()
+
 
 
         }
