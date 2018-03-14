@@ -22,6 +22,16 @@ class ConfigManager(val coreManager: CoreManager) {
     private var configLoaded = false
 
     private val settings = HashMap<String, Any>()
+    var skUnityKey = ""
+        set(value) {
+            field = value
+            if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
+        }
+    var skUnityUsername = ""
+        set(value) {
+            field = value
+            if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
+        }
 
     val rootFolder = File(System.getProperty("user.home"), ".skide")
     var defaultProjectPath = File(System.getProperty("user.home"), "SkIde-Projects")
@@ -132,6 +142,7 @@ class ConfigManager(val coreManager: CoreManager) {
     }
 
 
+
     //PROJECTS
     fun addProject(holder: PointerHolder): Boolean {
         if (projects.containsKey(holder.id)) return false
@@ -172,7 +183,6 @@ class ConfigManager(val coreManager: CoreManager) {
 
         return writeServersFile()
     }
-
     //APIS
     fun addApi(holder: PointerHolder): Boolean {
         if (apis.containsKey(holder.id)) return false
@@ -203,6 +213,8 @@ class ConfigManager(val coreManager: CoreManager) {
             lastOpened = obj.getInt("last_open")
             defaultProjectPath = File(obj.getString("default_project"))
             defaultServerPath = File(obj.getString("default_server"))
+            if(obj.has("skunity_key")) skUnityKey = obj.getString("skunity_key")
+            if(obj.has("skunity_name")) skUnityUsername = obj.getString("skunity_name")
 
             val settingsObj = obj.getJSONObject("settings")
 
@@ -249,6 +261,8 @@ class ConfigManager(val coreManager: CoreManager) {
         obj.put("last_open", lastOpened)
         obj.put("default_project", defaultProjectPath.absolutePath)
         obj.put("default_server", defaultServerPath.absolutePath)
+        if(skUnityKey != "") obj.put("skunity_key", skUnityKey)
+        if(skUnityUsername != "") obj.put("skunity_name", skUnityUsername)
         val settArr = JSONObject()
         for ((key, value) in settings) {
             settArr.put(key, value)

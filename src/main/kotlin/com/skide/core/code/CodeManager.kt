@@ -4,6 +4,7 @@ import com.skide.core.code.autocomplete.AutoCompleteCompute
 import com.skide.core.code.autocomplete.ReplaceSequence
 import com.skide.core.code.highlighting.Highlighting
 import com.skide.core.skript.SkriptParser
+import com.skide.gui.Menus
 import com.skide.include.Node
 import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
@@ -68,6 +69,7 @@ class CodeManager {
     }
 
     private fun registerEvents(project: OpenFileHolder) {
+
 
         area.focusedProperty().addListener { _, _, newValue ->
 
@@ -140,6 +142,7 @@ class CodeManager {
             }
             if (ev.isControlDown) {
 
+
                 if(ev.code == KeyCode.F) {
                     findHandler.switchGui()
                 }
@@ -166,14 +169,19 @@ class CodeManager {
             }
         }
 
-        area.setOnMousePressed {
+        area.setOnMousePressed {ev->
             mousePressed = true
+
+            if(ev.isSecondaryButtonDown) {
+
+                Menus.getMenuForArea(this, ev.screenX, ev.screenY)
+            }
 
         }
         area.setOnMouseReleased {
             mousePressed = false
         }
-        area.setOnMouseClicked {
+        area.setOnMouseClicked { ev ->
             if(sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
             if (autoComplete.popUp.isShowing) autoComplete.popUp.hide()
 

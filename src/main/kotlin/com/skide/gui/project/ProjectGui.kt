@@ -250,6 +250,14 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             GuiManager.showAbout()
         }
 
+
+        val skUnity = MenuItem("Log in to SkUnity")
+        skUnity.setOnAction {
+            if(coreManager.skUnity.login()) controller.mainBenuBar.menus[2].items.remove(skUnity)
+        }
+        controller.mainBenuBar.menus[2].items.add(skUnity)
+
+
         val otherProjects = Menu("Other projects")
 
         closeItem.setOnAction {

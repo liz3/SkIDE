@@ -7,10 +7,12 @@ import com.skide.core.management.ProjectManager
 import com.skide.core.management.ServerManager
 import com.skide.gui.GuiManager
 import com.skide.gui.JavaFXBootstrapper
+import com.skide.gui.Prompts
 import com.skide.gui.controllers.StartGuiController
 import com.skide.utils.AutoSaver
 import com.skide.utils.DebugLevel
 import com.skide.utils.ResourceManager
+import com.skide.utils.SkUnity
 import javafx.application.Platform
 
 
@@ -22,6 +24,7 @@ class CoreManager {
     val resourceManager = ResourceManager(this)
     val guiManager = GuiManager
     val saver = AutoSaver(this)
+    val skUnity = SkUnity(this)
     private var debugLevel = DebugLevel.INFORMATION
 
 
@@ -40,6 +43,7 @@ class CoreManager {
         //load config
         val configLoadResult = configManager.load()
 
+        skUnity.load()
         //Check if config load failed
         if (configLoadResult == ConfigLoadResult.ERROR) {
             //TODO handle ERROR
@@ -48,7 +52,9 @@ class CoreManager {
 
 
 
+
         guiManager.bootstrapCallback = { stage ->
+
 
             val window = guiManager.getWindow("StartGui.fxml", "Welcome to SkIde", false, stage)
             stage.isResizable = false

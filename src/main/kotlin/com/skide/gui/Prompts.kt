@@ -3,6 +3,9 @@ package com.skide.gui
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TextInputDialog
+import java.util.Optional
+
+
 
 object Prompts {
 
@@ -17,6 +20,17 @@ object Prompts {
             ""
         }
     }
+    fun passPrompt(): String {
+        val pd = PasswordDialog()
+        val result = pd.showAndWait()
+
+        return try {
+           result.get()
+        }catch (e:Exception) {
+            ""
+        }
+    }
+
 
     fun infoCheck(title: String, header: String, body: String, type: Alert.AlertType): Boolean {
 
