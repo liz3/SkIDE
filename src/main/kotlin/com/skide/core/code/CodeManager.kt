@@ -13,6 +13,7 @@ import com.skide.utils.getCaretLine
 import com.skide.utils.readFile
 import javafx.application.Platform
 import javafx.scene.control.Button
+import javafx.scene.control.ContextMenu
 import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
@@ -32,13 +33,13 @@ class CodeManager {
     lateinit var autoComplete: AutoCompleteCompute
     lateinit var highlighter: Highlighting
     lateinit var parseResult: Vector<Node>
-    lateinit var findHandler:FindHandler
-    lateinit var replaceHandler:ReplaceHandler
+    lateinit var findHandler: FindHandler
+    lateinit var replaceHandler: ReplaceHandler
     lateinit var sequenceReplaceHandler: ReplaceSequence
-    lateinit var hBox:HBox
+    lateinit var hBox: HBox
     private val parser = SkriptParser()
 
-
+    var contextMenu:ContextMenu? = null
 
     var mousePressed = false
 
@@ -50,7 +51,7 @@ class CodeManager {
         area = project.area
         highlighter = Highlighting(this)
         findHandler = FindHandler(this, project)
-        replaceHandler= ReplaceHandler(this, project)
+        replaceHandler = ReplaceHandler(this, project)
         if (this::highlighter.isInitialized) highlighter.computeHighlighting()
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox
@@ -73,14 +74,14 @@ class CodeManager {
 
         area.focusedProperty().addListener { _, _, newValue ->
 
-            if(!newValue) {
+            if (!newValue) {
                 project.saveCode()
             }
         }
         area.setOnKeyPressed { ev ->
 
-            if(ev.code == KeyCode.TAB) {
-                if(sequenceReplaceHandler.computing) {
+            if (ev.code == KeyCode.TAB) {
+                if (sequenceReplaceHandler.computing) {
                     ev.consume()
                     area.replaceText(area.caretPosition - 1, area.caretPosition, "")
                     sequenceReplaceHandler.fire()
@@ -128,13 +129,13 @@ class CodeManager {
             }
             if (ev.code == KeyCode.ESCAPE) {
 
-                if(autoComplete.popUp.isShowing)autoComplete.hideList()
-                if(sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
+                if (autoComplete.popUp.isShowing) autoComplete.hideList()
+                if (sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
             }
             if (ev.isControlDown) {
                 if (ev.code == KeyCode.SLASH) {
                     if (!autoComplete.popUp.isShowing) {
-                        area.replaceSelection("#" + content);
+                        area.replaceSelection("#$content");
 
 
                     }
@@ -143,10 +144,10 @@ class CodeManager {
             if (ev.isControlDown) {
 
 
-                if(ev.code == KeyCode.F) {
+                if (ev.code == KeyCode.F) {
                     findHandler.switchGui()
                 }
-                if(ev.code == KeyCode.R) {
+                if (ev.code == KeyCode.R) {
                     replaceHandler.switchGui()
                 }
                 if (ev.code == KeyCode.SPACE) {
@@ -169,12 +170,23 @@ class CodeManager {
             }
         }
 
-        area.setOnMousePressed {ev->
+        area.setOnMousePressed { ev ->
             mousePressed = true
 
-            if(ev.isSecondaryButtonDown) {
+            if (ev.isSecondaryButtonDown) {
 
-                Menus.getMenuForArea(this, ev.screenX, ev.screenY)
+                if(contextMenu == null) {
+                    contextMenu =Menus.getMenuForArea(this, ev.screenX, ev.screenY)
+                } else {
+                    contextMenu!!.hide()
+                    contextMenu = null
+                }
+
+            }  else {
+                if(contextMenu != null) {
+                    contextMenu!!.hide()
+                    contextMenu = null
+                }
             }
 
         }
@@ -182,7 +194,7 @@ class CodeManager {
             mousePressed = false
         }
         area.setOnMouseClicked { ev ->
-            if(sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
+            if (sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
             if (autoComplete.popUp.isShowing) autoComplete.popUp.hide()
 
 
@@ -223,14 +235,14 @@ class CodeManager {
             stack.reverse()
 
             hBox.children.clear()
-            stack.forEach {node ->
+            stack.forEach { node ->
                 val b = Button(node.content)
                 b.setPrefSize(80.0, 23.0)
                 b.setOnAction {
 
-                   area.moveTo(area.text.indexOf(node.raw))
+                    area.moveTo(area.text.indexOf(node.raw))
                     area.selectLine()
-                   area.scrollYToPixel(node.linenumber * 14.95)
+                    area.scrollYToPixel(node.linenumber * 14.95)
 
                 }
 

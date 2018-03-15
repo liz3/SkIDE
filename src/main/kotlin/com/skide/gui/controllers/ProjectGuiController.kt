@@ -1,10 +1,6 @@
 package com.skide.gui.controllers
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -16,7 +12,16 @@ class ProjectGuiController {
     lateinit var rootBorderPane: BorderPane
 
     @FXML
-    lateinit var mainRightBorderPane: BorderPane
+    lateinit var mainLowerBorderPane: BorderPane
+
+    @FXML
+    lateinit var consoleTabArea: TabPane
+
+    @FXML
+    lateinit var consoleAddBtn: Button
+
+    @FXML
+    lateinit var consoleRemBtn: Button
 
     @FXML
     lateinit var mainLeftBorderPane: BorderPane
@@ -50,4 +55,11 @@ class ProjectGuiController {
 
     @FXML
     lateinit var herachieLabel: Label
+
+    @FXML
+    lateinit var lowerTabPane:TabPane
+
+    @FXML
+    lateinit var lowerTabPaneToggleBtn:Button
+
 }

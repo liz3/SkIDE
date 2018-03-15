@@ -3,8 +3,6 @@ package com.skide.utils
 import com.skide.core.code.CodeManager
 import com.skide.include.Node
 import com.skide.include.NodeType
-import javafx.application.Platform
-import javafx.scene.control.Button
 import org.fxmisc.richtext.CodeArea
 import java.util.*
 import java.util.regex.Pattern
@@ -120,7 +118,7 @@ fun CodeArea.getCaretLine() = this.caretSelectionBind.paragraphIndex + 1
 class StringSearchResult(val start: Int, val end: Int, val str: String)
 
 class CurrentStateInfo(val currentNode: Node, val actualCurrentString: String, val column: Int, val currentWord: String,
-                       val beforeString: String, val afterString: String, val charBeforeCaret: String, val charAfterCaret: String, val inString: Boolean)
+                       val beforeString: String, val afterString: String, val charBeforeCaret: String, val charAfterCaret: String, val inString: Boolean, val inBrace: Boolean)
 
 fun CodeArea.getInfo(manager: CodeManager): CurrentStateInfo {
     val currentLine = manager.area.getCaretLine()
@@ -138,6 +136,7 @@ fun CodeArea.getInfo(manager: CodeManager): CurrentStateInfo {
     var currentWord = ""
     var beforeStr = ""
     var inString = false
+    var inBrace = false
     var afterStr = ""
     val charBeforeCaret = {
         if (column == 0) {
@@ -158,6 +157,11 @@ fun CodeArea.getInfo(manager: CodeManager): CurrentStateInfo {
         if (x == column) break
         val c = actualCurrentString[x]
         if (c == '"') inString = !inString
+    }
+    for (x in 0 until actualCurrentString.length) {
+        if (x == column) break
+        val c = actualCurrentString[x]
+        if (c == '(' || c == ')') inBrace = !inBrace
     }
     if (charBeforeCaret != "") {
         var count = column
@@ -180,7 +184,7 @@ fun CodeArea.getInfo(manager: CodeManager): CurrentStateInfo {
     }
 
 
-    return CurrentStateInfo(currentNode!!, actualCurrentString, column, currentWord, beforeStr, afterStr, charBeforeCaret, charAfterCaret, inString)
+    return CurrentStateInfo(currentNode!!, actualCurrentString, column, currentWord, beforeStr, afterStr, charBeforeCaret, charAfterCaret, inString, inBrace)
 }
 
 fun String.search(what: String, ignoreCase: Boolean, regex: Boolean): List<StringSearchResult> {

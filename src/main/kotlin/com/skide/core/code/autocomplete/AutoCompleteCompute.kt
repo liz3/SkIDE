@@ -120,7 +120,10 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         area.caretPositionProperty().addListener { _, _, _ ->
 
 
-            if (manager.mousePressed || stopped) return@addListener
+            if (manager.mousePressed || stopped) {
+                println("Returning")
+                return@addListener
+            }
             lineBefore = currentLine
             currentLine = area.getCaretLine()
             coldPosOld = colPos
@@ -132,11 +135,11 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
 
         }
-       /*
-        area.textProperty().addListener { observable, oldValue, newValue ->
+        /*
+         area.textProperty().addListener { observable, oldValue, newValue ->
 
-        }
-        */
+         }
+         */
     }
 
     private fun onColumnChange() {
@@ -206,17 +209,19 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         if (popUp.isShowing) {
 
 
+            val replaced = getWordSearchReplace(currentInfo.currentWord, currentInfo)
+
             println("Char is ${currentInfo.charAfterCaret}")
 
             val toRemove = Vector<ListHolderItem>()
 
-            fillList.items.filterNotTo(toRemove) { it.name.startsWith(currentInfo.currentWord, true) }
+            fillList.items.filterNotTo(toRemove) { it.name.startsWith(replaced, true) }
             toRemove.forEach {
                 fillList.items.remove(it)
                 removed.add(it)
             }
             toRemove.clear()
-            removed.filterTo(toRemove) { it.name.startsWith(currentInfo.currentWord, true) }
+            removed.filterTo(toRemove) { it.name.startsWith(replaced, true) }
 
             toRemove.forEach {
                 removed.remove(it)
@@ -237,7 +242,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             if (currentInfo.currentWord.endsWith("{")) return
             if (currentInfo.currentNode.nodeType == NodeType.COMMENT) return
             if (currentInfo.currentWord.endsWith(":") ||
-                    currentInfo.beforeString.endsWith(")") ||currentInfo.beforeString.endsWith("(")) return
+                    currentInfo.beforeString.endsWith(")") || currentInfo.beforeString.endsWith("(")) return
             manager.parseResult = manager.parseStructure()
             fillList.items.clear()
             removed.clear()
@@ -292,7 +297,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
                         if (!found) {
                             addItem((it.fields["name"] as String) + " [from option]", { info ->
-                                area.replaceText(area.caretPosition  - info.beforeString.length, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
+                                area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
 
                                 //TODO add path items as
                             })
@@ -301,18 +306,18 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
                         if (!found) {
                             addItem({
-                                if(it.fields["visibility"] == "global") {
+                                if (it.fields["visibility"] == "global") {
                                     ""
                                 } else {
                                     "_"
                                 }
                             }.invoke() + it.fields["name"] as String, { info ->
-                               if(it.fields["visibility"] == "global") {
-                                   area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{" + it.fields["name"] + "}")
+                                if (it.fields["visibility"] == "global") {
+                                    area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{" + it.fields["name"] + "}")
 
-                               } else {
-                                   area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.fields["name"] + "}")
-                               }
+                                } else {
+                                    area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.fields["name"] + "}")
+                                }
                             })
                         }
                     }
@@ -323,16 +328,43 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 it.forEach { item ->
                     if (item.type != DocType.EVENT) {
 
-                        addItem("${item.name} - ${item.addon.name}", { currInfo ->
-                            val toRem = currInfo.actualCurrentString.replace("\t", "").length
-                            var adder = if(item.pattern == "") item.name else item.pattern
-                            if(item.type == DocType.CONDITION) if(!currInfo.actualCurrentString.contains("if ")) adder = "if $adder"
-                            adder += ":"
-                            area.replaceText(area.caretPosition - toRem, area.caretPosition, adder)
-                            manager.parseResult = manager.parseStructure()
-                            manager.sequenceReplaceHandler.compute(area.getInfo(manager), adder.length)
+                        if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && !currentInfo.inBrace && currentInfo.charAfterCaret == ":") {
 
-                        })
+                            if (item.type == DocType.TYPE) {
+                                addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
+                                    var toRem = currInfo.beforeString
+                                    toRem = toRem.replace(":", "")
+                                    val adder = item.name
+                                    area.replaceText(area.caretPosition - toRem.length, area.caretPosition, adder)
+                                    manager.parseResult = manager.parseStructure()
+                                })
+                            }
+                        } else if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && currentInfo.inBrace) {
+                            if (item.type == DocType.TYPE) {
+                                addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
+                                    var toRem = currInfo.beforeString
+                                    toRem = toRem.replace(")", "")
+                                    if (toRem.contains(":")) {
+                                        toRem = toRem.split(":")[1]
+                                    }
+                                    val adder = item.name
+                                    area.replaceText(area.caretPosition - toRem.length, area.caretPosition, adder)
+                                    manager.parseResult = manager.parseStructure()
+                                })
+                            }
+                        } else {
+                            addItem("${item.name}:${item.type.toString()} - ${item.addon.name}", { currInfo ->
+                                val toRem = currInfo.actualCurrentString.replace("\t", "").length
+                                var adder = if (item.pattern == "") item.name else item.pattern
+                                if (item.type == DocType.CONDITION) if (!currInfo.actualCurrentString.contains("if ")) adder = "if $adder"
+                                adder += ":"
+                                area.replaceText(area.caretPosition - toRem, area.caretPosition, adder)
+                                manager.parseResult = manager.parseStructure()
+                                manager.sequenceReplaceHandler.compute(area.getInfo(manager), adder.length)
+
+                            })
+                        }
+
 
                     }
                 }
@@ -377,10 +409,10 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
 
         if (!popUp.isShowing) {
-        area.replaceText(area.caretPosition, area.caretPosition + node.raw.length, "")
+            area.replaceText(area.caretPosition, area.caretPosition + node.raw.length, "")
 
             manager.parseResult = manager.parseStructure()
-         //   if (area.getInfo(manager, currentLine).inString) return
+            //   if (area.getInfo(manager, currentLine).inString) return
 
             val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, manager.parseResult, node)
 
@@ -417,7 +449,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 for (s in Arrays.asList("Join", "Quit")) {
                     addItem("On $s", {
                         hideList()
-                        area.moveTo(area.caretPosition -it.actualCurrentString.length)
+                        area.moveTo(area.caretPosition - it.actualCurrentString.length)
                         area.replaceText(area.caretPosition, area.caretPosition + it.actualCurrentString.length, "on " + s.toLowerCase() + ":\n\t")
                         area.moveTo(area.caretPosition - 1)
                     })
@@ -439,42 +471,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     }
                 }
             }
-/*
-
-            manager.parseResult.forEach {
-                if (it.nodeType == NodeType.FUNCTION) {
-                    val name = it.fields["name"] as String
-                    val returnType = it.fields["return"] as String
-                    var paramsStr = ""
-                    var insertParams = ""
-                    (it.fields["params"] as Vector<*>).forEach {
-                        it as MethodParameter
-                        paramsStr += ",${it.name}:${it.type}"
-                        insertParams += ",${it.name}"
-                    }
-                    if (paramsStr != "") paramsStr = paramsStr.substring(1)
-                    if (insertParams != "") insertParams = insertParams.substring(1)
-                    val con = "FUNC: $name($paramsStr):$returnType"
-
-                    val insert = "$name($insertParams)"
-                    addItem(con, {
-                        area.replaceText(area.caretPosition, area.caretPosition, insert)
-                    })
-
-                }
-            }
-
-
-            vars.forEach {
-                if (it.fields["visibility"] == "global") {
-                    addItem("VAR " + it.fields["name"], { _ ->
-                        area.replaceText(area.caretPosition, area.caretPosition, "{" + it.fields["name"] + "}")
-                    })
-                }
-            }
-
-
- */
 
             globalCompleteVisible = true
             popUp.show(project.openProject.guiHandler.window.stage)
@@ -509,6 +505,21 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
 
+    private fun getWordSearchReplace(replaced:String, currentInfo: CurrentStateInfo): String {
+
+        var replaced = replaced
+
+        if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && currentInfo.inBrace) {
+            replaced = replaced.replace(")", "")
+            if (replaced.contains(":")) {
+                replaced = replaced.split(":")[1]
+            }
+        } else if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && !currentInfo.inBrace && currentInfo.charAfterCaret == ":") {
+            replaced = replaced.replace(":", "")
+        }
+
+        return replaced
+    }
     private fun onLineChange() {
 
 

@@ -25,10 +25,10 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
     fun switchGui() {
 
         if (visible) {
-            manager.autoComplete.stopped = false
-            project.borderPane.top = null
             clearSearchHighlighting()
+            project.borderPane.top = null
             visible = false
+            manager.autoComplete.stopped = false
         } else {
             manager.autoComplete.stopped = true
             project.borderPane.top = node.first
@@ -88,10 +88,7 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
         ctrl.searchField.setOnKeyReleased {
             if (it.code == KeyCode.ESCAPE) {
-                project.borderPane.top = null
-                clearSearchHighlighting()
-                visible = false
-                area.requestFocus()
+                switchGui()
 
             }
         }

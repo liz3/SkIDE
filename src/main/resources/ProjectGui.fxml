@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -10,14 +12,41 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-
+<?import javafx.scene.layout.VBox?>
 
 <BorderPane fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="1068.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectGuiController">
    <bottom>
-      <BorderPane fx:id="mainRightBorderPane" prefHeight="28.0" prefWidth="1068.0" BorderPane.alignment="CENTER">
-         <bottom>
-            <HBox prefHeight="3.0" prefWidth="1068.0" BorderPane.alignment="CENTER" />
-         </bottom>
+      <BorderPane fx:id="mainLowerBorderPane" prefHeight="201.0" prefWidth="1068.0" BorderPane.alignment="CENTER">
+         <center>
+            <TabPane fx:id="lowerTabPane" prefHeight="200.0" prefWidth="200.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+              <tabs>
+                <Tab text="Console">
+                     <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                           <center>
+                              <TabPane fx:id="consoleTabArea" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+                           </center>
+                           <left>
+                              <VBox prefHeight="172.0" prefWidth="31.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Button fx:id="consoleAddBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="51.0" text="+" />
+                                    <Button fx:id="consoleRemBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="56.0" text="X" />
+                                 </children>
+                              </VBox>
+                           </left>
+                        </BorderPane>
+                     </content>
+                </Tab>
+              </tabs>
+            </TabPane>
+         </center>
+         <top>
+            <Button fx:id="lowerTabPaneToggleBtn" alignment="TOP_LEFT" mnemonicParsing="false" prefHeight="0.0" prefWidth="53.0" text="Toggle" BorderPane.alignment="CENTER_RIGHT">
+               <BorderPane.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </BorderPane.margin>
+            </Button>
+         </top>
       </BorderPane>
    </bottom>
    <left>

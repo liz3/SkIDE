@@ -87,10 +87,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
         ctrl.searchField.setOnKeyReleased {
             if (it.code == KeyCode.ESCAPE) {
-                project.borderPane.top = null
-                clearSearchHighlighting()
-                visible = false
-                area.requestFocus()
+               switchGui()
 
             }
             if (it.code == KeyCode.ENTER) {

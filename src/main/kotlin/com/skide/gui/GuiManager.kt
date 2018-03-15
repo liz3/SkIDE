@@ -32,6 +32,7 @@ object GuiManager {
         val controller = loader.getController<Any>()
 
         val scene = Scene(rootNode)
+        scene.stylesheets.add("Reset.css")
         scene.stylesheets.add("ThemeDark.css")
         stage.scene = scene
         stage.sizeToScene()
@@ -115,6 +116,9 @@ class JavaFXBootstrapper : Application() {
     //Call the method with the primary created stage
     override fun start(primaryStage: Stage) = GuiManager.bootstrapCallback(primaryStage)
 
+    override fun stop() {
+        System.exit(0)
+    }
     //Companion Object is required to kick off JavaFX with Kotlin
     companion object {
         fun bootstrap() = launch(JavaFXBootstrapper::class.java)

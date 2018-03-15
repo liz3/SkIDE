@@ -7,15 +7,12 @@ import com.skide.gui.Menus
 import com.skide.gui.controllers.CreateProjectGuiController
 import com.skide.gui.controllers.ProjectGuiController
 import com.skide.include.OpenFileHolder
-import com.terminalfx.TerminalBuilder
 import javafx.application.Platform
-import javafx.scene.Scene
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.BorderPane
-import javafx.scene.layout.HBox
 import org.fxmisc.flowless.VirtualizedScrollPane
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
@@ -28,6 +25,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     val openFiles = HashMap<File, OpenFileHolder>()
     val settings = SettingsGui(coreManager, this)
     val window = GuiManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
+
 
 
     fun startGui(): ProjectGuiEventListeners {
@@ -45,6 +43,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             closeHook()
         }
         eventManager.setup()
+        LowerTabPaneEventManager(controller, this, coreManager).setup()
 
         return eventManager
     }
@@ -110,14 +109,12 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         registerEditorEvents()
         setupMainMenu()
         updateProjectFilesTreeView()
-        controller.rootBorderPane.bottom = getLowerTabPane()
         guiReady()
     }
 
     private fun openFile(f: File) {
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
-
 
             for ((file, holder) in openProjectGuiManager.openFiles) {
 
@@ -180,23 +177,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     }
 
-    fun getLowerTabPane() : TabPane{
 
-        val terminalBuilder = TerminalBuilder()
-        terminalBuilder.terminalPath = openProjectGuiManager.openProject.project.folder.toPath()
-        terminalBuilder.terminalConfig.backgroundColor = "#2B2B2B"
-        terminalBuilder.terminalConfig.foregroundColor = "#dbe0dc"
-        val terminalTab = terminalBuilder.newTerminal()
-        terminalTab.text = "Console"
-        terminalTab.isClosable = false
-
-        val tabPane = TabPane()
-        tabPane.prefHeight = 250.0
-
-        tabPane.tabs.add(terminalTab)
-
-        return tabPane;
-    }
     fun registerEventsForNewFile(holder: OpenFileHolder) {
 
         holder.tab.setOnCloseRequest {
