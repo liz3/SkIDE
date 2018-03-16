@@ -257,8 +257,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
                 params.forEach {
                     it as MethodParameter
-                    toAdd["_" + it.name + " :" + it.type] = Pair(NodeType.SET_VAR, { _ ->
-                        area.replaceText(area.caretPosition, area.caretPosition, "{_" + it.name + "}")
+                    toAdd["_" + it.name + " :" + it.type] = Pair(NodeType.SET_VAR, { info ->
+                        area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.name + "}")
                     })
                 }
             }
@@ -352,6 +352,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                     manager.parseResult = manager.parseStructure()
                                 })
                             }
+
                         } else {
                             addItem("${item.name}:${item.type.toString()} - ${item.addon.name}", { currInfo ->
                                 val toRem = currInfo.actualCurrentString.replace("\t", "").length

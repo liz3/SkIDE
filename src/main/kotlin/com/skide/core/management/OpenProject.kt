@@ -7,6 +7,7 @@ import com.skide.include.OpenFileHolder
 import com.skide.include.Project
 import com.skide.utils.Version
 import com.skide.utils.adjustVersion
+import com.skide.utils.skcompiler.SkCompiler
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
@@ -16,6 +17,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
     val guiHandler = OpenProjectGuiManager(this, coreManager)
     val eventManager = guiHandler.startGui()
     val addons = HashMap<String, Vector<AddonItem>>()
+    val compiler = SkCompiler()
 
 
     init {

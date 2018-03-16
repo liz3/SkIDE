@@ -1,7 +1,6 @@
 .context-menu {
     -fx-padding: 0;
     -fx-font-size: 12px;
-    -fx-min-width: 200px;
 }
 .menu-item {
     -fx-padding: 0;

@@ -1,6 +1,8 @@
 package com.skide.core.management
 
 import com.skide.CoreManager
+import com.skide.include.CompileOption
+import com.skide.include.CompileOptionType
 import com.skide.include.Project
 import com.skide.utils.FileReturnResult
 import com.skide.utils.readFile
@@ -132,9 +134,12 @@ class ProjectManager(val coreManager: CoreManager) {
 class ProjectFileManager(val project: Project) {
 
     val configFile = File(project.folder, ".project.skide")
+    private val compileOptsFile = File(project.folder, ".compileInfo.skide")
     val projectFiles = HashMap<String, File>()
     val addons = HashMap<String, String>()
     val openFilesForSave = Vector<String>()
+    val compileOptions = HashMap<String, CompileOption>()
+
 
     init {
         project.files.forEach {
@@ -148,6 +153,86 @@ class ProjectFileManager(val project: Project) {
             addons[it.getString("name")] = it.getString("version")
         }
         rewriteConfig()
+        if (compileOptsFile.exists()) {
+            loadCompileOptions()
+        } else {
+            compileOptsFile.createNewFile()
+            val default = CompileOption(project.name, project.folder, CompileOptionType.CONCATENATE, true, true, false, 0)
+
+            default.includedFiles += projectFiles.values
+            compileOptions["Default"] = default
+            writeCompileOptions()
+
+        }
+
+    }
+
+    fun delCompileOption(name: String) {
+        if (!compileOptions.containsKey(name)) return
+        compileOptions.remove(name)
+        writeCompileOptions()
+
+    }
+
+    fun addCompileOption(opt: CompileOption) {
+
+        if (compileOptions.containsKey(opt.name)) return
+
+        compileOptions[opt.name] = opt
+
+        writeCompileOptions()
+    }
+
+    private fun loadCompileOptions() {
+        JSONArray(readFile(compileOptsFile).second).forEach { current ->
+            if (current is JSONObject) {
+                val compileOption = CompileOption(current.getString("name"),
+                        File(current.getString("output")),
+                        CompileOptionType.valueOf(current.getString("method")),
+                        current.getBoolean("rem_empty_lines"),
+                        current.getBoolean("rem_comments"),
+                        current.getBoolean("obfuscate"),
+                        current.getInt("obfuscate_lvl"))
+
+                val includedFiles = current.getJSONArray("included_file")
+                val excludedFiles = current.getJSONArray("excluded_file")
+
+                projectFiles.values.forEach {
+                    when {
+                        includedFiles.contains(it.absolutePath) -> compileOption.includedFiles.add(it)
+                        excludedFiles.contains(it.absolutePath) -> compileOption.excludedFiles.add(it)
+                        else -> compileOption.includedFiles.add(it)
+                    }
+                }
+                compileOptions[compileOption.name] = compileOption
+            }
+        }
+
+    }
+
+    fun writeCompileOptions() {
+        val arr = JSONArray()
+
+        compileOptions.values.forEach { c ->
+            val obj = JSONObject()
+            val included = JSONArray()
+            val excluded = JSONArray()
+
+            obj.put("name", c.name)
+            obj.put("output", c.outputDir.absolutePath)
+            obj.put("method", c.method.toString())
+            obj.put("rem_empty_lines", c.remEmptyLines)
+            obj.put("rem_comments", c.remComments)
+            obj.put("obfuscate", c.obsfuscate)
+            obj.put("obfuscate_lvl", c.obfuscateLevel)
+            c.excludedFiles.forEach { excluded.put(it.absolutePath) }
+            c.includedFiles.forEach { included.put(it.absolutePath) }
+            obj.put("included_file", included)
+            obj.put("excluded_file", excluded)
+
+            arr.put(obj)
+        }
+        writeFile(arr.toString().toByteArray(), compileOptsFile)
     }
 
     fun rewriteConfig() {
@@ -195,7 +280,11 @@ class ProjectFileManager(val project: Project) {
         val file = File(project.folder, rName)
         file.createNewFile()
         projectFiles.put(rName, file)
+        compileOptions.values.forEach {
+            it.includedFiles.add(file)
+        }
         rewriteConfig()
+        writeCompileOptions()
         return true
     }
 
@@ -204,7 +293,12 @@ class ProjectFileManager(val project: Project) {
         val file = projectFiles[rName]
         if (file?.exists()!!) file.delete() else return false
         projectFiles.remove(rName)
+        compileOptions.values.forEach {
+          if(it.includedFiles.contains(file))  it.includedFiles.remove(file)
+          if(it.excludedFiles.contains(file))  it.excludedFiles.remove(file)
+        }
         rewriteConfig()
+        writeCompileOptions()
         return true
     }
 

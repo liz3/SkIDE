@@ -39,7 +39,7 @@ class CodeManager {
     lateinit var hBox: HBox
     private val parser = SkriptParser()
 
-    var contextMenu:ContextMenu? = null
+    var contextMenu: ContextMenu? = null
 
     var mousePressed = false
 
@@ -142,8 +142,6 @@ class CodeManager {
                 }
             }
             if (ev.isControlDown) {
-
-
                 if (ev.code == KeyCode.F) {
                     findHandler.switchGui()
                 }
@@ -175,15 +173,15 @@ class CodeManager {
 
             if (ev.isSecondaryButtonDown) {
 
-                if(contextMenu == null) {
-                    contextMenu =Menus.getMenuForArea(this, ev.screenX, ev.screenY)
+                if (contextMenu == null) {
+                    contextMenu = Menus.getMenuForArea(this, ev.screenX, ev.screenY)
                 } else {
                     contextMenu!!.hide()
                     contextMenu = null
                 }
 
-            }  else {
-                if(contextMenu != null) {
+            } else {
+                if (contextMenu != null) {
                     contextMenu!!.hide()
                     contextMenu = null
                 }

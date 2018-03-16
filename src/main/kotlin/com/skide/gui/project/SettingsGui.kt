@@ -20,7 +20,11 @@ class SettingsGui(val coreManager: CoreManager, val projGuiManager: OpenProjectG
 
 
     fun show() {
-        if (!loaded) SettingsGuiEventListener(this, window.controller as ProjectSettingsGuiController).init()
+        if (!loaded) {
+            val co = CompileOptionsGui(projGuiManager.openProject, window.controller as ProjectSettingsGuiController)
+            co.init()
+            SettingsGuiEventListener(this, window.controller as ProjectSettingsGuiController, co).init()
+        }
 
         if (window.stage.isShowing) return
         window.stage.show()
@@ -36,7 +40,7 @@ enum class SettingsChangeType {
     ADDON_ALTER
 }
 
-class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGuiController) {
+class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGuiController, val co: CompileOptionsGui) {
 
 
     val resourceManager = gui.coreManager.resourceManager
@@ -144,6 +148,7 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGu
             }
             ctrl.okBtn.setOnAction {
                 performChanges()
+                gui.window.close()
             }
         }
 
@@ -176,6 +181,7 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGu
         changes.clear()
         alterValues.clear()
         gui.projGuiManager.openProject.updateAddons()
+        co.applyCurr()
     }
     private fun currItem() = ctrl.plListView.selectionModel.selectedItem
 }

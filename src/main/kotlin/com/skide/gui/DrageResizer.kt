@@ -18,7 +18,7 @@ class DragResizer {
 
         bottomSec.scene.heightProperty().addListener { observable, oldValue, newValue ->
             if (bottomSec.height > newValue.toDouble() - 30) {
-                bottomSec.minHeight = newValue.toDouble() - 30
+                //bottomSec.minHeight = newValue.toDouble() - 30
             }
         }
         bottomSec.setOnMouseMoved { event ->
@@ -39,7 +39,7 @@ class DragResizer {
             mousePosY = event.sceneY
             bottomSecHeight = bottomSec.height
             if (canDrag(windowHeight, mousePosY, bottomSecHeight)) {
-                bottomSec.minHeight = if (mousePosY < 30) windowHeight - 30 else windowHeight - event.sceneY
+                bottomSec.prefHeight = if (mousePosY < 30) windowHeight - 30 else windowHeight - event.sceneY
             }
         }
     }
@@ -47,6 +47,6 @@ class DragResizer {
     private fun canDrag(windowHeight: Double, mousePosY: Double, bottomSecHeight: Double): Boolean {
         val bottomSecOffsetTop = windowHeight - bottomSecHeight
         val mousePosYRelativeToBottomSec = mousePosY - bottomSecOffsetTop
-        return mousePosYRelativeToBottomSec <= 25
+        return mousePosYRelativeToBottomSec <= 50
     }
 }

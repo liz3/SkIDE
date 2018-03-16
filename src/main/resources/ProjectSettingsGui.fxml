@@ -45,6 +45,33 @@
                   </AnchorPane>
             </content>
           </Tab>
+            <Tab text="Compile Options">
+               <content>
+                  <Pane prefHeight="200.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="14.0" layoutY="14.0" text="Compile Options" />
+                        <Label layoutX="220.0" layoutY="65.0" text="Output Directory:" />
+                        <TextField fx:id="compileOutPutPathField" layoutX="220.0" layoutY="82.0" prefHeight="25.0" prefWidth="241.0" />
+                        <ListView fx:id="compileConfListView" layoutX="14.0" layoutY="65.0" prefHeight="200.0" prefWidth="200.0" />
+                        <Label layoutX="14.0" layoutY="44.0" text="Configuration" />
+                        <Button fx:id="compileDelConfBtn" layoutX="14.0" layoutY="271.0" mnemonicParsing="false" text="Delete" />
+                        <Button fx:id="compileNewConfBtn" layoutX="271.0" layoutY="10.0" mnemonicParsing="false" text="New" />
+                        <Label layoutX="220.0" layoutY="113.0" text="Compile Method" />
+                        <ComboBox fx:id="compileMethodComboBox" layoutX="220.0" layoutY="130.0" prefHeight="25.0" prefWidth="238.0" />
+                        <CheckBox fx:id="removeCommentsCheck" layoutX="216.0" layoutY="172.0" mnemonicParsing="false" text="Remove Comments" />
+                        <CheckBox fx:id="removeEmptyLinesCheck" layoutX="216.0" layoutY="189.0" mnemonicParsing="false" text="Remove Empty Line" />
+                        <CheckBox fx:id="compileObfuscateCheck" layoutX="216.0" layoutY="218.0" mnemonicParsing="false" text="Obfuscate" />
+                        <Button fx:id="compileOutPutBtn" layoutX="471.0" layoutY="82.0" mnemonicParsing="false" text="..." />
+                        <ComboBox fx:id="obsfsucateLevelComboBox" layoutX="297.0" layoutY="214.0" prefWidth="150.0" />
+                        <ListView fx:id="compileIncludedFileList" layoutX="471.0" layoutY="254.0" prefHeight="200.0" prefWidth="200.0" />
+                        <Label layoutX="471.0" layoutY="235.0" text="Included files" />
+                        <ListView fx:id="compileExcludedFileList" layoutX="686.0" layoutY="254.0" prefHeight="200.0" prefWidth="200.0" />
+                        <Label layoutX="686.0" layoutY="235.0" text="Excluded Files" />
+                        <TextField fx:id="compileNewOptionsNameField" layoutX="114.0" layoutY="10.0" />
+                     </children>
+                  </Pane>
+               </content>
+            </Tab>
         </tabs>
       </TabPane>
    </center>

@@ -25,6 +25,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     val openFiles = HashMap<File, OpenFileHolder>()
     val settings = SettingsGui(coreManager, this)
     val window = GuiManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
+    lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
 
 
 
@@ -43,7 +44,8 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             closeHook()
         }
         eventManager.setup()
-        LowerTabPaneEventManager(controller, this, coreManager).setup()
+        lowerTabPaneEventManager = LowerTabPaneEventManager(controller, this, coreManager)
+        lowerTabPaneEventManager.setup()
 
         return eventManager
     }
@@ -265,6 +267,18 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             openProjectGuiManager.window.close()
             openProjectGuiManager.closeHook()
         }
+
+        val newProject = MenuItem("New Project")
+        newProject.setOnAction {
+            val window = GuiManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
+            window.controller as CreateProjectGuiController
+            window.controller.initGui(coreManager, window)
+            window.stage.isResizable = false
+
+
+            window.stage.show()
+        }
+        val compileMenu = Menu("Compile")
         fileMenu.setOnShowing {
             otherProjects.items.clear()
             coreManager.configManager.projects.values.forEach {
@@ -278,23 +292,25 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                     otherProjects.items.add(item)
                 }
             }
-        }
 
-        val newProject = MenuItem("New Project")
-        newProject.setOnAction {
-            val window = GuiManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
-            window.controller as CreateProjectGuiController
-            window.controller.initGui(coreManager, window)
-            window.stage.isResizable = false
+            compileMenu.items.clear()
 
-
-            window.stage.show()
+            openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach {
+                val item = MenuItem(it.key)
+                item.setOnAction {ev ->
+                    openProjectGuiManager.openFiles.forEach { f->
+                        f.value.saveCode()
+                    }
+                    openProjectGuiManager.openProject.compiler.compile(openProjectGuiManager.openProject.project, it.value, openProjectGuiManager.lowerTabPaneEventManager.setupBuildLogTabForInput())
+                }
+                compileMenu.items.add(item)
+            }
         }
         val projectSettings = MenuItem("Project Settings")
         projectSettings.setOnAction {
             openProjectGuiManager.settings.show()
         }
-        fileMenu.items.addAll(newProject, projectSettings, otherProjects, closeItem)
+        fileMenu.items.addAll(newProject, projectSettings, otherProjects, compileMenu, closeItem)
     }
 
     private fun registerBrowserEvents() {
