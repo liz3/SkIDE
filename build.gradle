@@ -6,6 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
     }
 }
 
@@ -39,6 +40,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
+
 compileKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
@@ -63,4 +65,29 @@ jar {
         attributes 'Implementation-Version': version
         attributes 'Implementation-Vendor': name
     }
+}
+
+apply plugin: 'javafx-gradle-plugin'
+
+// these values are the examples and defaults
+// you won't need them all
+
+// configure javafx-gradle-plugin
+// for all available settings please look at the class "JavaFXGradlePluginExtension"
+jfx {
+    verbose = true
+    mainClass = "com.skide.MainKt"
+    vendor = 'Liz3'
+    appName = "skide"
+    nativeReleaseVersion = "0.0.4"
+    fileAssociations = [
+
+            [
+                    description: 'Njol Skript File',
+                    extensions: 'sk',
+                    contentType: 'application/skript',
+                    icon: 'src/main/deploy/skide.ico'
+            ]
+    ]
+
 }
