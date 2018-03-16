@@ -74,6 +74,7 @@ class CodeManager {
 
         area.focusedProperty().addListener { _, _, newValue ->
 
+            autoComplete.hideList()
             if (!newValue) {
                 project.saveCode()
             }
