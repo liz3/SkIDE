@@ -16,3 +16,20 @@ SkIDE is a fully featured IDE, providing Autocomplete, Syntax Highlighting and a
 SkIDE is written completely in Kotlin currently, you still can pull request with Java Code.
 
 For the gui SkIDE uses JavaFX, highlighting is provided by RichTextFX.
+
+# Used Libraries and Frameworks
+[Kotlin Language](http://kotlinlang.org/)
+
+[JavaFX](http://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html)
+
+[RichTextFX](https://github.com/FXMisc/RichTextFX)
+
+[TerminalFX](https://github.com/javaterminal/TerminalFX)
+
+[SkUnity](http://skunity.com/)
+
+[Gradle](https://gradle.org/)
+
+[JavaFX Gradle Plugin](https://github.com/FibreFoX/javafx-gradle-plugin)
+
+[JSON java Library](https://github.com/stleary/JSON-java)
