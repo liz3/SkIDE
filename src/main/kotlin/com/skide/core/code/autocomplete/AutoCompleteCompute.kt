@@ -283,8 +283,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     val con = "$name($paramsStr):$returnType"
 
                     val insert = "$name($insertParams)"
-                    toAdd.put(con, Pair(NodeType.FUNCTION, { _ ->
-                        area.replaceText(area.caretPosition, area.caretPosition, insert)
+                    toAdd.put(con, Pair(NodeType.FUNCTION, { inf ->
+                        area.replaceText(area.caretPosition - inf.beforeString.length, area.caretPosition, insert)
                     }))
                 }
             }
@@ -354,8 +354,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                             }
 
                         } else {
-                            addItem("${item.name}:${item.type.toString()} - ${item.addon.name}", { currInfo ->
-                                val toRem = currInfo.actualCurrentString.replace("\t", "").length
+                            addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
+                                val toRem = currInfo.beforeString.length
                                 var adder = if (item.pattern == "") item.name else item.pattern
                                 if (item.type == DocType.CONDITION) if (!currInfo.actualCurrentString.contains("if ")) adder = "if $adder"
                                 adder += ":"

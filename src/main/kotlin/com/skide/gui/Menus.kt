@@ -71,6 +71,11 @@ object Menus {
 
             controller.contentArea.text = "[CODE=SKRIPT]${codeManager.area.selectedText}[/CODE]\n"
 
+
+            controller.cancelBtn.setOnAction {
+                scene.stage.close()
+
+            }
             controller.sendBtn.setOnAction {
                 val title = controller.titleBar.text
                 val msg = controller.contentArea.text
