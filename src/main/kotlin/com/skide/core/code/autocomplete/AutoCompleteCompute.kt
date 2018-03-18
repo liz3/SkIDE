@@ -362,7 +362,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                 area.replaceText(area.caretPosition - toRem, area.caretPosition, adder)
                                 manager.parseResult = manager.parseStructure()
 
-
+                                manager.sequenceReplaceHandler.compute(area.getInfo(manager))
                             })
                         }
 

@@ -1,14 +1,31 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
+import com.skide.core.code.highlighting.HighlighterStatics
 import com.skide.utils.CurrentStateInfo
 import com.skide.utils.EditorUtils
 import org.fxmisc.wellbehaved.event.EventPattern
 import org.fxmisc.wellbehaved.event.InputMap
 import org.fxmisc.wellbehaved.event.Nodes
 import java.util.*
+import java.util.regex.Pattern
 import kotlin.math.abs
 
+object SequenceReplacePattern {
+
+    const val valuePattern = "%.+?%"
+    const val optionalPattern = "\\[.*?\\]"
+    const val groupPattern = "\\(([^)]+)\\)"
+    const val optionalGroupPattern = "\\[\\(([^)]+)\\)\\]"
+
+    val patternCompiler = Pattern.compile(
+            "(?<VALUE>" + valuePattern + ")"
+                    + "|(?<OPTIONAL>" + optionalPattern + ")"
+                    + "|(?<GROUP>" + groupPattern + ")"
+                    + "|(?<OPTIONALGROUP>" + optionalGroupPattern + ")")
+}
+
+//	if [the] Bedwars game [(named|with name)] %string% is (startable|able to start):
 enum class ReplaceSequenceType {
     OPTIONAL,
     GROUP,
@@ -21,132 +38,66 @@ data class ReplaceSeuenceItem(val absoluteStart: Int, val absoluteEnd: Int, val 
 
 class ReplaceSequence(val manager: CodeManager) {
 
+
     val area = manager.area
     var computing = false
     val list = Vector<ReplaceSeuenceItem>()
     var atIndex = -1
     val im = InputMap.consume(
             EventPattern.keyTyped("\t"),
-            {  }
+            { }
     )
     var originalLength = 0
     var lineIndex = 0
 
-    fun compute(info: CurrentStateInfo, length: Int) {
+    fun compute(info: CurrentStateInfo) {
         if (computing) return
         computing = true
         manager.autoComplete.stopped = true
-        parse(info, length)
+        parse(info)
         Nodes.addInputMap(area, im)
     }
 
 
-    private fun parse(info: CurrentStateInfo, length: Int) {
+    private fun parse(info: CurrentStateInfo) {
 
         list.clear()
-        var inQuote = false
-        var absBegin = area.caretPosition - length - 1
-        var currPointer = -1
-        println("${area.caretPosition}:$length")
-        var str = info.actualCurrentString
-
-        while (str.startsWith("\t")) {
-            str = str.substring(1)
-            currPointer++
-        }
-        originalLength = str.length
         lineIndex = info.currentNode.linenumber
-        while (currPointer != str.length - 1) {
-            currPointer++
-            var currentChar = str[currPointer]
-            if (currentChar == '"') {
-                inQuote = !inQuote
-                continue
-            }
-            if (currentChar == '%') {
-                val start = absBegin + currPointer + 2 - info.currentNode.tabLevel
-                var expression = ""
-                currPointer++
-                currentChar = str[currPointer]
-                expression += currentChar
-                while (currentChar != '%') {
-                    currPointer++
-                    currentChar = str[currPointer]
-                    expression += currentChar
-                }
-                val end = absBegin + currPointer + 1 - info.currentNode.tabLevel
-                val value = ReplaceSeuenceItem(start, end, ReplaceSequenceType.VALUE)
-                value.fields["name"] = expression.substring(0, expression.length - 1)
-                list.add(value)
-            }
-            if (currentChar == '[') {
-                val hasMultiple = str[currPointer + 1] == '('
-                val start = absBegin + currPointer + 1 - info.currentNode.tabLevel
-                var expression = ""
-                while (currentChar != ']') {
-                    currPointer++
-                    currentChar = str[currPointer]
-                    expression += currentChar
-                }
-                val end = absBegin + currPointer + 1 + 1 - info.currentNode.tabLevel
-                val entry = ReplaceSeuenceItem(start, end, if (hasMultiple) ReplaceSequenceType.OPTIONAL_GROUP else ReplaceSequenceType.OPTIONAL)
+        originalLength = info.currentNode.raw.length
 
-                if (hasMultiple) {
-                    val opts = Vector<String>()
-                    expression.replace("(", "").replace(")", "").split("|").forEach { opts.add(it) }
-                    entry.fields["values"] = opts
-                } else {
-                    entry.fields["value"] = expression
-                }
-                list.addElement(entry)
-            }
-            if (currentChar == '(') {
-                val start = absBegin + currPointer + 1 - info.currentNode.tabLevel
-                var expression = ""
-                currPointer++
-                currentChar = str[currPointer]
-                expression += currentChar
-                while (currentChar != ')') {
-                    currPointer++
-                    currentChar = str[currPointer]
-                    expression += currentChar
-                }
-                val end = absBegin + currPointer + 1 + 1 - info.currentNode.tabLevel
-                val value = ReplaceSeuenceItem(start, end, ReplaceSequenceType.GROUP)
+        val absStart = area.caretPosition - area.caretColumn
+        val matcher = SequenceReplacePattern.patternCompiler.matcher(info.currentNode.raw)
 
-                if (expression.contains("|")) {
-                    val opts = Vector<String>()
-                    expression.split("|").forEach { opts.add(it) }
-                    value.fields["values"] = opts
-                } else {
-                    value.fields["value"] = expression
+        while (matcher.find()) {
+            val start = matcher.start()
+            val end = matcher.end()
 
-                }
 
-                list.addElement(value)
-            }
-
+           if(matcher.group("VALUE") != null) {
+               list.add(ReplaceSeuenceItem(absStart + start + 1, absStart + end - 1, ReplaceSequenceType.VALUE))
+           } else {
+               list.add(ReplaceSeuenceItem(absStart + start, absStart + end, ReplaceSequenceType.VALUE))
+           }
         }
-
 
         fire()
     }
 
-    // on lua script disable:
+
     fun fire() {
         if (!computing) return
         atIndex++
 
-        if(atIndex == list.size) {
+        if (atIndex == list.size) {
             cancel()
             return
         }
         val currentItem = list[atIndex]
         val nowLength = area.paragraphs[lineIndex - 1].text.length
 
-        if(currentItem != null) {
+        if (currentItem != null) {
             area.selectRange(currentItem.absoluteStart + (nowLength - originalLength), currentItem.absoluteEnd + (nowLength - originalLength))
-        } else{
+        } else {
             cancel()
         }
     }
