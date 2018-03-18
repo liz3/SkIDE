@@ -43,6 +43,7 @@ class CodeManager {
 
     var mousePressed = false
 
+    var lastPos = 0
 
     fun setup(project: OpenFileHolder) {
 
@@ -170,6 +171,8 @@ class CodeManager {
         }
 
         area.setOnMousePressed { ev ->
+
+            if (lastPos == 0) lastPos = area.caretPosition
             mousePressed = true
 
             if (ev.isSecondaryButtonDown) {
@@ -190,12 +193,36 @@ class CodeManager {
 
         }
         area.setOnMouseReleased {
-            mousePressed = false
+            Platform.runLater {
+                mousePressed = false
+            }
         }
-        area.setOnMouseClicked { ev ->
-            if (sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
-            if (autoComplete.popUp.isShowing) autoComplete.popUp.hide()
 
+        area.setOnMouseClicked { ev ->
+            if (sequenceReplaceHandler.computing) {
+                sequenceReplaceHandler.cancel()
+                return@setOnMouseClicked
+
+            }
+            if (autoComplete.popUp.isShowing) {
+                autoComplete.popUp.hide()
+                return@setOnMouseClicked
+            }
+
+
+            if (ev.clickCount == 2) {
+                area.selectWord()
+                return@setOnMouseClicked
+            }
+
+            if (ev.clickCount == 3) {
+                area.moveTo(lastPos)
+                area.selectLine()
+                Platform.runLater {
+                    lastPos = 0
+                }
+
+            }
 
         }
     }

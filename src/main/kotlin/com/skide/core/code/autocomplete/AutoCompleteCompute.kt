@@ -426,8 +426,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 area.moveTo(area.caretPosition - 7)
             }
 
-
-
             addItem("Generate Command") {
                 popUp.hide()
 

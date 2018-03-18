@@ -14,11 +14,6 @@ class SkriptParser {
 
         val split = content.split("\n").toMutableList()
 
-
-
-
-        println(split.size)
-
         for (x in 0 until split.size) {
             if (toSkip != 0) {
                 toSkip--
@@ -37,7 +32,6 @@ class SkriptParser {
               }
             }
         }
-        println(added.size)
         return nodes
     }
 
