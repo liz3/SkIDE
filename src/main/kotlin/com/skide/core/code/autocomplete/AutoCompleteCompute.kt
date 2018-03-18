@@ -356,12 +356,12 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         } else {
                             addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
                                 val toRem = currInfo.beforeString.length
-                                var adder = if (item.pattern == "") item.name else item.pattern
+                                var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
                                 if (item.type == DocType.CONDITION) if (!currInfo.actualCurrentString.contains("if ")) adder = "if $adder"
                                 adder += ":"
                                 area.replaceText(area.caretPosition - toRem, area.caretPosition, adder)
                                 manager.parseResult = manager.parseStructure()
-                                manager.sequenceReplaceHandler.compute(area.getInfo(manager), adder.length)
+
 
                             })
                         }
@@ -400,6 +400,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             fillList.refresh()
 
         }
+        if(fillList.items.size == 0) return
         popUp.show(project.openProject.guiHandler.window.stage)
         fillList.selectionModel.select(0)
 
@@ -506,7 +507,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
 
-    private fun getWordSearchReplace(replaced:String, currentInfo: CurrentStateInfo): String {
+    private fun getWordSearchReplace(replaced: String, currentInfo: CurrentStateInfo): String {
 
         var replaced = replaced
 
@@ -521,6 +522,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
         return replaced
     }
+
     private fun onLineChange() {
 
 
