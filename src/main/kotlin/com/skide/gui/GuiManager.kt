@@ -33,7 +33,7 @@ object GuiManager {
 
         val scene = Scene(rootNode)
         scene.stylesheets.add("Reset.css")
-        scene.stylesheets.add("ThemeDark.css")
+        //scene.stylesheets.add("ThemeDark.css")
         stage.scene = scene
         stage.sizeToScene()
 

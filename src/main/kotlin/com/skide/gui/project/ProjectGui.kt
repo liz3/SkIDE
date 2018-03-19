@@ -29,7 +29,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
 
     fun startGui(): ProjectGuiEventListeners {
-        window.scene.stylesheets.add("DarkHighlighting.css")
+        window.scene.stylesheets.add("HighlightingLight.css")
 
         val controller = window.controller as ProjectGuiController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)

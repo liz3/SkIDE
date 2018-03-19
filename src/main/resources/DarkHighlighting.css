@@ -53,11 +53,11 @@
 }
 
 .styled-text-area .text.string {
-    -fx-fill: #6A8759;
+    -fx-fill: #909296;
 }
 
 .styled-text-area .text.comment {
-    -fx-fill: #629755;
+    -fx-fill: #909296;
 }
 
 .styled-text-area .text.console {

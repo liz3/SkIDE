@@ -48,11 +48,11 @@
 }
 
 .string {
-    -fx-fill: blue;
+    -fx-fill: #5f6063;
 }
 
 .comment {
-    -fx-fill: #035003;
+    -fx-fill: #5f6063;
 }
 
 .console {
