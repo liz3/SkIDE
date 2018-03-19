@@ -28,11 +28,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
 
 
-
     fun startGui(): ProjectGuiEventListeners {
-
-
-     //   window.scene.stylesheets.add("HighlightingLight.css")
         window.scene.stylesheets.add("DarkHighlighting.css")
 
         val controller = window.controller as ProjectGuiController
@@ -49,24 +45,19 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
         return eventManager
     }
-
     fun closeHook() {
         openFiles.values.forEach {
             it.saveCode()
         }
         coreManager.projectManager.openProjects.remove(this.openProject)
     }
-
     val projectFiles = openProject.project.fileManager.projectFiles
 }
 
 class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGuiManager, private val controller: ProjectGuiController, val coreManager: CoreManager) {
 
-
     var guiReady = {}
-
     var contextMenuVisible: ContextMenu? = null
-
 
     val filesTab = {
         val tab = Tab("Project files")
@@ -95,8 +86,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     val structureTab = {
         val tab = Tab("Skript Structure")
         val treeView = TreeView<String>()
-
-
         tab.content = treeView
         tab.isDisable = true
         Pair(tab, treeView)
@@ -256,7 +245,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         val skUnity = MenuItem("Log in to SkUnity")
         skUnity.setOnAction {
-            if(coreManager.skUnity.login()) controller.mainBenuBar.menus[2].items.remove(skUnity)
+            if (coreManager.skUnity.login()) controller.mainBenuBar.menus[2].items.remove(skUnity)
         }
         controller.mainBenuBar.menus[2].items.add(skUnity)
 
@@ -297,8 +286,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach {
                 val item = MenuItem(it.key)
-                item.setOnAction {ev ->
-                    openProjectGuiManager.openFiles.forEach { f->
+                item.setOnAction { ev ->
+                    openProjectGuiManager.openFiles.forEach { f ->
                         f.value.saveCode()
                     }
                     openProjectGuiManager.openProject.compiler.compile(openProjectGuiManager.openProject.project, it.value, openProjectGuiManager.lowerTabPaneEventManager.setupBuildLogTabForInput())

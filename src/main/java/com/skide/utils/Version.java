@@ -4,9 +4,6 @@ public class Version implements Comparable<Version> {
 
     private String version;
 
-    static{
-        System.out.println("test message");
-    }
     public final String get() {
         return this.version;
     }

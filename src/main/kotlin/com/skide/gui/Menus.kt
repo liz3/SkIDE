@@ -3,10 +3,7 @@ package com.skide.gui
 import com.skide.core.code.CodeManager
 import com.skide.core.management.OpenProject
 import com.skide.gui.controllers.SkunityQuestionFameController
-import javafx.scene.control.Alert
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.MenuItem
-import javafx.scene.control.TreeView
+import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.stage.Popup
@@ -38,11 +35,11 @@ object Menus {
 
             var name = Prompts.textPrompt("New Yaml File", "Enter File name Here")
 
-            if(!name.endsWith(".yml") && !name.endsWith(".yaml")) name += ".yml"
+            if (!name.endsWith(".yml") && !name.endsWith(".yaml")) name += ".yml"
             if (name.isNotEmpty()) project.createNewFile(name)
 
         }
-        menu.items.addAll(newFileItem,newYamlFile)
+        menu.items.addAll(newFileItem, newYamlFile)
 
 
 
@@ -51,16 +48,23 @@ object Menus {
         return menu
     }
 
-    fun getMenuForArea(codeManager: CodeManager,  x: Double, y: Double): ContextMenu {
+    fun getMenuForArea(codeManager: CodeManager, x: Double, y: Double): ContextMenu {
 
         val menu = ContextMenu()
 
-
-       val skUnityEntry = MenuItem("Ask on SkUnity")
+        val copyEntry = MenuItem("Copy")
+        copyEntry.setOnAction {
+            codeManager.area.copy()
+        }
+        val pasteEntry = MenuItem("Paste")
+        pasteEntry.setOnAction {
+            codeManager.area.paste()
+        }
+        val skUnityEntry = MenuItem("Ask on skUnity")
 
         skUnityEntry.setOnAction {
 
-            val scene = GuiManager.getWindow("SkUnityQuestionFrame.fxml", "Ask on SkUnity", true)
+            val scene = GuiManager.getWindow("SkUnityQuestionFrame.fxml", "Ask on skUnity", true)
             val controller = scene.controller as SkunityQuestionFameController
 
             val popUp = Popup()
@@ -80,7 +84,7 @@ object Menus {
                 val title = controller.titleBar.text
                 val msg = controller.contentArea.text
 
-                if(title != "" ||msg != "") {
+                if (title != "" || msg != "") {
                     codeManager.findHandler.project.coreManager.skUnity.report(title, msg)
 
                     scene.stage.close()
@@ -91,7 +95,24 @@ object Menus {
         }
 
 
-        if(codeManager.findHandler.project.coreManager.skUnity.loggedIn) menu.items.add(skUnityEntry)
+
+        val compileMenu = Menu("Export/Compile")
+        for((name, opt) in codeManager.findHandler.project.openProject.project.fileManager.compileOptions) {
+
+            val compileEntry = MenuItem(name)
+            compileEntry.setOnAction {
+
+                codeManager.findHandler.project.openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
+                codeManager.findHandler.project.openProject.compiler.compile(codeManager.findHandler.project.openProject.project,opt,
+                        codeManager.findHandler.project.openProject.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput())
+            }
+            compileMenu.items.add(compileEntry)
+        }
+        if(codeManager.area.selectedText.isNotEmpty())menu.items.add(copyEntry)
+        menu.items.add(pasteEntry)
+        if (codeManager.findHandler.project.coreManager.skUnity.loggedIn) menu.items.add(skUnityEntry)
+        menu.items.add(compileMenu)
+
         menu.show(codeManager.area, x, y)
 
         return menu

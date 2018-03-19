@@ -21,7 +21,6 @@ import org.reactfx.value.Var
 import java.util.*
 import kotlin.collections.HashMap
 
-
 class ListHolderItem(val name: String, val caller: (info: CurrentStateInfo) -> Unit, val description: String = "") {
 
     override fun toString(): String {
@@ -112,7 +111,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
 
+
     private fun addItem(label: String, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller))
+
 
 
     private fun registerEventListener() {

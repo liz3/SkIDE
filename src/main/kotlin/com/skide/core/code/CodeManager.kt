@@ -144,6 +144,9 @@ class CodeManager {
                 }
             }
             if (ev.isControlDown) {
+                if(ev.code == KeyCode.C) {
+                    area.copy()
+                }
                 if (ev.code == KeyCode.F) {
                     findHandler.switchGui()
                 }
