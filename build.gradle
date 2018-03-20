@@ -54,6 +54,8 @@ shadowJar {
     mergeServiceFiles()
     exclude 'META-INF/*.DSA'
     exclude 'META-INF/*.RSA'
+    archiveName = "SkIde.jar"
+
 }
 
 jar {
@@ -67,7 +69,6 @@ jar {
         attributes 'Implementation-Version': version
         attributes 'Implementation-Vendor': name
     }
-    archiveName = "SkIde.jar"
 }
 
 apply plugin: 'javafx-gradle-plugin'
