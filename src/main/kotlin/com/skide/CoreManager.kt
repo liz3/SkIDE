@@ -1,24 +1,13 @@
 package com.skide
 
-import com.skide.core.code.debugger.Debugger
 import com.skide.core.management.ConfigLoadResult
 import com.skide.core.management.ConfigManager
 import com.skide.core.management.ProjectManager
 import com.skide.core.management.ServerManager
 import com.skide.gui.GuiManager
 import com.skide.gui.JavaFXBootstrapper
-import com.skide.gui.Prompts
 import com.skide.gui.controllers.StartGuiController
-import com.skide.utils.AutoSaver
-import com.skide.utils.DebugLevel
-import com.skide.utils.ResourceManager
-import com.skide.utils.SkUnity
-import javafx.application.Platform
-import javafx.scene.control.TabPane
-import com.terminalfx.TerminalTab
-import com.terminalfx.TerminalBuilder
-import javafx.scene.Scene
-import javafx.stage.Stage
+import com.skide.utils.*
 
 
 class CoreManager {
@@ -59,6 +48,8 @@ class CoreManager {
 
 
         guiManager.bootstrapCallback = { stage ->
+
+            GuiManager.discord.update("Opened SkIde", "just started SkIde")
 
             val window = guiManager.getWindow("StartGui.fxml", "Welcome to SkIde", false, stage)
             stage.isResizable = false

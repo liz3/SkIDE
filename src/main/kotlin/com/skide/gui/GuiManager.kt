@@ -1,6 +1,8 @@
 package com.skide.gui
 
+import com.skide.CoreManager
 import com.skide.include.ActiveWindow
+import com.skide.utils.Discord
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.fxml.FXMLLoader
@@ -18,6 +20,8 @@ import netscape.javascript.JSObject
 
 object GuiManager {
 
+    val discord = Discord()
+
     val activeGuis: HashMap<Int, ActiveWindow> = HashMap()
     var idCounter = 0
 
@@ -33,7 +37,7 @@ object GuiManager {
 
         val scene = Scene(rootNode)
         scene.stylesheets.add("Reset.css")
-        //scene.stylesheets.add("ThemeDark.css")
+        scene.stylesheets.add("ThemeDark.css")
         stage.scene = scene
         stage.sizeToScene()
 
@@ -85,6 +89,7 @@ object GuiManager {
                 stage.show()
 
                 Prompts.infoCheck("Attention", "reopen if links dont work!", "If you want to open a link, but it does not work, restart about!", Alert.AlertType.INFORMATION)
+
             }
         }
 
@@ -117,6 +122,7 @@ class JavaFXBootstrapper : Application() {
     override fun start(primaryStage: Stage) = GuiManager.bootstrapCallback(primaryStage)
 
     override fun stop() {
+        GuiManager.discord.stop()
         System.exit(0)
     }
     //Companion Object is required to kick off JavaFX with Kotlin

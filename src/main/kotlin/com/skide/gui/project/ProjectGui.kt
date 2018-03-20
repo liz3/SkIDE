@@ -29,7 +29,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
 
     fun startGui(): ProjectGuiEventListeners {
-        window.scene.stylesheets.add("HighlightingLight.css")
+        window.scene.stylesheets.add("DarkHighlighting.css")
 
         val controller = window.controller as ProjectGuiController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
@@ -323,7 +323,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             }
         }
-        controller.editorMainTabPane.selectionModelProperty().addListener { _, _, _ ->
+        controller.editorMainTabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
             if (controller.editorMainTabPane.selectionModel.selectedItem != null) {
 
@@ -331,7 +331,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
                 openProjectGuiManager.openFiles.values
                         .filter { it.tab == tab }
-                        .forEach { updateStructureTab(it) }
+                        .forEach {
+                            updateStructureTab(it)
+                            GuiManager.discord.update(it.name, "Editing ${it.name}")
+                        }
 
 
             } else {
