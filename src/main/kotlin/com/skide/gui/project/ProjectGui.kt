@@ -333,7 +333,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                         .filter { it.tab == tab }
                         .forEach {
                             updateStructureTab(it)
-                            GuiManager.discord.update(it.name, "Editing ${it.name}")
+                            GuiManager.discord.update("Editing script ${it.name}", "Coding")
                         }
 
 

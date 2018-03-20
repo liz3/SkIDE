@@ -46,16 +46,16 @@ class Discord {
 
     fun stop() = discordRpc.shutdown()
 
-    fun update(details: String, imageText: String) {
+    fun update(details: String, state: String) {
 
         Thread {
             stop()
             update()
             val drp = DiscordRichPresence()
             drp.details = details
-            drp.state = "SkIde"
+            drp.state = state
             drp.largeImageKey = "default_liz3"
-            drp.largeImageText = imageText
+            drp.largeImageText = ""
 
             try {
                 discordRpc.updatePresence(drp)
