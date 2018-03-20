@@ -67,6 +67,7 @@ jar {
         attributes 'Implementation-Version': version
         attributes 'Implementation-Vendor': name
     }
+    archiveName = "SkIde.jar"
 }
 
 apply plugin: 'javafx-gradle-plugin'
