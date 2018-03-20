@@ -20,12 +20,12 @@ object Menus {
         openView.fitWidth = 15.0
         openView.fitHeight = 15.0
 
-        val newFileItem = MenuItem("New Skript File")
+        val newFileItem = MenuItem("New Script File")
         newFileItem.graphic = openView
 
         newFileItem.setOnAction {
 
-            val name = Prompts.textPrompt("New Skript File", "Enter File name Here")
+            val name = Prompts.textPrompt("New Script File", "Enter File name Here")
 
             if (name.isNotEmpty()) project.createNewFile(name)
 

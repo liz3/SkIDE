@@ -299,7 +299,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         projectSettings.setOnAction {
             openProjectGuiManager.settings.show()
         }
-        fileMenu.items.addAll(newProject, projectSettings, otherProjects, compileMenu, closeItem)
+        fileMenu.items.addAll(newProject, projectSettings, /*generalSettings, */otherProjects, compileMenu, closeItem)
     }
 
     private fun registerBrowserEvents() {
