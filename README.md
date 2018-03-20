@@ -33,3 +33,5 @@ For the gui SkIDE uses JavaFX, highlighting is provided by RichTextFX.
 [JavaFX Gradle Plugin](https://github.com/FibreFoX/javafx-gradle-plugin)
 
 [JSON java Library](https://github.com/stleary/JSON-java)
+
+[Discord RPC](https://github.com/PSNRigner/discord-rpc-java)
