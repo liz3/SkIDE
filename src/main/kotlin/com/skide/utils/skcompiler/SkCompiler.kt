@@ -79,6 +79,66 @@ class SkCompiler {
           }
       }.start()
     }
+    fun compileForServer(project: Project, opts: CompileOption, skFolder:File, caller: (String) -> Unit, finished: () -> Unit) {
+      Thread {
+          caller("Starting compile process...")
+
+          val optimised = HashMap<File, Vector<Node>>()
+
+          opts.includedFiles.forEach {
+              caller("Parsing file ${it.absolutePath}")
+              val result = parser.superParse(readFile(it).second)
+              caller("Optimizing file ${it.absolutePath}")
+              val filtered = Vector<Node>()
+              for (node in result) {
+                  if(!isValid(node, opts)) continue
+
+
+                  val toRemove = Vector<Node>()
+                  node.childNodes.forEach { child ->
+                      getToRemove(child, opts)
+                  }
+                  node.childNodes.forEach {
+                      if(!isValid(it, opts)) toRemove.add(it)
+                  }
+                  toRemove.forEach {
+                      node.childNodes.remove(it)
+                  }
+                  filtered.add(node)
+              }
+              optimised[it] = filtered
+          }
+
+
+          if (opts.method == CompileOptionType.CONCATENATE) {
+
+              var out = ""
+              optimised.values.forEach { arr ->
+
+                  for(node in arr) {
+                      out += computeString(node)
+                  }
+              }
+              val file = File(skFolder, project.name + ".sk")
+              caller("Writing file ${file.absolutePath}")
+              writeFile(out.substring(1).toByteArray(), file, false, true)
+              caller("Finished")
+              finished()
+          }
+          if (opts.method == CompileOptionType.PER_FILE) {
+
+              optimised.forEach { arr ->
+                  val file = File(skFolder, arr.key.name)
+                  var out = ""
+                  arr.value.forEach { out += computeString(it)}
+                  caller("Writing file ${file.absolutePath}")
+                  writeFile(out.substring(1).toByteArray(), file, false, true)
+              }
+              caller("Finished")
+              finished()
+          }
+      }.start()
+    }
 
     private fun computeString(node: Node): String {
 

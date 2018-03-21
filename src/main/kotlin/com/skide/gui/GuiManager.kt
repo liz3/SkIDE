@@ -15,6 +15,7 @@ import java.awt.Desktop
 import java.net.URI
 import javafx.concurrent.Worker.State
 import javafx.scene.control.Alert
+import javafx.scene.image.Image
 import netscape.javascript.JSObject
 
 
@@ -34,7 +35,7 @@ object GuiManager {
         val loader = FXMLLoader()
         val rootNode: Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
         val controller = loader.getController<Any>()
-
+        stage.icons.add( Image(javaClass.getResource("/icon.png").toExternalForm()))
         val scene = Scene(rootNode)
         scene.stylesheets.add("Reset.css")
         scene.stylesheets.add("ThemeDark.css")

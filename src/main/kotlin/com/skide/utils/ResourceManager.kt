@@ -1,26 +1,34 @@
 package com.skide.utils
 
 import com.skide.CoreManager
+import com.skide.gui.Prompts
 import com.skide.include.Addon
 import com.skide.include.AddonItem
 import com.skide.include.DocType
+import javafx.scene.control.Alert
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.net.URLEncoder
 import java.util.*
 
 class ResourceManager(val coreManager: CoreManager) {
 
     val addons = HashMap<String, Addon>()
     val skriptDocList = Vector<AddonItem>()
+    val skriptVersions = Vector<String>()
     val file = File(coreManager.configManager.rootFolder, "docs.json")
     val addonsFile = File(coreManager.configManager.rootFolder, "addons.json")
     val skriptDoc = File(coreManager.configManager.rootFolder, "skript.json")
+    val skriptVersionsFile = File(coreManager.configManager.rootFolder, "skript-vers.json")
+    val skriptVersionsFolder = File(coreManager.configManager.rootFolder, "skript-versions")
 
     init {
 
     }
 
-    private fun parseSkriptVersion() {
+    private fun parseCurrentSkriptVersionDocs() {
+
 
         val read = readFile(skriptDoc)
 
@@ -62,8 +70,12 @@ class ResourceManager(val coreManager: CoreManager) {
         }
     }
 
+    fun parseSkriptVersions() {
+         JSONArray(readFile(skriptVersionsFile).second).forEach { skriptVersions.add(it as String) }
+    }
     fun loadResources() {
 
+        if(!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
         if (file.exists()) {
             file.delete()
         }
@@ -71,9 +83,11 @@ class ResourceManager(val coreManager: CoreManager) {
         downloadFile("https://liz3.net/sk/?function=getAllSyntax", file.absolutePath)
         downloadFile("https://liz3.net/sk/?function=getAllAddons", addonsFile.absolutePath)
         downloadFile("https://liz3.net/sk/?function=getAddonSyntax&addon=skript", skriptDoc.absolutePath)
+        downloadFile("https://skripttools.net/api.php?t=skript&action=getlist", skriptVersionsFile.absolutePath)
 
 
-        parseSkriptVersion()
+        parseCurrentSkriptVersionDocs()
+        parseSkriptVersions()
 
         val str = readFile(file.absolutePath)
 
@@ -128,5 +142,18 @@ class ResourceManager(val coreManager: CoreManager) {
               addonVer!!.addElement(AddonItem(id, name,  type, addon, reviewed, addonVersion, pattern, plugin, eventValues, changers, tags, returnType))
           }
         }
+    }
+
+    fun downloadSkriptVersion(name:String): File {
+
+        val skFile = File(skriptVersionsFolder, name)
+
+        if(!skFile.exists()) {
+            skFile.createNewFile()
+            Prompts.infoCheck("Information", "SkIde is downloading a file", "SkIde is Downloading a file!", Alert.AlertType.INFORMATION)
+            downloadFile("https://skripttools.net/dl/${URLEncoder.encode(name, "UTF-8")}", skFile.absolutePath)
+        }
+
+        return skFile
     }
 }

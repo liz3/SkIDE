@@ -5,7 +5,9 @@ import com.skide.core.management.OpenProject
 import com.skide.gui.GuiManager
 import com.skide.gui.Menus
 import com.skide.gui.controllers.CreateProjectGuiController
+import com.skide.gui.controllers.GeneralSettingsGuiController
 import com.skide.gui.controllers.ProjectGuiController
+import com.skide.gui.settings.SettingsGuiHandler
 import com.skide.include.OpenFileHolder
 import javafx.application.Platform
 import javafx.scene.control.*
@@ -103,7 +105,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         guiReady()
     }
 
-    private fun openFile(f: File) {
+     fun openFile(f: File) {
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
 
@@ -299,7 +301,17 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         projectSettings.setOnAction {
             openProjectGuiManager.settings.show()
         }
-        fileMenu.items.addAll(newProject, projectSettings, /*generalSettings, */otherProjects, compileMenu, closeItem)
+        val generalSettings = MenuItem("General Settings")
+        generalSettings.setOnAction {
+
+            val window = GuiManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)
+
+            SettingsGuiHandler(window.controller as GeneralSettingsGuiController, coreManager, window).init()
+
+            window.stage.show()
+
+        }
+        fileMenu.items.addAll(newProject, projectSettings, otherProjects, compileMenu, generalSettings, closeItem)
     }
 
     private fun registerBrowserEvents() {

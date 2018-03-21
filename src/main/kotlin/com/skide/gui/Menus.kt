@@ -20,12 +20,12 @@ object Menus {
         openView.fitWidth = 15.0
         openView.fitHeight = 15.0
 
-        val newFileItem = MenuItem("New Script File")
+        val newFileItem = MenuItem("New Skript File")
         newFileItem.graphic = openView
 
         newFileItem.setOnAction {
 
-            val name = Prompts.textPrompt("New Script File", "Enter File name Here")
+            val name = Prompts.textPrompt("New Skript File", "Enter File name Here")
 
             if (name.isNotEmpty()) project.createNewFile(name)
 
@@ -112,7 +112,35 @@ object Menus {
         menu.items.add(pasteEntry)
         if (codeManager.findHandler.project.coreManager.skUnity.loggedIn) menu.items.add(skUnityEntry)
         menu.items.add(compileMenu)
+        val runFileMenu = Menu("Run this File")
+        codeManager.findHandler.project.coreManager.serverManager.servers.forEach {
 
+            val serverItem = MenuItem(it.value.configuration.name)
+            serverItem.setOnAction {ev  ->
+                codeManager.findHandler.project.openProject.run(it.value, codeManager.findHandler.project)
+            }
+            runFileMenu.items.add(serverItem)
+        }
+        val runConfMenu = Menu("Run Configuration")
+        for((name, opt) in codeManager.findHandler.project.openProject.project.fileManager.compileOptions) {
+            val confItem = Menu(name)
+            codeManager.findHandler.project.coreManager.serverManager.servers.forEach {
+
+                val serverItem = MenuItem(it.value.configuration.name)
+                serverItem.setOnAction {ev  ->
+                    codeManager.findHandler.project.openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
+                    codeManager.findHandler.project.openProject.run(it.value, opt)
+                }
+                confItem.items.add(serverItem)
+            }
+            runConfMenu.items.add(confItem)
+
+
+        }
+
+
+        menu.items.add(runFileMenu)
+        menu.items.add(runConfMenu)
         menu.show(codeManager.area, x, y)
 
         return menu

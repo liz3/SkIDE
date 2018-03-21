@@ -27,7 +27,6 @@ class CoreManager {
 
     fun bootstrap(args: Array<String>) {
         //Bootstrap everything
-
         args.forEach {
             //first lets set the debug level
             if (it.startsWith("--debug")) {
@@ -36,16 +35,14 @@ class CoreManager {
         }
         //load config
         val configLoadResult = configManager.load()
-
         skUnity.load()
         //Check if config load failed
-        if (configLoadResult == ConfigLoadResult.ERROR) {
+        if (configLoadResult == ConfigLoadResult.ERROR)
             //TODO handle ERROR
             return
-        }
 
-
-
+        resourceManager.loadResources()
+        serverManager.init()
 
         guiManager.bootstrapCallback = { stage ->
 
@@ -60,8 +57,6 @@ class CoreManager {
 
 
         }
-        resourceManager.loadResources()
-
         //Launch the JavaFX Process Thread
         JavaFXBootstrapper.bootstrap()
 

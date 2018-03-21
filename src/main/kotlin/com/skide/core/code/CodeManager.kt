@@ -78,6 +78,11 @@ class CodeManager {
             autoComplete.hideList()
             if (!newValue) {
                 project.saveCode()
+                project.openProject.runConfs.forEach {
+                    if(it.value.runner === project) {
+                        it.value.srv.setSkriptFile(project.name, area.text)
+                    }
+                }
             }
         }
         area.setOnKeyPressed { ev ->

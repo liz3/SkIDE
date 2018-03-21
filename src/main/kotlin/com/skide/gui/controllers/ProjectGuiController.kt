@@ -62,4 +62,6 @@ class ProjectGuiController {
     @FXML
     lateinit var lowerTabPaneToggleBtn:Button
 
+    @FXML
+    lateinit var runsTabPane:TabPane
 }

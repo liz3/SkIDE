@@ -37,6 +37,15 @@
                         </BorderPane>
                      </content>
                 </Tab>
+                  <Tab text="Runs">
+                     <content>
+                        <BorderPane prefHeight="200.0" prefWidth="200.0">
+                           <center>
+                              <TabPane fx:id="runsTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
+                           </center>
+                        </BorderPane>
+                     </content>
+                  </Tab>
               </tabs>
             </TabPane>
          </center>

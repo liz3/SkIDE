@@ -1,12 +1,21 @@
 package com.skide.gui.project
 
 import com.skide.CoreManager
+import com.skide.core.management.RunningServerManager
 import com.skide.gui.DragResizer
 import com.skide.gui.controllers.ProjectGuiController
+import com.skide.include.Server
 import com.terminalfx.TerminalBuilder
 import javafx.application.Platform
+import javafx.scene.Node
+import javafx.scene.control.Button
 import javafx.scene.control.Tab
 import javafx.scene.control.TextArea
+import javafx.scene.control.TextField
+import javafx.scene.input.KeyCode
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.VBox
+import java.io.File
 
 class LowerTabPaneEventManager(val ctrl: ProjectGuiController, val openProjectGuiManager: OpenProjectGuiManager, val coreManager: CoreManager) {
 
@@ -15,8 +24,49 @@ class LowerTabPaneEventManager(val ctrl: ProjectGuiController, val openProjectGu
     val tabPane = ctrl.lowerTabPane
     val terminalBuilder = TerminalBuilder()
     val buildLogArea = TextArea()
+    private val running = HashMap<Server, Tab>()
 
 
+
+    fun getServerTab(serverManager: RunningServerManager): Triple<Tab, Button, Button> {
+
+        if(running.containsKey(serverManager.server)) {
+            ctrl.runsTabPane.tabs.remove(running[serverManager.server]!!)
+            running.remove(serverManager.server)
+        }
+        val tab = Tab(serverManager.server.configuration.name)
+
+        val pane =  BorderPane()
+        val vBox = VBox()
+        val reloadBtn = Button("R")
+        reloadBtn.setPrefSize(25.0, 25.0)
+        val stopBtn = Button("S")
+        stopBtn.setPrefSize(25.0, 25.0)
+        val cleanBtn = Button("C")
+        cleanBtn.setPrefSize(25.0, 25.0)
+        cleanBtn.setOnAction {
+            serverManager.cleanFiles()
+
+        }
+        vBox.children.addAll(reloadBtn, stopBtn, cleanBtn)
+        pane.left = vBox
+        val sendField = TextField()
+        sendField.setOnKeyPressed {ev ->
+            if(ev.code == KeyCode.ENTER) {
+                serverManager.sendCommand(sendField.text)
+                sendField.text = ""
+            }
+        }
+        pane.bottom = sendField
+        pane.center = serverManager.area
+
+        tab.content = pane
+        ctrl.runsTabPane.tabs.add(tab)
+        ctrl.runsTabPane.selectionModel.select(tab)
+        tabPane.selectionModel.select(1)
+        running[serverManager.server] = tab
+        return Triple(tab, reloadBtn, stopBtn)
+    }
     fun setupBuildLogTabForInput(): (String) -> Unit {
 
         buildLogArea.clear()

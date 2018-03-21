@@ -88,12 +88,9 @@ class ConfigManager(val coreManager: CoreManager) {
         }
         if (serversFileResult.first == FileReturnResult.SUCCESS) {
             val serverObj = JSONObject(serversFileResult.second)
-            val apisArray = serverObj.getJSONArray("apis")
+
             val serversArray = serverObj.getJSONArray("servers")
-            apisArray.forEach {
-                it as JSONObject
-                apis.put(it.getLong("id"), PointerHolder(it.getLong("id"), it.getString("name"), it.getString("path")))
-            }
+
             serversArray.forEach {
                 it as JSONObject
                 servers.put(it.getLong("id"), PointerHolder(it.getLong("id"), it.getString("name"), it.getString("path")))
@@ -128,15 +125,8 @@ class ConfigManager(val coreManager: CoreManager) {
             serverObj.put("path", server.path)
             serverArr.put(serverObj)
         }
-        for ((id, api) in apis) {
-            val apiObject = JSONObject()
-            apiObject.put("id", id)
-            apiObject.put("name", api.name)
-            apiObject.put("path", api.path)
-            apisObArr.put(apiObject)
-        }
         obj.put("servers", serverArr)
-        obj.put("apis", apis)
+
 
         return writeFile(obj.toString().toByteArray(), serversFile, false, false).first == FileReturnResult.SUCCESS
     }
@@ -166,7 +156,7 @@ class ConfigManager(val coreManager: CoreManager) {
     //SERVER
     fun addServer(holder: PointerHolder): Boolean {
         if (servers.containsKey(holder.id)) return false
-        servers.put(holder.id, holder)
+        servers[holder.id] = holder
 
         return writeServersFile()
     }
@@ -180,26 +170,6 @@ class ConfigManager(val coreManager: CoreManager) {
     fun alterServer(id: Long, holder: PointerHolder): Boolean {
         if (!servers.containsKey(id)) return false
         servers.put(id, holder)
-
-        return writeServersFile()
-    }
-    //APIS
-    fun addApi(holder: PointerHolder): Boolean {
-        if (apis.containsKey(holder.id)) return false
-        apis.put(holder.id, holder)
-
-        return writeServersFile()
-    }
-
-    fun deleteApi(id: Long): Boolean {
-        if (!apis.containsKey(id)) return false
-        apis.remove(id)
-        return writeServersFile()
-    }
-
-    fun alterApi(id: Long, holder: PointerHolder): Boolean {
-        if (!apis.containsKey(id)) return false
-        apis.put(id, holder)
 
         return writeServersFile()
     }
