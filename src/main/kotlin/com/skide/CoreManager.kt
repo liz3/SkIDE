@@ -6,8 +6,11 @@ import com.skide.core.management.ProjectManager
 import com.skide.core.management.ServerManager
 import com.skide.gui.GuiManager
 import com.skide.gui.JavaFXBootstrapper
+import com.skide.gui.Prompts
 import com.skide.gui.controllers.StartGuiController
 import com.skide.utils.*
+import javafx.application.Platform
+import javafx.scene.control.Alert
 
 
 class CoreManager {
@@ -57,6 +60,7 @@ class CoreManager {
 
 
         }
+
         //Launch the JavaFX Process Thread
         JavaFXBootstrapper.bootstrap()
 

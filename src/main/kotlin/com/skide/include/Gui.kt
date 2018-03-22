@@ -29,7 +29,7 @@ class ActiveWindow(val stage:Stage, val scene:Scene, val loader:FXMLLoader, val 
     }
 }
 
-class OpenFileHolder(val openProject: OpenProject, val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea, val coreManager: CoreManager,  val codeManager:CodeManager = CodeManager()) {
+class OpenFileHolder(val openProject: OpenProject, val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea, val coreManager: CoreManager,  val codeManager:CodeManager = CodeManager(), val isExternal:Boolean = false) {
 
     val currentStackBox = HBox()
 

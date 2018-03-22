@@ -1,4 +1,4 @@
-package com.skide.core.code.debugger
+package com.skide.core.debugger
 
 import com.skide.gui.GuiManager
 import com.skide.gui.controllers.ErrorReportGuiController
@@ -23,8 +23,8 @@ class Debugger {
 
 class SystemErr : PrintStream(System.err) {
 
-    internal var err = ""
-    internal var recording = false
+    private var err = ""
+    private var recording = false
 
     override fun println(raw: String) {
         var msg = raw
@@ -32,8 +32,6 @@ class SystemErr : PrintStream(System.err) {
         val sdf = SimpleDateFormat("d.M.Y HH:mm:ss");
         if (!msg.startsWith("["))
             msg = " $msg"
-     //   area.appendText("$msg\n")
-
 
         err += msg + "\n"
         if (!recording) {
@@ -53,10 +51,10 @@ class SystemErr : PrintStream(System.err) {
                     val win = GuiManager.getWindow("ErrorReport.fxml", "Error", false)
                     val ctrl = win.controller as ErrorReportGuiController
 
-                    val cal = Calendar.getInstance();
-                    val sdf = SimpleDateFormat("d.M.Y HH:mm:ss");
+                    val cal = Calendar.getInstance()
+                    val sdf = SimpleDateFormat("d.M.Y HH:mm:ss")
 
-                    val theError = "OS: ${System.getProperty("os.name")} ${System.getProperty("os.arch")}\nTime: ${sdf.format(cal.time)}\n$err"
+                    val theError = "OS: ${System.getProperty("os.name")} ${System.getProperty("os.arch")}\nJava: ${System.getProperty("java.runtime.version")}\nTime: ${sdf.format(cal.time)}\n$err"
 
                     ctrl.contentArea.text = theError
 
@@ -72,6 +70,7 @@ class SystemErr : PrintStream(System.err) {
                         clpbrd.setContents(stringSelection, null)
                     }
 
+                    win.stage.isResizable = false
                     win.stage.show()
                     recording = false
                     err = ""

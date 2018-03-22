@@ -8,9 +8,7 @@ import com.skide.gui.Menus
 import com.skide.include.Node
 import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
-import com.skide.utils.EditorUtils
-import com.skide.utils.getCaretLine
-import com.skide.utils.readFile
+import com.skide.utils.*
 import javafx.application.Platform
 import javafx.scene.control.Button
 import javafx.scene.control.ContextMenu
@@ -79,7 +77,7 @@ class CodeManager {
             if (!newValue) {
                 project.saveCode()
                 project.openProject.runConfs.forEach {
-                    if(it.value.runner === project) {
+                    if (it.value.runner === project) {
                         it.value.srv.setSkriptFile(project.name, area.text)
                     }
                 }
@@ -121,13 +119,24 @@ class CodeManager {
 
 
                 val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
-                if (ev.code == KeyCode.DIGIT7) {
+                if (ev.code == KeyCode.DIGIT7 && getOs() != OperatingSystemType.MAC_OS) {
+
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, "}")
+                    area.moveTo(area.caretPosition - 1)
+                } else if (ev.code == KeyCode.DIGIT8 && getOs() == OperatingSystemType.MAC_OS) {
 
                     ev.consume()
                     area.replaceText(startPos, area.caretPosition, "}")
                     area.moveTo(area.caretPosition - 1)
                 }
-                if (ev.code == KeyCode.DIGIT8) {
+
+                if (ev.code == KeyCode.DIGIT8 && getOs() != OperatingSystemType.MAC_OS) {
+
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, "]")
+                    area.moveTo(area.caretPosition - 1)
+                } else if (ev.code == KeyCode.DIGIT5 && getOs() == OperatingSystemType.MAC_OS) {
 
                     ev.consume()
                     area.replaceText(startPos, area.caretPosition, "]")
@@ -149,7 +158,7 @@ class CodeManager {
                 }
             }
             if (ev.isControlDown) {
-                if(ev.code == KeyCode.C) {
+                if (ev.code == KeyCode.C) {
                     area.copy()
                 }
                 if (ev.code == KeyCode.F) {

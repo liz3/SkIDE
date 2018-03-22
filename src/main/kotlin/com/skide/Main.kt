@@ -1,6 +1,6 @@
 package com.skide
 
-import com.skide.core.code.debugger.Debugger
+import com.skide.core.debugger.Debugger
 
 
 fun main(args: Array<String>) {

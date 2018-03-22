@@ -13,30 +13,23 @@ class Discord {
     }
 
     private fun update() {
+        if (getOs() == OperatingSystemType.MAC_OS) return
+
         discordRpc = DiscordRpc()
         discordRpc.init("425466853943672852", object : DiscordEventHandler {
             override fun joinRequest(joinRequest: DiscordJoinRequest?) {
-                // will never be called
             }
 
             override fun joinGame(joinSecret: String?) {
-                // will never be called
             }
 
             override fun ready() {
 
+            }override fun disconnected(errorCode: ErrorCode?, message: String?) {
             }
-
-            override fun disconnected(errorCode: ErrorCode?, message: String?) {
-
-            }
-
             override fun spectateGame(spectateSecret: String?) {
-                // will never be called
             }
-
             override fun errored(errorCode: ErrorCode?, message: String?) {
-                // i guess could be handled somehow
             }
         }, true)
 
@@ -44,10 +37,14 @@ class Discord {
         discordRpc.runCallbacks()
     }
 
-    fun stop() = discordRpc.shutdown()
+    fun stop() {
+        if (getOs() == OperatingSystemType.MAC_OS) return
+        discordRpc.shutdown()
 
+    }
     fun update(details: String, state: String) {
 
+        if (getOs() == OperatingSystemType.MAC_OS) return
         Thread {
             stop()
             update()
@@ -64,6 +61,7 @@ class Discord {
                 e.printStackTrace()
             }
         }.start()
+
 
     }
 }

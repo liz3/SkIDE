@@ -1,9 +1,11 @@
 package com.skide.gui.project
 
 import com.skide.CoreManager
+import com.skide.core.management.ExternalHandler
 import com.skide.core.management.OpenProject
 import com.skide.gui.GuiManager
 import com.skide.gui.Menus
+import com.skide.gui.Prompts
 import com.skide.gui.controllers.CreateProjectGuiController
 import com.skide.gui.controllers.GeneralSettingsGuiController
 import com.skide.gui.controllers.ProjectGuiController
@@ -47,12 +49,29 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
         return eventManager
     }
+
     fun closeHook() {
         openFiles.values.forEach {
             it.saveCode()
         }
+        if (openProject.runConfs.size != 0) {
+
+            Thread {
+                val am = openProject.runConfs.size
+                openProject.runConfs.forEach {
+                    it.value.srv.kill()
+                }
+                Platform.runLater {
+
+                    Prompts.infoCheck("Stopped Server", "Running servers had to be stopped", "SkIde stopped $am server", Alert.AlertType.INFORMATION)
+
+
+                }
+            }.start()
+        }
         coreManager.projectManager.openProjects.remove(this.openProject)
     }
+
     val projectFiles = openProject.project.fileManager.projectFiles
 }
 
@@ -105,7 +124,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         guiReady()
     }
 
-     fun openFile(f: File) {
+    fun openFile(f: File, isExternal: Boolean = false) {
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
 
@@ -121,7 +140,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             return
         }
-        val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), controller.editorMainTabPane, BorderPane(), CodeArea(), coreManager)
+        val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), controller.editorMainTabPane, BorderPane(), CodeArea(), coreManager, isExternal = isExternal)
         openProjectGuiManager.openFiles.put(f, holder)
         setupNewTabForDisplay(holder)
     }
@@ -150,22 +169,17 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     private fun setupNewTabForDisplay(holder: OpenFileHolder) {
 
         Platform.runLater {
-
             holder.tab.isClosable = true
             holder.borderPane.center = VirtualizedScrollPane(holder.area)
             holder.borderPane.bottom = holder.currentStackBox
             holder.currentStackBox.prefHeight = 35.0
             holder.tab.content = holder.borderPane
             holder.area.paragraphGraphicFactory = LineNumberFactory.get(holder.area)
-            //setup the code management
-            holder.codeManager.setup(holder)
+            if (holder.name.endsWith(".sk")) holder.codeManager.setup(holder) else ExternalHandler(holder)
             registerEventsForNewFile(holder)
             holder.tabPane.tabs.add(holder.tab)
-
-
-
             holder.tabPane.selectionModel.select(holder.tab)
-            updateStructureTab(holder)
+            if (!holder.isExternal) updateStructureTab(holder)
         }
 
     }
@@ -311,7 +325,18 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             window.stage.show()
 
         }
-        fileMenu.items.addAll(newProject, projectSettings, otherProjects, compileMenu, generalSettings, closeItem)
+        val editServerConfMenu = Menu("Edit server Configuration")
+        coreManager.serverManager.servers.forEach {
+            val file = File(it.value.configuration.folder, "server.properties")
+            if(file.exists()) {
+                val tItem = MenuItem(it.value.configuration.name)
+                tItem.setOnAction {
+                    openProjectGuiManager.openProject.eventManager.openFile(file, true)
+                }
+                editServerConfMenu.items.add(tItem)
+            }
+        }
+        fileMenu.items.addAll(newProject, projectSettings, otherProjects, compileMenu, generalSettings, editServerConfMenu, closeItem)
     }
 
     private fun registerBrowserEvents() {
@@ -344,7 +369,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 openProjectGuiManager.openFiles.values
                         .filter { it.tab == tab }
                         .forEach {
-                            updateStructureTab(it)
+                            if (!it.isExternal) updateStructureTab(it)
                             GuiManager.discord.update("Editing script ${it.name}", "Coding")
                         }
 

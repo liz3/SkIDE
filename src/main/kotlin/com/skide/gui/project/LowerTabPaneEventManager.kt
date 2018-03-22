@@ -1,13 +1,13 @@
 package com.skide.gui.project
 
 import com.skide.CoreManager
+import com.skide.core.management.OpenProject
 import com.skide.core.management.RunningServerManager
 import com.skide.gui.DragResizer
 import com.skide.gui.controllers.ProjectGuiController
 import com.skide.include.Server
 import com.terminalfx.TerminalBuilder
 import javafx.application.Platform
-import javafx.scene.Node
 import javafx.scene.control.Button
 import javafx.scene.control.Tab
 import javafx.scene.control.TextArea
@@ -28,7 +28,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGuiController, val openProjectGu
 
 
 
-    fun getServerTab(serverManager: RunningServerManager): Triple<Tab, Button, Button> {
+    fun getServerTab(serverManager: RunningServerManager, openProject: OpenProject): Triple<Tab, Button, Button> {
 
         if(running.containsKey(serverManager.server)) {
             ctrl.runsTabPane.tabs.remove(running[serverManager.server]!!)
@@ -46,8 +46,9 @@ class LowerTabPaneEventManager(val ctrl: ProjectGuiController, val openProjectGu
         cleanBtn.setPrefSize(25.0, 25.0)
         cleanBtn.setOnAction {
             serverManager.cleanFiles()
-
         }
+
+
         vBox.children.addAll(reloadBtn, stopBtn, cleanBtn)
         pane.left = vBox
         val sendField = TextField()
