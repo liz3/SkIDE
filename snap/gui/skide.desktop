@@ -1,0 +1,8 @@
+[Desktop Entry]
+Comment=Integrated Development Environment for Skript
+Exec=desktop-launch java -jar $SNAP/jar/SkIDE.jar
+GenericName=Integrated Development Environment for Skript
+Name=SkIDE
+NoDisplay=false
+StartupNotify=true
+Type=Application

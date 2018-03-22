@@ -1,0 +1,29 @@
+name: skide
+version: '0.0'
+summary: IDE for Skript
+description: ...
+
+confinement: devmode
+
+apps:
+  run:
+    command: desktop-launch java -jar -Duser-home=$SNAP_USER_DATA $SNAP/jar/SkIDE.jar
+
+parts:
+  skide:
+    after: [desktop-glib-only]
+    plugin: gradle
+    source: .
+    gradle-output-dir: build/libs
+    build: |
+      export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
+      gradle shadowJar
+    install : |
+      mkdir $SNAPCRAFT_PART_INSTALL/jar
+      cp build/libs/SkIde.jar $SNAPCRAFT_PART_INSTALL/jar/SkIDE.jar
+    build-packages:
+      - openjdk-8-jdk
+      - openjfx
+    stage-packages:
+      - openjdk-8-jdk
+      - openjfx

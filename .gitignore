@@ -5,3 +5,10 @@ target/
 out/
 build/
 .gradle/
+
+# snapcraft
+parts
+stage
+prime
+*.snap
+snap/.snapcraft
