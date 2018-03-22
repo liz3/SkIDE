@@ -22,6 +22,7 @@ apply plugin: 'kotlin'
 group = 'com.skide'
 version = '0.0.6'
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 mainClassName = 'com.skide.MainKt'
 
 repositories {
