@@ -17,7 +17,7 @@ SkIDE is written completely in Kotlin currently, you still can pull request with
 
 For the gui SkIDE uses JavaFX, highlighting is provided by RichTextFX.
 
-# Used Libraries and Frameworks
+# Used Libraries, Apis and Frameworks
 [Kotlin Language](http://kotlinlang.org/)
 
 [JavaFX](http://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html)
@@ -27,6 +27,8 @@ For the gui SkIDE uses JavaFX, highlighting is provided by RichTextFX.
 [TerminalFX](https://github.com/javaterminal/TerminalFX)
 
 [SkUnity](http://skunity.com/)
+
+[SkriptTools](https://skripttools.net/)
 
 [Gradle](https://gradle.org/)
 
