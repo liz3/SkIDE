@@ -22,69 +22,70 @@ class SkUnity(val coreManager: CoreManager) {
         }
 
     }
-        fun login(): Boolean {
-            if (loggedIn) return false
 
-            val name = Prompts.textPrompt("Username", "Please enter your SkUnity Username")
-            val password = Prompts.passPrompt()
+    fun login(): Boolean {
+        if (loggedIn) return false
 
-            if (name.isEmpty() || password.isEmpty()) return false
+        val name = Prompts.textPrompt("Username", "Please enter your SkUnity Username")
+        val password = Prompts.passPrompt()
 
-            val headers = HashMap<String, String>()
-            headers["Content-type"] = "application/x-www-form-urlencoded"
-            val map = HashMap<String, String>()
-            map["action"] = "token"
-            map["username"] = name
-            map["password"] = password
+        if (name.isEmpty() || password.isEmpty()) return false
 
-            val result = request("https://liz3.net/sk/xf/", "POST", headers, getURLEncoded(map))
-            val buff = ByteArray(result.third.available())
-            result.third.read(buff)
-            val content = JSONObject(String(buff))
+        val headers = HashMap<String, String>()
+        headers["Content-type"] = "application/x-www-form-urlencoded"
+        val map = HashMap<String, String>()
+        map["action"] = "token"
+        map["username"] = name
+        map["password"] = password
 
-            val data = content.getJSONObject("data")
+        val result = request("https://liz3.net/sk/xf/", "POST", headers, getURLEncoded(map))
+        val buff = ByteArray(result.third.available())
+        result.third.read(buff)
+        val content = JSONObject(String(buff))
 
-            if (data.has("error")) {
-                Prompts.infoCheck("Error", "Error while logging in!", data.getString("message"), Alert.AlertType.ERROR)
-                return false
-            }
-            coreManager.configManager.skUnityKey = data.getString("hash")
-            key = data.getString("hash")
-            loggedIn = true
-            Prompts.infoCheck("Success", "You are logged in into SkUnity!", "You can now use SkUnity Features in SkIde", Alert.AlertType.INFORMATION)
-            username = name
-            coreManager.configManager.skUnityUsername = username
-            return true
+        val data = content.getJSONObject("data")
+
+        if (data.has("error")) {
+            Prompts.infoCheck("Error", "Error while logging in!", data.getString("message"), Alert.AlertType.ERROR)
+            return false
+        }
+        coreManager.configManager.skUnityKey = data.getString("hash")
+        key = data.getString("hash")
+        loggedIn = true
+        Prompts.infoCheck("Success", "You are logged in into SkUnity!", "You can now use SkUnity Features in SkIde", Alert.AlertType.INFORMATION)
+        username = name
+        coreManager.configManager.skUnityUsername = username
+        return true
+    }
+
+    fun report(title: String, msg: String) {
+
+        val headers = HashMap<String, String>()
+        headers["Content-type"] = "application/x-www-form-urlencoded"
+        val map = HashMap<String, String>()
+        map["action"] = "post"
+        map["title"] = title
+        map["msg"] = "$msg\n\nReported with SkIde"
+        map["token"] = key
+        map["username"] = username
+
+
+        val result = request("https://liz3.net/sk/xf/", "POST", headers, getURLEncoded(map))
+        val buff = ByteArray(result.third.available())
+        result.third.read(buff)
+        val content = JSONObject(String(buff))
+        val data = content.getJSONObject("data")
+
+        if (data.has("error")) {
+            Prompts.infoCheck("Error", "Error while reporting the error!", data.getString("message"), Alert.AlertType.ERROR)
+            return
+        } else {
+            Prompts.infoCheck("Success", "Post was created!", "The post was created successfully", Alert.AlertType.INFORMATION)
+
         }
 
-        fun report(title: String, msg: String) {
 
-            val headers = HashMap<String, String>()
-            headers["Content-type"] = "application/x-www-form-urlencoded"
-            val map = HashMap<String, String>()
-            map["action"] = "post"
-            map["title"] = title
-            map["msg"] = "$msg\n\nReported with SkIde"
-            map["token"] = key
-            map["username"] = username
-
-
-            val result = request("https://liz3.net/sk/xf/", "POST", headers, getURLEncoded(map))
-            val buff = ByteArray(result.third.available())
-            result.third.read(buff)
-            val content = JSONObject(String(buff))
-            val data = content.getJSONObject("data")
-
-            if (data.has("error")) {
-                Prompts.infoCheck("Error", "Error while reporting the error!", data.getString("message"), Alert.AlertType.ERROR)
-                return
-            } else {
-                Prompts.infoCheck("Success", "Post was created!", "The post was created successfully", Alert.AlertType.INFORMATION)
-
-            }
-
-
-        }
+    }
 
 
 }

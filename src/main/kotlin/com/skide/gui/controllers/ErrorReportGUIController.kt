@@ -5,7 +5,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.TextArea
 
 
-class ErrorReportGuiController {
+class ErrorReportGUIController {
 
     @FXML
     lateinit var discordLink: Button

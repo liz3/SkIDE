@@ -64,7 +64,7 @@ object Menus {
 
         skUnityEntry.setOnAction {
 
-            val scene = GuiManager.getWindow("SkUnityQuestionFrame.fxml", "Ask on skUnity", true)
+            val scene = GUIManager.getWindow("SkUnityQuestionFrame.fxml", "Ask on skUnity", true)
             val controller = scene.controller as SkunityQuestionFameController
 
             val popUp = Popup()
@@ -95,20 +95,19 @@ object Menus {
         }
 
 
-
         val compileMenu = Menu("Export/Compile")
-        for((name, opt) in codeManager.findHandler.project.openProject.project.fileManager.compileOptions) {
+        for ((name, opt) in codeManager.findHandler.project.openProject.project.fileManager.compileOptions) {
 
             val compileEntry = MenuItem(name)
             compileEntry.setOnAction {
 
                 codeManager.findHandler.project.openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
-                codeManager.findHandler.project.openProject.compiler.compile(codeManager.findHandler.project.openProject.project,opt,
+                codeManager.findHandler.project.openProject.compiler.compile(codeManager.findHandler.project.openProject.project, opt,
                         codeManager.findHandler.project.openProject.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput())
             }
             compileMenu.items.add(compileEntry)
         }
-        if(codeManager.area.selectedText.isNotEmpty())menu.items.add(copyEntry)
+        if (codeManager.area.selectedText.isNotEmpty()) menu.items.add(copyEntry)
         menu.items.add(pasteEntry)
         if (codeManager.findHandler.project.coreManager.skUnity.loggedIn) menu.items.add(skUnityEntry)
         menu.items.add(compileMenu)
@@ -116,18 +115,18 @@ object Menus {
         codeManager.findHandler.project.coreManager.serverManager.servers.forEach {
 
             val serverItem = MenuItem(it.value.configuration.name)
-            serverItem.setOnAction {ev  ->
+            serverItem.setOnAction { ev ->
                 codeManager.findHandler.project.openProject.run(it.value, codeManager.findHandler.project)
             }
             runFileMenu.items.add(serverItem)
         }
         val runConfMenu = Menu("Run Configuration")
-        for((name, opt) in codeManager.findHandler.project.openProject.project.fileManager.compileOptions) {
+        for ((name, opt) in codeManager.findHandler.project.openProject.project.fileManager.compileOptions) {
             val confItem = Menu(name)
             codeManager.findHandler.project.coreManager.serverManager.servers.forEach {
 
                 val serverItem = MenuItem(it.value.configuration.name)
-                serverItem.setOnAction {ev  ->
+                serverItem.setOnAction { ev ->
                     codeManager.findHandler.project.openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
                     codeManager.findHandler.project.openProject.run(it.value, opt)
                 }

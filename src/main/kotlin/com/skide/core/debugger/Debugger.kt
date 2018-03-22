@@ -1,7 +1,7 @@
 package com.skide.core.debugger
 
-import com.skide.gui.GuiManager
-import com.skide.gui.controllers.ErrorReportGuiController
+import com.skide.gui.GUIManager
+import com.skide.gui.controllers.ErrorReportGUIController
 import javafx.application.Platform
 import java.awt.Desktop
 import java.awt.Toolkit
@@ -48,8 +48,8 @@ class SystemErr : PrintStream(System.err) {
 
 
                 Platform.runLater {
-                    val win = GuiManager.getWindow("ErrorReport.fxml", "Error", false)
-                    val ctrl = win.controller as ErrorReportGuiController
+                    val win = GUIManager.getWindow("ErrorReport.fxml", "Error", false)
+                    val ctrl = win.controller as ErrorReportGUIController
 
                     val cal = Calendar.getInstance()
                     val sdf = SimpleDateFormat("d.M.Y HH:mm:ss")
@@ -85,7 +85,7 @@ class SystemErr : PrintStream(System.err) {
 
 
 
-         super.println("[" + sdf.format(cal.time) + " | ERROR]" + msg)
+        super.println("[" + sdf.format(cal.time) + " | ERROR]" + msg)
     }
 
     override fun println(x: Any?) {
@@ -103,11 +103,12 @@ class SystemOut : PrintStream(System.out) {
         val sdf = SimpleDateFormat("d.M.Y HH:mm:ss");
         if (!msg.startsWith("["))
             msg = " $msg"
-       // area.appendText("$msg\n")
+        // area.appendText("$msg\n")
         super.println("[" + sdf.format(cal.time) + " | MSG]" + msg)
     }
+
     override fun println(msg: Any?) {
-       println(msg.toString())
+        println(msg.toString())
     }
 
 }

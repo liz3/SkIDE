@@ -3,7 +3,7 @@ package com.skide.include
 import com.skide.CoreManager
 import com.skide.core.code.CodeManager
 import com.skide.core.management.OpenProject
-import com.skide.gui.GuiManager
+import com.skide.gui.GUIManager
 import com.skide.utils.writeFile
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
@@ -15,8 +15,8 @@ import javafx.stage.Stage
 import org.fxmisc.richtext.CodeArea
 import java.io.File
 
-class ActiveWindow(val stage:Stage, val scene:Scene, val loader:FXMLLoader, val controller:Any, val id:Int) {
-    fun close() = GuiManager.closeGui(id)
+class ActiveWindow(val stage: Stage, val scene: Scene, val loader: FXMLLoader, val controller: Any, val id: Int) {
+    fun close() = GUIManager.closeGui(id)
 
     var closeListener = {}
 
@@ -29,10 +29,9 @@ class ActiveWindow(val stage:Stage, val scene:Scene, val loader:FXMLLoader, val 
     }
 }
 
-class OpenFileHolder(val openProject: OpenProject, val f: File, val name:String, val tab:Tab, val tabPane: TabPane, val borderPane:BorderPane, val area:CodeArea, val coreManager: CoreManager,  val codeManager:CodeManager = CodeManager(), val isExternal:Boolean = false) {
+class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String, val tab: Tab, val tabPane: TabPane, val borderPane: BorderPane, val area: CodeArea, val coreManager: CoreManager, val codeManager: CodeManager = CodeManager(), val isExternal: Boolean = false) {
 
     val currentStackBox = HBox()
-
 
 
     fun saveCode() {

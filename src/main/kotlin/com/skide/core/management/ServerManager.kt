@@ -22,8 +22,8 @@ class ServerManager(val coreManager: CoreManager) {
         loadServers()
     }
 
-    fun getServerForRun(server:Server, readyCallback:(RunningServerManager) -> Unit = {s -> }): RunningServerManager {
-        if(running.containsKey(server)){
+    fun getServerForRun(server: Server, readyCallback: (RunningServerManager) -> Unit = { s -> }): RunningServerManager {
+        if (running.containsKey(server)) {
             readyCallback(running[server]!!)
             return running[server]!!
         }
@@ -34,6 +34,7 @@ class ServerManager(val coreManager: CoreManager) {
         running[server] = runner
         return runner
     }
+
     private fun loadServers() {
         coreManager.configManager.servers.values.forEach {
 
@@ -41,9 +42,9 @@ class ServerManager(val coreManager: CoreManager) {
             val obj = JSONObject(readFile(confFile).second)
             val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args")), confFile, false, obj.getLong("id"))
             obj.getJSONArray("addons").forEach {
-                if(it is JSONObject) {
+                if (it is JSONObject) {
 
-                server.configuration.addons.add(ServerAddon(it.getString("name"), File(it.getString("file")), it.getBoolean("preset")))
+                    server.configuration.addons.add(ServerAddon(it.getString("name"), File(it.getString("file")), it.getBoolean("preset")))
                 }
             }
             servers[obj.getString("name")] = server
@@ -51,7 +52,7 @@ class ServerManager(val coreManager: CoreManager) {
         }
     }
 
-    fun createServer(server:Server): Boolean {
+    fun createServer(server: Server): Boolean {
         server.confFile = File(server.configuration.folder, ".server.skide")
         if (servers.containsKey(server.configuration.name)) return false
         if (!server.configuration.folder.isDirectory) return false
@@ -84,10 +85,10 @@ class ServerManager(val coreManager: CoreManager) {
         return true
     }
 
-    fun saveServerConfigution(server:Server) {
-        if(server.running) return
+    fun saveServerConfigution(server: Server) {
+        if (server.running) return
 
-        if(!servers.containsKey(server.configuration.name)) {
+        if (!servers.containsKey(server.configuration.name)) {
             createServer(server)
             return
         }
@@ -113,8 +114,8 @@ class ServerManager(val coreManager: CoreManager) {
 
     }
 
-    fun deleteServer(server:Server) {
-        if(server.running) return
+    fun deleteServer(server: Server) {
+        if (server.running) return
         val name = server.configuration.name
         servers.remove(name)
         coreManager.configManager.deleteServer(server.id)
@@ -139,8 +140,7 @@ class ServerManager(val coreManager: CoreManager) {
             }
         }
         writeFile(("#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://account.mojang.com/documents/minecraft_eula).\n" +
-                "eula=true\n").toByteArray(), File(server.configuration.folder, "eula.txt"),false, true)
-
+                "eula=true\n").toByteArray(), File(server.configuration.folder, "eula.txt"), false, true)
 
 
         val downloaded = coreManager.resourceManager.downloadSkriptVersion(server.configuration.skriptVersion)

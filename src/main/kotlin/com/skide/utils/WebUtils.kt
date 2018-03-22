@@ -26,20 +26,22 @@ fun downloadFile(target: String, path: String) {
 
 
 }
-fun getURLEncoded(map:Map<String, String>): String {
+
+fun getURLEncoded(map: Map<String, String>): String {
 
     var content = ""
     map.forEach {
-        content += "&"  + URLEncoder.encode(it.key, "UTF-8") + "="  + URLEncoder.encode(it.value, "UTF-8")
+        content += "&" + URLEncoder.encode(it.key, "UTF-8") + "=" + URLEncoder.encode(it.value, "UTF-8")
     }
-    return if(!content.isEmpty()) content.substring(1) else ""
+    return if (!content.isEmpty()) content.substring(1) else ""
 }
-fun request(path:String, method:String = "GET", headers:Map<String, String> = HashMap(), body:String = ""): Triple<Int, MutableMap<String, MutableList<String>>, InputStream> {
+
+fun request(path: String, method: String = "GET", headers: Map<String, String> = HashMap(), body: String = ""): Triple<Int, MutableMap<String, MutableList<String>>, InputStream> {
 
     val connection = {
         val url = URL(path)
 
-        if(path.startsWith("https://")) {
+        if (path.startsWith("https://")) {
             url.openConnection() as HttpsURLConnection
         } else {
             url.openConnection() as HttpURLConnection
@@ -56,7 +58,7 @@ fun request(path:String, method:String = "GET", headers:Map<String, String> = Ha
     connection.doInput = true
     connection.doOutput = true
 
-    if(method == "POST") {
+    if (method == "POST") {
         connection.outputStream.write(body.toByteArray())
         connection.outputStream.flush()
     }

@@ -1,6 +1,6 @@
 package com.skide.core.code
 
-import com.skide.gui.GuiManager
+import com.skide.gui.GUIManager
 import com.skide.gui.controllers.ReplaceFrameController
 import com.skide.include.OpenFileHolder
 import com.skide.utils.StringSearchResult
@@ -11,7 +11,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
     private val area = manager.area
     private var visible = false
-    private val node = GuiManager.getScene("ReplaceFrame.fxml")
+    private val node = GUIManager.getScene("ReplaceFrame.fxml")
     private var entries = ArrayList<StringSearchResult>()
     var executed = false
     var currentPoint = 0
@@ -81,13 +81,14 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
 
     }
+
     private fun registerEvents() {
 
         val ctrl = node.second as ReplaceFrameController
 
         ctrl.searchField.setOnKeyReleased {
             if (it.code == KeyCode.ESCAPE) {
-               switchGui()
+                switchGui()
 
             }
             if (it.code == KeyCode.ENTER) {
@@ -148,8 +149,8 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
             }
         }
         ctrl.replaceField.setOnKeyReleased {
-            if(it.code == KeyCode.ENTER) {
-               replace()
+            if (it.code == KeyCode.ENTER) {
+                replace()
             }
         }
         ctrl.caseSensitive.setOnAction {

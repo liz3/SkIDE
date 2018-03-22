@@ -1,4 +1,5 @@
 package com.skide.gui.controllers
+
 import com.skide.include.Server
 import com.skide.include.ServerAddon
 import javafx.fxml.FXML
@@ -8,7 +9,7 @@ import javafx.scene.control.ListView
 import javafx.scene.control.TextField
 
 
-class GeneralSettingsGuiController {
+class GeneralSettingsGUIController {
 
     @FXML
     lateinit var serverServerList: ListView<Server>
@@ -71,6 +72,6 @@ class GeneralSettingsGuiController {
     lateinit var applyBtn: Button
 
     @FXML
-    lateinit var serverStartAgsTextField:TextField
+    lateinit var serverStartAgsTextField: TextField
 
 }

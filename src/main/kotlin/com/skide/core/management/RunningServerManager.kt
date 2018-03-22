@@ -13,12 +13,12 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
 
     lateinit var process: Process
     private lateinit var thread: Thread
-    lateinit var area:TextArea
+    lateinit var area: TextArea
 
     fun start(readyCallback: (RunningServerManager) -> Unit) {
         if (server.running) return
 
-            area = TextArea()
+        area = TextArea()
         thread = Thread {
 
             area.isEditable = false
@@ -44,7 +44,7 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
                         }
                         Thread {
                             Platform.runLater {
-                                if(msg!!.length > 1) area.appendText("$msg\n")
+                                if (msg!!.length > 1) area.appendText("$msg\n")
                                 msg = ""
                             }
                         }.start()
@@ -64,12 +64,13 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
     fun cleanFiles() {
         val f = File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts")
 
-        if(f.exists()) {
+        if (f.exists()) {
             f.listFiles().forEach {
-                if(it.name.endsWith(".sk"))it.delete()
+                if (it.name.endsWith(".sk")) it.delete()
             }
         }
     }
+
     fun setSkriptFile(name: String, content: String) {
         val file = File(File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), name)
 

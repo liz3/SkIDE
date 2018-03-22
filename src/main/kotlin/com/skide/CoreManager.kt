@@ -4,13 +4,10 @@ import com.skide.core.management.ConfigLoadResult
 import com.skide.core.management.ConfigManager
 import com.skide.core.management.ProjectManager
 import com.skide.core.management.ServerManager
-import com.skide.gui.GuiManager
+import com.skide.gui.GUIManager
 import com.skide.gui.JavaFXBootstrapper
-import com.skide.gui.Prompts
-import com.skide.gui.controllers.StartGuiController
+import com.skide.gui.controllers.StartGUIController
 import com.skide.utils.*
-import javafx.application.Platform
-import javafx.scene.control.Alert
 
 
 class CoreManager {
@@ -19,13 +16,10 @@ class CoreManager {
     val projectManager = ProjectManager(this)
     val serverManager = ServerManager(this)
     val resourceManager = ResourceManager(this)
-    val guiManager = GuiManager
+    val guiManager = GUIManager
     val saver = AutoSaver(this)
     val skUnity = SkUnity(this)
     private var debugLevel = DebugLevel.INFORMATION
-
-
-
 
 
     fun bootstrap(args: Array<String>) {
@@ -41,7 +35,7 @@ class CoreManager {
         skUnity.load()
         //Check if config load failed
         if (configLoadResult == ConfigLoadResult.ERROR)
-            //TODO handle ERROR
+        //TODO handle ERROR
             return
 
         resourceManager.loadResources()
@@ -49,14 +43,13 @@ class CoreManager {
 
         guiManager.bootstrapCallback = { stage ->
 
-            GuiManager.discord.update("In the main menu", "Idle")
+            GUIManager.discord.update("In the main menu", "Idle")
 
             val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, stage)
             stage.isResizable = false
-            val controller = window.controller as StartGuiController
+            val controller = window.controller as StartGUIController
             controller.initGui(this, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
             window.stage.show()
-
 
 
         }

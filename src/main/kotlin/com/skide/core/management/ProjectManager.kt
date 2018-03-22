@@ -294,8 +294,8 @@ class ProjectFileManager(val project: Project) {
         if (file?.exists()!!) file.delete() else return false
         projectFiles.remove(rName)
         compileOptions.values.forEach {
-          if(it.includedFiles.contains(file))  it.includedFiles.remove(file)
-          if(it.excludedFiles.contains(file))  it.excludedFiles.remove(file)
+            if (it.includedFiles.contains(file)) it.includedFiles.remove(file)
+            if (it.excludedFiles.contains(file)) it.excludedFiles.remove(file)
         }
         rewriteConfig()
         writeCompileOptions()

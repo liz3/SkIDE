@@ -5,10 +5,10 @@ import com.skide.CoreManager
 class AutoSaver(coreManager: CoreManager) {
 
     init {
-        val thread = Thread{
+        val thread = Thread {
             Thread.sleep(25000)
             coreManager.projectManager.openProjects.forEach {
-                it.guiHandler.openFiles.forEach { f->
+                it.guiHandler.openFiles.forEach { f ->
                     f.value.saveCode()
                 }
             }

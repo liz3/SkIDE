@@ -3,13 +3,13 @@ package com.skide.gui.project
 import com.skide.CoreManager
 import com.skide.core.management.ExternalHandler
 import com.skide.core.management.OpenProject
-import com.skide.gui.GuiManager
+import com.skide.gui.GUIManager
 import com.skide.gui.Menus
 import com.skide.gui.Prompts
-import com.skide.gui.controllers.CreateProjectGuiController
-import com.skide.gui.controllers.GeneralSettingsGuiController
-import com.skide.gui.controllers.ProjectGuiController
-import com.skide.gui.settings.SettingsGuiHandler
+import com.skide.gui.controllers.CreateProjectGUIController
+import com.skide.gui.controllers.GeneralSettingsGUIController
+import com.skide.gui.controllers.ProjectGUIController
+import com.skide.gui.settings.SettingsGUIHandler
 import com.skide.include.OpenFileHolder
 import javafx.application.Platform
 import javafx.scene.control.*
@@ -28,14 +28,14 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
     val openFiles = HashMap<File, OpenFileHolder>()
     val settings = SettingsGui(coreManager, this)
-    val window = GuiManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
+    val window = GUIManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
     lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
 
 
     fun startGui(): ProjectGuiEventListeners {
         window.scene.stylesheets.add("DarkHighlighting.css")
 
-        val controller = window.controller as ProjectGuiController
+        val controller = window.controller as ProjectGUIController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
         eventManager.guiReady = {
             window.stage.show()
@@ -75,7 +75,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     val projectFiles = openProject.project.fileManager.projectFiles
 }
 
-class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGuiManager, private val controller: ProjectGuiController, val coreManager: CoreManager) {
+class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGuiManager, private val controller: ProjectGUIController, val coreManager: CoreManager) {
 
     var guiReady = {}
     var contextMenuVisible: ContextMenu? = null
@@ -255,7 +255,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         fileMenu.items.remove(closeItem)
 
         controller.mainBenuBar.menus[2].items[0].setOnAction {
-            GuiManager.showAbout()
+            GUIManager.showAbout()
         }
 
 
@@ -275,8 +275,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         val newProject = MenuItem("New Project")
         newProject.setOnAction {
-            val window = GuiManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
-            window.controller as CreateProjectGuiController
+            val window = GUIManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
+            window.controller as CreateProjectGUIController
             window.controller.initGui(coreManager, window)
             window.stage.isResizable = false
 
@@ -318,9 +318,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         val generalSettings = MenuItem("General Settings")
         generalSettings.setOnAction {
 
-            val window = GuiManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)
+            val window = GUIManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)
 
-            SettingsGuiHandler(window.controller as GeneralSettingsGuiController, coreManager, window).init()
+            SettingsGUIHandler(window.controller as GeneralSettingsGUIController, coreManager, window).init()
 
             window.stage.show()
 
@@ -328,7 +328,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         val editServerConfMenu = Menu("Edit server Configuration")
         coreManager.serverManager.servers.forEach {
             val file = File(it.value.configuration.folder, "server.properties")
-            if(file.exists()) {
+            if (file.exists()) {
                 val tItem = MenuItem(it.value.configuration.name)
                 tItem.setOnAction {
                     openProjectGuiManager.openProject.eventManager.openFile(file, true)
@@ -370,7 +370,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                         .filter { it.tab == tab }
                         .forEach {
                             if (!it.isExternal) updateStructureTab(it)
-                            GuiManager.discord.update("Editing script ${it.name}", "Coding")
+                            GUIManager.discord.update("Editing script ${it.name}", "Coding")
                         }
 
 

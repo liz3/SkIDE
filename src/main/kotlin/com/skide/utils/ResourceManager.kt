@@ -32,7 +32,7 @@ class ResourceManager(val coreManager: CoreManager) {
 
         val read = readFile(skriptDoc)
 
-        if(read.first == FileReturnResult.SUCCESS) {
+        if (read.first == FileReturnResult.SUCCESS) {
 
             JSONObject(read.second).getJSONArray("result").forEach {
 
@@ -43,39 +43,38 @@ class ResourceManager(val coreManager: CoreManager) {
                 val name = it.getString("name")
                 val addonName = it.getString("addon")
 
+                val addonVersion = it.getString("version")
+                val reviewed = if (it.has("reviewed")) it.getString("reviewed") else ""
+                val pattern = if (it.has("pattern")) it.getString("pattern") else ""
+                val plugin = if (it.has("plugin")) it.getString("plugin") else ""
+                val eventValues = if (it.has("eventvalues")) it.getString("eventvalues") else ""
+                val changers = if (it.has("changers")) it.getString("changers") else ""
+                val tags = if (it.has("tags")) it.getString("tags") else ""
+                val returnType = if (it.has("returntype")) it.getString("returntype") else ""
+
+                val type = when (it.getString("doc")) {
+                    "conditions" -> DocType.CONDITION
+                    "effects" -> DocType.EFFECTS
+                    "events" -> DocType.EVENT
+                    "expressions" -> DocType.EXPRESSION
+                    "types" -> DocType.TYPE
+                    else -> DocType.TYPE
+                }
 
 
-                    val addonVersion = it.getString("version")
-                    val reviewed = if( it.has("reviewed")) it.getString("reviewed")  else ""
-                    val pattern = if( it.has("pattern")) it.getString("pattern")  else ""
-                    val plugin = if( it.has("plugin")) it.getString("plugin")  else ""
-                    val eventValues = if( it.has("eventvalues")) it.getString("eventvalues")  else ""
-                    val changers = if( it.has("changers")) it.getString("changers")  else ""
-                    val tags = if( it.has("tags")) it.getString("tags")  else ""
-                    val returnType = if( it.has("returntype")) it.getString("returntype")  else ""
-
-                    val type = when (it.getString("doc")) {
-                        "conditions" -> DocType.CONDITION
-                        "effects" -> DocType.EFFECTS
-                        "events" -> DocType.EVENT
-                        "expressions" -> DocType.EXPRESSION
-                        "types" -> DocType.TYPE
-                        else -> DocType.TYPE
-                    }
-
-
-                    skriptDocList.add(AddonItem(id, name,  type, addon, reviewed, addonVersion, pattern, plugin, eventValues, changers, tags, returnType))
+                skriptDocList.add(AddonItem(id, name, type, addon, reviewed, addonVersion, pattern, plugin, eventValues, changers, tags, returnType))
 
             }
         }
     }
 
     fun parseSkriptVersions() {
-         JSONArray(readFile(skriptVersionsFile).second).forEach { skriptVersions.add(it as String) }
+        JSONArray(readFile(skriptVersionsFile).second).forEach { skriptVersions.add(it as String) }
     }
+
     fun loadResources() {
 
-        if(!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
+        if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
         if (file.exists()) {
             file.delete()
         }
@@ -101,54 +100,54 @@ class ResourceManager(val coreManager: CoreManager) {
             val name = it.getString("name")
             val addonName = it.getString("addon")
 
-          if(addonName != "Skript" && addonName != "skript") {
+            if (addonName != "Skript" && addonName != "skript") {
 
-              var addonVersion = it.getString("version")
-              val reviewed = if( it.has("reviewed")) it.getString("reviewed")  else ""
-              val pattern = if( it.has("pattern")) it.getString("pattern")  else ""
-              val plugin = if( it.has("plugin")) it.getString("plugin")  else ""
-              val author = {
-                  var devName = ""
+                var addonVersion = it.getString("version")
+                val reviewed = if (it.has("reviewed")) it.getString("reviewed") else ""
+                val pattern = if (it.has("pattern")) it.getString("pattern") else ""
+                val plugin = if (it.has("plugin")) it.getString("plugin") else ""
+                val author = {
+                    var devName = ""
 
-                  addonDevs.forEach {dev ->
-                      dev as JSONObject
-                      if(dev.getString("addon") == addonName.split(" ").first()) devName = dev.getString("author")
-                  }
+                    addonDevs.forEach { dev ->
+                        dev as JSONObject
+                        if (dev.getString("addon") == addonName.split(" ").first()) devName = dev.getString("author")
+                    }
 
-                  devName
-              }.invoke()
-              if(author == "") println("dev null for $id $addonName in allSyntaxes")
-              val eventValues = if( it.has("eventvalues")) it.getString("eventvalues")  else ""
-              val changers = if( it.has("changers")) it.getString("changers")  else ""
-              val tags = if( it.has("tags")) it.getString("tags")  else ""
-              val returnType = if( it.has("returntype")) it.getString("returntype")  else ""
-
-
-              if (!addons.containsKey(addonName)) addons[addonName] = Addon((addons.size + 1).toLong(), addonName, author)
-              val addon = addons[addonName]!!
-              if (addonVersion == null || addonVersion == "") addonVersion = "0.0.0"
-              if (!addon.versions.containsKey(addonVersion)) addon.versions[addonVersion] = Vector()
-              val addonVer = addon.versions[addonVersion]
-              val type = when (it.getString("doc")) {
-                  "conditions" -> DocType.CONDITION
-                  "effects" -> DocType.EFFECTS
-                  "events" -> DocType.EVENT
-                  "expressions" -> DocType.EXPRESSION
-                  "types" -> DocType.TYPE
-                  else -> DocType.TYPE
-              }
+                    devName
+                }.invoke()
+                if (author == "") println("dev null for $id $addonName in allSyntaxes")
+                val eventValues = if (it.has("eventvalues")) it.getString("eventvalues") else ""
+                val changers = if (it.has("changers")) it.getString("changers") else ""
+                val tags = if (it.has("tags")) it.getString("tags") else ""
+                val returnType = if (it.has("returntype")) it.getString("returntype") else ""
 
 
-              addonVer!!.addElement(AddonItem(id, name,  type, addon, reviewed, addonVersion, pattern, plugin, eventValues, changers, tags, returnType))
-          }
+                if (!addons.containsKey(addonName)) addons[addonName] = Addon((addons.size + 1).toLong(), addonName, author)
+                val addon = addons[addonName]!!
+                if (addonVersion == null || addonVersion == "") addonVersion = "0.0.0"
+                if (!addon.versions.containsKey(addonVersion)) addon.versions[addonVersion] = Vector()
+                val addonVer = addon.versions[addonVersion]
+                val type = when (it.getString("doc")) {
+                    "conditions" -> DocType.CONDITION
+                    "effects" -> DocType.EFFECTS
+                    "events" -> DocType.EVENT
+                    "expressions" -> DocType.EXPRESSION
+                    "types" -> DocType.TYPE
+                    else -> DocType.TYPE
+                }
+
+
+                addonVer!!.addElement(AddonItem(id, name, type, addon, reviewed, addonVersion, pattern, plugin, eventValues, changers, tags, returnType))
+            }
         }
     }
 
-    fun downloadSkriptVersion(name:String): File {
+    fun downloadSkriptVersion(name: String): File {
 
         val skFile = File(skriptVersionsFolder, name)
 
-        if(!skFile.exists()) {
+        if (!skFile.exists()) {
             skFile.createNewFile()
             Prompts.infoCheck("Information", "SkIde is downloading a file", "SkIde is Downloading a file!", Alert.AlertType.INFORMATION)
             downloadFile("https://skripttools.net/dl/${URLEncoder.encode(name, "UTF-8")}", skFile.absolutePath)

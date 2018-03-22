@@ -132,7 +132,6 @@ class ConfigManager(val coreManager: CoreManager) {
     }
 
 
-
     //PROJECTS
     fun addProject(holder: PointerHolder): Boolean {
         if (projects.containsKey(holder.id)) return false
@@ -183,8 +182,8 @@ class ConfigManager(val coreManager: CoreManager) {
             lastOpened = obj.getInt("last_open")
             defaultProjectPath = File(obj.getString("default_project"))
             defaultServerPath = File(obj.getString("default_server"))
-            if(obj.has("skunity_key")) skUnityKey = obj.getString("skunity_key")
-            if(obj.has("skunity_name")) skUnityUsername = obj.getString("skunity_name")
+            if (obj.has("skunity_key")) skUnityKey = obj.getString("skunity_key")
+            if (obj.has("skunity_name")) skUnityUsername = obj.getString("skunity_name")
 
             val settingsObj = obj.getJSONObject("settings")
 
@@ -218,21 +217,23 @@ class ConfigManager(val coreManager: CoreManager) {
         return true
     }
 
-    fun get(key:String): Any? {
+    fun get(key: String): Any? {
         return settings[key]
     }
-    fun set(key:String, value:Any) {
+
+    fun set(key: String, value: Any) {
         settings.put(key, value)
         writeFile(getConfigObject().toString().toByteArray(), configFile, false, false)
     }
+
     private fun getConfigObject(): JSONObject {
 
         val obj = JSONObject()
         obj.put("last_open", lastOpened)
         obj.put("default_project", defaultProjectPath.absolutePath)
         obj.put("default_server", defaultServerPath.absolutePath)
-        if(skUnityKey != "") obj.put("skunity_key", skUnityKey)
-        if(skUnityUsername != "") obj.put("skunity_name", skUnityUsername)
+        if (skUnityKey != "") obj.put("skunity_key", skUnityKey)
+        if (skUnityUsername != "") obj.put("skunity_name", skUnityUsername)
         val settArr = JSONObject()
         for ((key, value) in settings) {
             settArr.put(key, value)

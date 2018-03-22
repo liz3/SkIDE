@@ -4,7 +4,7 @@ import com.skide.CoreManager
 import com.skide.core.management.OpenProject
 import com.skide.core.management.RunningServerManager
 import com.skide.gui.DragResizer
-import com.skide.gui.controllers.ProjectGuiController
+import com.skide.gui.controllers.ProjectGUIController
 import com.skide.include.Server
 import com.terminalfx.TerminalBuilder
 import javafx.application.Platform
@@ -15,9 +15,8 @@ import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
-import java.io.File
 
-class LowerTabPaneEventManager(val ctrl: ProjectGuiController, val openProjectGuiManager: OpenProjectGuiManager, val coreManager: CoreManager) {
+class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGuiManager: OpenProjectGuiManager, val coreManager: CoreManager) {
 
     var visible = true
     val rootPane = ctrl.mainLowerBorderPane
@@ -27,16 +26,15 @@ class LowerTabPaneEventManager(val ctrl: ProjectGuiController, val openProjectGu
     private val running = HashMap<Server, Tab>()
 
 
-
     fun getServerTab(serverManager: RunningServerManager, openProject: OpenProject): Triple<Tab, Button, Button> {
 
-        if(running.containsKey(serverManager.server)) {
+        if (running.containsKey(serverManager.server)) {
             ctrl.runsTabPane.tabs.remove(running[serverManager.server]!!)
             running.remove(serverManager.server)
         }
         val tab = Tab(serverManager.server.configuration.name)
 
-        val pane =  BorderPane()
+        val pane = BorderPane()
         val vBox = VBox()
         val reloadBtn = Button("R")
         reloadBtn.setPrefSize(25.0, 25.0)
@@ -52,8 +50,8 @@ class LowerTabPaneEventManager(val ctrl: ProjectGuiController, val openProjectGu
         vBox.children.addAll(reloadBtn, stopBtn, cleanBtn)
         pane.left = vBox
         val sendField = TextField()
-        sendField.setOnKeyPressed {ev ->
-            if(ev.code == KeyCode.ENTER) {
+        sendField.setOnKeyPressed { ev ->
+            if (ev.code == KeyCode.ENTER) {
                 serverManager.sendCommand(sendField.text)
                 sendField.text = ""
             }
@@ -68,6 +66,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGuiController, val openProjectGu
         running[serverManager.server] = tab
         return Triple(tab, reloadBtn, stopBtn)
     }
+
     fun setupBuildLogTabForInput(): (String) -> Unit {
 
         buildLogArea.clear()

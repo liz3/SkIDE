@@ -11,7 +11,7 @@ import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
-class RunningObjectGuiBinder(val reloadBtn: Button, val stopBtn:Button, val srv: RunningServerManager, var runner:Any)
+class RunningObjectGuiBinder(val reloadBtn: Button, val stopBtn: Button, val srv: RunningServerManager, var runner: Any)
 
 class OpenProject(val project: Project, val coreManager: CoreManager) {
 
@@ -50,14 +50,14 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         println(addons.size)
     }
 
-    fun run(server:Server, configuration: CompileOption) {
+    fun run(server: Server, configuration: CompileOption) {
 
-        if(!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running) {
+        if (!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running) {
             runConfs.remove(server)
             val runningServer = coreManager.serverManager.getServerForRun(server) { srv ->
                 compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
 
-                    if(configuration.method == CompileOptionType.PER_FILE) {
+                    if (configuration.method == CompileOptionType.PER_FILE) {
                         configuration.includedFiles.forEach {
                             srv.sendCommand("sk reload ${it.name}")
                         }
@@ -78,10 +78,10 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             return
         }
 
-        if(runConfs.containsKey(server) && runConfs[server]!!.runner === configuration) {
+        if (runConfs.containsKey(server) && runConfs[server]!!.runner === configuration) {
             compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
 
-                if(configuration.method == CompileOptionType.PER_FILE) {
+                if (configuration.method == CompileOptionType.PER_FILE) {
                     configuration.includedFiles.forEach {
                         runConfs[server]!!.srv.sendCommand("sk reload ${it.name}")
                     }
@@ -93,7 +93,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         } else {
             runConfs[server]!!.runner = configuration
             compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
-                if(configuration.method == CompileOptionType.PER_FILE) {
+                if (configuration.method == CompileOptionType.PER_FILE) {
                     configuration.includedFiles.forEach {
                         runConfs[server]!!.srv.sendCommand("sk reload ${it.name}")
                     }
@@ -105,9 +105,9 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         }
     }
 
-    fun run(server:Server, file: OpenFileHolder) {
+    fun run(server: Server, file: OpenFileHolder) {
 
-        if(!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running) {
+        if (!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running) {
             runConfs.remove(server)
             val runningServer = coreManager.serverManager.getServerForRun(server) {
                 it.setSkriptFile(file.name, file.area.text)
@@ -123,7 +123,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             return
         }
 
-        if(runConfs.containsKey(server) && runConfs[server]!!.runner === file) {
+        if (runConfs.containsKey(server) && runConfs[server]!!.runner === file) {
             runConfs[server]!!.srv.setSkriptFile(file.name, file.area.text)
         } else {
             runConfs[server]!!.runner = file

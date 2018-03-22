@@ -22,11 +22,11 @@ enum class NodeType {
     CLASS
 }
 
-class MethodParameter(val name: String, val type: String, val value:String)
+class MethodParameter(val name: String, val type: String, val value: String)
 
 class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val linenumber: Int, val childNodes: Vector<Node> = Vector()) {
 
-    val content = raw.trim().replace("\r","").replace("\t","")
+    val content = raw.trim().replace("\r", "").replace("\t", "")
     var hasComment = false
     var commentPart = ""
     val fields = HashMap<String, Any>()
@@ -45,14 +45,14 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
             theType = NodeType.FUNCTION
         }
         if (content.toLowerCase().startsWith("command ")) {
-            fields.put("name", content.split(" ")[1].replace("/","").replace(":",""))
+            fields.put("name", content.split(" ")[1].replace("/", "").replace(":", ""))
             theType = NodeType.COMMAND
         }
         if (content.toLowerCase().startsWith("#")) {
             theType = NodeType.COMMENT
         }
         if (content.toLowerCase().startsWith("on ")) {
-            fields.put("name", content.replace(":","").replace("on ", ""))
+            fields.put("name", content.replace(":", "").replace("on ", ""))
             theType = NodeType.EVENT
         }
         if (content.toLowerCase().startsWith("if ")) {
@@ -77,7 +77,7 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
                 //get var name
 
 
-                if(content.substring(3).trim().startsWith("{{")) {
+                if (content.substring(3).trim().startsWith("{{")) {
                     val name = content.split("{")[2].split("}").first()
                     println(name)
                     when {
@@ -88,7 +88,7 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
                         }
                         else -> fields.put("visibility", "global")
                     }
-                    if(name.startsWith("_") || name.startsWith("@")) {
+                    if (name.startsWith("_") || name.startsWith("@")) {
 
                         fields.put("name", name.substring(1))
                     } else {
@@ -98,11 +98,11 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
                     fields.put("set_value", content.split("to")[1])
 
 
-            if(content.contains("::")) {
-                val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
-                println(listOrMapPath)
-                fields.put("path", listOrMapPath)
-            }
+                    if (content.contains("::")) {
+                        val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
+                        println(listOrMapPath)
+                        fields.put("path", listOrMapPath)
+                    }
 
                 } else {
                     val name = content.split("{")[1].split("}").first()
@@ -115,7 +115,7 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
                         }
                         else -> fields.put("visibility", "global")
                     }
-                    if(name.startsWith("_") || name.startsWith("@")) {
+                    if (name.startsWith("_") || name.startsWith("@")) {
 
                         fields.put("name", name.substring(1))
                     } else {
@@ -123,7 +123,7 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
 
                     }
                     fields.put("set_value", content.split("to")[1])
-                    if(content.contains("::")) {
+                    if (content.contains("::")) {
                         val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
                         println(listOrMapPath)
                         fields.put("path", listOrMapPath)
@@ -160,22 +160,22 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
 
     private fun parseMethodParameters() {
         val paramList = Vector<MethodParameter>()
-        if(!content.contains("(") || !content.contains(")")) return
+        if (!content.contains("(") || !content.contains(")")) return
         val name = content.split(" ")[1].split("(")[0]
         val params = content.split("(")[1].split(")")[0].split(",")
         val returnType: String
         params.forEach {
 
-           if(it != "" && it.contains(":")) {
-               val paramName = it.trim().split(":").first()
-               var paramType = it.trim().split(":")[1]
-               var value = ""
-               if(paramType.contains("=")) {
-                   value = paramType.split("=")[1].trim().replace("\"","")
-                   paramType = paramType.split("=").first().trim()
-               }
-               paramList.add(MethodParameter(paramName, paramType, value))
-           }
+            if (it != "" && it.contains(":")) {
+                val paramName = it.trim().split(":").first()
+                var paramType = it.trim().split(":")[1]
+                var value = ""
+                if (paramType.contains("=")) {
+                    value = paramType.split("=")[1].trim().replace("\"", "")
+                    paramType = paramType.split("=").first().trim()
+                }
+                paramList.add(MethodParameter(paramName, paramType, value))
+            }
         }
         fields["name"] = name
         fields["params"] = paramList

@@ -8,12 +8,12 @@ class Discord {
 
 
     init {
-
         update()
     }
 
     private fun update() {
-        if (getOs() == OperatingSystemType.MAC_OS) return
+        if (getOS() == OperatingSystemType.MAC_OS)
+            return
 
         discordRpc = DiscordRpc()
         discordRpc.init("425466853943672852", object : DiscordEventHandler {
@@ -25,10 +25,14 @@ class Discord {
 
             override fun ready() {
 
-            }override fun disconnected(errorCode: ErrorCode?, message: String?) {
             }
+
+            override fun disconnected(errorCode: ErrorCode?, message: String?) {
+            }
+
             override fun spectateGame(spectateSecret: String?) {
             }
+
             override fun errored(errorCode: ErrorCode?, message: String?) {
             }
         }, true)
@@ -38,13 +42,16 @@ class Discord {
     }
 
     fun stop() {
-        if (getOs() == OperatingSystemType.MAC_OS) return
+        if (getOS() == OperatingSystemType.MAC_OS)
+            return
         discordRpc.shutdown()
 
     }
+
     fun update(details: String, state: String) {
 
-        if (getOs() == OperatingSystemType.MAC_OS) return
+        if (getOS() == OperatingSystemType.MAC_OS)
+            return
         Thread {
             stop()
             update()

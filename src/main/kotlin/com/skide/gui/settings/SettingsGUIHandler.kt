@@ -1,7 +1,7 @@
 package com.skide.gui.settings
 
 import com.skide.CoreManager
-import com.skide.gui.controllers.GeneralSettingsGuiController
+import com.skide.gui.controllers.GeneralSettingsGUIController
 import com.skide.include.ActiveWindow
 import com.skide.include.Server
 import com.skide.include.ServerAddon
@@ -12,7 +12,7 @@ import javafx.stage.Stage
 import java.io.File
 import java.util.*
 
-class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager: CoreManager, val window: ActiveWindow) {
+class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager: CoreManager, val window: ActiveWindow) {
 
     var newServerAdded = false
 
@@ -24,16 +24,15 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
     fun init() {
 
 
-
         ctrl.okBtn.setOnAction {
             deleted.forEach {
                 serverManager.deleteServer(it)
             }
-            if(currentSelected() != null) {
-                if(newServerAdded) {
+            if (currentSelected() != null) {
+                if (newServerAdded) {
                     newServerAdded = false
                 }
-                    serverManager.saveServerConfigution(currentSelected())
+                serverManager.saveServerConfigution(currentSelected())
             }
 
             deleted.clear()
@@ -43,8 +42,8 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
             deleted.forEach {
                 serverManager.deleteServer(it)
             }
-            if(currentSelected() != null) {
-                if(newServerAdded) {
+            if (currentSelected() != null) {
+                if (newServerAdded) {
                     newServerAdded = false
                 }
                 serverManager.saveServerConfigution(currentSelected())
@@ -62,30 +61,30 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
         }
         ctrl.serverServerList.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
 
-            if(oldValue == null)  {
-                if(!newServerAdded) {
+            if (oldValue == null) {
+                if (!newServerAdded) {
                     setNewValues()
                 }
                 return@addListener
             }
-           if(newServerAdded) {
-              serverManager.createServer(oldValue)
-               newServerAdded = false
-           } else {
-             if(!deleted.contains(oldValue))  serverManager.saveServerConfigution(oldValue)
-           }
-           if(!newServerAdded && newValue != null) setNewValues()
+            if (newServerAdded) {
+                serverManager.createServer(oldValue)
+                newServerAdded = false
+            } else {
+                if (!deleted.contains(oldValue)) serverManager.saveServerConfigution(oldValue)
+            }
+            if (!newServerAdded && newValue != null) setNewValues()
         }
         ctrl.serverServertPathChooseBtn.setOnAction {
             val file = getFile("Choose the Bukkit/Spigot Jar File")
-            if(file != null) {
+            if (file != null) {
                 currentSelected().configuration.apiPath = file
                 ctrl.serverServerPathTextField.text = file.absolutePath
             }
         }
         ctrl.serverServerFolderPathChooseBtn.setOnAction {
             val file = getDir("Choose the Folder path")
-            if(file != null) {
+            if (file != null) {
                 currentSelected().configuration.folder = file
                 currentSelected().confFile = File(file, ".server.skide")
                 ctrl.serverServerFolderPathTextField.text = file.absolutePath
@@ -93,17 +92,17 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
         }
         ctrl.serverAddAddonFromFileChooseBtn.setOnAction {
             val file = getFile("Choose the Addon File")
-            if(file != null) {
+            if (file != null) {
                 ctrl.serverAddAddonFromFileTextField.text = file.absolutePath
             }
         }
         ctrl.serverAddAddonFromFileBtn.setOnAction {
             val file = File(ctrl.serverAddAddonFromFileTextField.text)
 
-            if(file.exists()) {
+            if (file.exists()) {
                 currentSelected().configuration.addons.forEach {
-                    if(it.file.absolutePath == file.absolutePath) return@setOnAction
-                println("Returning")
+                    if (it.file.absolutePath == file.absolutePath) return@setOnAction
+                    println("Returning")
                 }
                 val item = ServerAddon(file.name, file, false)
                 currentSelected().configuration.addons.addElement(item)
@@ -111,7 +110,7 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
             }
         }
         ctrl.serverSkriptVersionComboBox.setOnAction {
-           if(currentSelected() != null) currentSelected().configuration.skriptVersion = ctrl.serverSkriptVersionComboBox.selectionModel.selectedItem as String
+            if (currentSelected() != null) currentSelected().configuration.skriptVersion = ctrl.serverSkriptVersionComboBox.selectionModel.selectedItem as String
         }
         ctrl.serverServerDeleteBtn.setOnAction {
             deleted.add(currentSelected())
@@ -119,7 +118,7 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
 
         }
         ctrl.serverAddonDeleteBtn.setOnAction {
-            if(ctrl.serverAddonList.selectionModel.selectedItem != null) {
+            if (ctrl.serverAddonList.selectionModel.selectedItem != null) {
                 val item = ctrl.serverAddonList.selectionModel.selectedItem
                 ctrl.serverAddonList.items.remove(item)
                 currentSelected().configuration.addons.remove(item)
@@ -128,7 +127,7 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
         }
         ctrl.serverNewServerCreateBtn.setOnAction {
             val name = ctrl.serverNewServerNameTextField.text
-            if(serverManager.servers.containsKey(name)) return@setOnAction
+            if (serverManager.servers.containsKey(name)) return@setOnAction
             newServerAdded = true
             val server = Server(ServerConfiguration(name, "", File(""), File(""), ""), File(""), false, System.currentTimeMillis())
             ctrl.serverServerList.items.add(server)
@@ -142,6 +141,7 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
         }
         ctrl.serverSkriptVersionComboBox.items.addAll(coreManager.resourceManager.skriptVersions)
     }
+
     private fun setNewValues() {
 
         ctrl.serverServerNameTextField.text = currentSelected().configuration.name
@@ -153,6 +153,7 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
             ctrl.serverAddonList.items.add(it)
         }
     }
+
     private fun clearValues() {
 
 
@@ -164,7 +165,7 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
     }
 
 
-    private fun getFile(name:String): File? {
+    private fun getFile(name: String): File? {
 
         val fileChooserWindow = Stage()
         val dirChooser = FileChooser()
@@ -172,9 +173,10 @@ class SettingsGuiHandler(val ctrl:GeneralSettingsGuiController, val coreManager:
         dirChooser.extensionFilters.addAll(
                 FileChooser.ExtensionFilter("JAR", "*.jar")
         )
-       return dirChooser.showOpenDialog(fileChooserWindow)
+        return dirChooser.showOpenDialog(fileChooserWindow)
     }
-    fun getDir(name:String): File? {
+
+    fun getDir(name: String): File? {
 
         val fileChooserWindow = Stage()
         val dirChooser = DirectoryChooser()

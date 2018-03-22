@@ -1,24 +1,25 @@
 package com.skide.gui.project
 
 import com.skide.core.management.OpenProject
-import com.skide.gui.controllers.ProjectSettingsGuiController
+import com.skide.gui.controllers.ProjectSettingsGUIController
 import com.skide.include.CompileOption
 import com.skide.include.CompileOptionType
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import java.io.File
 
-class CompileOptionsGui(val project: OpenProject, val ctrl: ProjectSettingsGuiController) {
+class CompileOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUIController) {
 
 
     val allOptions = project.project.fileManager.compileOptions
 
-    fun applyCurr(old:CompileOption = current()): Boolean {
+    fun applyCurr(old: CompileOption = current()): Boolean {
 
-        if(!old.outputDir.exists()) return false
+        if (!old.outputDir.exists()) return false
         project.project.fileManager.writeCompileOptions()
         return true
     }
+
     fun init() {
 
         ctrl.compileMethodComboBox.items.addAll(CompileOptionType.CONCATENATE, CompileOptionType.PER_FILE, CompileOptionType.JAR)
@@ -28,7 +29,7 @@ class CompileOptionsGui(val project: OpenProject, val ctrl: ProjectSettingsGuiCo
 
         ctrl.compileConfListView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
 
-            if(oldValue != null && !applyCurr(oldValue)) return@addListener
+            if (oldValue != null && !applyCurr(oldValue)) return@addListener
             insertCurrentValues()
         }
         ctrl.compileNewConfBtn.setOnAction {
@@ -51,16 +52,16 @@ class CompileOptionsGui(val project: OpenProject, val ctrl: ProjectSettingsGuiCo
             current().method = newValue
         }
         ctrl.compileIncludedFileList.setOnMouseClicked { ev ->
-            if(ev.clickCount == 2) {
-               if(ctrl.compileIncludedFileList.selectionModel.selectedItem != null) {
+            if (ev.clickCount == 2) {
+                if (ctrl.compileIncludedFileList.selectionModel.selectedItem != null) {
 
-                   val currentItem = ctrl.compileIncludedFileList.selectionModel.selectedItem as File
+                    val currentItem = ctrl.compileIncludedFileList.selectionModel.selectedItem as File
 
-                   current().includedFiles.remove(currentItem)
-                   current().excludedFiles.add(currentItem)
-                   ctrl.compileIncludedFileList.items.remove(currentItem)
-                   ctrl.compileExcludedFileList.items.add(currentItem)
-               }
+                    current().includedFiles.remove(currentItem)
+                    current().excludedFiles.add(currentItem)
+                    ctrl.compileIncludedFileList.items.remove(currentItem)
+                    ctrl.compileExcludedFileList.items.add(currentItem)
+                }
             }
         }
         ctrl.compileOutPutBtn.setOnAction {
@@ -68,7 +69,7 @@ class CompileOptionsGui(val project: OpenProject, val ctrl: ProjectSettingsGuiCo
             val dirChooser = DirectoryChooser()
             dirChooser.title = "Choose output folder"
             val dir = dirChooser.showDialog(fileChooserWindow)
-            if(dir != null) {
+            if (dir != null) {
                 current().outputDir = dir
                 ctrl.compileOutPutPathField.text = dir.absolutePath
 
@@ -76,16 +77,16 @@ class CompileOptionsGui(val project: OpenProject, val ctrl: ProjectSettingsGuiCo
 
         }
         ctrl.compileExcludedFileList.setOnMouseClicked { ev ->
-            if(ev.clickCount == 2) {
-               if(ctrl.compileExcludedFileList.selectionModel.selectedItem != null) {
+            if (ev.clickCount == 2) {
+                if (ctrl.compileExcludedFileList.selectionModel.selectedItem != null) {
 
-                   val currentItem = ctrl.compileExcludedFileList.selectionModel.selectedItem as File
+                    val currentItem = ctrl.compileExcludedFileList.selectionModel.selectedItem as File
 
-                   current().excludedFiles.remove(currentItem)
-                   current().includedFiles.add(currentItem)
-                   ctrl.compileIncludedFileList.items.add(currentItem)
-                   ctrl.compileExcludedFileList.items.remove(currentItem)
-               }
+                    current().excludedFiles.remove(currentItem)
+                    current().includedFiles.add(currentItem)
+                    ctrl.compileIncludedFileList.items.add(currentItem)
+                    ctrl.compileExcludedFileList.items.remove(currentItem)
+                }
             }
         }
         ctrl.removeCommentsCheck.setOnAction {
@@ -101,7 +102,7 @@ class CompileOptionsGui(val project: OpenProject, val ctrl: ProjectSettingsGuiCo
         ctrl.compileDelConfBtn.setOnAction {
             project.project.fileManager.delCompileOption(current().name)
             ctrl.compileConfListView.items.remove(current())
-            if(allOptions.size == 1) ctrl.compileDelConfBtn.isDisable = true
+            if (allOptions.size == 1) ctrl.compileDelConfBtn.isDisable = true
         }
 
 

@@ -10,7 +10,7 @@ import javafx.scene.control.CheckBox
 import java.io.File
 
 
-class ProjectSettingsGuiController {
+class ProjectSettingsGUIController {
 
     @FXML
     lateinit var prNameTextField: TextField

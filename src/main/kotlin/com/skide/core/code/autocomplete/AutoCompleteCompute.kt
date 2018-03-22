@@ -1,7 +1,7 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
-import com.skide.gui.GuiManager
+import com.skide.gui.GUIManager
 import com.skide.gui.controllers.GenerateCommandController
 import com.skide.include.*
 import com.skide.utils.CurrentStateInfo
@@ -111,9 +111,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
 
-
     private fun addItem(label: String, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller))
-
 
 
     private fun registerEventListener() {
@@ -401,7 +399,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             fillList.refresh()
 
         }
-        if(fillList.items.size == 0) return
+        if (fillList.items.size == 0) return
         popUp.show(project.openProject.guiHandler.window.stage)
         fillList.selectionModel.select(0)
 
@@ -430,13 +428,13 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             addItem("Generate Command") {
                 popUp.hide()
 
-                val window = GuiManager.getWindow("GenerateCommand.fxml", "Generate command", true)
+                val window = GUIManager.getWindow("GenerateCommand.fxml", "Generate command", true)
                 val generate: GenerateCommandController = window.controller as GenerateCommandController;
                 generate.createButton.onMouseClicked = EventHandler<MouseEvent> { _ ->
                     run {
                         area.replaceText(area.caretPosition, area.caretPosition, "command /" + generate.commandNameField.text + ":\n\tdescription: " + generate.descriptionField.text + "\n" + "\tpermission: " + generate.permissionField.text + "\n\ttrigger:\n\t\tsend \"hi\" to player")
 
-                        GuiManager.closeGui(window.id);
+                        GUIManager.closeGui(window.id);
                     }
                 }
 

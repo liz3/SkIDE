@@ -12,132 +12,134 @@ class SkCompiler {
 
     val parser = SkriptParser()
 
-    fun isValid(it:Node, opts: CompileOption): Boolean {
+    fun isValid(it: Node, opts: CompileOption): Boolean {
         if (it.nodeType == NodeType.COMMENT && opts.remComments) {
-           return false
+            return false
         }
         if (it.nodeType == NodeType.UNDEFINED && opts.remEmptyLines) {
             return false
         }
         return true
     }
+
     fun compile(project: Project, opts: CompileOption, caller: (String) -> Unit) {
-      Thread {
-          caller("Starting compile process...")
+        Thread {
+            caller("Starting compile process...")
 
-          val optimised = HashMap<File, Vector<Node>>()
+            val optimised = HashMap<File, Vector<Node>>()
 
-          opts.includedFiles.forEach {
-              caller("Parsing file ${it.absolutePath}")
-              val result = parser.superParse(readFile(it).second)
-              caller("Optimizing file ${it.absolutePath}")
-              val filtered = Vector<Node>()
-              for (node in result) {
-                  if(!isValid(node, opts)) continue
-
-
-                  val toRemove = Vector<Node>()
-                  node.childNodes.forEach { child ->
-                      getToRemove(child, opts)
-                  }
-                  node.childNodes.forEach {
-                      if(!isValid(it, opts)) toRemove.add(it)
-                  }
-                  toRemove.forEach {
-                      node.childNodes.remove(it)
-                  }
-                  filtered.add(node)
-              }
-              optimised[it] = filtered
-          }
+            opts.includedFiles.forEach {
+                caller("Parsing file ${it.absolutePath}")
+                val result = parser.superParse(readFile(it).second)
+                caller("Optimizing file ${it.absolutePath}")
+                val filtered = Vector<Node>()
+                for (node in result) {
+                    if (!isValid(node, opts)) continue
 
 
-          if (opts.method == CompileOptionType.CONCATENATE) {
+                    val toRemove = Vector<Node>()
+                    node.childNodes.forEach { child ->
+                        getToRemove(child, opts)
+                    }
+                    node.childNodes.forEach {
+                        if (!isValid(it, opts)) toRemove.add(it)
+                    }
+                    toRemove.forEach {
+                        node.childNodes.remove(it)
+                    }
+                    filtered.add(node)
+                }
+                optimised[it] = filtered
+            }
 
-              var out = ""
-              optimised.values.forEach { arr ->
 
-                  for(node in arr) {
-                      out += computeString(node)
-                  }
-              }
-              val file = File(opts.outputDir, project.name + ".sk")
-              caller("Writing file ${file.absolutePath}")
-              writeFile(out.substring(1).toByteArray(), file, false, true)
-              caller("Finished")
-          }
-          if (opts.method == CompileOptionType.PER_FILE) {
+            if (opts.method == CompileOptionType.CONCATENATE) {
 
-              optimised.forEach { arr ->
-                  val file = File(opts.outputDir, arr.key.name)
-                  var out = ""
-                  arr.value.forEach { out += computeString(it)}
-                  caller("Writing file ${file.absolutePath}")
-                  writeFile(out.substring(1).toByteArray(), file, false, true)
-              }
-              caller("Finished")
-          }
-      }.start()
+                var out = ""
+                optimised.values.forEach { arr ->
+
+                    for (node in arr) {
+                        out += computeString(node)
+                    }
+                }
+                val file = File(opts.outputDir, project.name + ".sk")
+                caller("Writing file ${file.absolutePath}")
+                writeFile(out.substring(1).toByteArray(), file, false, true)
+                caller("Finished")
+            }
+            if (opts.method == CompileOptionType.PER_FILE) {
+
+                optimised.forEach { arr ->
+                    val file = File(opts.outputDir, arr.key.name)
+                    var out = ""
+                    arr.value.forEach { out += computeString(it) }
+                    caller("Writing file ${file.absolutePath}")
+                    writeFile(out.substring(1).toByteArray(), file, false, true)
+                }
+                caller("Finished")
+            }
+        }.start()
     }
-    fun compileForServer(project: Project, opts: CompileOption, skFolder:File, caller: (String) -> Unit, finished: () -> Unit) {
-      Thread {
-          caller("Starting compile process...")
 
-          val optimised = HashMap<File, Vector<Node>>()
+    fun compileForServer(project: Project, opts: CompileOption, skFolder: File, caller: (String) -> Unit, finished: () -> Unit) {
+        Thread {
+            caller("Starting compile process...")
 
-          opts.includedFiles.forEach {
-              caller("Parsing file ${it.absolutePath}")
-              val result = parser.superParse(readFile(it).second)
-              caller("Optimizing file ${it.absolutePath}")
-              val filtered = Vector<Node>()
-              for (node in result) {
-                  if(!isValid(node, opts)) continue
+            val optimised = HashMap<File, Vector<Node>>()
 
-
-                  val toRemove = Vector<Node>()
-                  node.childNodes.forEach { child ->
-                      getToRemove(child, opts)
-                  }
-                  node.childNodes.forEach {
-                      if(!isValid(it, opts)) toRemove.add(it)
-                  }
-                  toRemove.forEach {
-                      node.childNodes.remove(it)
-                  }
-                  filtered.add(node)
-              }
-              optimised[it] = filtered
-          }
+            opts.includedFiles.forEach {
+                caller("Parsing file ${it.absolutePath}")
+                val result = parser.superParse(readFile(it).second)
+                caller("Optimizing file ${it.absolutePath}")
+                val filtered = Vector<Node>()
+                for (node in result) {
+                    if (!isValid(node, opts)) continue
 
 
-          if (opts.method == CompileOptionType.CONCATENATE) {
+                    val toRemove = Vector<Node>()
+                    node.childNodes.forEach { child ->
+                        getToRemove(child, opts)
+                    }
+                    node.childNodes.forEach {
+                        if (!isValid(it, opts)) toRemove.add(it)
+                    }
+                    toRemove.forEach {
+                        node.childNodes.remove(it)
+                    }
+                    filtered.add(node)
+                }
+                optimised[it] = filtered
+            }
 
-              var out = ""
-              optimised.values.forEach { arr ->
 
-                  for(node in arr) {
-                      out += computeString(node)
-                  }
-              }
-              val file = File(skFolder, project.name + ".sk")
-              caller("Writing file ${file.absolutePath}")
-              writeFile(out.substring(1).toByteArray(), file, false, true)
-              caller("Finished")
-              finished()
-          }
-          if (opts.method == CompileOptionType.PER_FILE) {
+            if (opts.method == CompileOptionType.CONCATENATE) {
 
-              optimised.forEach { arr ->
-                  val file = File(skFolder, arr.key.name)
-                  var out = ""
-                  arr.value.forEach { out += computeString(it)}
-                  caller("Writing file ${file.absolutePath}")
-                  writeFile(out.substring(1).toByteArray(), file, false, true)
-              }
-              caller("Finished")
-              finished()
-          }
-      }.start()
+                var out = ""
+                optimised.values.forEach { arr ->
+
+                    for (node in arr) {
+                        out += computeString(node)
+                    }
+                }
+                val file = File(skFolder, project.name + ".sk")
+                caller("Writing file ${file.absolutePath}")
+                writeFile(out.substring(1).toByteArray(), file, false, true)
+                caller("Finished")
+                finished()
+            }
+            if (opts.method == CompileOptionType.PER_FILE) {
+
+                optimised.forEach { arr ->
+                    val file = File(skFolder, arr.key.name)
+                    var out = ""
+                    arr.value.forEach { out += computeString(it) }
+                    caller("Writing file ${file.absolutePath}")
+                    writeFile(out.substring(1).toByteArray(), file, false, true)
+                }
+                caller("Finished")
+                finished()
+            }
+        }.start()
     }
 
     private fun computeString(node: Node): String {
@@ -149,7 +151,7 @@ class SkCompiler {
             str += computeString(it)
         }
 
-        return  "\n" + str
+        return "\n" + str
     }
 
     private fun getToRemove(node: Node, opts: CompileOption): Boolean {
@@ -162,7 +164,7 @@ class SkCompiler {
         toRemove.forEach {
             node.childNodes.remove(it)
         }
-        if(!isValid(node, opts)) return true
+        if (!isValid(node, opts)) return true
 
         return false
     }

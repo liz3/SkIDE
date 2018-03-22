@@ -1,4 +1,5 @@
 package com.skide.gui;
+
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -13,7 +14,7 @@ public class PasswordDialog extends Dialog<String> {
 
     public PasswordDialog() {
         setTitle("Password");
-        setHeaderText("Please enter your Skunity password.");
+        setHeaderText("Please enter your skUnity password.");
 
         ButtonType passwordButtonType = new ButtonType("Ok", ButtonData.OK_DONE);
         getDialogPane().getButtonTypes().addAll(passwordButtonType, ButtonType.CANCEL);

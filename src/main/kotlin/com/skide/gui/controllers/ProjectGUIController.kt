@@ -1,4 +1,5 @@
 package com.skide.gui.controllers
+
 import javafx.fxml.FXML;
 import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane;
@@ -6,7 +7,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 
-class ProjectGuiController {
+class ProjectGUIController {
 
     @FXML
     lateinit var rootBorderPane: BorderPane
@@ -57,11 +58,11 @@ class ProjectGuiController {
     lateinit var herachieLabel: Label
 
     @FXML
-    lateinit var lowerTabPane:TabPane
+    lateinit var lowerTabPane: TabPane
 
     @FXML
-    lateinit var lowerTabPaneToggleBtn:Button
+    lateinit var lowerTabPaneToggleBtn: Button
 
     @FXML
-    lateinit var runsTabPane:TabPane
+    lateinit var runsTabPane: TabPane
 }

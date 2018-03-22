@@ -18,7 +18,7 @@ class Highlighting(val manager: CodeManager) {
 
     }
 
-    fun searchHighlighting(searched: String, case:Boolean, regex:Boolean) {
+    fun searchHighlighting(searched: String, case: Boolean, regex: Boolean) {
 
 
         val pos = area.caretPosition
@@ -107,9 +107,9 @@ class Highlighting(val manager: CodeManager) {
 
     private fun searchPatternCompiler(word: String, case: Boolean, regex: Boolean): Pattern {
 
-        val content = if(regex) word else Pattern.quote(word)
+        val content = if (regex) word else Pattern.quote(word)
 
-        return if(!case) Pattern.compile("(?<SEARCH>$content)", Pattern.CASE_INSENSITIVE) else Pattern.compile("(?<SEARCH>$content)")
+        return if (!case) Pattern.compile("(?<SEARCH>$content)", Pattern.CASE_INSENSITIVE) else Pattern.compile("(?<SEARCH>$content)")
     }
 
     private val patternCompiler = Pattern.compile(

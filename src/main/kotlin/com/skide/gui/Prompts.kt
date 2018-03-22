@@ -6,7 +6,6 @@ import javafx.scene.control.TextInputDialog
 import java.util.Optional
 
 
-
 object Prompts {
 
     fun textPrompt(title: String, header: String): String {
@@ -16,17 +15,18 @@ object Prompts {
 
         return try {
             input.showAndWait().get()
-        }catch (e:Exception) {
+        } catch (e: Exception) {
             ""
         }
     }
+
     fun passPrompt(): String {
         val pd = PasswordDialog()
         val result = pd.showAndWait()
 
         return try {
-           result.get()
-        }catch (e:Exception) {
+            result.get()
+        } catch (e: Exception) {
             ""
         }
     }

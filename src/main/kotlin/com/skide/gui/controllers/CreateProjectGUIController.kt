@@ -12,9 +12,7 @@ import java.io.File
 import javafx.scene.control.CheckBox
 
 
-
-
-class ImportProjectGuiController {
+class CreateProjectGUIController {
 
 
     @FXML
@@ -40,7 +38,7 @@ class ImportProjectGuiController {
 
     var rootProjectFolder = ""
 
-    fun initGui(manager: CoreManager, thisWindow: ActiveWindow, returnWindow: ActiveWindow) {
+    fun initGui(manager: CoreManager, thisWindow: ActiveWindow, returnWindow: ActiveWindow? = null) {
 
         openAfterCreation.isSelected = true
         openAfterCreation.isDisable = true
@@ -51,15 +49,18 @@ class ImportProjectGuiController {
 
         projectNameField.setOnKeyReleased { _ ->
 
-            if(projectNameField.text == "") {
-                if(!createButton.isDisabled) createButton.isDisable = true
+
+            projectPathField.text = File(rootProjectFolder, projectNameField.text).absolutePath
+
+            if (projectNameField.text == "") {
+                if (!createButton.isDisabled) createButton.isDisable = true
             } else {
-                if(createButton.isDisabled) createButton.isDisable = false
+                if (createButton.isDisabled) createButton.isDisable = false
 
                 //Check existing projects for possible duplications
                 var found = false
                 manager.configManager.projects.values.forEach {
-                    if(it.path == projectPathField.text) {
+                    if (it.path == projectPathField.text) {
                         found = true
                     }
                 }
@@ -74,17 +75,10 @@ class ImportProjectGuiController {
             val dirChooser = DirectoryChooser()
             dirChooser.title = "Choose save path for the Project"
             val dir = dirChooser.showDialog(fileChooserWindow)
-            if(dir != null) {
+            if (dir != null) {
                 rootProjectFolder = dir.absolutePath
-                projectPathField.text = dir.absolutePath
+                projectPathField.text = File(rootProjectFolder, projectNameField.text).absolutePath
 
-                var found = false
-                manager.configManager.projects.values.forEach {
-                    if(it.path == projectPathField.text) {
-                        found = true
-                    }
-                }
-                createButton.isDisable = found
             }
 
         }
@@ -92,15 +86,19 @@ class ImportProjectGuiController {
 
 
         createButton.setOnAction {
-            if(!projectPathField.text.contains(rootProjectFolder)) return@setOnAction
+            if (!projectPathField.text.contains(rootProjectFolder)) return@setOnAction
             manager.configManager.defaultProjectPath = File(rootProjectFolder)
-            manager.projectManager.importProject(projectNameField.text,projectPathField.text, skriptVersionComboBox.selectionModel.selectedItem, openAfterCreation.isSelected)
+            manager.projectManager.createNewProject(projectNameField.text, projectPathField.text, skriptVersionComboBox.selectionModel.selectedItem, openAfterCreation.isSelected)
 
+            thisWindow.close()
+            if (!openAfterCreation.isSelected) {
+                returnWindow?.stage?.show()
+            }
         }
 
         cancelButton.setOnAction {
             thisWindow.close()
-            returnWindow.stage.show()
+            returnWindow?.stage?.show()
         }
     }
 }

@@ -26,10 +26,10 @@ class SkriptParser {
                 toSkip += parse(x, node, split, added) - 1
                 nodes.addElement(node)
             } else {
-              if(!added.contains(x))  {
-                  added.add(x)
-                  nodes.addElement(Node(null, split[x], getTabCount(current), x + 1))
-              }
+                if (!added.contains(x)) {
+                    added.add(x)
+                    nodes.addElement(Node(null, split[x], getTabCount(current), x + 1))
+                }
             }
         }
         return nodes
@@ -63,9 +63,9 @@ class SkriptParser {
                 continue
             }
             if (currentTabCount < (parent.tabLevel + 1)) {
-                if(current.replace("\t", " ").isBlank()) {
-                    if(x < split.size -1) {
-                        if(getTabCount(split[x + 1]) > currentTabCount) {
+                if (current.replace("\t", " ").isBlank()) {
+                    if (x < split.size - 1) {
+                        if (getTabCount(split[x + 1]) > currentTabCount) {
                             before = Node(parent, current, currentTabCount, x + 1)
                             parent.childNodes.add(before)
                             added.add(x)

@@ -73,11 +73,11 @@ class ReplaceSequence(val manager: CodeManager) {
             val end = matcher.end()
 
 
-           if(matcher.group("VALUE") != null) {
-               list.add(ReplaceSeuenceItem(absStart + start + 1, absStart + end - 1, ReplaceSequenceType.VALUE))
-           } else {
-               list.add(ReplaceSeuenceItem(absStart + start, absStart + end, ReplaceSequenceType.VALUE))
-           }
+            if (matcher.group("VALUE") != null) {
+                list.add(ReplaceSeuenceItem(absStart + start + 1, absStart + end - 1, ReplaceSequenceType.VALUE))
+            } else {
+                list.add(ReplaceSeuenceItem(absStart + start, absStart + end, ReplaceSequenceType.VALUE))
+            }
         }
 
         fire()

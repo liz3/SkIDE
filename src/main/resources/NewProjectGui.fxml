@@ -7,7 +7,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="273.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.CreateProjectGuiController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="273.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.CreateProjectGUIController">
    <children>
       <Label layoutX="14.0" layoutY="14.0" text="Name" />
       <TextField fx:id="projectNameField" layoutX="14.0" layoutY="31.0" prefHeight="25.0" prefWidth="328.0" promptText="Project Name" />

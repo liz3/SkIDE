@@ -16,9 +16,6 @@ import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
 import org.fxmisc.richtext.CodeArea
-import org.fxmisc.wellbehaved.event.EventPattern
-import org.fxmisc.wellbehaved.event.InputMap
-import org.fxmisc.wellbehaved.event.Nodes
 
 import java.util.*
 
@@ -119,24 +116,24 @@ class CodeManager {
 
 
                 val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
-                if (ev.code == KeyCode.DIGIT7 && getOs() != OperatingSystemType.MAC_OS) {
+                if (ev.code == KeyCode.DIGIT7 && getOS() != OperatingSystemType.MAC_OS) {
 
                     ev.consume()
                     area.replaceText(startPos, area.caretPosition, "}")
                     area.moveTo(area.caretPosition - 1)
-                } else if (ev.code == KeyCode.DIGIT8 && getOs() == OperatingSystemType.MAC_OS) {
+                } else if (ev.code == KeyCode.DIGIT8 && getOS() == OperatingSystemType.MAC_OS) {
 
                     ev.consume()
                     area.replaceText(startPos, area.caretPosition, "}")
                     area.moveTo(area.caretPosition - 1)
                 }
 
-                if (ev.code == KeyCode.DIGIT8 && getOs() != OperatingSystemType.MAC_OS) {
+                if (ev.code == KeyCode.DIGIT8 && getOS() != OperatingSystemType.MAC_OS) {
 
                     ev.consume()
                     area.replaceText(startPos, area.caretPosition, "]")
                     area.moveTo(area.caretPosition - 1)
-                } else if (ev.code == KeyCode.DIGIT5 && getOs() == OperatingSystemType.MAC_OS) {
+                } else if (ev.code == KeyCode.DIGIT5 && getOS() == OperatingSystemType.MAC_OS) {
 
                     ev.consume()
                     area.replaceText(startPos, area.caretPosition, "]")
