@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+        classpath "de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2"
     }
 }
 
@@ -21,6 +21,7 @@ apply plugin: 'kotlin'
 
 group = 'com.skide'
 version = '0.0.6'
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 mainClassName = 'com.skide.MainKt'
@@ -30,12 +31,11 @@ repositories {
     flatDir {
         dirs 'static-libs'
     }
-
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile 'com.jfoenix:jfoenix:8.0.3'
+    compile "com.jfoenix:jfoenix:8.0.3"
     compile "org.fxmisc.richtext:richtextfx:0.8.2"
     compile "org.json:json:20180130"
     compile name: 'terminalfx-1.3'
@@ -45,19 +45,19 @@ dependencies {
 
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = project.targetCompatibility
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = project.targetCompatibility
 }
 
 shadowJar {
     mergeServiceFiles()
     exclude 'META-INF/*.DSA'
     exclude 'META-INF/*.RSA'
-    archiveName = "SkIde.jar"
-
+    archiveName = "Sk-IDE_full.jar"
 }
+
 
 jar {
     manifest {
@@ -74,11 +74,6 @@ jar {
 
 apply plugin: 'javafx-gradle-plugin'
 
-// these values are the examples and defaults
-// you won't need them all
-
-// configure javafx-gradle-plugin
-// for all available settings please look at the class "JavaFXGradlePluginExtension"
 jfx {
     verbose = true
     mainClass = "com.skide.MainKt"
@@ -86,7 +81,6 @@ jfx {
     appName = "skide"
     nativeReleaseVersion = "0.0.4"
     fileAssociations = [
-
             [
                     description: 'Njol Skript File',
                     extensions: 'sk',
