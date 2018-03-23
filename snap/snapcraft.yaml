@@ -1,4 +1,4 @@
-name: skide
+name: Sk-IDE
 version: '0.0'
 summary: IDE for Skript
 description: ...
@@ -7,10 +7,10 @@ confinement: devmode
 
 apps:
   run:
-    command: desktop-launch java -jar -Duser-home=$SNAP_USER_DATA $SNAP/jar/SkIDE.jar
+    command: desktop-launch java -jar -Duser-home=$SNAP_USER_DATA $SNAP/jar/Sk-IDE.jar
 
 parts:
-  skide:
+  Sk-IDE:
     after: [desktop-glib-only]
     plugin: gradle
     source: .
@@ -20,7 +20,7 @@ parts:
       gradle shadowJar
     install : |
       mkdir $SNAPCRAFT_PART_INSTALL/jar
-      cp build/libs/SkIde.jar $SNAPCRAFT_PART_INSTALL/jar/SkIDE.jar
+      cp build/libs/Sk-IDE.jar $SNAPCRAFT_PART_INSTALL/jar/Sk-IDE.jar
     build-packages:
       - openjdk-8-jdk
       - openjfx

@@ -1,5 +1,5 @@
 
-### SkIDE Issue Report  
+### Sk-IDE Issue Report  
 ---
   
 #### The Issue  
@@ -12,7 +12,7 @@
   
 #### Information About Your System  
   
-+ Your SkIDE Version  
++ Your Sk-IDE Version  
   
 + Your Java Versions (JDK, JRE)  
   

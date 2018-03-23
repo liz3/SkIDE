@@ -33,13 +33,13 @@ class ConfigManager(val coreManager: CoreManager) {
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
 
-    val rootFolder = File(System.getProperty("user.home"), ".skide")
-    var defaultProjectPath = File(System.getProperty("user.home"), "SkIde-Projects")
+    val rootFolder = File(System.getProperty("user.home"), ".Sk-IDE")
+    var defaultProjectPath = File(System.getProperty("user.home"), "Sk-IDE Projects")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
-    var defaultServerPath = File(System.getProperty("user.home"), "SkIde-Server")
+    var defaultServerPath = File(System.getProperty("user.home"), "Sk-IDE Server")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
@@ -51,11 +51,11 @@ class ConfigManager(val coreManager: CoreManager) {
         }
 
 
-    val configFile = File(rootFolder, "settings.skide")
-    val projectsFile = File(rootFolder, "projects.skide")
-    val serversFile = File(rootFolder, "servers.skide")
-    val addonFile = File(rootFolder, "addons.skide")
-    val hostsFile = File(rootFolder, "hosts.skide")
+    val configFile = File(rootFolder, "settings.Sk-IDE")
+    val projectsFile = File(rootFolder, "projects.Sk-IDE")
+    val serversFile = File(rootFolder, "servers.Sk-IDE")
+    val addonFile = File(rootFolder, "addons.Sk-IDE")
+    val hostsFile = File(rootFolder, "hosts.Sk-IDE")
 
     val projects = HashMap<Long, PointerHolder>()
     val servers = HashMap<Long, PointerHolder>()

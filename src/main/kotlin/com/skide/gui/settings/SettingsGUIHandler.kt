@@ -86,7 +86,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             val file = getDir("Choose the Folder path")
             if (file != null) {
                 currentSelected().configuration.folder = file
-                currentSelected().confFile = File(file, ".server.skide")
+                currentSelected().confFile = File(file, ".server.Sk-IDE")
                 ctrl.serverServerFolderPathTextField.text = file.absolutePath
             }
         }

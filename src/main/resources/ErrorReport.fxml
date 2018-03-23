@@ -14,7 +14,7 @@
             <Font size="46.0" />
          </font>
       </Label>
-      <Label alignment="TOP_LEFT" layoutX="14.0" layoutY="74.0" prefHeight="206.0" prefWidth="802.0" text="Please dont ask why, but SkIde had an error :(&#10;We would be really happy if you could report this error!&#10;To Report, please press the Copy Button, or Copy the content from the Box.&#10;Then there are multiple ways to report the Issue:&#10;1. Post in on our Discord Server in the Issue Text chat.&#10;2. Create a Issue on Github.&#10;3. Report it to the User &quot;Liz3&quot; in the Forum. SpigotMC/SkUnity....">
+      <Label alignment="TOP_LEFT" layoutX="14.0" layoutY="74.0" prefHeight="206.0" prefWidth="802.0" text="Please dont ask why, but Sk-IDE had an error :(&#10;We would be really happy if you could report this error!&#10;To Report, please press the Copy Button, or Copy the content from the Box.&#10;Then there are multiple ways to report the Issue:&#10;1. Post in on our Discord Server in the Issue Text chat.&#10;2. Create a Issue on Github.&#10;3. Report it to the User &quot;Liz3&quot; in the Forum. SpigotMC/SkUnity....">
          <font>
             <Font size="18.0" />
          </font>

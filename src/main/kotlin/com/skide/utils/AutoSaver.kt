@@ -14,7 +14,7 @@ class AutoSaver(coreManager: CoreManager) {
             }
 
         }
-        thread.name = "SkIde Auto Save Thread"
+        thread.name = "Sk-IDE Auto Save Thread"
         thread.start()
     }
 }

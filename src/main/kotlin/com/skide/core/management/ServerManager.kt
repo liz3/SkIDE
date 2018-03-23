@@ -38,7 +38,7 @@ class ServerManager(val coreManager: CoreManager) {
     private fun loadServers() {
         coreManager.configManager.servers.values.forEach {
 
-            val confFile = File(it.path, ".server.skide")
+            val confFile = File(it.path, ".server.Sk-IDE")
             val obj = JSONObject(readFile(confFile).second)
             val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args")), confFile, false, obj.getLong("id"))
             obj.getJSONArray("addons").forEach {
@@ -53,7 +53,7 @@ class ServerManager(val coreManager: CoreManager) {
     }
 
     fun createServer(server: Server): Boolean {
-        server.confFile = File(server.configuration.folder, ".server.skide")
+        server.confFile = File(server.configuration.folder, ".server.Sk-IDE")
         if (servers.containsKey(server.configuration.name)) return false
         if (!server.configuration.folder.isDirectory) return false
         if (!server.configuration.folder.exists()) {

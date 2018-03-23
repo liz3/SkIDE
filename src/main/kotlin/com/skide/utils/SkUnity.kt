@@ -52,7 +52,7 @@ class SkUnity(val coreManager: CoreManager) {
         coreManager.configManager.skUnityKey = data.getString("hash")
         key = data.getString("hash")
         loggedIn = true
-        Prompts.infoCheck("Success", "You are logged in into SkUnity!", "You can now use SkUnity Features in SkIde", Alert.AlertType.INFORMATION)
+        Prompts.infoCheck("Success", "You are logged in into SkUnity!", "You can now use SkUnity Features in Sk-IDE", Alert.AlertType.INFORMATION)
         username = name
         coreManager.configManager.skUnityUsername = username
         return true
@@ -65,7 +65,7 @@ class SkUnity(val coreManager: CoreManager) {
         val map = HashMap<String, String>()
         map["action"] = "post"
         map["title"] = title
-        map["msg"] = "$msg\n\nReported with SkIde"
+        map["msg"] = "$msg\n\nReported with Sk-IDE"
         map["token"] = key
         map["username"] = username
 

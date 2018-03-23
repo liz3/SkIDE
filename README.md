@@ -1,21 +1,21 @@
-# SkIDE
+# Sk-IDE
 ---
 [![Join the Discord](https://discordapp.com/api/guilds/324602899839844352/widget.png?style=shield)](https://discord.gg/Ac6Q34e)
 
 
 
-Development Repository for SkIDE.
+Development Repository for Sk-IDE.
 
 # Description
 Skript is a Plugin for the Minecraft Multiplayer that allows Server Owners to modify the server with a Skript language in simple english sentences. 
 
-Still Skript has a clear syntax that needs to be followed, SkIDE provides you with a more easy way to create Skripts.
-SkIDE is a fully featured IDE, providing Autocomplete, Syntax Highlighting and a lot more things like Plugin Support.
+Still Skript has a clear syntax that needs to be followed, Sk-IDE provides you with a more easy way to create Scripts.
+Sk-IDE is a fully featured IDE, providing Autocomplete, Syntax Highlighting and a lot more things like Plugin Support.
 
 # Code
-SkIDE is written completely in Kotlin currently, you still can pull request with Java Code.
+Sk-IDE is written completely in Kotlin currently, you still can pull request with Java Code.
 
-For the gui SkIDE uses JavaFX, highlighting is provided by RichTextFX.
+For the gui Sk-IDE uses JavaFX, highlighting is provided by RichTextFX.
 
 # Used Libraries, Apis and Frameworks
 [Kotlin Language](http://kotlinlang.org/)

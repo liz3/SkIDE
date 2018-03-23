@@ -149,7 +149,7 @@ class ResourceManager(val coreManager: CoreManager) {
 
         if (!skFile.exists()) {
             skFile.createNewFile()
-            Prompts.infoCheck("Information", "SkIde is downloading a file", "SkIde is Downloading a file!", Alert.AlertType.INFORMATION)
+            Prompts.infoCheck("Information", "Sk-IDE is downloading a file", "Sk-IDE is Downloading a file!", Alert.AlertType.INFORMATION)
             downloadFile("https://skripttools.net/dl/${URLEncoder.encode(name, "UTF-8")}", skFile.absolutePath)
         }
 

@@ -63,7 +63,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                 }
                 Platform.runLater {
 
-                    Prompts.infoCheck("Stopped Server", "Running servers had to be stopped", "SkIde stopped $am server", Alert.AlertType.INFORMATION)
+                    Prompts.infoCheck("Stopped Server", "Running servers had to be stopped", "Sk-IDE stopped $am server", Alert.AlertType.INFORMATION)
 
 
                 }
@@ -370,7 +370,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                         .filter { it.tab == tab }
                         .forEach {
                             if (!it.isExternal) updateStructureTab(it)
-                            GUIManager.discord.update("Editing script ${it.name}", "Coding")
+                            if (it.name.contains(".sk"))
+                                GUIManager.discord.update("Editing script ${it.name}", "Coding")
+                            else
+                                GUIManager.discord.update("Editing ${it.name}", "Coding")
                         }
 
 
