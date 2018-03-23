@@ -1,6 +1,6 @@
 [Desktop Entry]
 Comment=Integrated Development Environment for Skript
-Exec=desktop-launch java -jar $SNAP/jar/Sk-IDE.jar
+Exec=desktop-launch $SNAP/bin/Sk-IDE
 GenericName=Integrated Development Environment for Skript
 Name=Sk-IDE
 NoDisplay=false
