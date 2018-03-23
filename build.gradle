@@ -78,11 +78,11 @@ jfx {
     verbose = true
     mainClass = "com.skide.MainKt"
     vendor = 'Liz3'
-    appName = "skide"
+    appName = "Sk-IDE"
     nativeReleaseVersion = "0.0.4"
     fileAssociations = [
             [
-                    description: 'Njol Skript File',
+                    description: 'Njol Script File',
                     extensions: 'sk',
                     contentType: 'application/skript',
                     icon: 'src/main/deploy/skide.ico'
