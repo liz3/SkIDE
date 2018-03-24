@@ -20,6 +20,11 @@
     -fx-font-weight: bold;
 }
 
+.section {
+    -fx-fill: #A068C7;
+    -fx-font-weight: bold;
+}
+
 .keywords {
     -fx-fill: #cb3000;
     -fx-font-weight: bold;
