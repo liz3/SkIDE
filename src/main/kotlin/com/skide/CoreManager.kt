@@ -9,6 +9,8 @@ import com.skide.gui.JavaFXBootstrapper
 import com.skide.gui.Prompts
 import com.skide.gui.controllers.StartGUIController
 import com.skide.utils.*
+import javafx.application.Platform
+import javafx.stage.Stage
 import java.lang.management.ManagementFactory
 
 
@@ -59,7 +61,11 @@ class CoreManager {
 
         attachDebugger()
         //Launch the JavaFX Process Thread
-        JavaFXBootstrapper.bootstrap()
+        if(Platform.isFxApplicationThread()) {
+            GUIManager.bootstrapCallback(Stage())
+        } else {
+            JavaFXBootstrapper.bootstrap()
+        }
 
     }
 

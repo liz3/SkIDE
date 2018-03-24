@@ -7,9 +7,9 @@ class Discord (private var disabled : Boolean = false) {
     private var discordRpc = DiscordRpc()
 
     init {
-        update()
         if (getOS() == OperatingSystemType.MAC_OS)
             disabled = true
+        update()
     }
 
     private fun update() {

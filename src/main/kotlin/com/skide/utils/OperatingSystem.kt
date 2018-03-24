@@ -13,7 +13,7 @@ fun getOS(): OperatingSystemType {
 
     if (sys.contains("Windows", true)) return OperatingSystemType.WINDOWS
     if (sys.contains("Linux", true) || sys.contains("Unix", true)) return OperatingSystemType.LINUX
-    if (sys.contains("Darwin", true) || sys.contains("OSX", true) || sys.contains("macos", true)) return OperatingSystemType.MAC_OS
+    if (sys.contains("Darwin", true) || sys.contains("OS X", true) || sys.contains("MAC OS", true)) return OperatingSystemType.MAC_OS
 
     return OperatingSystemType.OTHER
 }
