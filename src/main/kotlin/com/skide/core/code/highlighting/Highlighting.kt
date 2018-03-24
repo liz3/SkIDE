@@ -126,7 +126,7 @@ class Highlighting(val manager: CodeManager) {
 
 object HighlighterStatics {
 
-    const val SECTION_PATTERN = "command \\/?.+\\:|trigger:|permission:|permission message:|description:|cooldown:|cooldown message:"
+    const val SECTION_PATTERN = "command \\/?.+\\:|trigger:|aliases:|permission:|permission message:|description:|cooldown:|cooldown message:"
     val KEYWORDS = arrayOf("set" +
             "", "if", "stop", "loop", "trigger", "permission", "permission-message", "description", "return", "function", "options", "true", "false", "cancel", "else", "else if")
     const val COMMENT_PATTERN = "#[^\n]*"
