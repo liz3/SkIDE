@@ -47,7 +47,7 @@ class CodeManager {
         area = project.area
         findHandler = FindHandler(this, project)
         replaceHandler = ReplaceHandler(this, project)
-        if (this::highlighter.isInitialized && project.coreManager.configManager.get("highlighting") == "true") {
+        if (project.coreManager.configManager.get("highlighting") == "true") {
             highlighter = Highlighting(this)
             highlighter.computeHighlighting()
         }

@@ -34,7 +34,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
     fun startGui(): ProjectGuiEventListeners {
 
-        if(coreManager.configManager.get("theme") == "Dark") {
+        if (coreManager.configManager.get("theme") == "Dark") {
             window.scene.stylesheets.add("DarkHighlighting.css")
         } else {
             window.scene.stylesheets.add("HighlightingLight.css")
@@ -218,9 +218,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         if (structureTab.first.isDisabled) structureTab.first.isDisable = false
 
-       Platform.runLater {
-           structureTab.second.root = holder.codeManager.rootStructureItem
-       }
+        Platform.runLater {
+            structureTab.second.root = holder.codeManager.rootStructureItem
+        }
     }
 
 
@@ -379,12 +379,13 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                         .filter { it.tab == tab }
                         .forEach {
                             if (it.name.endsWith(".sk")) updateStructureTab(it)
-                            if (!(it.name.endsWith(".sk"))) {
+
+
+                            if (!it.name.endsWith(".sk")) {
                                 GUIManager.discord.update("Editing ${it.name}", "Coding")
                             } else {
                                 GUIManager.discord.update("Editing script ${it.name}", "Coding")
                             }
-
                         }
 
             } else {
