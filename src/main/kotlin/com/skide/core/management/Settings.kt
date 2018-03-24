@@ -34,12 +34,12 @@ class ConfigManager(val coreManager: CoreManager) {
         }
 
     val rootFolder = File(System.getProperty("user.home"), ".Sk-IDE")
-    var defaultProjectPath = File(System.getProperty("user.home"), "Sk-IDE Projects")
+    var defaultProjectPath = File(System.getProperty("user.home"), "Sk-IDE-Projects")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
-    var defaultServerPath = File(System.getProperty("user.home"), "Sk-IDE Server")
+    var defaultServerPath = File(System.getProperty("user.home"), "Sk-IDE-Server")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
@@ -51,11 +51,11 @@ class ConfigManager(val coreManager: CoreManager) {
         }
 
 
-    val configFile = File(rootFolder, "settings.Sk-IDE")
-    val projectsFile = File(rootFolder, "projects.Sk-IDE")
-    val serversFile = File(rootFolder, "servers.Sk-IDE")
-    val addonFile = File(rootFolder, "addons.Sk-IDE")
-    val hostsFile = File(rootFolder, "hosts.Sk-IDE")
+    val configFile = File(rootFolder, "settings.skide")
+    val projectsFile = File(rootFolder, "projects.skide")
+    val serversFile = File(rootFolder, "servers.skide")
+    val addonFile = File(rootFolder, "addons.skide")
+    val hostsFile = File(rootFolder, "hosts.skide")
 
     val projects = HashMap<Long, PointerHolder>()
     val servers = HashMap<Long, PointerHolder>()
@@ -185,10 +185,16 @@ class ConfigManager(val coreManager: CoreManager) {
             if (obj.has("skunity_key")) skUnityKey = obj.getString("skunity_key")
             if (obj.has("skunity_name")) skUnityUsername = obj.getString("skunity_name")
 
+
+
             val settingsObj = obj.getJSONObject("settings")
 
+            if(settingsObj.length() == 0) {
+                writeDefaultSettings()
+                return readConfig()
+            }
             settingsObj.keySet().forEach {
-                settings.put(it, settingsObj.get(it))
+                settings[it] = settingsObj.get(it)
             }
 
         }
@@ -212,11 +218,19 @@ class ConfigManager(val coreManager: CoreManager) {
         if (writeFile(brackets, projectsFile, false, true).first != FileReturnResult.SUCCESS) return false
         if (writeFile(objForServer.toString().toByteArray(), serversFile, false, true).first != FileReturnResult.SUCCESS) return false
         if (writeFile(brackets, hostsFile, false, true).first != FileReturnResult.SUCCESS) return false
-
+        writeDefaultSettings()
         configLoaded = true
+
         return true
     }
 
+    private fun writeDefaultSettings() {
+        set("auto_complete", "true")
+        set("theme", "dark")
+        set("highlighting", "true")
+        set("font", "Source Code Pro")
+        set("font_size", "15")
+    }
     fun get(key: String): Any? {
         return settings[key]
     }

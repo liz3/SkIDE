@@ -68,7 +68,7 @@ class ProjectManager(val coreManager: CoreManager) {
 
     private fun loadProjectConfiguration(holder: PointerHolder): Pair<ProjectConfigurationLoadResult, Project?> {
 
-        val configFile = File(holder.path, ".project.Sk-IDE")
+        val configFile = File(holder.path, ".project.skide")
         val readResult = readFile(configFile)
         if (readResult.first == FileReturnResult.NOT_FOUND) return Pair(ProjectConfigurationLoadResult.NOT_FOUND, null)
 
@@ -97,7 +97,7 @@ class ProjectManager(val coreManager: CoreManager) {
         obj.put("addons", JSONArray())
         obj.put("primary_server_id", -1)
 
-        val configFile = File(projectFolder, ".project.Sk-IDE")
+        val configFile = File(projectFolder, ".project.skide")
         writeFile(obj.toString().toByteArray(), configFile, false, true)
         return true
     }
@@ -108,7 +108,7 @@ class ProjectManager(val coreManager: CoreManager) {
 
         if (!projectFolder.exists()) return false
 
-        val possOldConfigFile = File(projectFolder, ".project.Sk-IDE")
+        val possOldConfigFile = File(projectFolder, ".project.skide")
         if (possOldConfigFile.exists()) {
             //TODO inform user
             possOldConfigFile.delete()
@@ -124,7 +124,7 @@ class ProjectManager(val coreManager: CoreManager) {
             filesArr.put(it.absolutePath)
         }
         obj.put("files", filesArr)
-        val configFile = File(projectFolder, ".project.Sk-IDE")
+        val configFile = File(projectFolder, ".project.skide")
         writeFile(obj.toString().toByteArray(), configFile, false, true)
         return true
     }
@@ -133,8 +133,8 @@ class ProjectManager(val coreManager: CoreManager) {
 
 class ProjectFileManager(val project: Project) {
 
-    val configFile = File(project.folder, ".project.Sk-IDE")
-    private val compileOptsFile = File(project.folder, ".compileInfo.Sk-IDE")
+    val configFile = File(project.folder, ".project.skide")
+    private val compileOptsFile = File(project.folder, ".compileInfo.skide")
     val projectFiles = HashMap<String, File>()
     val addons = HashMap<String, String>()
     val openFilesForSave = Vector<String>()

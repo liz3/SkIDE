@@ -45,10 +45,12 @@ class CodeManager {
         rootStructureItem = TreeItem(project.name)
         content = readFile(project.f).second
         area = project.area
-        highlighter = Highlighting(this)
         findHandler = FindHandler(this, project)
         replaceHandler = ReplaceHandler(this, project)
-        if (this::highlighter.isInitialized) highlighter.computeHighlighting()
+        if (this::highlighter.isInitialized && project.coreManager.configManager.get("highlighting") == "true") {
+            highlighter = Highlighting(this)
+            highlighter.computeHighlighting()
+        }
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox
 

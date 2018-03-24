@@ -1,5 +1,6 @@
 package com.skide.gui
 
+import com.skide.core.management.ConfigManager
 import com.skide.include.ActiveWindow
 import com.skide.utils.Discord
 import javafx.application.Application
@@ -19,6 +20,8 @@ import netscape.javascript.JSObject
 
 object GUIManager {
 
+    lateinit var settings:ConfigManager
+
     val discord = Discord()
 
     val activeGuis: HashMap<Int, ActiveWindow> = HashMap()
@@ -36,7 +39,9 @@ object GUIManager {
         stage.icons.add(Image(javaClass.getResource("/icon.png").toExternalForm()))
         val scene = Scene(rootNode)
         scene.stylesheets.add("Reset.css")
-        scene.stylesheets.add("ThemeDark.css")
+        if(settings.get("theme") == "Dark") {
+            scene.stylesheets.add("ThemeDark.css")
+        }
         stage.scene = scene
         stage.sizeToScene()
 
@@ -80,18 +85,13 @@ object GUIManager {
 
             if (newValue === State.SUCCEEDED) {
                 val win = view.engine.executeScript("window") as JSObject
-
                 val instance = LinkOpener()
                 win.setMember("skide", instance)
-
-
                 stage.show()
-
                 Prompts.infoCheck("Attention", "reopen if links dont work!", "If you want to open a link, but it does not work, restart about!", Alert.AlertType.INFORMATION)
 
             }
         }
-
         view.engine.load("https://liz3.net/sk/about/")
 
 

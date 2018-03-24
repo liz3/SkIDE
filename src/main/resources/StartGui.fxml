@@ -5,15 +5,27 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane prefHeight="450.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.StartGUIController">
    <children>
       <Pane layoutX="234.0" prefHeight="450.0" prefWidth="410.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <ListView fx:id="projectsList" prefHeight="450.0" prefWidth="235.0" />
-            <Label fx:id="createNewProject" layoutX="392.0" layoutY="208.0" text="Create new Project" />
+            <Label fx:id="createNewProject" layoutX="384.0" layoutY="205.0" text="Create new Project">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
             <ImageView fx:id="iconImage" fitHeight="150.0" fitWidth="148.0" layoutX="368.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-            <Label fx:id="importProject" layoutX="424.0" layoutY="234.0" text="Import" />
+            <Label fx:id="importProject" layoutX="421.0" layoutY="225.0" text="Import">
+               <font>
+                  <Font size="14.0" />
+               </font></Label>
+            <Label fx:id="settings" layoutX="417.0" layoutY="252.0" text="Settings">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
          </children>
       </Pane>
    </children>

@@ -8,6 +8,7 @@ import com.skide.gui.GUIManager
 import com.skide.gui.JavaFXBootstrapper
 import com.skide.gui.controllers.StartGUIController
 import com.skide.utils.*
+import java.lang.management.ManagementFactory
 
 
 class CoreManager {
@@ -23,6 +24,7 @@ class CoreManager {
 
 
     fun bootstrap(args: Array<String>) {
+        GUIManager.settings = configManager
         //Bootstrap everything
         args.forEach {
             //first lets set the debug level
@@ -54,8 +56,15 @@ class CoreManager {
 
         }
 
+        attachDebugger()
         //Launch the JavaFX Process Thread
         JavaFXBootstrapper.bootstrap()
 
+    }
+
+    fun attachDebugger() {
+
+        val id = ManagementFactory.getRuntimeMXBean().name.split("@").first()
+        println(id)
     }
 }

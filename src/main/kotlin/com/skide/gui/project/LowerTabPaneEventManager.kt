@@ -70,7 +70,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
     fun setupBuildLogTabForInput(): (String) -> Unit {
 
         buildLogArea.clear()
-        tabPane.selectionModel.select(1)
+        tabPane.selectionModel.select(2)
 
         val recaller = { x: String ->
 

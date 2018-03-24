@@ -7,6 +7,9 @@ import javafx.scene.control.Button
 import javafx.scene.control.ComboBox
 import javafx.scene.control.ListView
 import javafx.scene.control.TextField
+import javafx.scene.control.CheckBox
+
+
 
 
 class GeneralSettingsGUIController {
@@ -73,5 +76,24 @@ class GeneralSettingsGUIController {
 
     @FXML
     lateinit var serverStartAgsTextField: TextField
+
+    @FXML
+    lateinit var settingsTheneComboBox: ComboBox<String>
+
+    @FXML
+    lateinit var settingsFontTextField: TextField
+
+    @FXML
+    lateinit var settingsFontSizeTextField: TextField
+
+    @FXML
+    lateinit var settingsAutoCompleteCheck: CheckBox
+
+    @FXML
+    lateinit var settingsHighlightingCheck: CheckBox
+
+    @FXML
+    lateinit var settingsCssFileBtn: Button
+
 
 }

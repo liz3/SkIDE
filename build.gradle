@@ -82,7 +82,7 @@ jfx {
     nativeReleaseVersion = "0.0.4"
     fileAssociations = [
             [
-                    description: 'Njol Script File',
+                    description: 'Njol Skript File',
                     extensions: 'sk',
                     contentType: 'application/skript',
                     icon: 'src/main/deploy/skide.ico'

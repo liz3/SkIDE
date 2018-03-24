@@ -50,12 +50,14 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     init {
 
+        if(project.coreManager.configManager.get("auto_complete") == "true") {
+            setupContextPopup()
+            registerEventListener()
 
-        setupContextPopup()
-        registerEventListener()
+            currentLine = area.getCaretLine()
+            lineBefore = currentLine
+        }
 
-        currentLine = area.getCaretLine()
-        lineBefore = currentLine
     }
 
     private fun setupContextPopup() {

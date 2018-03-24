@@ -2,6 +2,7 @@ package com.skide.gui.controllers
 
 import com.skide.CoreManager
 import com.skide.gui.GUIManager
+import com.skide.gui.settings.SettingsGUIHandler
 import com.skide.include.ActiveWindow
 import javafx.fxml.FXML
 import javafx.scene.control.Label
@@ -24,6 +25,9 @@ class StartGUIController {
 
     @FXML
     private lateinit var importProject: Label
+
+    @FXML
+    private lateinit var settings: Label
 
     fun initGui(manager: CoreManager, thisWindow: ActiveWindow, firstRun: Boolean) {
 
@@ -54,6 +58,13 @@ class StartGUIController {
 
                 }
             }
+        }
+        settings.setOnMouseReleased {
+
+            val window = GUIManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)
+            SettingsGUIHandler(window.controller as GeneralSettingsGUIController, manager, window).init()
+
+            window.stage.show()
         }
         importProject.setOnMouseClicked {
 

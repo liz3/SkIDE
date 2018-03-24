@@ -14,11 +14,12 @@ import java.util.*
 
 class Debugger {
 
+    val sysout = SystemOut()
+    val syserr = SystemErr()
     init {
-        System.setOut(SystemOut())
-        System.setErr(SystemErr())
+        System.setOut(sysout)
+        System.setErr(syserr)
     }
-
 }
 
 class SystemErr : PrintStream(System.err) {

@@ -1,11 +1,14 @@
 package com.skide.gui.settings
 
 import com.skide.CoreManager
+import com.skide.gui.Prompts
 import com.skide.gui.controllers.GeneralSettingsGUIController
 import com.skide.include.ActiveWindow
 import com.skide.include.Server
 import com.skide.include.ServerAddon
 import com.skide.include.ServerConfiguration
+import com.skide.utils.restart
+import javafx.scene.control.Alert
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
 import javafx.stage.Stage
@@ -21,9 +24,22 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
     val deleted = Vector<Server>()
 
 
+    private fun updateSettings() {
+
+        coreManager.configManager.set("highlighting", "${ctrl.settingsHighlightingCheck.isSelected}")
+        coreManager.configManager.set("theme", ctrl.settingsTheneComboBox.selectionModel.selectedItem)
+        coreManager.configManager.set("auto_complete", "${ctrl.settingsAutoCompleteCheck.isSelected}")
+        coreManager.configManager.set("font", ctrl.settingsFontTextField.text)
+        coreManager.configManager.set("font_size", ctrl.settingsFontSizeTextField.text)
+    }
+
     fun init() {
 
-
+        window.stage.setOnCloseRequest {
+            if(Prompts.infoCheck("Restart", "Sk-IDE restart", "In order to perform all changes, SkIde needs to be restarted!", Alert.AlertType.CONFIRMATION)) {
+                restart()
+            }
+        }
         ctrl.okBtn.setOnAction {
             deleted.forEach {
                 serverManager.deleteServer(it)
@@ -36,8 +52,13 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             }
 
             deleted.clear()
+            updateSettings()
             window.stage.close()
+            if(Prompts.infoCheck("Restart", "Sk-IDE restart", "In order to perform all changes, SkIde needs to be restarted!", Alert.AlertType.CONFIRMATION)) {
+                restart()
+            }
         }
+
         ctrl.applyBtn.setOnAction {
             deleted.forEach {
                 serverManager.deleteServer(it)
@@ -50,6 +71,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             }
 
             deleted.clear()
+            updateSettings()
         }
         ctrl.cancelBtn.setOnAction {
             window.stage.close()
@@ -86,7 +108,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             val file = getDir("Choose the Folder path")
             if (file != null) {
                 currentSelected().configuration.folder = file
-                currentSelected().confFile = File(file, ".server.Sk-IDE")
+                currentSelected().confFile = File(file, ".server.skide")
                 ctrl.serverServerFolderPathTextField.text = file.absolutePath
             }
         }
@@ -136,10 +158,17 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             ctrl.serverServerNameTextField.text = name
         }
 
+        ctrl.settingsTheneComboBox.items.addAll("Light", "Dark")
         serverManager.servers.forEach {
             ctrl.serverServerList.items.add(it.value)
         }
         ctrl.serverSkriptVersionComboBox.items.addAll(coreManager.resourceManager.skriptVersions)
+
+        ctrl.settingsAutoCompleteCheck.isSelected = coreManager.configManager.get("auto_complete") == "true"
+        ctrl.settingsHighlightingCheck.isSelected = coreManager.configManager.get("highlighting") == "true"
+        ctrl.settingsTheneComboBox.selectionModel.select(coreManager.configManager.get("theme").toString())
+        ctrl.settingsFontTextField.text = coreManager.configManager.get("font").toString()
+        ctrl.settingsFontSizeTextField.text = coreManager.configManager.get("font_size").toString()
     }
 
     private fun setNewValues() {

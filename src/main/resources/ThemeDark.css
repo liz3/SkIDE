@@ -57,8 +57,6 @@
 .code-area {
     -fx-background-color: #2B2B2B;
     -fx-highlight-text-fill: derive(#1E90FF, 100%);
-    -fx-font-family: "Source Code Pro" !important;
-    -fx-font-size: 15px;
 }
 
 

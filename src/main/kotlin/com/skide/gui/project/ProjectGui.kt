@@ -33,7 +33,12 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
 
     fun startGui(): ProjectGuiEventListeners {
-        window.scene.stylesheets.add("DarkHighlighting.css")
+
+        if(coreManager.configManager.get("theme") == "Dark") {
+            window.scene.stylesheets.add("DarkHighlighting.css")
+        } else {
+            window.scene.stylesheets.add("HighlightingLight.css")
+        }
 
         val controller = window.controller as ProjectGUIController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
@@ -63,7 +68,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                 }
                 Platform.runLater {
 
-                    Prompts.infoCheck("Stopped Server", "Running servers had to be stopped", "Sk-IDE stopped $am server", Alert.AlertType.INFORMATION)
+                    Prompts.infoCheck("Stopped Server", "Running servers had to be stopped", "SkIde stopped $am server", Alert.AlertType.INFORMATION)
 
 
                 }
@@ -141,6 +146,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             return
         }
         val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), controller.editorMainTabPane, BorderPane(), CodeArea(), coreManager, isExternal = isExternal)
+
         openProjectGuiManager.openFiles.put(f, holder)
         setupNewTabForDisplay(holder)
     }
@@ -169,6 +175,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     private fun setupNewTabForDisplay(holder: OpenFileHolder) {
 
         Platform.runLater {
+            holder.area.style = "-fx-font-family: \"${coreManager.configManager.get("font")}\" !important; -fx-font-size: ${coreManager.configManager.get("font_size")}px;"
             holder.tab.isClosable = true
             holder.borderPane.center = VirtualizedScrollPane(holder.area)
             holder.borderPane.bottom = holder.currentStackBox
@@ -179,7 +186,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             registerEventsForNewFile(holder)
             holder.tabPane.tabs.add(holder.tab)
             holder.tabPane.selectionModel.select(holder.tab)
-            if (!holder.isExternal) updateStructureTab(holder)
+            if (holder.name.endsWith(".sk")) updateStructureTab(holder)
         }
 
     }
@@ -211,7 +218,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         if (structureTab.first.isDisabled) structureTab.first.isDisable = false
 
-        structureTab.second.root = holder.codeManager.rootStructureItem
+       Platform.runLater {
+           structureTab.second.root = holder.codeManager.rootStructureItem
+       }
     }
 
 
@@ -369,13 +378,11 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 openProjectGuiManager.openFiles.values
                         .filter { it.tab == tab }
                         .forEach {
-                            if (!it.isExternal) updateStructureTab(it)
-                            if (it.name.contains(".sk"))
-                                GUIManager.discord.update("Editing script ${it.name}", "Coding")
-                            else
-                                GUIManager.discord.update("Editing ${it.name}", "Coding")
-                        }
+                            if (it.name.endsWith(".sk")) updateStructureTab(it)
 
+
+                            GUIManager.discord.update("Editing script ${it.name}", "Coding")
+                        }
 
             } else {
                 controller.browserTabPane.selectionModel.select(0)
