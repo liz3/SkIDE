@@ -61,7 +61,7 @@ class StartGUIController {
                 }
             }
         }
-        versionLabel.text = "SK-IDE Ver. ${manager.resourceManager.version} Copyright Liz3|StabbedByFeather - GLP v2 License"
+        versionLabel.text = "SK-IDE Ver. ${manager.resourceManager.version} Copyright Liz3|StabbedByFeather - GPL v2 License"
         settings.setOnMouseReleased {
 
             val window = GUIManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)
