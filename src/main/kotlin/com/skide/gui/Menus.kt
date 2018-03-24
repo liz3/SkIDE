@@ -115,7 +115,7 @@ object Menus {
         codeManager.findHandler.project.coreManager.serverManager.servers.forEach {
 
             val serverItem = MenuItem(it.value.configuration.name)
-            serverItem.setOnAction { ev ->
+            serverItem.setOnAction { _ ->
                 codeManager.findHandler.project.openProject.run(it.value, codeManager.findHandler.project)
             }
             runFileMenu.items.add(serverItem)
@@ -126,7 +126,7 @@ object Menus {
             codeManager.findHandler.project.coreManager.serverManager.servers.forEach {
 
                 val serverItem = MenuItem(it.value.configuration.name)
-                serverItem.setOnAction { ev ->
+                serverItem.setOnAction { _ ->
                     codeManager.findHandler.project.openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
                     codeManager.findHandler.project.openProject.run(it.value, opt)
                 }

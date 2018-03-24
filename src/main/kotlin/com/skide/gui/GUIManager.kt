@@ -81,7 +81,7 @@ object GUIManager {
         view.setOnMouseReleased {
 
         }
-        view.engine.loadWorker.stateProperty().addListener { observable, oldValue, newValue ->
+        view.engine.loadWorker.stateProperty().addListener { _, _, newValue ->
 
             if (newValue === State.SUCCEEDED) {
                 val win = view.engine.executeScript("window") as JSObject

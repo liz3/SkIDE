@@ -22,7 +22,7 @@ class ServerManager(val coreManager: CoreManager) {
         loadServers()
     }
 
-    fun getServerForRun(server: Server, readyCallback: (RunningServerManager) -> Unit = { s -> }): RunningServerManager {
+    fun getServerForRun(server: Server, readyCallback: (RunningServerManager) -> Unit = { }): RunningServerManager {
         if (running.containsKey(server)) {
             readyCallback(running[server]!!)
             return running[server]!!

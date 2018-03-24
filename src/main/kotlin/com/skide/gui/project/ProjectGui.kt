@@ -311,7 +311,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach {
                 val item = MenuItem(it.key)
-                item.setOnAction { ev ->
+                item.setOnAction { _ ->
                     openProjectGuiManager.openFiles.forEach { f ->
                         f.value.saveCode()
                     }

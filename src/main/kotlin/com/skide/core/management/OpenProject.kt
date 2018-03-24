@@ -67,7 +67,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
                     }
                 })
             }
-            val guiReturn = guiHandler.lowerTabPaneEventManager.getServerTab(runningServer, this)
+            val guiReturn = guiHandler.lowerTabPaneEventManager.getServerTab(runningServer)
             guiReturn.second.setOnAction {
                 runningServer.sendCommand("rl")
             }
@@ -112,7 +112,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             val runningServer = coreManager.serverManager.getServerForRun(server) {
                 it.setSkriptFile(file.name, file.area.text)
             }
-            val guiReturn = guiHandler.lowerTabPaneEventManager.getServerTab(runningServer, this)
+            val guiReturn = guiHandler.lowerTabPaneEventManager.getServerTab(runningServer)
             guiReturn.second.setOnAction {
                 runningServer.sendCommand("rl")
             }
@@ -146,8 +146,8 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         project.fileManager.rewriteConfig()
     }
 
-    fun createNewFile(name: String) {
-        val name = if (!name.contains(".")) "$name.sk" else name
+    fun createNewFile(orig: String) {
+        val name = if (!orig.contains(".")) "$orig.sk" else orig
         project.fileManager.addFile(name)
         eventManager.updateProjectFilesTreeView()
         eventManager.openFile(project.fileManager.projectFiles[name]!!)

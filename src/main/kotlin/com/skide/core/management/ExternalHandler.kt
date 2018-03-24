@@ -10,7 +10,7 @@ class ExternalHandler(val openFileHolder: OpenFileHolder) {
         Platform.runLater {
             openFileHolder.area.appendText(readFile(openFileHolder.f).second)
 
-            openFileHolder.area.focusedProperty().addListener { observable, oldValue, newValue ->
+            openFileHolder.area.focusedProperty().addListener { _, _, newValue ->
 
                 if (!newValue) {
                     openFileHolder.saveCode()

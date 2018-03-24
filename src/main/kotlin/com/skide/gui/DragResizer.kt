@@ -16,7 +16,7 @@ class DragResizer {
 
         bottomSec.minHeight = 30.0
 
-        bottomSec.scene.heightProperty().addListener { observable, oldValue, newValue ->
+        bottomSec.scene.heightProperty().addListener { _, _, newValue ->
             if (bottomSec.height > newValue.toDouble() - 30) {
                 //bottomSec.minHeight = newValue.toDouble() - 30
             }

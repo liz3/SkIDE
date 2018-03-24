@@ -77,11 +77,11 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             window.stage.close()
 
         }
-        ctrl.serverStartAgsTextField.textProperty().addListener { observable, oldValue, newValue ->
+        ctrl.serverStartAgsTextField.textProperty().addListener { _, _, newValue ->
 
             currentSelected().configuration.startAgrs = newValue
         }
-        ctrl.serverServerList.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        ctrl.serverServerList.selectionModel.selectedItemProperty().addListener { _, oldValue, newValue ->
 
             if (oldValue == null) {
                 if (!newServerAdded) {

@@ -27,7 +27,7 @@ class CompileOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICo
             ctrl.compileConfListView.items.add(it)
         }
 
-        ctrl.compileConfListView.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        ctrl.compileConfListView.selectionModel.selectedItemProperty().addListener { _, oldValue, _ ->
 
             if (oldValue != null && !applyCurr(oldValue)) return@addListener
             insertCurrentValues()

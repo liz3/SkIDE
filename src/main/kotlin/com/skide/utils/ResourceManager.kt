@@ -41,8 +41,6 @@ class ResourceManager(val coreManager: CoreManager) {
                 it as JSONObject
                 val id = it.getInt("id")
                 val name = it.getString("name")
-                val addonName = it.getString("addon")
-
                 val addonVersion = it.getString("version")
                 val reviewed = if (it.has("reviewed")) it.getString("reviewed") else ""
                 val pattern = if (it.has("pattern")) it.getString("pattern") else ""

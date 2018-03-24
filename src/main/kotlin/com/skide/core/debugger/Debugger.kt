@@ -29,8 +29,8 @@ class SystemErr : PrintStream(System.err) {
 
     override fun println(raw: String) {
         var msg = raw
-        val cal = Calendar.getInstance();
-        val sdf = SimpleDateFormat("d.M.Y HH:mm:ss");
+        val cal = Calendar.getInstance()
+        val sdf = SimpleDateFormat("d.M.Y HH:mm:ss")
         if (!msg.startsWith("["))
             msg = " $msg"
 
@@ -51,9 +51,6 @@ class SystemErr : PrintStream(System.err) {
                 Platform.runLater {
                     val win = GUIManager.getWindow("ErrorReport.fxml", "Error", false)
                     val ctrl = win.controller as ErrorReportGUIController
-
-                    val cal = Calendar.getInstance()
-                    val sdf = SimpleDateFormat("d.M.Y HH:mm:ss")
 
                     val theError = "OS: ${System.getProperty("os.name")} ${System.getProperty("os.arch")}\nJava: ${System.getProperty("java.runtime.version")}\nTime: ${sdf.format(cal.time)}\n$err"
 
@@ -98,8 +95,8 @@ class SystemErr : PrintStream(System.err) {
 class SystemOut : PrintStream(System.out) {
 
 
-    override fun println(msg: String) {
-        var msg = msg
+    override fun println(orig: String) {
+        var msg = orig
         val cal = Calendar.getInstance();
         val sdf = SimpleDateFormat("d.M.Y HH:mm:ss");
         if (!msg.startsWith("["))

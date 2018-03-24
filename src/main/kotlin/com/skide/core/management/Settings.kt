@@ -117,7 +117,6 @@ class ConfigManager(val coreManager: CoreManager) {
     private fun writeServersFile(): Boolean {
         val obj = JSONObject()
         val serverArr = JSONArray()
-        val apisObArr = JSONArray()
         for ((id, server) in servers) {
             val serverObj = JSONObject()
             serverObj.put("id", id)

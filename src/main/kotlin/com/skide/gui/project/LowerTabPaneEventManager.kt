@@ -1,7 +1,6 @@
 package com.skide.gui.project
 
 import com.skide.CoreManager
-import com.skide.core.management.OpenProject
 import com.skide.core.management.RunningServerManager
 import com.skide.gui.DragResizer
 import com.skide.gui.controllers.ProjectGUIController
@@ -26,7 +25,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
     private val running = HashMap<Server, Tab>()
 
 
-    fun getServerTab(serverManager: RunningServerManager, openProject: OpenProject): Triple<Tab, Button, Button> {
+    fun getServerTab(serverManager: RunningServerManager): Triple<Tab, Button, Button> {
 
         if (running.containsKey(serverManager.server)) {
             ctrl.runsTabPane.tabs.remove(running[serverManager.server]!!)

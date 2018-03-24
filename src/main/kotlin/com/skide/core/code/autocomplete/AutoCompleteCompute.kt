@@ -417,7 +417,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             manager.parseResult = manager.parseStructure()
             //   if (area.getInfo(manager, currentLine).inString) return
 
-            val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, manager.parseResult, node)
 
             fillList.items.clear()
             removed.clear()
@@ -506,9 +505,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
 
-    private fun getWordSearchReplace(replaced: String, currentInfo: CurrentStateInfo): String {
+    private fun getWordSearchReplace(orig: String, currentInfo: CurrentStateInfo): String {
 
-        var replaced = replaced
+        var replaced = orig
 
         if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && currentInfo.inBrace) {
             replaced = replaced.replace(")", "")
