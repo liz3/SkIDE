@@ -1,5 +1,6 @@
 package com.skide.gui
 
+import com.sun.jna.platform.win32.Guid
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TextInputDialog
@@ -8,8 +9,16 @@ import java.util.Optional
 
 object Prompts {
 
+    var theme = ""
+
     fun textPrompt(title: String, header: String): String {
         val input = TextInputDialog()
+
+        if(theme == "Dark") {
+            val dialogPane = input.dialogPane
+            dialogPane.stylesheets.add("ThemeDark.css")
+        }
+
         input.title = title
         input.headerText = header
 
@@ -22,6 +31,11 @@ object Prompts {
 
     fun passPrompt(): String {
         val pd = PasswordDialog()
+
+        if(theme == "Dark") {
+            val dialogPane = pd.dialogPane
+            dialogPane.stylesheets.add("ThemeDark.css")
+        }
         val result = pd.showAndWait()
 
         return try {
@@ -40,6 +54,11 @@ object Prompts {
         alert.contentText = body
         alert.isResizable = false
         alert.graphic = null
+
+        if(theme == "Dark") {
+            val dialogPane = alert.dialogPane
+            dialogPane.stylesheets.add("ThemeDark.css")
+        }
 
         val result = alert.showAndWait() ?: return false
         return result.get() == ButtonType.OK

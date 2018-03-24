@@ -91,7 +91,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
 
         DragResizer().makeResizable(ctrl.mainLowerBorderPane)
         terminalBuilder.terminalPath = openProjectGuiManager.openProject.project.folder.toPath()
-        if (coreManager.configManager.get("theme") == "dark") {
+        if (coreManager.configManager.get("theme") == "Dark") {
             terminalBuilder.terminalConfig.backgroundColor = "#2B2B2B"
             terminalBuilder.terminalConfig.foregroundColor = "#dbe0dc"
         }

@@ -6,6 +6,7 @@ import com.skide.core.management.ProjectManager
 import com.skide.core.management.ServerManager
 import com.skide.gui.GUIManager
 import com.skide.gui.JavaFXBootstrapper
+import com.skide.gui.Prompts
 import com.skide.gui.controllers.StartGUIController
 import com.skide.utils.*
 import java.lang.management.ManagementFactory
@@ -42,7 +43,7 @@ class CoreManager {
 
         resourceManager.loadResources()
         serverManager.init()
-
+        Prompts.theme = configManager.get("theme") as String
         guiManager.bootstrapCallback = { stage ->
 
             GUIManager.discord.update("In the main menu", "Idle")
