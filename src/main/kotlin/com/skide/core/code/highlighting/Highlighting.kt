@@ -64,6 +64,7 @@ class Highlighting(val manager: CodeManager) {
 
         while (matcher.find()) {
             val styleClass = when {
+                matcher.group("SECTION") != null -> "section"
                 matcher.group("PAREN") != null -> "paren"
             //   matcher.group("BRACE") != null -> "brace"
                 matcher.group("BRACKET") != null -> "bracket"
@@ -113,7 +114,8 @@ class Highlighting(val manager: CodeManager) {
     }
 
     private val patternCompiler = Pattern.compile(
-            "(?<PAREN>" + HighlighterStatics.PAREN_PATTERN + ")"
+            "(?<SECTION>" + HighlighterStatics.SECTION_PATTERN + ")"
+                    + "|(?<PAREN>" + HighlighterStatics.PAREN_PATTERN + ")"
                     //    + "|(?<BRACE>" + HighlighterStatics.BRACE_PATTERN + ")"
                     + "|(?<BRACKET>" + HighlighterStatics.BRACKET_PATTERN + ")"
                     + "|(?<STRING>" + HighlighterStatics.STRING_PATTERN + ")"
@@ -124,12 +126,13 @@ class Highlighting(val manager: CodeManager) {
 
 object HighlighterStatics {
 
+    const val SECTION_PATTERN = "command \\/?.+\\:|trigger:|permission:|permission message:|description:|cooldown:|cooldown message:"
     val KEYWORDS = arrayOf("set" +
             "", "if", "stop", "loop", "trigger", "permission", "permission-message", "description", "return", "function", "options", "true", "false", "cancel", "else", "else if")
     const val COMMENT_PATTERN = "#[^\n]*"
     const val VAR_PATTERN = "\\{\\S*}"
     const val PAREN_PATTERN = "\\(|\\)"
-    const val BRACE_PATTERN = "\\{|\\}"
+    //const val BRACE_PATTERN = "\\{|\\}"
     const val BRACKET_PATTERN = "\\[|\\]"
     const val STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\""
     fun joinBoundaryPattern(items: Array<String>) = "\\b(" + items.joinToString("|") + ")\\b"

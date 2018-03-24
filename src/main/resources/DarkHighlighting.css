@@ -1,12 +1,12 @@
 .styled-text-area .text.conditions {
     -fx-fill: #7a8080;
-
 }
 
 .styled-text-area .text.effects {
     -fx-fill: #9876AA;
     -fx-font-weight: bold;
 }
+
 .styled-text-area .text.vars {
     -fx-fill: #9876AA;
 }
@@ -17,7 +17,6 @@
 }
 
 .styled-text-area .text.expressions {
-
     -fx-fill: #807348;
 }
 
@@ -26,8 +25,12 @@
     -fx-font-weight: bold;
 }
 
-.styled-text-area .text.keywords {
+.styled-text-area .text.section {
+    -fx-fill: #A068C7;
+    -fx-font-weight: bold;
+}
 
+.styled-text-area .text.keywords {
     -fx-fill: #CC7832;
     -fx-font-weight: bold;
 }
@@ -35,7 +38,6 @@
 .styled-text-area .text.semicolon {
     -fx-font-weight: bold;
 }
-
 
 .styled-text-area .text.paren {
     -fx-fill: firebrick;
@@ -64,11 +66,13 @@
     -fx-fill: #680780;
     -fx-font-weight: bold;
 }
+
 .styled-text-area .text.marked {
     -fx-fill: #d64617;
     -fx-background-color: #500710;
     -fx-font-weight: bold;
 }
+
 .styled-text-area .text.console-err {
     -fx-fill: #800b07;
     -fx-font-weight: bold;
@@ -85,6 +89,7 @@
 .github-blue {
     -fx-fill: dodgerblue;
 }
+
 .normal {
     -fx-fill: aliceblue;
 }

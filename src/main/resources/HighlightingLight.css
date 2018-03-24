@@ -1,6 +1,5 @@
 .conditions {
     -fx-fill: #7a8080;
-
 }
 
 .vars {
@@ -13,7 +12,6 @@
 }
 
 .expressions {
-
     -fx-fill: #807348;
 }
 
@@ -23,7 +21,6 @@
 }
 
 .keywords {
-
     -fx-fill: #cb3000;
     -fx-font-weight: bold;
 }
@@ -59,11 +56,13 @@
     -fx-fill: #680780;
     -fx-font-weight: bold;
 }
+
 .marked {
     -fx-fill: #d6030b;
     -fx-background-color: #500710;
     -fx-font-weight: bold;
 }
+
 .console-err {
     -fx-fill: #800b07;
     -fx-font-weight: bold;

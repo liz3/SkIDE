@@ -379,9 +379,12 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                         .filter { it.tab == tab }
                         .forEach {
                             if (it.name.endsWith(".sk")) updateStructureTab(it)
+                            if (!(it.name.endsWith(".sk"))) {
+                                GUIManager.discord.update("Editing ${it.name}", "Coding")
+                            } else {
+                                GUIManager.discord.update("Editing script ${it.name}", "Coding")
+                            }
 
-
-                            GUIManager.discord.update("Editing script ${it.name}", "Coding")
                         }
 
             } else {

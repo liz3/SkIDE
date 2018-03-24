@@ -54,24 +54,24 @@
 .scroll-bar > .decrement-button:pressed > .decrement-arrow {
     -fx-background-color: -fx-mark-highlight-color, rgb(255, 255, 255);
 }
+
 .code-area {
     -fx-background-color: #2B2B2B;
     -fx-highlight-text-fill: derive(#1E90FF, 100%);
 }
 
-
-.styled-text-area .text{
+.styled-text-area .text {
     -fx-fill: #dbe0dc;
 }
+
 .styled-text-area .caret {
-    -fx-stroke:  #dbe0dc;
+    -fx-stroke: #dbe0dc;
 }
+
 .code-area .lineno .text {
     -fx-fill: #606366;
 }
-.code-area .lineno{
-    -fx-background-color: #2e2e2e;
-}
-.menu-bar {
 
+.code-area .lineno {
+    -fx-background-color: #2e2e2e;
 }
