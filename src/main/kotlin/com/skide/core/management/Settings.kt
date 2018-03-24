@@ -7,6 +7,8 @@ import com.skide.utils.writeFile
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 
 class PointerHolder(val id: Long, val name: String, val path: String)
@@ -59,10 +61,19 @@ class ConfigManager(val coreManager: CoreManager) {
 
     val projects = HashMap<Long, PointerHolder>()
     val servers = HashMap<Long, PointerHolder>()
-    val apis = HashMap<Long, PointerHolder>()
-
-
     fun load(): ConfigLoadResult {
+
+        val oldFolder = File(System.getProperty("user.home"), ".skide")
+        if (oldFolder.exists()) {
+            oldFolder.listFiles().forEach {
+                val out = File(rootFolder, it.name)
+                if (!it.isDirectory && !out.exists()) {
+                    Files.copy(it.toPath(), out.toPath())
+                }
+
+            }
+        }
+
         loaded = if (loaded) return ConfigLoadResult.SUCCESS else true
         var firstRun = false
 
@@ -185,10 +196,9 @@ class ConfigManager(val coreManager: CoreManager) {
             if (obj.has("skunity_name")) skUnityUsername = obj.getString("skunity_name")
 
 
-
             val settingsObj = obj.getJSONObject("settings")
 
-            if(settingsObj.length() == 0) {
+            if (settingsObj.length() == 0) {
                 writeDefaultSettings()
                 return readConfig()
             }
@@ -230,6 +240,7 @@ class ConfigManager(val coreManager: CoreManager) {
         set("font", "Source Code Pro")
         set("font_size", "15")
     }
+
     fun get(key: String): Any? {
         return settings[key]
     }

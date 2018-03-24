@@ -14,6 +14,7 @@ import java.util.*
 
 class ResourceManager(val coreManager: CoreManager) {
 
+    var version = ""
     val addons = HashMap<String, Addon>()
     val skriptDocList = Vector<AddonItem>()
     val skriptVersions = Vector<String>()
@@ -72,6 +73,7 @@ class ResourceManager(val coreManager: CoreManager) {
 
     fun loadResources() {
 
+        version = String(request("https://liz3.net/sk/depot/").third.readBytes())
         if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
         if (file.exists()) {
             file.delete()

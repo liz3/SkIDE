@@ -28,6 +28,8 @@ class StartGUIController {
 
     @FXML
     private lateinit var settings: Label
+    @FXML
+    private lateinit var versionLabel: Label
 
     fun initGui(manager: CoreManager, thisWindow: ActiveWindow, firstRun: Boolean) {
 
@@ -59,6 +61,7 @@ class StartGUIController {
                 }
             }
         }
+        versionLabel.text = "SK-IDE Ver. ${manager.resourceManager.version} Copyright Yann \"Liz3\" HN - GLP v2 License"
         settings.setOnMouseReleased {
 
             val window = GUIManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)

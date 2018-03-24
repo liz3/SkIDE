@@ -21,11 +21,12 @@
                <font>
                   <Font size="14.0" />
                </font></Label>
-            <Label fx:id="settings" layoutX="417.0" layoutY="252.0" text="Settings">
+            <Label fx:id="settings" layoutX="417.0" layoutY="245.0" text="Settings">
                <font>
                   <Font size="14.0" />
                </font>
             </Label>
+            <Label fx:id="versionLabel" layoutX="245.0" layoutY="419.0" prefHeight="17.0" prefWidth="391.0" text="Sk-IDE" />
          </children>
       </Pane>
    </children>

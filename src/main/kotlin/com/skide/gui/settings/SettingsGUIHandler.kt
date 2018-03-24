@@ -35,11 +35,6 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
     fun init() {
 
-        window.stage.setOnCloseRequest {
-            if(Prompts.infoCheck("Restart", "Sk-IDE restart", "In order to perform all changes, SkIde needs to be restarted!", Alert.AlertType.CONFIRMATION)) {
-                restart()
-            }
-        }
         ctrl.okBtn.setOnAction {
             deleted.forEach {
                 serverManager.deleteServer(it)
