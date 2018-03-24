@@ -68,7 +68,9 @@ class ConfigManager(val coreManager: CoreManager) {
             oldFolder.listFiles().forEach {
                 val out = File(rootFolder, it.name)
                 if (!it.isDirectory && !out.exists()) {
-                    Files.copy(it.toPath(), out.toPath())
+                    out.createNewFile()
+                    Files.copy(it.toPath(), out.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                    it.delete()
                 }
 
             }
