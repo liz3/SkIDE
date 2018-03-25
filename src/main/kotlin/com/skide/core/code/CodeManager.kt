@@ -107,7 +107,8 @@ class CodeManager {
               val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
 
               if (project.coreManager.configManager.get("bracket_cut") != null) {
-                  val split = (project.coreManager.configManager.get("bracket_cut") as String).split("+")
+                  val str = project.coreManager.configManager.get("bracket_cut") as String
+                  val split = str.split("+")
                   split.forEach {
                       if (it == "CONTROL") {
                           if(!ev.isControlDown) {
@@ -125,6 +126,18 @@ class CodeManager {
                               return@forEach
                           }
                       } else {
+                          if(ev.isControlDown && !str.contains("CONTROL+")) {
+                              computed = false
+                              return@forEach
+                          }
+                          if(ev.isShiftDown && !str.contains("SHIFT+")) {
+                              computed = false
+                              return@forEach
+                          }
+                          if(ev.isAltDown && !str.contains("ALT+")) {
+                              computed = false
+                              return@forEach
+                          }
                           if (ev.code.toString() != it){
                               computed = false
                           }
@@ -141,7 +154,8 @@ class CodeManager {
               }
               computed = true
               if (project.coreManager.configManager.get("curly_cut") != null) {
-                  val split = (project.coreManager.configManager.get("curly_cut") as String).split("+")
+                  val str = (project.coreManager.configManager.get("curly_cut") as String)
+                  val split = str.split("+")
                   split.forEach {
                       if (it == "CONTROL") {
                           if(!ev.isControlDown) {
@@ -159,6 +173,18 @@ class CodeManager {
                               return@forEach
                           }
                       } else {
+                          if(ev.isControlDown && !str.contains("CONTROL+")) {
+                              computed = false
+                              return@forEach
+                          }
+                          if(ev.isShiftDown && !str.contains("SHIFT+")) {
+                              computed = false
+                              return@forEach
+                          }
+                          if(ev.isAltDown && !str.contains("ALT+")) {
+                              computed = false
+                              return@forEach
+                          }
                           if (ev.code.toString() != it){
                               computed = false
                           }
@@ -175,7 +201,8 @@ class CodeManager {
               }
               computed = true
               if (project.coreManager.configManager.get("paren_cut") != null) {
-                  val split = (project.coreManager.configManager.get("paren_cut") as String).split("+")
+                  val str = (project.coreManager.configManager.get("paren_cut") as String)
+                  val split = str.split("+")
                   split.forEach {
                       if (it == "CONTROL") {
                           if(!ev.isControlDown) {
@@ -193,6 +220,18 @@ class CodeManager {
                               return@forEach
                           }
                       } else {
+                          if(ev.isControlDown && !str.contains("CONTROL+")) {
+                              computed = false
+                              return@forEach
+                          }
+                          if(ev.isShiftDown && !str.contains("SHIFT+")) {
+                              computed = false
+                              return@forEach
+                          }
+                          if(ev.isAltDown && !str.contains("ALT+")) {
+                              computed = false
+                              return@forEach
+                          }
                           if (ev.code.toString() != it){
                               computed = false
                           }
@@ -214,7 +253,8 @@ class CodeManager {
               }
               computed = true
               if (project.coreManager.configManager.get("quote_cut") != null) {
-                  val split = (project.coreManager.configManager.get("quote_cut") as String).split("+")
+                  val str = (project.coreManager.configManager.get("quote_cut") as String)
+                  val split = str.split("+")
                   split.forEach {
                       if (it == "CONTROL") {
                           if(!ev.isControlDown) {
@@ -232,6 +272,18 @@ class CodeManager {
                              return@forEach
                          }
                       } else {
+                          if(ev.isControlDown && !str.contains("CONTROL+")) {
+                              computed = false
+                              return@forEach
+                          }
+                          if(ev.isShiftDown && !str.contains("SHIFT+")) {
+                              computed = false
+                              return@forEach
+                          }
+                          if(ev.isAltDown && !str.contains("ALT+")) {
+                              computed = false
+                              return@forEach
+                          }
                           if (ev.code.toString() != it){
                               computed = false
                           }

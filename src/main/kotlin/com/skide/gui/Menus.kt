@@ -17,6 +17,12 @@ object Menus {
         val menu = ContextMenu()
 
         val openIcon = Image(javaClass.getResource("/icon.png").toExternalForm())
+        val yaml = Image(javaClass.getResource("/yaml.png").toExternalForm())
+
+        val yamlView = ImageView(yaml)
+        yamlView.fitWidth = 15.0
+        yamlView.fitHeight = 15.0
+
         val openView = ImageView(openIcon)
         openView.fitWidth = 15.0
         openView.fitHeight = 15.0
@@ -32,6 +38,7 @@ object Menus {
 
         }
         val newYamlFile = MenuItem("New Yaml File")
+        newYamlFile.graphic = yamlView
         newYamlFile.setOnAction {
 
             var name = Prompts.textPrompt("New Yaml File", "Enter File name Here")
