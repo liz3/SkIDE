@@ -81,6 +81,7 @@ class Highlighting(val manager: CodeManager) {
                 matcher.group("COLORD") != null -> "color-d"
                 matcher.group("COLORE") != null -> "color-e"
                 matcher.group("COLORF") != null -> "color-f"
+                matcher.group("NUMBERS") != null -> "numbers"
                 matcher.group("PAREN") != null -> "paren"
                 matcher.group("BRACKET") != null -> "bracket"
                 matcher.group("STRING") != null -> "string"
@@ -146,6 +147,7 @@ class Highlighting(val manager: CodeManager) {
                     + "|(?<COLORD>" + HighlighterStatics.COLOR_D_PATTERN + ")"
                     + "|(?<COLORE>" + HighlighterStatics.COLOR_E_PATTERN + ")"
                     + "|(?<COLORF>" + HighlighterStatics.COLOR_F_PATTERN + ")"
+                    + "|(?<NUMBERS>" + HighlighterStatics.NUMBERS_PATTERN + ")"
                     + "|(?<PAREN>" + HighlighterStatics.PAREN_PATTERN + ")"
                     + "|(?<BRACKET>" + HighlighterStatics.BRACKET_PATTERN + ")"
                     + "|(?<STRING>" + HighlighterStatics.STRING_PATTERN + ")"
@@ -173,6 +175,7 @@ object HighlighterStatics {
     const val COLOR_D_PATTERN = "§d|&d"
     const val COLOR_E_PATTERN = "§e|&e"
     const val COLOR_F_PATTERN = "§f|&f"
+    const val NUMBERS_PATTERN = "[0-9]"
     val KEYWORDS = arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "cancel", "else", "else if")
     const val COMMENT_PATTERN = "#[^\n]*"
     const val VAR_PATTERN = "\\{\\S*}"

@@ -31,7 +31,7 @@
 }
 
 .styled-text-area .text.keywords {
-    -fx-fill: #CC7832;
+    -fx-fill: #3F7CCF;
     -fx-font-weight: bold;
 }
 
@@ -130,6 +130,10 @@
 
 .styled-text-area .text.color-f {
     -fx-fill: #FFFFFF;
+}
+
+.styled-text-area .text.numbers {
+    -fx-fill: #f67c35;
 }
 
 .styled-text-area .text.console-err {

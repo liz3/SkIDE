@@ -26,7 +26,7 @@
 }
 
 .keywords {
-    -fx-fill: #cb3000;
+    -fx-fill: #3F7CCF;
     -fx-font-weight: bold;
 }
 
@@ -61,6 +61,74 @@
     -fx-fill: #d6030b;
     -fx-background-color: #500710;
     -fx-font-weight: bold;
+}
+
+.color-0 {
+    -fx-fill: #000000;
+}
+
+.color-1 {
+    -fx-fill: #0000AA;
+}
+
+.color-2 {
+    -fx-fill: #00AA00;
+}
+
+.color-3 {
+    -fx-fill: #00AAAA;
+}
+
+.color-4 {
+    -fx-fill: #AA0000;
+}
+
+.color-5 {
+    -fx-fill: #AA00AA;
+}
+
+.color-6 {
+    -fx-fill: #FFAA00;
+}
+
+.color-7 {
+    -fx-fill: #AAAAAA;
+}
+
+.color-8 {
+    -fx-fill: #555555;
+}
+
+.color-9 {
+    -fx-fill: #5555FF;
+}
+
+.color-a {
+    -fx-fill: #55FF55;
+}
+
+.color-b {
+    -fx-fill: #55FFFF;
+}
+
+.color-c {
+    -fx-fill: #FF5555;
+}
+
+.color-d {
+    -fx-fill: #FF55FF;
+}
+
+.color-e {
+    -fx-fill: #FFFF55;
+}
+
+.color-f {
+    -fx-fill: #FFFFFF;
+}
+
+.numbers {
+    -fx-fill: #f67c35;
 }
 
 .console-err {
