@@ -21,7 +21,7 @@
 }
 
 .section {
-    -fx-fill: #A068C7;
+    -fx-fill: #3F7CCF;
     -fx-font-weight: bold;
 }
 
@@ -41,11 +41,6 @@
 
 .bracket {
     -fx-fill: darkgreen;
-    -fx-font-weight: bold;
-}
-
-.brace {
-    -fx-fill: teal;
     -fx-font-weight: bold;
 }
 

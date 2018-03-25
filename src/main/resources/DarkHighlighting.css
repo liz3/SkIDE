@@ -26,7 +26,7 @@
 }
 
 .styled-text-area .text.section {
-    -fx-fill: #A068C7;
+    -fx-fill: #3F7CCF;
     -fx-font-weight: bold;
 }
 
@@ -49,11 +49,6 @@
     -fx-font-weight: bold;
 }
 
-.styled-text-area .text.brace {
-    -fx-fill: teal;
-    -fx-font-weight: bold;
-}
-
 .styled-text-area .text.string {
     -fx-fill: #909296;
 }
@@ -71,6 +66,70 @@
     -fx-fill: #d64617;
     -fx-background-color: #500710;
     -fx-font-weight: bold;
+}
+
+.styled-text-area .text.color-0 {
+    -fx-fill: #000000;
+}
+
+.styled-text-area .text.color-1 {
+    -fx-fill: #0000AA;
+}
+
+.styled-text-area .text.color-2 {
+    -fx-fill: #00AA00;
+}
+
+.styled-text-area .text.color-3 {
+    -fx-fill: #00AAAA;
+}
+
+.styled-text-area .text.color-4 {
+    -fx-fill: #AA0000;
+}
+
+.styled-text-area .text.color-5 {
+    -fx-fill: #AA00AA;
+}
+
+.styled-text-area .text.color-6 {
+    -fx-fill: #FFAA00;
+}
+
+.styled-text-area .text.color-7 {
+    -fx-fill: #AAAAAA;
+}
+
+.styled-text-area .text.color-8 {
+    -fx-fill: #555555;
+}
+
+.styled-text-area .text.color-9 {
+    -fx-fill: #5555FF;
+}
+
+.styled-text-area .text.color-a {
+    -fx-fill: #55FF55;
+}
+
+.styled-text-area .text.color-b {
+    -fx-fill: #55FFFF;
+}
+
+.styled-text-area .text.color-c {
+    -fx-fill: #FF5555;
+}
+
+.styled-text-area .text.color-d {
+    -fx-fill: #FF55FF;
+}
+
+.styled-text-area .text.color-e {
+    -fx-fill: #FFFF55;
+}
+
+.styled-text-area .text.color-f {
+    -fx-fill: #FFFFFF;
 }
 
 .styled-text-area .text.console-err {
