@@ -96,4 +96,15 @@ class GeneralSettingsGUIController {
     lateinit var settingsCssFileBtn: Button
 
 
+    @FXML
+    lateinit var keyParenField: TextField
+
+    @FXML
+    lateinit var keyBracketField: TextField
+
+    @FXML
+    lateinit var keyCurlyBracket: TextField
+
+    @FXML
+    lateinit var keyQuoteField: TextField
 }

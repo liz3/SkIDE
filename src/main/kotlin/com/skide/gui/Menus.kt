@@ -3,6 +3,7 @@ package com.skide.gui
 import com.skide.core.code.CodeManager
 import com.skide.core.management.OpenProject
 import com.skide.gui.controllers.SkunityQuestionFameController
+import com.skide.include.OpenFileHolder
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
@@ -45,6 +46,19 @@ object Menus {
 
         menu.show(parent, x, y)
 
+        return menu
+    }
+
+    fun getMenuForRootPane(project: OpenFileHolder): ContextMenu {
+
+        val menu = ContextMenu()
+        val newWindowItem = MenuItem("Open in new Window")
+        newWindowItem.setOnAction {
+            project.toggleExlude()
+
+        }
+
+        menu.items.addAll(newWindowItem)
         return menu
     }
 

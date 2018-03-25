@@ -181,6 +181,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             holder.borderPane.bottom = holder.currentStackBox
             holder.currentStackBox.prefHeight = 35.0
             holder.tab.content = holder.borderPane
+            holder.tab.contextMenu = Menus.getMenuForRootPane(holder)
             holder.area.paragraphGraphicFactory = LineNumberFactory.get(holder.area)
             if (holder.name.endsWith(".sk")) holder.codeManager.setup(holder) else ExternalHandler(holder)
             registerEventsForNewFile(holder)
@@ -369,6 +370,22 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             }
         }
+      /*
+        controller.editorMainTabPane.setOnMousePressed {ev ->
+            if(ev.isSecondaryButtonDown) {
+
+                if(controller.editorMainTabPane.selectionModel.selectedItem == null) return@setOnMousePressed
+                openProjectGuiManager.openFiles.values.forEach {
+
+                    if(it.tab == controller.editorMainTabPane.selectionModel.selectedItem && !it.area.isFocused) {
+
+                        Menus.getMenuForRootPane(it, controller.editorMainTabPane, ev.screenX, ev.screenY)
+                    }
+                }
+
+            }
+        }
+       */
         controller.editorMainTabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
             if (controller.editorMainTabPane.selectionModel.selectedItem != null) {

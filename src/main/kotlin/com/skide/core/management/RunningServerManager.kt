@@ -37,7 +37,7 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
                 val reader = BufferedReader(InputStreamReader(process.inputStream))
                 while (true) {
                     msg = reader.readLine()
-                    if (msg == null) break
+                    if (!process.isAlive) break
                     if (msg != "") {
                         if (msg.contains("]: Done")) {
                             readyCallback(this)

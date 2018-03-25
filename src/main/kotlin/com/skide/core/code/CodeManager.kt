@@ -14,6 +14,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
 import org.fxmisc.richtext.CodeArea
 
@@ -69,7 +70,6 @@ class CodeManager {
 
     private fun registerEvents(project: OpenFileHolder) {
 
-
         area.focusedProperty().addListener { _, _, newValue ->
 
             autoComplete.hideList()
@@ -82,7 +82,9 @@ class CodeManager {
                 }
             }
         }
+
         area.setOnKeyPressed { ev ->
+
 
             if (ev.code == KeyCode.TAB) {
                 if (sequenceReplaceHandler.computing) {
@@ -93,70 +95,168 @@ class CodeManager {
                     return@setOnKeyPressed
                 }
             }
-            if (ev.isShiftDown) {
-
-                val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
-                if (ev.code == KeyCode.DIGIT8) {
-
-                    ev.consume()
-                    area.replaceText(startPos, area.caretPosition, ")")
-                    area.moveTo(area.caretPosition - 1)
-                    if (autoComplete.popUp.isShowing) {
-                        autoComplete.removed.clear()
-                        autoComplete.popUp.hide()
-                        autoComplete.fillList.items.clear()
-                    }
-                }
-                if (ev.code == KeyCode.DIGIT2) {
-
-                    ev.consume()
-                    area.replaceText(startPos, area.caretPosition, "\"")
-                    area.moveTo(area.caretPosition - 1)
-                }
-            }
-            if (ev.isAltDown) {
-
-
-                val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
-                if (ev.code == KeyCode.DIGIT7 && getOS() != OperatingSystemType.MAC_OS) {
-
-                    ev.consume()
-                    area.replaceText(startPos, area.caretPosition, "}")
-                    area.moveTo(area.caretPosition - 1)
-                } else if (ev.code == KeyCode.DIGIT8 && getOS() == OperatingSystemType.MAC_OS) {
-
-                    ev.consume()
-                    area.replaceText(startPos, area.caretPosition, "}")
-                    area.moveTo(area.caretPosition - 1)
-                }
-
-                if (ev.code == KeyCode.DIGIT8 && getOS() != OperatingSystemType.MAC_OS) {
-
-                    ev.consume()
-                    area.replaceText(startPos, area.caretPosition, "]")
-                    area.moveTo(area.caretPosition - 1)
-                } else if (ev.code == KeyCode.DIGIT5 && getOS() == OperatingSystemType.MAC_OS) {
-
-                    ev.consume()
-                    area.replaceText(startPos, area.caretPosition, "]")
-                    area.moveTo(area.caretPosition - 1)
-                }
-            }
             if (ev.code == KeyCode.ESCAPE) {
 
                 if (autoComplete.popUp.isShowing) autoComplete.hideList()
                 if (sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
             }
+
+          if(ev.code != KeyCode.SHIFT && ev.code != KeyCode.CONTROL && ev.code != KeyCode.ALT && ev.code != KeyCode.ALT_GRAPH) {
+
+              var computed = true
+              val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
+
+              if (project.coreManager.configManager.get("bracket_cut") != null) {
+                  val split = (project.coreManager.configManager.get("bracket_cut") as String).split("+")
+                  split.forEach {
+                      if (it == "CONTROL") {
+                          if(!ev.isControlDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else if (it == "ALT") {
+                          if(!ev.isAltDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else if (it == "SHIFT") {
+                          if(!ev.isShiftDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else {
+                          if (ev.code.toString() != it){
+                              computed = false
+                          }
+                      }
+                  }
+              } else {
+                  computed = false
+              }
+              if (computed) {
+                  ev.consume()
+                  area.replaceText(startPos, area.caretPosition, "]")
+                  area.moveTo(area.caretPosition - 1)
+                  return@setOnKeyPressed
+              }
+              computed = true
+              if (project.coreManager.configManager.get("curly_cut") != null) {
+                  val split = (project.coreManager.configManager.get("curly_cut") as String).split("+")
+                  split.forEach {
+                      if (it == "CONTROL") {
+                          if(!ev.isControlDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else if (it == "ALT") {
+                          if(!ev.isAltDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else if (it == "SHIFT") {
+                          if(!ev.isShiftDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else {
+                          if (ev.code.toString() != it){
+                              computed = false
+                          }
+                      }
+                  }
+              }else {
+                  computed = false
+              }
+              if (computed) {
+                  ev.consume()
+                  area.replaceText(startPos, area.caretPosition, "}")
+                  area.moveTo(area.caretPosition - 1)
+                  return@setOnKeyPressed
+              }
+              computed = true
+              if (project.coreManager.configManager.get("paren_cut") != null) {
+                  val split = (project.coreManager.configManager.get("paren_cut") as String).split("+")
+                  split.forEach {
+                      if (it == "CONTROL") {
+                          if(!ev.isControlDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else if (it == "ALT") {
+                          if(!ev.isAltDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else if (it == "SHIFT") {
+                          if(!ev.isShiftDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else {
+                          if (ev.code.toString() != it){
+                              computed = false
+                          }
+                      }
+                  }
+              }else {
+                  computed = false
+              }
+              if (computed) {
+                  ev.consume()
+                  area.replaceText(startPos, area.caretPosition, ")")
+                  area.moveTo(area.caretPosition - 1)
+                  if (autoComplete.popUp.isShowing) {
+                      autoComplete.removed.clear()
+                      autoComplete.popUp.hide()
+                      autoComplete.fillList.items.clear()
+                  }
+                  return@setOnKeyPressed
+              }
+              computed = true
+              if (project.coreManager.configManager.get("quote_cut") != null) {
+                  val split = (project.coreManager.configManager.get("quote_cut") as String).split("+")
+                  split.forEach {
+                      if (it == "CONTROL") {
+                          if(!ev.isControlDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else if (it == "ALT") {
+                          if(!ev.isAltDown) {
+                              computed = false
+                              return@forEach
+                          }
+                      } else if (it == "SHIFT") {
+                         if(!ev.isShiftDown) {
+                             computed = false
+                             return@forEach
+                         }
+                      } else {
+                          if (ev.code.toString() != it){
+                              computed = false
+                          }
+                      }
+                  }
+              }else {
+                  computed = false
+              }
+              if (computed) {
+                  ev.consume()
+                  area.replaceText(startPos, area.caretPosition, "\"")
+                  area.moveTo(area.caretPosition - 1)
+                  return@setOnKeyPressed
+              }
+              computed = true
+          }
+
             if (ev.isControlDown) {
                 if (ev.code == KeyCode.SLASH) {
                     if (!autoComplete.popUp.isShowing) {
-                        area.replaceSelection("#$content");
+                        area.replaceSelection("#$content")
 
 
                     }
                 }
-            }
-            if (ev.isControlDown) {
                 if (ev.code == KeyCode.C) {
                     area.copy()
                 }
@@ -242,6 +342,7 @@ class CodeManager {
 
         }
     }
+
 
     fun gotoItem(item: TreeItem<String>) {
 

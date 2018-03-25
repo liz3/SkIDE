@@ -71,21 +71,32 @@ class ResourceManager(val coreManager: CoreManager) {
         JSONArray(readFile(skriptVersionsFile).second).forEach { skriptVersions.add(it as String) }
     }
 
-    fun loadResources() {
+    fun loadResources(callback: (Int, Int, String) -> Unit) {
 
+        val total = 5
+
+        callback(total, 1, "https://liz3.net/sk/depot/")
         version = String(request("https://liz3.net/sk/depot/").third.readBytes())
         if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
         if (file.exists()) {
             file.delete()
         }
 
+        callback(total, 2, "Downloading: https://liz3.net/sk/?function=getAllSyntax")
         downloadFile("https://liz3.net/sk/?function=getAllSyntax", file.absolutePath)
+        callback(total, 3, "Downloading: https://liz3.net/sk/?function=getAllAddons")
         downloadFile("https://liz3.net/sk/?function=getAllAddons", addonsFile.absolutePath)
+        callback(total, 4, "Downloading: https://liz3.net/sk/?function=getAddonSyntax&addon=skript")
         downloadFile("https://liz3.net/sk/?function=getAddonSyntax&addon=skript", skriptDoc.absolutePath)
+
+        callback(total, 5, "Downloading: https://skripttools.net/api.php?t=skript&action=getlist")
         downloadFile("https://skripttools.net/api.php?t=skript&action=getlist", skriptVersionsFile.absolutePath)
 
 
+        callback(total, 6, "Reading docs")
         parseCurrentSkriptVersionDocs()
+
+        callback(total, 7, "Reading script versions")
         parseSkriptVersions()
 
         val str = readFile(file.absolutePath)
@@ -93,6 +104,7 @@ class ResourceManager(val coreManager: CoreManager) {
         val addonDevs = JSONObject(readFile(addonsFile).second).getJSONArray("result")
         val obj = JSONObject(str.second)
 
+        callback(total, 8, "Parsing Addons...")
 
         obj.getJSONArray("result").forEach {
             it as JSONObject

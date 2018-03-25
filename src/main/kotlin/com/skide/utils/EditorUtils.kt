@@ -35,8 +35,6 @@ object EditorUtils {
 
         return null
     }
-
-
     fun filterByNodeType(type: NodeType, list: Vector<Node>): Vector<Node> {
 
         val found = Vector<Node>()

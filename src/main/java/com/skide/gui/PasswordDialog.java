@@ -1,6 +1,7 @@
 package com.skide.gui;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -9,7 +10,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
+
+
 public class PasswordDialog extends Dialog<String> {
+
+
     private PasswordField passwordField;
 
     public PasswordDialog() {

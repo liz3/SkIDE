@@ -8,7 +8,11 @@ import com.skide.include.Server
 import com.skide.include.ServerAddon
 import com.skide.include.ServerConfiguration
 import com.skide.utils.restart
+import javafx.application.Platform
 import javafx.scene.control.Alert
+import javafx.scene.control.TextField
+import javafx.scene.input.KeyCode
+import javafx.scene.input.KeyEvent
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
 import javafx.stage.Stage
@@ -33,8 +37,45 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("font_size", ctrl.settingsFontSizeTextField.text)
     }
 
+    private fun setShortcut(ev: KeyEvent, field: TextField, key: String) {
+
+
+        if (ev.code == KeyCode.SHIFT || ev.code == KeyCode.CONTROL || ev.code == KeyCode.ALT || ev.code == KeyCode.ALT_GRAPH) return
+
+        var content = ev.code.toString()
+
+        if (ev.isShiftDown) content = "SHIFT+$content"
+        if (ev.isAltDown) content = "ALT+$content"
+        if (ev.isControlDown) content = "CONTROL+$content"
+
+        coreManager.configManager.set(key, content)
+
+      Platform.runLater {
+          field.text = content
+      }
+    }
+
     fun init() {
 
+
+        ctrl.keyBracketField.text = coreManager.configManager.get("bracket_cut").toString()
+        ctrl.keyBracketField.setOnKeyPressed {
+            setShortcut(it, ctrl.keyBracketField, "bracket_cut")
+        }
+        ctrl.keyCurlyBracket.text = coreManager.configManager.get("curly_cut").toString()
+        ctrl.keyCurlyBracket.setOnKeyPressed {
+            setShortcut(it, ctrl.keyCurlyBracket, "curly_cut")
+        }
+
+        ctrl.keyParenField.text = coreManager.configManager.get("paren_cut").toString()
+        ctrl.keyParenField.setOnKeyPressed {
+            setShortcut(it, ctrl.keyParenField, "paren_cut")
+        }
+
+        ctrl.keyQuoteField.text = coreManager.configManager.get("quote_cut").toString()
+        ctrl.keyQuoteField.setOnKeyPressed {
+            setShortcut(it, ctrl.keyQuoteField, "quote_cut")
+        }
         ctrl.okBtn.setOnAction {
             deleted.forEach {
                 serverManager.deleteServer(it)
@@ -49,7 +90,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             deleted.clear()
             updateSettings()
             window.stage.close()
-            if(Prompts.infoCheck("Restart", "Sk-IDE restart", "In order to perform all changes, SkIde needs to be restarted!", Alert.AlertType.CONFIRMATION)) {
+            if (Prompts.infoCheck("Restart", "Sk-IDE restart", "In order to perform all changes, SkIde needs to be restarted!", Alert.AlertType.CONFIRMATION)) {
                 restart()
             }
         }

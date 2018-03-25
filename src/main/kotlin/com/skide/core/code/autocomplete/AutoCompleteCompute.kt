@@ -136,11 +136,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
 
         }
-        /*
-         area.textProperty().addListener { observable, oldValue, newValue ->
-
-         }
-         */
     }
 
     private fun onColumnChange() {
@@ -358,8 +353,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                             addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
                                 val toRem = currInfo.beforeString.length
                                 var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
-                                if (item.type == DocType.CONDITION) if (!currInfo.actualCurrentString.contains("if ")) adder = "if $adder"
-                                adder += ":"
+                                if (item.type == DocType.CONDITION) if (!currInfo.actualCurrentString.contains("if ")) adder = "if $adder:"
+
                                 area.replaceText(area.caretPosition - toRem, area.caretPosition, adder)
                                 manager.parseResult = manager.parseStructure()
 
@@ -402,7 +397,12 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
         }
         if (fillList.items.size == 0) return
-        popUp.show(project.openProject.guiHandler.window.stage)
+        if(project.isExluded) {
+            popUp.show(project.externStage)
+
+        } else {
+            popUp.show(project.openProject.guiHandler.window.stage)
+        }
         fillList.selectionModel.select(0)
 
     }
@@ -463,9 +463,12 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                 area.replaceText(area.caretPosition - info.actualCurrentString.length, area.caretPosition, {
                                     var text = item.pattern
                                     if (text.isEmpty()) text = item.name
+                                    text = text.replace("[on]", "on").replace("\n", "")+ ":"
+                                    if(!text.startsWith("on ")) text = "on $text"
                                     text
-                                }.invoke().replace("[on]", "on") + ":\n")
-                                println(item)
+                                }.invoke())
+                                manager.parseResult = manager.parseStructure()
+                                manager.sequenceReplaceHandler.compute(area.getInfo(manager))
                             })
                         }
                     }
@@ -473,7 +476,12 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
 
             globalCompleteVisible = true
-            popUp.show(project.openProject.guiHandler.window.stage)
+           if(project.isExluded) {
+               popUp.show(project.externStage)
+
+           } else {
+               popUp.show(project.openProject.guiHandler.window.stage)
+           }
             fillList.selectionModel.select(0)
 
         } else {
@@ -533,7 +541,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         if (old != null && current != null) {
 
             if (old.linenumber == current.linenumber - 1) {
-                // println("moved one down")
                 if (current.nodeType == NodeType.UNDEFINED) {
                     val tabCount = old.tabLevel - 1
                     var str = ""

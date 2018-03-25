@@ -6,6 +6,7 @@ import kotlin.collections.HashMap
 enum class NodeType {
     EXECUTION,
     IF_STATEMENT,
+    ELSE_STATEMENT,
     COMMAND,
     EVENT,
     OPTIONS,
@@ -58,6 +59,9 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
         if (content.toLowerCase().startsWith("if ")) {
             theType = NodeType.IF_STATEMENT
         }
+        if (content.toLowerCase().startsWith("else ")) {
+            theType = NodeType.ELSE_STATEMENT
+        }
         if (content.toLowerCase().startsWith("loop ")) {
             theType = NodeType.LOOP
         }
@@ -83,25 +87,25 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
                     when {
                         name.startsWith("_") -> fields.put("visibility", "local")
                         name.startsWith("@") -> {
-                            fields.put("visibility", "global")
-                            fields.put("from_option", true)
+                            fields["visibility"] = "global"
+                            fields["from_option"] = true
                         }
-                        else -> fields.put("visibility", "global")
+                        else -> fields["visibility"] = "global"
                     }
                     if (name.startsWith("_") || name.startsWith("@")) {
 
-                        fields.put("name", name.substring(1))
+                        fields["name"] = name.substring(1)
                     } else {
-                        fields.put("name", name)
+                        fields["name"] = name
 
                     }
-                    fields.put("set_value", content.split("to")[1])
+                    fields["set_value"] = content.split("to")[1]
 
 
                     if (content.contains("::")) {
                         val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
                         println(listOrMapPath)
-                        fields.put("path", listOrMapPath)
+                        fields["path"] = listOrMapPath
                     }
 
                 } else {

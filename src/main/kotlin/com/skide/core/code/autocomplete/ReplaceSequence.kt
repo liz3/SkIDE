@@ -45,8 +45,7 @@ class ReplaceSequence(val manager: CodeManager) {
     var atIndex = -1
     val im = InputMap.consume(
             EventPattern.keyTyped("\t"),
-            { }
-    )
+            { })
     var originalLength = 0
     var lineIndex = 0
 

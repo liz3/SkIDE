@@ -27,6 +27,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
 
     fun getServerTab(serverManager: RunningServerManager): Triple<Tab, Button, Button> {
 
+        if(tabPane.tabs[1]!!.isDisable) tabPane.tabs[1]!!.isDisable = false
         if (running.containsKey(serverManager.server)) {
             ctrl.runsTabPane.tabs.remove(running[serverManager.server]!!)
             running.remove(serverManager.server)
@@ -69,6 +70,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
     fun setupBuildLogTabForInput(): (String) -> Unit {
 
         buildLogArea.clear()
+        if(tabPane.tabs[2]!!.isDisable) tabPane.tabs[2]!!.isDisable = false
         tabPane.selectionModel.select(2)
 
         val recaller = { x: String ->
@@ -83,7 +85,9 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
 
     fun setup() {
 
+
         val buildLogTab = Tab("Build Log")
+        buildLogTab.isDisable = true
         buildLogTab.content = buildLogArea
         tabPane.tabs.add(buildLogTab)
         buildLogArea.isEditable = false
@@ -136,6 +140,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
 
         ctrl.consoleTabArea.selectionModel.select(tab)
 
+        tabPane.tabs[1]!!.isDisable = true
     }
 
 

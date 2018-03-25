@@ -2,6 +2,7 @@ package com.skide.utils
 
 import com.skide.gui.GUIManager
 import sun.font.LayoutPathImpl.getPath
+import java.awt.im.InputContext
 import java.util.ArrayList
 import java.io.File
 
@@ -40,4 +41,9 @@ fun restart() {
       builder.start()
   }.start()
     System.exit(0)
+}
+fun getLocale(): String {
+
+    val context = InputContext.getInstance()
+   return context.locale.toString()
 }

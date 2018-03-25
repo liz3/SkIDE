@@ -12,10 +12,7 @@ class Highlighting(val manager: CodeManager) {
     var sub = x.subscribe({ area.setStyleSpans(0, computHighlighting(area.text)) })
 
     fun computeHighlighting() {
-
-
         area.replaceText(0, 0, area.text)
-
     }
 
     fun searchHighlighting(searched: String, case: Boolean, regex: Boolean) {

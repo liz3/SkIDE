@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane blendMode="MULTIPLY" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="343.0" prefWidth="752.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.SplashGuiController">
+   <children>
+      <ImageView fx:id="view" fitHeight="343.0" fitWidth="752.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" />
+      <Label fx:id="label" layoutX="280.0" layoutY="248.0" prefHeight="17.0" prefWidth="417.0" text="Label" />
+      <ProgressBar fx:id="progressBar" layoutX="280.0" layoutY="265.0" prefHeight="18.0" prefWidth="417.0" progress="0.0" />
+   </children>
+</Pane>
