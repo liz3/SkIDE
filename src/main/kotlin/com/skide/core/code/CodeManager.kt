@@ -101,205 +101,205 @@ class CodeManager {
                 if (sequenceReplaceHandler.computing) sequenceReplaceHandler.cancel()
             }
 
-          if(ev.code != KeyCode.SHIFT && ev.code != KeyCode.CONTROL && ev.code != KeyCode.ALT && ev.code != KeyCode.ALT_GRAPH) {
+            if (ev.code != KeyCode.SHIFT && ev.code != KeyCode.CONTROL && ev.code != KeyCode.ALT && ev.code != KeyCode.ALT_GRAPH) {
 
-              var computed = true
-              val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
+                var computed = true
+                val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
 
-              if (project.coreManager.configManager.get("bracket_cut") != null) {
-                  val str = project.coreManager.configManager.get("bracket_cut") as String
-                  val split = str.split("+")
-                  split.forEach {
-                      if (it == "CONTROL") {
-                          if(!ev.isControlDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else if (it == "ALT") {
-                          if(!ev.isAltDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else if (it == "SHIFT") {
-                          if(!ev.isShiftDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else {
-                          if(ev.isControlDown && !str.contains("CONTROL+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if(ev.isShiftDown && !str.contains("SHIFT+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if(ev.isAltDown && !str.contains("ALT+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if (ev.code.toString() != it){
-                              computed = false
-                          }
-                      }
-                  }
-              } else {
-                  computed = false
-              }
-              if (computed) {
-                  ev.consume()
-                  area.replaceText(startPos, area.caretPosition, "]")
-                  area.moveTo(area.caretPosition - 1)
-                  return@setOnKeyPressed
-              }
-              computed = true
-              if (project.coreManager.configManager.get("curly_cut") != null) {
-                  val str = (project.coreManager.configManager.get("curly_cut") as String)
-                  val split = str.split("+")
-                  split.forEach {
-                      if (it == "CONTROL") {
-                          if(!ev.isControlDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else if (it == "ALT") {
-                          if(!ev.isAltDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else if (it == "SHIFT") {
-                          if(!ev.isShiftDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else {
-                          if(ev.isControlDown && !str.contains("CONTROL+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if(ev.isShiftDown && !str.contains("SHIFT+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if(ev.isAltDown && !str.contains("ALT+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if (ev.code.toString() != it){
-                              computed = false
-                          }
-                      }
-                  }
-              }else {
-                  computed = false
-              }
-              if (computed) {
-                  ev.consume()
-                  area.replaceText(startPos, area.caretPosition, "}")
-                  area.moveTo(area.caretPosition - 1)
-                  return@setOnKeyPressed
-              }
-              computed = true
-              if (project.coreManager.configManager.get("paren_cut") != null) {
-                  val str = (project.coreManager.configManager.get("paren_cut") as String)
-                  val split = str.split("+")
-                  split.forEach {
-                      if (it == "CONTROL") {
-                          if(!ev.isControlDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else if (it == "ALT") {
-                          if(!ev.isAltDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else if (it == "SHIFT") {
-                          if(!ev.isShiftDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else {
-                          if(ev.isControlDown && !str.contains("CONTROL+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if(ev.isShiftDown && !str.contains("SHIFT+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if(ev.isAltDown && !str.contains("ALT+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if (ev.code.toString() != it){
-                              computed = false
-                          }
-                      }
-                  }
-              }else {
-                  computed = false
-              }
-              if (computed) {
-                  ev.consume()
-                  area.replaceText(startPos, area.caretPosition, ")")
-                  area.moveTo(area.caretPosition - 1)
-                  if (autoComplete.popUp.isShowing) {
-                      autoComplete.removed.clear()
-                      autoComplete.popUp.hide()
-                      autoComplete.fillList.items.clear()
-                  }
-                  return@setOnKeyPressed
-              }
-              computed = true
-              if (project.coreManager.configManager.get("quote_cut") != null) {
-                  val str = (project.coreManager.configManager.get("quote_cut") as String)
-                  val split = str.split("+")
-                  split.forEach {
-                      if (it == "CONTROL") {
-                          if(!ev.isControlDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else if (it == "ALT") {
-                          if(!ev.isAltDown) {
-                              computed = false
-                              return@forEach
-                          }
-                      } else if (it == "SHIFT") {
-                         if(!ev.isShiftDown) {
-                             computed = false
-                             return@forEach
-                         }
-                      } else {
-                          if(ev.isControlDown && !str.contains("CONTROL+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if(ev.isShiftDown && !str.contains("SHIFT+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if(ev.isAltDown && !str.contains("ALT+")) {
-                              computed = false
-                              return@forEach
-                          }
-                          if (ev.code.toString() != it){
-                              computed = false
-                          }
-                      }
-                  }
-              }else {
-                  computed = false
-              }
-              if (computed) {
-                  ev.consume()
-                  area.replaceText(startPos, area.caretPosition, "\"")
-                  area.moveTo(area.caretPosition - 1)
-                  return@setOnKeyPressed
-              }
-              computed = true
-          }
+                if (project.coreManager.configManager.get("bracket_cut") != null) {
+                    val str = project.coreManager.configManager.get("bracket_cut") as String
+                    val split = str.split("+")
+                    split.forEach {
+                        if (it == "CONTROL") {
+                            if (!ev.isControlDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "ALT") {
+                            if (!ev.isAltDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "SHIFT") {
+                            if (!ev.isShiftDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else {
+                            if (ev.isControlDown && !str.contains("CONTROL+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isShiftDown && !str.contains("SHIFT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isAltDown && !str.contains("ALT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.code.toString() != it) {
+                                computed = false
+                            }
+                        }
+                    }
+                } else {
+                    computed = false
+                }
+                if (computed) {
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, "]")
+                    area.moveTo(area.caretPosition - 1)
+                    return@setOnKeyPressed
+                }
+                computed = true
+                if (project.coreManager.configManager.get("curly_cut") != null) {
+                    val str = (project.coreManager.configManager.get("curly_cut") as String)
+                    val split = str.split("+")
+                    split.forEach {
+                        if (it == "CONTROL") {
+                            if (!ev.isControlDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "ALT") {
+                            if (!ev.isAltDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "SHIFT") {
+                            if (!ev.isShiftDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else {
+                            if (ev.isControlDown && !str.contains("CONTROL+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isShiftDown && !str.contains("SHIFT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isAltDown && !str.contains("ALT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.code.toString() != it) {
+                                computed = false
+                            }
+                        }
+                    }
+                } else {
+                    computed = false
+                }
+                if (computed) {
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, "}")
+                    area.moveTo(area.caretPosition - 1)
+                    return@setOnKeyPressed
+                }
+                computed = true
+                if (project.coreManager.configManager.get("paren_cut") != null) {
+                    val str = (project.coreManager.configManager.get("paren_cut") as String)
+                    val split = str.split("+")
+                    split.forEach {
+                        if (it == "CONTROL") {
+                            if (!ev.isControlDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "ALT") {
+                            if (!ev.isAltDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "SHIFT") {
+                            if (!ev.isShiftDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else {
+                            if (ev.isControlDown && !str.contains("CONTROL+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isShiftDown && !str.contains("SHIFT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isAltDown && !str.contains("ALT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.code.toString() != it) {
+                                computed = false
+                            }
+                        }
+                    }
+                } else {
+                    computed = false
+                }
+                if (computed) {
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, ")")
+                    area.moveTo(area.caretPosition - 1)
+                    if (autoComplete.popUp.isShowing) {
+                        autoComplete.removed.clear()
+                        autoComplete.popUp.hide()
+                        autoComplete.fillList.items.clear()
+                    }
+                    return@setOnKeyPressed
+                }
+                computed = true
+                if (project.coreManager.configManager.get("quote_cut") != null) {
+                    val str = (project.coreManager.configManager.get("quote_cut") as String)
+                    val split = str.split("+")
+                    split.forEach {
+                        if (it == "CONTROL") {
+                            if (!ev.isControlDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "ALT") {
+                            if (!ev.isAltDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "SHIFT") {
+                            if (!ev.isShiftDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else {
+                            if (ev.isControlDown && !str.contains("CONTROL+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isShiftDown && !str.contains("SHIFT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isAltDown && !str.contains("ALT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.code.toString() != it) {
+                                computed = false
+                            }
+                        }
+                    }
+                } else {
+                    computed = false
+                }
+                if (computed) {
+                    ev.consume()
+                    area.replaceText(startPos, area.caretPosition, "\"")
+                    area.moveTo(area.caretPosition - 1)
+                    return@setOnKeyPressed
+                }
+                computed = true
+            }
 
             if (ev.isControlDown) {
                 if (ev.code == KeyCode.SLASH) {
@@ -384,11 +384,11 @@ class CodeManager {
             }
 
             if (ev.clickCount == 3) {
+                if(area.text.length < lastPos) return@setOnMouseClicked
                 area.moveTo(lastPos)
                 area.selectLine()
-                Platform.runLater {
-                    lastPos = 0
-                }
+                lastPos = 0
+
 
             }
 
