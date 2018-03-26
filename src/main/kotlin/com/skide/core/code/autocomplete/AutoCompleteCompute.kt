@@ -121,14 +121,17 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         area.caretPositionProperty().addListener { _, _, _ ->
 
 
-            if (manager.mousePressed || stopped) {
-                println("Returning")
-                return@addListener
-            }
             lineBefore = currentLine
             currentLine = area.getCaretLine()
             coldPosOld = colPos
             colPos = area.caretColumn
+            if (manager.mousePressed || stopped) {
+                println("Returning")
+                if (lineBefore != currentLine && manager.sequenceReplaceHandler.computing) manager.sequenceReplaceHandler.cancel()
+
+                return@addListener
+            }
+
             if (lineBefore != currentLine) {
                 onLineChange()
             } else {

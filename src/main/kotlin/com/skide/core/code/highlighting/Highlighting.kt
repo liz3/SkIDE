@@ -83,6 +83,7 @@ class Highlighting(val manager: CodeManager) {
                 matcher.group("NUMBERS") != null -> "numbers"
 
                 matcher.group("OPERATORS") != null -> "operators"
+                matcher.group("COMMAND") != null -> "operators"
 
                 matcher.group("PAREN") != null -> "paren"
                 matcher.group("BRACKET") != null -> "bracket"
@@ -154,6 +155,7 @@ class Highlighting(val manager: CodeManager) {
                     + "|(?<NUMBERS>" + HighlighterStatics.NUMBERS_PATTERN + ")"
 
                     + "|(?<OPERATORS>" + HighlighterStatics.OPERATORS_PATTERN + ")"
+                    + "|(?<COMMAND>" + HighlighterStatics.COMMAND_PATTERN + ")"
 
                     + "|(?<PAREN>" + HighlighterStatics.PAREN_PATTERN + ")"
                     + "|(?<BRACKET>" + HighlighterStatics.BRACKET_PATTERN + ")"
@@ -165,7 +167,8 @@ class Highlighting(val manager: CodeManager) {
 
 object HighlighterStatics {
 
-    const val SECTION_PATTERN = "usage:|executable by:|aliases:|permission:|permission message:|description:|cooldown:|cooldown message:|cooldown bypass:|cooldown storage:"
+    const val SECTION_PATTERN = "(?<=\\n)\\s*usage:|executable by:|aliases:|permission:|permission message:|description:|cooldown:|cooldown message:|cooldown bypass:|cooldown storage:"
+
 
     const val COLOR_0_PATTERN = "§0|&0"
     const val COLOR_1_PATTERN = "§1|&1"
@@ -186,7 +189,8 @@ object HighlighterStatics {
 
     const val NUMBERS_PATTERN = "[0-9]"
 
-    const val OPERATORS_PATTERN = "command |trigger:|if |else:|else if |while |loop | is | contains "
+    const val COMMAND_PATTERN = "(?<=\\G|\\n)command(?=\\s)"
+    const val OPERATORS_PATTERN = "trigger:|if |else:|else if |while |loop | is | contains |function "
     //val KEYWORDS = arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "cancel", "else", "else if")
     const val COMMENT_PATTERN = "#[^\n]*"
     const val VAR_PATTERN = "\\{\\S*}"

@@ -37,7 +37,7 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
                 val reader = BufferedReader(InputStreamReader(process.inputStream))
                 while (true) {
                     msg = reader.readLine()
-                    if (!process.isAlive) break
+                    if (!process.isAlive || msg == null) break
                     if (msg != "") {
                         if (msg.contains("]: Done")) {
                             readyCallback(this)
@@ -81,8 +81,17 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
 
     fun sendCommand(msg: String) {
         if (!server.running) return
-        process.outputStream.write("$msg\n".toByteArray())
-        process.outputStream.flush()
+
+        try {
+            process.outputStream.write("$msg\n".toByteArray())
+            process.outputStream.flush()
+        }catch (e:Exception) {
+            server.running = false
+            coreManager.serverManager.running.remove(server)
+            Platform.runLater {
+                area.appendText("\n\nSERVER STOPPED")
+            }
+        }
     }
 
     fun kill() {

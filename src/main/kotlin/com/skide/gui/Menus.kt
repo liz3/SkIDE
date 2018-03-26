@@ -20,7 +20,7 @@ object Menus {
         val yaml = Image(javaClass.getResource("/yaml.png").toExternalForm())
 
         val yamlView = ImageView(yaml)
-        yamlView.fitWidth = 15.0
+        yamlView.fitWidth = 25.0
         yamlView.fitHeight = 15.0
 
         val openView = ImageView(openIcon)

@@ -165,6 +165,13 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 openView.fitHeight = 15.0
                 item.graphic = openView
             }
+            if (name.endsWith(".yml")) {
+                val openIcon = Image(javaClass.getResource("/yaml.png").toExternalForm())
+                val openView = ImageView(openIcon)
+                openView.fitWidth = 25.0
+                openView.fitHeight = 15.0
+                item.graphic = openView
+            }
             rootItem.children.add(item)
         }
 
