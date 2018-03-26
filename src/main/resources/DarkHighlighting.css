@@ -30,8 +30,8 @@
     -fx-font-weight: bold;
 }
 
-.styled-text-area .text.keywords {
-    -fx-fill: #3F7CCF;
+.styled-text-area .text.operators {
+    -fx-fill: #A068C7;
     -fx-font-weight: bold;
 }
 

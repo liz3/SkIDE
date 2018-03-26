@@ -62,6 +62,7 @@ class Highlighting(val manager: CodeManager) {
         while (matcher.find()) {
             val styleClass = when {
                 matcher.group("SECTION") != null -> "section"
+
                 matcher.group("COLOR0") != null -> "color-0"
                 matcher.group("COLOR1") != null -> "color-1"
                 matcher.group("COLOR2") != null -> "color-2"
@@ -78,12 +79,16 @@ class Highlighting(val manager: CodeManager) {
                 matcher.group("COLORD") != null -> "color-d"
                 matcher.group("COLORE") != null -> "color-e"
                 matcher.group("COLORF") != null -> "color-f"
+
                 matcher.group("NUMBERS") != null -> "numbers"
+
+                matcher.group("OPERATORS") != null -> "operators"
+
                 matcher.group("PAREN") != null -> "paren"
                 matcher.group("BRACKET") != null -> "bracket"
                 matcher.group("STRING") != null -> "string"
                 matcher.group("COMMENT") != null -> "comment"
-                matcher.group("KEYWORDS") != null -> "keywords"
+                //matcher.group("KEYWORDS") != null -> "keywords"
                 matcher.group("VARS") != null -> "vars"
                 else -> null
             }!!
@@ -128,6 +133,7 @@ class Highlighting(val manager: CodeManager) {
 
     private val patternCompiler = Pattern.compile(
             "(?<SECTION>" + HighlighterStatics.SECTION_PATTERN + ")"
+
                     + "|(?<COLOR0>" + HighlighterStatics.COLOR_0_PATTERN + ")"
                     + "|(?<COLOR1>" + HighlighterStatics.COLOR_1_PATTERN + ")"
                     + "|(?<COLOR2>" + HighlighterStatics.COLOR_2_PATTERN + ")"
@@ -144,18 +150,23 @@ class Highlighting(val manager: CodeManager) {
                     + "|(?<COLORD>" + HighlighterStatics.COLOR_D_PATTERN + ")"
                     + "|(?<COLORE>" + HighlighterStatics.COLOR_E_PATTERN + ")"
                     + "|(?<COLORF>" + HighlighterStatics.COLOR_F_PATTERN + ")"
+
                     + "|(?<NUMBERS>" + HighlighterStatics.NUMBERS_PATTERN + ")"
+
+                    + "|(?<OPERATORS>" + HighlighterStatics.OPERATORS_PATTERN + ")"
+
                     + "|(?<PAREN>" + HighlighterStatics.PAREN_PATTERN + ")"
                     + "|(?<BRACKET>" + HighlighterStatics.BRACKET_PATTERN + ")"
                     + "|(?<STRING>" + HighlighterStatics.STRING_PATTERN + ")"
                     + "|(?<COMMENT>" + HighlighterStatics.COMMENT_PATTERN + ")"
                     + "|(?<VARS>" + HighlighterStatics.VAR_PATTERN + ")"
-                    + "|(?<KEYWORDS>" + HighlighterStatics.joinBoundaryPattern(HighlighterStatics.KEYWORDS) + ")")
+                    /*+ "|(?<KEYWORDS>" + HighlighterStatics.joinBoundaryPattern(HighlighterStatics.KEYWORDS) + ")"*/)
 }
 
 object HighlighterStatics {
 
-    const val SECTION_PATTERN = "command \\/?.+\\:|trigger:|usage:|executable by:|aliases:|permission:|permission message:|description:|cooldown:|cooldown message:|cooldown bypass:|cooldown storage:"
+    const val SECTION_PATTERN = "usage:|executable by:|aliases:|permission:|permission message:|description:|cooldown:|cooldown message:|cooldown bypass:|cooldown storage:"
+
     const val COLOR_0_PATTERN = "§0|&0"
     const val COLOR_1_PATTERN = "§1|&1"
     const val COLOR_2_PATTERN = "§2|&2"
@@ -172,14 +183,16 @@ object HighlighterStatics {
     const val COLOR_D_PATTERN = "§d|&d"
     const val COLOR_E_PATTERN = "§e|&e"
     const val COLOR_F_PATTERN = "§f|&f"
+
     const val NUMBERS_PATTERN = "[0-9]"
-    val KEYWORDS = arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "cancel", "else", "else if")
+
+    const val OPERATORS_PATTERN = "command |trigger:|if |else:|else if |while |loop | is | contains "
+    //val KEYWORDS = arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "cancel", "else", "else if")
     const val COMMENT_PATTERN = "#[^\n]*"
     const val VAR_PATTERN = "\\{\\S*}"
     const val PAREN_PATTERN = "\\(|\\)"
     const val BRACKET_PATTERN = "\\[|\\]"
     const val STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\""
     fun joinBoundaryPattern(items: Array<String>) = "\\b(" + items.joinToString("|") + ")\\b"
-
 
 }
