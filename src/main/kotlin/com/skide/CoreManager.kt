@@ -25,6 +25,7 @@ import java.lang.management.ManagementFactory
 
 class CoreManager {
 
+
     val guiManager = GUIManager
     lateinit var configManager: ConfigManager
     lateinit var projectManager: ProjectManager
@@ -53,51 +54,55 @@ class CoreManager {
             val task = object : Task<Void>() {
                 @Throws(Exception::class)
                 override fun call(): Void? {
-                    Thread.sleep(250)
-                    updateMessage("Initializing...")
-                    updateProgress(0.0, 100.0)
-                    args.forEach {
-                        //first lets set the debug level
-                        if (it.startsWith("--debug")) {
-                            debugLevel = DebugLevel.valueOf(it.split("=")[1].toUpperCase())
+                    try {
+                        Thread.sleep(250)
+                        updateMessage("Initializing...")
+                        updateProgress(0.0, 100.0)
+                        args.forEach {
+                            //first lets set the debug level
+                            if (it.startsWith("--debug")) {
+                                debugLevel = DebugLevel.valueOf(it.split("=")[1].toUpperCase())
+                            }
                         }
-                    }
-                    configManager = ConfigManager(me)
-                    projectManager = ProjectManager(me)
-                    serverManager = ServerManager(me)
-                    resourceManager = ResourceManager(me)
-                    saver = AutoSaver(me)
-                    skUnity = SkUnity(me)
-                    updateProgress(5.0, 100.0)
-                    updateMessage("Loading Config...")
-                    GUIManager.settings = configManager
-                    val configLoadResult = configManager.load()
-                    if (configLoadResult == ConfigLoadResult.ERROR) return null
-                    updateProgress(25.0, 100.0)
-                    updateMessage("Checking skUnity access...")
-                    skUnity.load()
-                    updateProgress(35.0, 100.0)
-                    updateMessage("Initializing server manager")
-                    serverManager.init()
-                    updateProgress(50.0, 100.0)
-                    updateMessage("Downloading latest Resources")
+                        configManager = ConfigManager(me)
+                        projectManager = ProjectManager(me)
+                        serverManager = ServerManager(me)
+                        resourceManager = ResourceManager(me)
+                        saver = AutoSaver(me)
+                        skUnity = SkUnity(me)
+                        updateProgress(5.0, 100.0)
+                        updateMessage("Loading Config...")
+                        GUIManager.settings = configManager
+                        val configLoadResult = configManager.load()
+                        if (configLoadResult == ConfigLoadResult.ERROR) return null
+                        updateProgress(25.0, 100.0)
+                        updateMessage("Checking skUnity access...")
+                        skUnity.load()
+                        updateProgress(35.0, 100.0)
+                        updateMessage("Initializing server manager")
+                        serverManager.init()
+                        updateProgress(50.0, 100.0)
+                        updateMessage("Downloading latest Resources")
 
-                    resourceManager.loadResources({ total, current, name ->
-                        val amount = current * 5;
-                        updateProgress(50.0 + amount, 100.0)
-                        updateMessage(name)
-                    })
-                    updateProgress(90.0, 100.0)
-                    updateMessage("Starting gui...")
-                    Prompts.theme = configManager.get("theme") as String
-                    attachDebugger()
-                    Platform.runLater {
-                        stage.close()
-                        GUIManager.discord.update("In the main menu", "Idle")
-                        val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, Stage())
-                        stage.isResizable = false
-                        (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
-                        window.stage.show()
+                        resourceManager.loadResources({ total, current, name ->
+                            val amount = current * 5;
+                            updateProgress(50.0 + amount, 100.0)
+                            updateMessage(name)
+                        })
+                        updateProgress(90.0, 100.0)
+                        updateMessage("Starting gui...")
+                        Prompts.theme = configManager.get("theme") as String
+                        attachDebugger()
+                        Platform.runLater {
+                            stage.close()
+                            GUIManager.discord.update("In the main menu", "Idle")
+                            val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, Stage())
+                            stage.isResizable = false
+                            (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
+                            window.stage.show()
+                        }
+                    }catch (e:Exception) {
+                        e.printStackTrace()
                     }
                     return null
                 }

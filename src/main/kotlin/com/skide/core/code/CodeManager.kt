@@ -460,7 +460,9 @@ class CodeManager {
                 b.setPrefSize(80.0, 23.0)
                 b.setOnAction {
 
-                    area.moveTo(area.text.indexOf(node.raw))
+                    val index = area.text.indexOf(node.raw);
+                    if(index == -1) return@setOnAction
+                    area.moveTo(index)
                     area.selectLine()
                     area.scrollYToPixel(node.linenumber * 14.95)
 

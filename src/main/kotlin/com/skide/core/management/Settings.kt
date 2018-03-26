@@ -204,12 +204,14 @@ class ConfigManager(val coreManager: CoreManager) {
                 writeDefaultSettings()
                 return readConfig()
             }
+
             settingsObj.keySet().forEach {
                 settings[it] = settingsObj.get(it)
             }
 
         }
         configLoaded = true
+        if(get("theme") == "dark") set("theme", "Dark")
         return true
     }
 
