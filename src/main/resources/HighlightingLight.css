@@ -3,7 +3,7 @@
 }
 
 .vars {
-    -fx-fill: #680780;
+    -fx-fill: #47b996;
 }
 
 .events {
@@ -45,11 +45,11 @@
 }
 
 .string {
-    -fx-fill: #5f6063;
+    -fx-fill: #515255;
 }
 
 .comment {
-    -fx-fill: #5f6063;
+    -fx-fill: #515255;
 }
 
 .console {

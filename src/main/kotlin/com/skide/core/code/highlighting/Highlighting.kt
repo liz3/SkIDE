@@ -169,7 +169,6 @@ object HighlighterStatics {
 
     const val SECTION_PATTERN = "(?<=\\n)\\s*usage:|executable by:|aliases:|permission:|permission message:|description:|cooldown:|cooldown message:|cooldown bypass:|cooldown storage:"
 
-
     const val COLOR_0_PATTERN = "§0|&0"
     const val COLOR_1_PATTERN = "§1|&1"
     const val COLOR_2_PATTERN = "§2|&2"
