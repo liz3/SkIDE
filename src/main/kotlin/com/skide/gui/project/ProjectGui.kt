@@ -75,6 +75,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             }.start()
         }
         coreManager.projectManager.openProjects.remove(this.openProject)
+
     }
 
     val projectFiles = openProject.project.fileManager.projectFiles

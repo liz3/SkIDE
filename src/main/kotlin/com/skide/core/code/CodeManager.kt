@@ -35,9 +35,11 @@ class CodeManager {
     lateinit var hBox: HBox
     private val parser = SkriptParser()
 
+
     var contextMenu: ContextMenu? = null
 
     var mousePressed = false
+    var cmdMacDown = false
 
     var lastPos = 0
 
@@ -83,8 +85,13 @@ class CodeManager {
             }
         }
 
+        area.setOnKeyReleased {
+
+            if(it.code == KeyCode.COMMAND) cmdMacDown = false
+        }
         area.setOnKeyPressed { ev ->
 
+            if(ev.code == KeyCode.COMMAND) cmdMacDown = true
 
             if (ev.code == KeyCode.TAB) {
                 if (sequenceReplaceHandler.computing) {
@@ -301,17 +308,35 @@ class CodeManager {
                 computed = true
             }
 
+            if(cmdMacDown && getOS() == OperatingSystemType.MAC_OS) {
+                if (ev.code == KeyCode.C) area.copy()
+                if (ev.code == KeyCode.Z) {
+
+                    if(getLocale().contains("de")) area.redo() else area.undo()
+                }
+
+                if (ev.code == KeyCode.Y) {
+                    if(getLocale().contains("de")) area.undo() else area.redo()
+
+                }
+                if (ev.code == KeyCode.V) area.paste()
+                if (ev.code == KeyCode.F) findHandler.switchGui()
+                if (ev.code == KeyCode.R) replaceHandler.switchGui()
+
+                return@setOnKeyPressed
+            }
+
             if (ev.isControlDown) {
+
                 if (ev.code == KeyCode.SLASH) {
                     if (!autoComplete.popUp.isShowing) {
                         area.replaceSelection("#$content")
-
-
                     }
                 }
                 if (ev.code == KeyCode.C) {
                     area.copy()
                 }
+
                 if (ev.code == KeyCode.F) {
                     findHandler.switchGui()
                 }
