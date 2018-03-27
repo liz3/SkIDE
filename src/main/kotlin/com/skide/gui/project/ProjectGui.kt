@@ -305,7 +305,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         fileMenu.setOnShowing {
             otherProjects.items.clear()
             coreManager.configManager.projects.values.forEach {
-                val open = coreManager.projectManager.openProjects.any { openProject -> it.id == openProject.project.id }
+
+                val open = coreManager.projectManager.openProjects.any { openProject -> it.name == openProject.project.name }
                 if (!open) {
                     val item = MenuItem(it.name)
                     val pr = it
