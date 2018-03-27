@@ -151,6 +151,9 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
                 performChanges()
                 gui.window.close()
             }
+            ctrl.cancelBtn.setOnAction {
+                gui.window.close()
+            }
         }
 
     }
