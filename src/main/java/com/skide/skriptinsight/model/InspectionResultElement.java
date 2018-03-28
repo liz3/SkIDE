@@ -1,4 +1,4 @@
-package net.nickac.skriptinsight.model;
+package com.skide.skriptinsight.model;
 
 import java.util.Map;
 import com.fasterxml.jackson.annotation.*;

@@ -1,7 +1,7 @@
-package net.nickac.skriptinsight.client;
+package com.skide.skriptinsight.client;
 
-import net.nickac.skriptinsight.model.Inspection;
-import net.nickac.skriptinsight.model.InspectionResult;
+import com.skide.skriptinsight.model.Inspection;
+import com.skide.skriptinsight.model.InspectionResult;
 
 import java.util.concurrent.*;
 

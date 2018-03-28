@@ -4,14 +4,14 @@
 //
 // Import this package:
 //
-//     import net.nickac.skriptinsight.model.Converter;
+//     import Converter;
 //
 // Then you can deserialize a JSON string with
 //
 //     Inspection[] data = Converter.InspectionFromJsonString(jsonString);
 //     InspectionResult data = Converter.InspectionResultFromJsonString(jsonString);
 
-package net.nickac.skriptinsight.model;
+package com.skide.skriptinsight.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
