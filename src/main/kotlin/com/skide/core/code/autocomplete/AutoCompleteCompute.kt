@@ -127,7 +127,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             coldPosOld = colPos
             colPos = area.caretColumn
             if (manager.mousePressed || stopped) {
-                println("Returning")
                 if (lineBefore != currentLine && manager.sequenceReplaceHandler.computing) manager.sequenceReplaceHandler.cancel()
 
                 return@addListener
@@ -189,7 +188,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     fun showLocalAutoComplete(movedRight: Boolean) {
 
 
-        println(currentLine)
         val currentInfo = area.getInfo(manager)
 
         if (globalCompleteVisible) {
@@ -211,7 +209,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             val replaced = getWordSearchReplace(currentInfo.currentWord, currentInfo)
 
-            println("Char is ${currentInfo.charAfterCaret}")
 
             val toRemove = Vector<ListHolderItem>()
 
@@ -236,7 +233,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             return
         } else {
-            println("Before is: " + currentInfo.beforeString)
             if (currentInfo.inString) return
             if (currentInfo.currentWord.endsWith("\"")) return
             if (currentInfo.currentWord.endsWith("{")) return

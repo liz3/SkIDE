@@ -123,7 +123,7 @@ class JavaFXBootstrapper : Application() {
     override fun start(primaryStage: Stage) = GUIManager.bootstrapCallback(primaryStage)
 
     override fun stop() {
-        CoreManager.insightClient.stopEngine();
+        CoreManager.insightClient.stopEngine()
         GUIManager.discord.stop()
         System.exit(0)
     }

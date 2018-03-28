@@ -58,7 +58,11 @@ class CodeManager {
         hBox = project.currentStackBox
 
 
+        ChangeWatcher(area, 2500, {
 
+            println("stopped")
+
+        }).start()
 
         area.appendText(content)
         if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
@@ -83,6 +87,7 @@ class CodeManager {
                 }
             }
         }
+
 
         area.setOnKeyReleased {
 
@@ -348,14 +353,14 @@ class CodeManager {
                         val node = EditorUtils.getLineNode(area.getCaretLine(), parseResult)
 
                         if (node != null) {
-                            println(node.raw)
+
                             if (node.raw.replace("\t", "").isEmpty() && area.caretColumn == 0)
                                 autoComplete.showGlobalAutoComplete(node)
                             else
                                 autoComplete.showLocalAutoComplete(false)
 
                         } else {
-                            println("its null")
+
                         }
                     }
                 }
