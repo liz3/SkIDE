@@ -72,7 +72,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         popUp.x = b.maxX + caretXOffset
                         popUp.y = b.maxY + caretYOffset
                     } else {
-                        if (!globalCompleteVisible) hideList()
+
                     }
                 }
 
@@ -399,14 +399,15 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             fillList.refresh()
 
         }
-        if (fillList.items.size == 0) return
+        if (fillList.items.size == 0) {
+            return
+        }
         if(project.isExluded) {
             popUp.show(project.externStage)
 
         } else {
             popUp.show(project.openProject.guiHandler.window.stage)
         }
-        fillList.selectionModel.select(0)
 
     }
 

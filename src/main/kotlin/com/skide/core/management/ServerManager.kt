@@ -1,11 +1,14 @@
 package com.skide.core.management
 
 import com.skide.CoreManager
+import com.skide.gui.Prompts
 import com.skide.include.Server
 import com.skide.include.ServerAddon
 import com.skide.include.ServerConfiguration
 import com.skide.utils.readFile
 import com.skide.utils.writeFile
+import javafx.application.Platform
+import javafx.scene.control.Alert
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -38,16 +41,23 @@ class ServerManager(val coreManager: CoreManager) {
     private fun loadServers() {
         coreManager.configManager.servers.values.forEach {
 
-            val confFile = File(it.path, ".server.skide")
-            val obj = JSONObject(readFile(confFile).second)
-            val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args")), confFile, false, obj.getLong("id"))
-            obj.getJSONArray("addons").forEach {
-                if (it is JSONObject) {
+          try {
+              val confFile = File(it.path, ".server.skide")
+              val obj = JSONObject(readFile(confFile).second)
+              val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args")), confFile, false, obj.getLong("id"))
+              obj.getJSONArray("addons").forEach {
+                  if (it is JSONObject) {
 
-                    server.configuration.addons.add(ServerAddon(it.getString("name"), File(it.getString("file")), it.getBoolean("preset")))
-                }
-            }
-            servers[obj.getString("name")] = server
+                      server.configuration.addons.add(ServerAddon(it.getString("name"), File(it.getString("file")), it.getBoolean("preset")))
+                  }
+              }
+              servers[obj.getString("name")] = server
+          }catch (e:Exception) {
+              deleteServerByName(it.id)
+              Platform.runLater {
+                  Prompts.infoCheck("Error", "Error while loading serer", "An error occurred while loading server ${it.name} at ${it.path}", Alert.AlertType.ERROR)
+              }
+          }
 
         }
     }
@@ -119,6 +129,11 @@ class ServerManager(val coreManager: CoreManager) {
         val name = server.configuration.name
         servers.remove(name)
         coreManager.configManager.deleteServer(server.id)
+
+    }
+    fun deleteServerByName(id: Long) {
+
+        coreManager.configManager.deleteServer(id)
 
     }
 
