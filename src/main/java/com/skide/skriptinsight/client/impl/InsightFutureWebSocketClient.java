@@ -6,7 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class InsightFutureWebSocketClient extends InsightWebSocketClient {
-    private final CompletableFuture<String> future;
+    private CompletableFuture<String> future;
 
     public InsightFutureWebSocketClient(SkriptInsightClient client, InsightRequestType type, String host, int port, String location) {
         super(client, type, host, port, location);
@@ -19,12 +19,15 @@ public class InsightFutureWebSocketClient extends InsightWebSocketClient {
         super.onMessage(message);
     }
 
-    public String getFirstReturnedValue() {
+    public String getReturnedValue() {
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {
             System.out.println("Unable to get the first returned value from websocket!");
             e.printStackTrace();
+        } finally {
+            //Create a new future.
+            future = new CompletableFuture<>();
         }
         return "";
     }

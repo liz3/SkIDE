@@ -9,7 +9,7 @@ import com.skide.skriptinsight.model.Inspection;
 import com.skide.skriptinsight.model.InspectionResult;
 
 import java.io.IOException;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
 
 public class SkriptInsightClient {
     private InsightWebSocketClient inspectionsWebSocketClient;
@@ -22,6 +22,12 @@ public class SkriptInsightClient {
            With the power of .NET Core, we can package the runtime and run the app easily.
            In theory it's simple: Find the executable file and run it. But it's harder than you may think.
          */
+        Thread th = new Thread(() -> {
+            int nrInspections = getRegisteredInspections().length;
+            System.out.printf("SkriptInsight: Loaded %d inspection %s%n", nrInspections, nrInspections != 1 ? "s" : "");
+
+        });
+        th.start();
     }
 
     public void stopEngine() {
@@ -40,28 +46,20 @@ public class SkriptInsightClient {
                     InsightConstants.Misc.SERVER_PORT,
                     InsightConstants.Paths.INSPECTIONS_PATH
             );
+            client.connect();
             try {
-                registedInspections = Converter.InspectionFromJsonString(client.getFirstReturnedValue());
+                registedInspections = Converter.InspectionFromJsonString(client.getReturnedValue());
             } catch (IOException e) {
                 System.out.println("An error occurred whilst trying to parse response from client.");
                 e.printStackTrace();
             }
         }
-        return null;
+        return registedInspections;
     }
 
     protected InspectionResult inspectScript(String script) throws ExecutionException, InterruptedException {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Callable<InspectionResult> task = new Callable<InspectionResult>() {
-            @Override
-            public InspectionResult call() throws Exception {
-                //Request inspection by websocket
-                return null;
-            }
-        };
-        Future<InspectionResult> future = executorService.submit(task);
-
-        return future.get();
+        //TODO: Implement script inspections
+        return null;
     }
 
 
