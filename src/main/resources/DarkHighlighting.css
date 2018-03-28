@@ -8,7 +8,7 @@
 }
 
 .styled-text-area .text.vars {
-    -fx-fill: #50ffdb;
+    -fx-fill: #9876AA;
 }
 
 .styled-text-area .text.events {
@@ -31,7 +31,7 @@
 }
 
 .styled-text-area .text.operators {
-    -fx-fill: #A068C7;
+    -fx-fill: #CC7832;
     -fx-font-weight: bold;
 }
 
@@ -133,7 +133,7 @@
 }
 
 .styled-text-area .text.numbers {
-    -fx-fill: #f67c35;
+    -fx-fill: #3F7CCF;
 }
 
 .styled-text-area .text.console-err {

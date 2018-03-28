@@ -93,7 +93,7 @@ class ResourceManager(val coreManager: CoreManager) {
         callback(total, 4, "Downloading: https://liz3.net/sk/?function=getAddonSyntax&addon=skript")
         downloadFile("https://liz3.net/sk/?function=getAddonSyntax&addon=skript", skriptDoc.absolutePath)
         callback(total, 5, "Downloading: https://skripttools.net/api.php?t=skript&action=getlist")
-        downloadFile("https://skripttools.net/api.php?t=skript&action=getlist", skriptVersionsFile.absolutePath)
+      //  downloadFile("https://skripttools.net/api.php?t=skript&action=getlist", skriptVersionsFile.absolutePath)
 
         callback(total, 6, "Reading docs")
         parseCurrentSkriptVersionDocs()

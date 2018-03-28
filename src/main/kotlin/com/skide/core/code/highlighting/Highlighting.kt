@@ -189,7 +189,7 @@ object HighlighterStatics {
     const val NUMBERS_PATTERN = "[0-9]"
 
     const val COMMAND_PATTERN = "(?<=\\G|\\n)command(?=\\s)"
-    const val OPERATORS_PATTERN = "trigger:|if |else:|else if |while |loop | is | contains |function "
+    const val OPERATORS_PATTERN = "trigger:|if |else:|else if |while |loop | is | contains |function |set |on "
     //val KEYWORDS = arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "cancel", "else", "else if")
     const val COMMENT_PATTERN = "#[^\n]*"
     const val VAR_PATTERN = "\\{\\S*}"

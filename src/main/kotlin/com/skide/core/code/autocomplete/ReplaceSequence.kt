@@ -53,6 +53,7 @@ class ReplaceSequence(val manager: CodeManager) {
         if (computing) return
         computing = true
         manager.autoComplete.stopped = true
+        manager.autoComplete.hideList()
         parse(info)
         Nodes.addInputMap(area, im)
     }
@@ -73,7 +74,7 @@ class ReplaceSequence(val manager: CodeManager) {
 
 
             if (matcher.group("VALUE") != null) {
-                list.add(ReplaceSeuenceItem(absStart + start + 1, absStart + end - 1, ReplaceSequenceType.VALUE))
+                list.add(ReplaceSeuenceItem(absStart + start, absStart + end, ReplaceSequenceType.VALUE))
             } else {
                 list.add(ReplaceSeuenceItem(absStart + start, absStart + end, ReplaceSequenceType.VALUE))
             }
