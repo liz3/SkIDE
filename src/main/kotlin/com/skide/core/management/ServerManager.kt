@@ -41,23 +41,23 @@ class ServerManager(val coreManager: CoreManager) {
     private fun loadServers() {
         coreManager.configManager.servers.values.forEach {
 
-          try {
-              val confFile = File(it.path, ".server.skide")
-              val obj = JSONObject(readFile(confFile).second)
-              val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args")), confFile, false, obj.getLong("id"))
-              obj.getJSONArray("addons").forEach {
-                  if (it is JSONObject) {
+            try {
+                val confFile = File(it.path, ".server.skide")
+                val obj = JSONObject(readFile(confFile).second)
+                val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args")), confFile, false, obj.getLong("id"))
+                obj.getJSONArray("addons").forEach {
+                    if (it is JSONObject) {
 
-                      server.configuration.addons.add(ServerAddon(it.getString("name"), File(it.getString("file")), it.getBoolean("preset")))
-                  }
-              }
-              servers[obj.getString("name")] = server
-          }catch (e:Exception) {
-              deleteServerByName(it.id)
-              Platform.runLater {
-                  Prompts.infoCheck("Error", "Error while loading serer", "An error occurred while loading server ${it.name} at ${it.path}", Alert.AlertType.ERROR)
-              }
-          }
+                        server.configuration.addons.add(ServerAddon(it.getString("name"), File(it.getString("file")), it.getBoolean("preset")))
+                    }
+                }
+                servers[obj.getString("name")] = server
+            } catch (e: Exception) {
+                deleteServerByName(it.id)
+                Platform.runLater {
+                    Prompts.infoCheck("Error", "Error while loading serer", "An error occurred while loading server ${it.name} at ${it.path}", Alert.AlertType.ERROR)
+                }
+            }
 
         }
     }
@@ -131,6 +131,7 @@ class ServerManager(val coreManager: CoreManager) {
         coreManager.configManager.deleteServer(server.id)
 
     }
+
     fun deleteServerByName(id: Long) {
 
         coreManager.configManager.deleteServer(id)
@@ -140,7 +141,12 @@ class ServerManager(val coreManager: CoreManager) {
     fun updateServerFiles(server: Server) {
 
         if (server.running) return
-        Files.copy(server.configuration.apiPath.toPath(), File(server.configuration.folder, "Server.jar").toPath(), StandardCopyOption.REPLACE_EXISTING)
+        try {
+            Files.copy(server.configuration.apiPath.toPath(), File(server.configuration.folder, "Server.jar").toPath(), StandardCopyOption.REPLACE_EXISTING)
+        } catch (e: Exception) {
+           Prompts.infoCheck("Error", "Error while updating server files", "The file ${server.configuration.apiPath.absolutePath} cold not be copied to ${File(server.configuration.folder, "Server.jar").absolutePath} because ${e.message}", Alert.AlertType.ERROR)
+            return
+        }
 
         val pluginDir = File(server.configuration.folder, "plugins")
 
@@ -159,9 +165,21 @@ class ServerManager(val coreManager: CoreManager) {
 
 
         val downloaded = coreManager.resourceManager.downloadSkriptVersion(server.configuration.skriptVersion)
+        try {
         Files.copy(downloaded.toPath(), File(pluginDir, "Skript.jar").toPath(), StandardCopyOption.REPLACE_EXISTING)
+        } catch (e: Exception) {
+            Prompts.infoCheck("Error", "Error while updating server files", "The file ${downloaded.absolutePath} cold not be copied to ${File(pluginDir, "Skript.jar").absolutePath} because ${e.message}", Alert.AlertType.ERROR)
+            return
+        }
         server.configuration.addons.forEach {
-            if(it.file.exists())Files.copy(it.file.toPath(), File(pluginDir, it.name).toPath(), StandardCopyOption.REPLACE_EXISTING)
+            if (it.file.exists()) try {
+                Files.copy(it.file.toPath(), File(pluginDir, it.name).toPath(), StandardCopyOption.REPLACE_EXISTING)
+            } catch (e: Exception) {
+                Prompts.infoCheck("Error", "Error while updating server files", "The file ${it.file.absolutePath} cold not be copied to ${File(pluginDir, it.name).absolutePath} because ${e.message}", Alert.AlertType.ERROR)
+                return
+            }
+
+
         }
     }
 

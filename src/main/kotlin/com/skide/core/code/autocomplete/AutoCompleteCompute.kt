@@ -87,6 +87,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (fillList.selectionModel.selectedItem != null) {
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
                     value.caller.invoke(area.getInfo(manager))
+                    hideList()
 
                 }
             }
@@ -522,7 +523,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         var replaced = orig
 
         if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && currentInfo.inBrace) {
-            replaced = replaced.replace(")", "")
+            replaced = replaced.replace(")", "").replace(",", "")
             if (replaced.contains(":")) {
                 replaced = replaced.split(":")[1]
             }
