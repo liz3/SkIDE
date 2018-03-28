@@ -1,21 +1,22 @@
 package com.skide.gui
 
+import com.skide.CoreManager
 import com.skide.core.management.ConfigManager
 import com.skide.include.ActiveWindow
 import com.skide.utils.Discord
 import javafx.application.Application
+import javafx.concurrent.Worker.State
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
+import javafx.scene.control.Alert
+import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.web.WebView
 import javafx.stage.Stage
+import netscape.javascript.JSObject
 import java.awt.Desktop
 import java.net.URI
-import javafx.concurrent.Worker.State
-import javafx.scene.control.Alert
-import javafx.scene.image.Image
-import netscape.javascript.JSObject
 
 
 object GUIManager {
@@ -122,6 +123,7 @@ class JavaFXBootstrapper : Application() {
     override fun start(primaryStage: Stage) = GUIManager.bootstrapCallback(primaryStage)
 
     override fun stop() {
+        CoreManager.insightClient.stopEngine();
         GUIManager.discord.stop()
         System.exit(0)
     }

@@ -15,7 +15,7 @@ public class SkriptInsightClient {
     private InsightWebSocketClient inspectionsWebSocketClient;
     private Inspection[] registedInspections;
 
-    protected void initEngine() {
+    public void initEngine() {
         /*
            Here's how we need to do this:
            SkriptInsight is made in C#. You may think that C# isn't cross-platform, but you're wrong.
@@ -24,7 +24,7 @@ public class SkriptInsightClient {
          */
     }
 
-    protected void stopEngine() {
+    public void stopEngine() {
         //This should always be run before the IDE is closed.
         //Otherwise, we will leave the process opened and cause some trouble.
     }

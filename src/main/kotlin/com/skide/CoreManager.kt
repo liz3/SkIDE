@@ -9,6 +9,7 @@ import com.skide.gui.JavaFXBootstrapper
 import com.skide.gui.Prompts
 import com.skide.gui.controllers.SplashGuiController
 import com.skide.gui.controllers.StartGUIController
+import com.skide.skriptinsight.client.SkriptInsightClient
 import com.skide.utils.*
 import javafx.application.Platform
 import javafx.concurrent.Task
@@ -25,6 +26,9 @@ import java.lang.management.ManagementFactory
 
 class CoreManager {
 
+    companion object {
+        lateinit var insightClient: SkriptInsightClient
+    }
 
     val guiManager = GUIManager
     lateinit var configManager: ConfigManager
@@ -70,6 +74,9 @@ class CoreManager {
                         resourceManager = ResourceManager(me)
                         saver = AutoSaver(me)
                         skUnity = SkUnity(me)
+                        insightClient = SkriptInsightClient()
+                        insightClient.initEngine()
+
                         updateProgress(5.0, 100.0)
                         updateMessage("Loading Config...")
                         GUIManager.settings = configManager
