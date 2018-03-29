@@ -2,7 +2,6 @@ package com.skide.skriptinsight.client;
 
 import com.skide.skriptinsight.client.impl.InsightFutureWebSocketClient;
 import com.skide.skriptinsight.client.impl.InsightRequestType;
-import com.skide.skriptinsight.client.impl.InsightWebSocketClient;
 import com.skide.skriptinsight.client.utils.InsightConstants;
 import com.skide.skriptinsight.model.Converter;
 import com.skide.skriptinsight.model.Inspection;
@@ -12,7 +11,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class SkriptInsightClient {
-    private InsightWebSocketClient inspectionsWebSocketClient;
+    private InsightFutureWebSocketClient inspectionsWebSocketClient;
     private Inspection[] registedInspections;
 
     public void initEngine() {
@@ -25,6 +24,15 @@ public class SkriptInsightClient {
         Thread th = new Thread(() -> {
             int nrInspections = getRegisteredInspections().length;
             System.out.printf("SkriptInsight: Loaded %d inspection %s%n", nrInspections, nrInspections != 1 ? "s" : "");
+
+            InsightFutureWebSocketClient client = new InsightFutureWebSocketClient(
+                    this,
+                    InsightRequestType.INSPECTIONS_REQUEST,
+                    "127.0.0.1",
+                    InsightConstants.Misc.SERVER_PORT,
+                    InsightConstants.Paths.INSPECTIONS_PATH
+            );
+            client.connect();
 
         });
         th.start();
@@ -52,6 +60,8 @@ public class SkriptInsightClient {
             } catch (IOException e) {
                 System.out.println("An error occurred whilst trying to parse response from client.");
                 e.printStackTrace();
+            } finally {
+                client.close();
             }
         }
         return registedInspections;
