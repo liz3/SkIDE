@@ -1,5 +1,6 @@
 package com.skide.core.code
 
+import com.skide.CoreManager
 import com.skide.core.code.autocomplete.AutoCompleteCompute
 import com.skide.core.code.autocomplete.ReplaceSequence
 import com.skide.core.code.highlighting.Highlighting
@@ -14,10 +15,8 @@ import javafx.scene.control.Button
 import javafx.scene.control.ContextMenu
 import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
 import javafx.scene.layout.HBox
 import org.fxmisc.richtext.CodeArea
-
 import java.util.*
 
 
@@ -60,9 +59,11 @@ class CodeManager {
         hBox = project.currentStackBox
 
 
-        ChangeWatcher(area, 2500, {
+        ChangeWatcher(area, 1500, {
 
-            println("stopped")
+            println("Running inspections with SkriptInsight!")
+            var result = CoreManager.insightClient.inspectScript(area.text)
+            CoreManager.insightClient.handleSkriptInspections(area, result)
 
         }).start()
 
