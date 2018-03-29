@@ -5,10 +5,11 @@ import com.skide.skriptinsight.client.impl.InsightRequestType;
 import com.skide.skriptinsight.client.utils.InsightConstants;
 import com.skide.skriptinsight.model.Converter;
 import com.skide.skriptinsight.model.Inspection;
+import com.skide.skriptinsight.model.InspectionRequest;
 import com.skide.skriptinsight.model.InspectionResult;
 
 import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import java.util.UUID;
 
 public class SkriptInsightClient {
     private InsightFutureWebSocketClient inspectionsWebSocketClient;
@@ -25,14 +26,14 @@ public class SkriptInsightClient {
             int nrInspections = getRegisteredInspections().length;
             System.out.printf("SkriptInsight: Loaded %d inspection %s%n", nrInspections, nrInspections != 1 ? "s" : "");
 
-            InsightFutureWebSocketClient client = new InsightFutureWebSocketClient(
+            inspectionsWebSocketClient = new InsightFutureWebSocketClient(
                     this,
-                    InsightRequestType.INSPECTIONS_REQUEST,
+                    InsightRequestType.INSPECT_SCRIPT_REQUEST,
                     "127.0.0.1",
                     InsightConstants.Misc.SERVER_PORT,
-                    InsightConstants.Paths.INSPECTIONS_PATH
+                    InsightConstants.Paths.INSPECT_PATH
             );
-            client.connect();
+            inspectionsWebSocketClient.connect();
 
         });
         th.start();
@@ -41,6 +42,7 @@ public class SkriptInsightClient {
     public void stopEngine() {
         //This should always be run before the IDE is closed.
         //Otherwise, we will leave the process opened and cause some trouble.
+        inspectionsWebSocketClient.close();
     }
 
 
@@ -67,9 +69,20 @@ public class SkriptInsightClient {
         return registedInspections;
     }
 
-    protected InspectionResult inspectScript(String script) throws ExecutionException, InterruptedException {
-        //TODO: Implement script inspections
-        return null;
+    protected InspectionResult inspectScript(String script) {
+        if (inspectionsWebSocketClient != null) {
+            try {
+                InspectionRequest request = new InspectionRequest();
+                request.setRequestID(UUID.randomUUID().toString());
+                request.setScriptContent(script);
+
+                inspectionsWebSocketClient.send(Converter.InspectionRequestToJsonString(request));
+                return Converter.InspectionResultFromJsonString(inspectionsWebSocketClient.getReturnedValue());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return new InspectionResult();
     }
 
 
