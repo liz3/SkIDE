@@ -7,6 +7,7 @@ import com.skide.skriptinsight.model.Converter;
 import com.skide.skriptinsight.model.Inspection;
 import com.skide.skriptinsight.model.InspectionRequest;
 import com.skide.skriptinsight.model.InspectionResult;
+import org.fxmisc.richtext.CodeArea;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -69,7 +70,7 @@ public class SkriptInsightClient {
         return registedInspections;
     }
 
-    protected InspectionResult inspectScript(String script) {
+    public InspectionResult inspectScript(String script) {
         if (inspectionsWebSocketClient != null) {
             try {
                 InspectionRequest request = new InspectionRequest();
@@ -85,5 +86,8 @@ public class SkriptInsightClient {
         return new InspectionResult();
     }
 
+    public void handleSkriptInspections(CodeArea area, InspectionResult result) {
+
+    }
 
 }
