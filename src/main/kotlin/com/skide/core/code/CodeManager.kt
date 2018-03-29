@@ -34,6 +34,7 @@ class CodeManager {
     lateinit var sequenceReplaceHandler: ReplaceSequence
     lateinit var hBox: HBox
     private val parser = SkriptParser()
+    val marked = Vector<Int>()
 
 
     var contextMenu: ContextMenu? = null
@@ -50,6 +51,7 @@ class CodeManager {
         area = project.area
         findHandler = FindHandler(this, project)
         replaceHandler = ReplaceHandler(this, project)
+        marked.add(0)
         if (project.coreManager.configManager.get("highlighting") == "true") {
             highlighter = Highlighting(this)
             highlighter.computeHighlighting()
@@ -69,6 +71,7 @@ class CodeManager {
         autoComplete = AutoCompleteCompute(this, project)
 
         registerEvents(project)
+
 
         area.moveTo(0)
 
