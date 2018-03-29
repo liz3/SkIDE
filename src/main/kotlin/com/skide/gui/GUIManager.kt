@@ -39,9 +39,9 @@ object GUIManager {
         val controller = loader.getController<Any>()
         stage.icons.add(Image(javaClass.getResource("/icon.png").toExternalForm()))
         val scene = Scene(rootNode)
-        scene.stylesheets.add("Reset.css")
+        scene.stylesheets.add(settings.getCssPath("Reset.css"))
         if(settings.get("theme") == "Dark") {
-            scene.stylesheets.add("ThemeDark.css")
+            scene.stylesheets.add(settings.getCssPath("ThemeDark.css"))
         }
         stage.scene = scene
         stage.sizeToScene()

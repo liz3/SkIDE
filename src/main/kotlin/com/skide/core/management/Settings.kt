@@ -7,6 +7,7 @@ import com.skide.utils.writeFile
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
+import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
@@ -110,6 +111,7 @@ class ConfigManager(val coreManager: CoreManager) {
             }
         }
 
+        checkCssFiles()
         return ConfigLoadResult.SUCCESS
     }
 
@@ -237,6 +239,22 @@ class ConfigManager(val coreManager: CoreManager) {
         return true
     }
 
+    fun checkCssFiles() {
+
+        val folder = File(rootFolder, "css")
+
+        if(!folder.exists()) {
+            folder.mkdir()
+
+           this.javaClass.getResourceAsStream("/Reset.css").copyTo(FileOutputStream(File(folder, "Reset.css")))
+           this.javaClass.getResourceAsStream("/DarkHighlighting.css").copyTo(FileOutputStream(File(folder, "DarkHighlighting.css")))
+           this.javaClass.getResourceAsStream("/HighlightingLight.css").copyTo(FileOutputStream(File(folder, "HighlightingLight.css")))
+           this.javaClass.getResourceAsStream("/ThemeDark.css").copyTo(FileOutputStream(File(folder, "ThemeDark.css")))
+        }
+
+
+
+    }
     private fun writeDefaultSettings() {
         set("auto_complete", "true")
         set("theme", "Dark")
@@ -254,6 +272,12 @@ class ConfigManager(val coreManager: CoreManager) {
         writeFile(getConfigObject().toString().toByteArray(), configFile, false, false)
     }
 
+    fun getCssPath(name:String): String {
+
+        val file = File(File(rootFolder, "css"), name)
+
+        return "file:///${file.absolutePath.replace("\\", "/")}"
+    }
     private fun getConfigObject(): JSONObject {
 
         val obj = JSONObject()

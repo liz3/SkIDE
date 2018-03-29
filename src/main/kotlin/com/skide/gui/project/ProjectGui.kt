@@ -35,9 +35,9 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     fun startGui(): ProjectGuiEventListeners {
 
         if (coreManager.configManager.get("theme") == "Dark") {
-            window.scene.stylesheets.add("DarkHighlighting.css")
+            window.scene.stylesheets.add(coreManager.configManager.getCssPath("DarkHighlighting.css"))
         } else {
-            window.scene.stylesheets.add("HighlightingLight.css")
+            window.scene.stylesheets.add(coreManager.configManager.getCssPath("HighlightingLight.css"))
         }
 
         val controller = window.controller as ProjectGUIController

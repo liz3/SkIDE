@@ -1,5 +1,6 @@
 package com.skide.gui
 
+import com.skide.core.management.ConfigManager
 import com.sun.jna.platform.win32.Guid
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
@@ -10,13 +11,14 @@ import java.util.Optional
 object Prompts {
 
     var theme = ""
+    lateinit var configManager: ConfigManager
 
     fun textPrompt(title: String, header: String): String {
         val input = TextInputDialog()
 
         if(theme == "Dark") {
             val dialogPane = input.dialogPane
-            dialogPane.stylesheets.add("ThemeDark.css")
+            dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))
         }
 
         input.title = title
@@ -34,7 +36,7 @@ object Prompts {
 
         if(theme == "Dark") {
             val dialogPane = pd.dialogPane
-            dialogPane.stylesheets.add("ThemeDark.css")
+            dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))
         }
         val result = pd.showAndWait()
 
@@ -57,7 +59,7 @@ object Prompts {
 
         if(theme == "Dark") {
             val dialogPane = alert.dialogPane
-            dialogPane.stylesheets.add("ThemeDark.css")
+            dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))
         }
 
         val result = alert.showAndWait() ?: return false

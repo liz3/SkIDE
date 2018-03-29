@@ -76,15 +76,15 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String
             pane.bottom = borderPane.bottom
             borderPane = pane
             externStage.scene = Scene(pane, 800.0, 600.0)
-                externStage.scene.stylesheets.add("Reset.css")
+                externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("Reset.css"))
             if(openProject.coreManager.configManager.get("theme") == "Dark") {
-                externStage.scene.stylesheets.add("ThemeDark.css")
+                externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("ThemeDark.css"))
 
             }
             if (coreManager.configManager.get("theme") == "Dark") {
-                externStage.scene.stylesheets.add("DarkHighlighting.css")
+                externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("DarkHighlighting.css"))
             } else {
-                externStage.scene.stylesheets.add("HighlightingLight.css")
+                externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("HighlightingLight.css"))
             }
             externStage.show()
             isExluded = true

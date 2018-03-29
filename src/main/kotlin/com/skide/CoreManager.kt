@@ -99,6 +99,7 @@ class CoreManager {
                         updateProgress(90.0, 100.0)
                         updateMessage("Starting gui...")
                         Prompts.theme = configManager.get("theme") as String
+                        Prompts.configManager = configManager
                         attachDebugger()
                         Platform.runLater {
                             stage.close()

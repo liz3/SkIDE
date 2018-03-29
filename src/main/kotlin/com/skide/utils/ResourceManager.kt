@@ -11,11 +11,13 @@ import org.json.JSONObject
 import java.io.File
 import java.net.URLEncoder
 import java.util.*
+import kotlin.collections.HashMap
 
 class ResourceManager(val coreManager: CoreManager) {
 
     var version = ""
     val addons = HashMap<String, Addon>()
+    val cssFiles = HashMap<String, String>()
     val skriptDocList = Vector<AddonItem>()
     val skriptVersions = Vector<String>()
     val file = File(coreManager.configManager.rootFolder, "docs.json")
@@ -95,9 +97,9 @@ class ResourceManager(val coreManager: CoreManager) {
 
         callback(total, 6, "Reading docs")
         parseCurrentSkriptVersionDocs()
-
         callback(total, 7, "Reading script versions")
         parseSkriptVersions()
+
 
         val str = readFile(file.absolutePath)
 
