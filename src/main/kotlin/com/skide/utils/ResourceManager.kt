@@ -15,7 +15,8 @@ import kotlin.collections.HashMap
 
 class ResourceManager(val coreManager: CoreManager) {
 
-    var version = ""
+
+
     val addons = HashMap<String, Addon>()
     val cssFiles = HashMap<String, String>()
     val skriptDocList = Vector<AddonItem>()
@@ -80,7 +81,7 @@ class ResourceManager(val coreManager: CoreManager) {
         callback(total, 1, "https://liz3.net/sk/depot/")
 
         //DO NOT TOUCH THIS LINE!!!!!!!
-        version = "1.0.2"
+
 
 
         if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()

@@ -1,5 +1,6 @@
 package com.skide.core.debugger
 
+import com.skide.Info
 import com.skide.gui.GUIManager
 import com.skide.gui.controllers.ErrorReportGUIController
 import javafx.application.Platform
@@ -52,7 +53,7 @@ class SystemErr : PrintStream(System.err) {
                     val win = GUIManager.getWindow("ErrorReport.fxml", "Error", false)
                     val ctrl = win.controller as ErrorReportGUIController
 
-                    val theError = "OS: ${System.getProperty("os.name")} ${System.getProperty("os.arch")}\nJava: ${System.getProperty("java.runtime.version")}\nTime: ${sdf.format(cal.time)}\n$err"
+                    val theError = "OS: ${System.getProperty("os.name")} ${System.getProperty("os.arch")}\nJava: ${System.getProperty("java.runtime.version")}\nSK-IDE version: ${Info.version}\nTime: ${sdf.format(cal.time)}\n$err"
 
                     ctrl.contentArea.text = theError
 

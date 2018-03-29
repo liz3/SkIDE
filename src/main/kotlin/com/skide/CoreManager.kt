@@ -30,6 +30,7 @@ class CoreManager {
         lateinit var insightClient: SkriptInsightClient
     }
 
+
     val guiManager = GUIManager
     lateinit var configManager: ConfigManager
     lateinit var projectManager: ProjectManager

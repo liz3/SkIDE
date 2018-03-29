@@ -242,18 +242,14 @@ class ConfigManager(val coreManager: CoreManager) {
     fun checkCssFiles() {
 
         val folder = File(rootFolder, "css")
-
         if(!folder.exists()) {
             folder.mkdir()
 
-           this.javaClass.getResourceAsStream("/Reset.css").copyTo(FileOutputStream(File(folder, "Reset.css")))
+            this.javaClass.getResourceAsStream("/Reset.css").copyTo(FileOutputStream(File(folder, "Reset.css")))
            this.javaClass.getResourceAsStream("/DarkHighlighting.css").copyTo(FileOutputStream(File(folder, "DarkHighlighting.css")))
            this.javaClass.getResourceAsStream("/HighlightingLight.css").copyTo(FileOutputStream(File(folder, "HighlightingLight.css")))
            this.javaClass.getResourceAsStream("/ThemeDark.css").copyTo(FileOutputStream(File(folder, "ThemeDark.css")))
         }
-
-
-
     }
     private fun writeDefaultSettings() {
         set("auto_complete", "true")

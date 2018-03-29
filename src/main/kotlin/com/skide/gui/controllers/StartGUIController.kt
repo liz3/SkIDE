@@ -1,6 +1,7 @@
 package com.skide.gui.controllers
 
 import com.skide.CoreManager
+import com.skide.Info
 import com.skide.gui.GUIManager
 import com.skide.gui.settings.SettingsGUIHandler
 import com.skide.include.ActiveWindow
@@ -61,7 +62,7 @@ class StartGUIController {
                 }
             }
         }
-        versionLabel.text = "SK-IDE Ver. ${manager.resourceManager.version} Copyright Liz3|StabbedByFeather - GPL v2 License"
+        versionLabel.text = "SK-IDE Ver. ${Info.version} Copyright Liz3|StabbedByFeather - GPL v2 License"
         settings.setOnMouseReleased {
 
             val window = GUIManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)
