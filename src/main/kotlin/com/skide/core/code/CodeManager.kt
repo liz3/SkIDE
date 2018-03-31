@@ -62,6 +62,7 @@ class CodeManager {
         ChangeWatcher(area, 1500, {
 
             println("Running inspections with SkriptInsight!")
+            highlighter.mapMarked()
             var result = CoreManager.insightClient.inspectScript(area.text)
             CoreManager.insightClient.handleSkriptInspections(area, result)
 

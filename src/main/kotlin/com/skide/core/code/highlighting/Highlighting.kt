@@ -1,9 +1,13 @@
 package com.skide.core.code.highlighting
 
 import com.skide.core.code.CodeManager
+import com.skide.utils.StyleSpanMerger
+import com.skide.utils.restart
+import javafx.application.Platform
 import org.fxmisc.richtext.model.StyleSpans
 import org.fxmisc.richtext.model.StyleSpansBuilder
 import java.util.*
+import java.util.function.BiFunction
 import java.util.regex.Pattern
 
 class Highlighting(val manager: CodeManager) {
@@ -11,9 +15,9 @@ class Highlighting(val manager: CodeManager) {
     val area = manager.area
     private val x = area.richChanges().filter({ ch -> ch.inserted != ch.removed })
     var sub = x.subscribe({
-
         area.setStyleSpans(0, computHighlighting(area.text))
-        mapMarked()
+
+
     })
     private val markedLines = Vector<String>()
 
@@ -40,10 +44,9 @@ class Highlighting(val manager: CodeManager) {
         val pos = area.caretPosition
         sub.unsubscribe()
 
-        sub =  x.subscribe({
+        sub = x.subscribe({
 
             area.setStyleSpans(0, computHighlighting(area.text))
-            mapMarked()
         })
         val text = area.text
         area.clear()
@@ -66,10 +69,8 @@ class Highlighting(val manager: CodeManager) {
     private fun computHighlighting(text: String): StyleSpans<Collection<String>> {
 
 
-
         var lastKwEnd = 0
         val spansBuilder = StyleSpansBuilder<Collection<String>>()
-
 
 
         val matcher = patternCompilerStatic.matcher(text)
@@ -109,6 +110,7 @@ class Highlighting(val manager: CodeManager) {
             lastKwEnd = matcher.end()
         }
         spansBuilder.add(emptyList(), text.length - lastKwEnd)
+
         return spansBuilder.create()
     }
 
@@ -138,22 +140,27 @@ class Highlighting(val manager: CodeManager) {
         return if (!case) Pattern.compile("(?<SEARCH>$content)", Pattern.CASE_INSENSITIVE) else Pattern.compile("(?<SEARCH>$content)")
     }
 
-    private fun mapMarked(){
+    fun mapMarked() {
 
-       for(line in manager.marked) {
+        //manager.marked is a set of line-numbers
+        for (line in manager.marked) {
 
-           val spansBuilder = StyleSpansBuilder<Collection<String>>()
+            //is invoked from another thread so Platform.runLater is required
+            Platform.runLater {
+                //get the lines text
+                val text = area.paragraphs[line].text
+                //Currently 0 would be changed to absolute line start later
+                val start = 0
+                val end = text.length
+                //get the spans
+                val spans = area.getStyleSpans(start, end)
+                //The merge method we talked about before
+                val result = StyleSpanMerger.merge(spans, end)
+                //reset the style
+                area.setStyleSpans(start, end, result)
+            }
 
-
-           val start = area.text.indexOf(area.paragraphs[line].text)
-           val end = start +area.paragraphs[line].text.length
-
-           val spans = area.getStyleSpans(start, end)
-
-           area.setStyleSpans(start, end, spansBuilder.create())
-
-
-       }
+        }
 
     }
 
