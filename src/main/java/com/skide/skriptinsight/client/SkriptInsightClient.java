@@ -43,7 +43,7 @@ public class SkriptInsightClient {
     public void stopEngine() {
         //This should always be run before the IDE is closed.
         //Otherwise, we will leave the process opened and cause some trouble.
-        inspectionsWebSocketClient.close();
+        new Thread(() -> inspectionsWebSocketClient.close()).start();
     }
 
 

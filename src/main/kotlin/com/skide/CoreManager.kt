@@ -15,6 +15,7 @@ import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
+import javafx.scene.control.Alert
 import javafx.scene.image.Image
 import javafx.scene.layout.Background
 import javafx.scene.layout.Pane
@@ -52,6 +53,7 @@ class CoreManager {
             stage.initStyle(StageStyle.TRANSPARENT)
             stage.scene.fill = Color.TRANSPARENT
             stage.sizeToScene()
+            stage.centerOnScreen()
             stage.isResizable = false
             stage.isAlwaysOnTop = true
             controller.view.image = Image(javaClass.getResource("/splash.png").toExternalForm())
@@ -104,11 +106,14 @@ class CoreManager {
                         attachDebugger()
                         Platform.runLater {
                             stage.close()
+
+
                             GUIManager.discord.update("In the main menu", "Idle")
                             val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, Stage())
                             stage.isResizable = false
                             (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
                             window.stage.show()
+
                         }
                     }catch (e:Exception) {
                         e.printStackTrace()

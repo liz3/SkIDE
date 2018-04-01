@@ -441,7 +441,7 @@ class CodeManager {
             area.requestFocus()
             area.moveTo(count)
             //TODO still needs some adjustment
-            area.scrollYToPixel((lineSearched * 14.95))
+            area.showParagraphAtTop(lineSearched)
             area.selectLine()
         }
     }
