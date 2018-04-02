@@ -12,7 +12,7 @@ class SkCompiler {
 
     val parser = SkriptParser()
 
-    fun isValid(it: Node, opts: CompileOption): Boolean {
+    private fun isValid(it: Node, opts: CompileOption): Boolean {
         if (it.nodeType == NodeType.COMMENT && opts.remComments) {
             return false
         }

@@ -21,7 +21,7 @@ import org.reactfx.value.Var
 import java.util.*
 import kotlin.collections.HashMap
 
-class ListHolderItem(val name: String, val caller: (info: CurrentStateInfo) -> Unit, val description: String = "") {
+class ListHolderItem(val name: String, val caller: (info: CurrentStateInfo) -> Unit, val description: String = "", val hideListAfter: Boolean = true) {
 
     override fun toString(): String {
         return name
@@ -50,7 +50,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     init {
 
-        if(project.coreManager.configManager.get("auto_complete") == "true") {
+        if (project.coreManager.configManager.get("auto_complete") == "true") {
             setupContextPopup()
             registerEventListener()
 
@@ -87,7 +87,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (fillList.selectionModel.selectedItem != null) {
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
                     value.caller.invoke(area.getInfo(manager))
-                    if(!globalCompleteVisible) hideList()
+                    if (!globalCompleteVisible && value.hideListAfter) hideList()
 
                 }
             }
@@ -103,7 +103,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (fillList.selectionModel.selectedItem != null) {
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
                     value.caller.invoke(area.getInfo(manager))
-                    hideList()
+                    if (value.hideListAfter) hideList()
                 }
             }
 
@@ -114,7 +114,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
 
-    private fun addItem(label: String, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller))
+     fun addItem(label: String, hideListAfter: Boolean = true, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller, "", hideListAfter))
+     fun addItem(label: String, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller, "", true))
 
 
     private fun registerEventListener() {
@@ -264,9 +265,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 })
             }
 
-            if(project.coreManager.configManager.get("cross_auto_complete") == "true") {
+            if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
 
-                for((path, nodes) in manager.crossNodes) {
+                for ((path, nodes) in manager.crossNodes) {
 
                     nodes.forEach {
 
@@ -290,7 +291,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                 area.replaceText(area.caretPosition - inf.beforeString.length, area.caretPosition, insert)
                             }))
                         }
-                        if(it.nodeType == NodeType.SET_VAR) {
+                        if (it.nodeType == NodeType.SET_VAR) {
                             if (!it.fields.containsKey("invalid")) {
 
                                 if (it.fields.contains("from_option")) {
@@ -310,7 +311,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                             } else {
                                                 "_"
                                             }
-                                        }.invoke() + it.fields["name"] as String  + " - $path", { info ->
+                                        }.invoke() + it.fields["name"] as String + " - $path", { info ->
                                             if (it.fields["visibility"] == "global") {
                                                 area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{" + it.fields["name"] + "}")
 
@@ -465,7 +466,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         if (fillList.items.size == 0) {
             return
         }
-        if(project.isExluded) {
+        if (project.isExluded) {
             popUp.show(project.externStage)
 
         } else {
@@ -479,7 +480,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
 
         if (!popUp.isShowing) {
-            area.replaceText(area.caretPosition, area.caretPosition + node.raw.length, "")
+            area.replaceText(area.caretPosition - area.caretColumn, area.caretPosition, "")
 
             manager.parseResult = manager.parseStructure()
             //   if (area.getInfo(manager, currentLine).inString) return
@@ -508,7 +509,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             }
 
-            addItem("Generate Event") {
+            addItem("Generate Event", false) {
 
 
                 fillList.items.clear()
@@ -530,8 +531,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                 area.replaceText(area.caretPosition - info.actualCurrentString.length, area.caretPosition, {
                                     var text = item.pattern
                                     if (text.isEmpty()) text = item.name
-                                    text = text.replace("[on]", "on").replace("\n", "")+ ":"
-                                    if(!text.startsWith("on ")) text = "on $text"
+                                    text = text.replace("[on]", "on").replace("\n", "") + ":"
+                                    if (!text.startsWith("on ")) text = "on $text"
                                     text
                                 }.invoke())
                                 manager.parseResult = manager.parseStructure()
@@ -544,12 +545,12 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
 
             globalCompleteVisible = true
-           if(project.isExluded) {
-               popUp.show(project.externStage)
+            if (project.isExluded) {
+                popUp.show(project.externStage)
 
-           } else {
-               popUp.show(project.openProject.guiHandler.window.stage)
-           }
+            } else {
+                popUp.show(project.openProject.guiHandler.window.stage)
+            }
             fillList.selectionModel.select(0)
 
         } else {

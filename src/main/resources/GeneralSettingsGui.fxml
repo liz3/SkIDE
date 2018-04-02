@@ -36,6 +36,10 @@
                         <Label layoutX="14.0" layoutY="273.0" text="Shortcut for &quot;" />
                         <TextField fx:id="keyQuoteField" layoutX="15.0" layoutY="290.0" />
                         <CheckBox fx:id="crossFileAutoComplete" layoutX="169.0" layoutY="64.0" mnemonicParsing="false" text="Cross-file Auto-complete" />
+                        <Label layoutX="14.0" layoutY="325.0" text="Shortcut for Auto-complete" />
+                        <TextField fx:id="autoCompleteCutField" layoutX="15.0" layoutY="342.0" />
+                        <Label layoutX="14.0" layoutY="367.0" text="Shortcut for Fixes" />
+                        <TextField fx:id="fixesCutField" layoutX="15.0" layoutY="384.0" />
                      </children>
                   </Pane>
                </content></Tab>

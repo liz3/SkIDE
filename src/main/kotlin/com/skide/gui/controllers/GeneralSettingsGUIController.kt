@@ -95,7 +95,6 @@ class GeneralSettingsGUIController {
     @FXML
     lateinit var settingsCssFileBtn: Button
 
-
     @FXML
     lateinit var keyParenField: TextField
 
@@ -110,4 +109,10 @@ class GeneralSettingsGUIController {
 
     @FXML
     lateinit var crossFileAutoComplete:CheckBox
+
+    @FXML
+    lateinit var autoCompleteCutField: TextField
+
+    @FXML
+    lateinit var fixesCutField: TextField
 }

@@ -3,6 +3,7 @@ package com.skide.core.management
 import com.skide.CoreManager
 import com.skide.utils.FileReturnResult
 import com.skide.utils.readFile
+import com.skide.utils.restart
 import com.skide.utils.writeFile
 import org.json.JSONArray
 import org.json.JSONObject
@@ -97,7 +98,12 @@ class ConfigManager(val coreManager: CoreManager) {
             val projectsArray = JSONArray(projectsFileResult.second)
             projectsArray.forEach {
                 it as JSONObject
-                projects.put(it.getLong("id"), PointerHolder(it.getLong("id"), it.getString("name"), it.getString("path")))
+                projects[it.getLong("id")] = PointerHolder(it.getLong("id"), it.getString("name"), it.getString("path"))
+            }
+        } else {
+            if(!projectsFile.exists()) {
+                projectsFile.createNewFile()
+                restart()
             }
         }
         if (serversFileResult.first == FileReturnResult.SUCCESS) {
@@ -107,7 +113,13 @@ class ConfigManager(val coreManager: CoreManager) {
 
             serversArray.forEach {
                 it as JSONObject
-                servers.put(it.getLong("id"), PointerHolder(it.getLong("id"), it.getString("name"), it.getString("path")))
+                servers[it.getLong("id")] = PointerHolder(it.getLong("id"), it.getString("name"), it.getString("path"))
+            }
+        } else {
+            if(!serversFile.exists()) {
+
+                serversFile.createNewFile()
+                restart()
             }
         }
 

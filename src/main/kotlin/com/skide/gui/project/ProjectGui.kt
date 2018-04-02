@@ -407,26 +407,12 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
                 openProjectGuiManager.openFiles.values
                         .filter { it.tab == tab }
+                        .filter { it.name.endsWith(".sk") }
                         .forEach { it.codeManager.gotoItem(item) }
 
             }
         }
-        /*
-          controller.editorMainTabPane.setOnMousePressed {ev ->
-              if(ev.isSecondaryButtonDown) {
 
-                  if(controller.editorMainTabPane.selectionModel.selectedItem == null) return@setOnMousePressed
-                  openProjectGuiManager.openFiles.values.forEach {
-
-                      if(it.tab == controller.editorMainTabPane.selectionModel.selectedItem && !it.area.isFocused) {
-
-                          Menus.getMenuForRootPane(it, controller.editorMainTabPane, ev.screenX, ev.screenY)
-                      }
-                  }
-
-              }
-          }
-         */
         controller.editorMainTabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
             if (controller.editorMainTabPane.selectionModel.selectedItem != null) {

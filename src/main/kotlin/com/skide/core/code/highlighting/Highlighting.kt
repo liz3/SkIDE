@@ -2,23 +2,32 @@ package com.skide.core.code.highlighting
 
 import com.skide.core.code.CodeManager
 import com.skide.utils.StyleSpanMerger
-import com.skide.utils.restart
-import javafx.application.Platform
 import org.fxmisc.richtext.model.StyleSpans
 import org.fxmisc.richtext.model.StyleSpansBuilder
 import java.util.*
-import java.util.function.BiFunction
 import java.util.regex.Pattern
+
 
 class Highlighting(val manager: CodeManager) {
 
+    var changed = false;
     val area = manager.area
     private val x = area.richChanges().filter({ ch -> ch.inserted != ch.removed })
     var sub = x.subscribe({
-        area.setStyleSpans(0, computHighlighting(area.text))
-
-
+        runHighlighting()
     })
+    fun runHighlighting() {
+        if (!changed) {
+            changed = true
+            area.setStyleSpans(0, computHighlighting(area.text))
+            mapMarked {
+                changed = false
+            }
+
+        }
+
+    }
+
     private val markedLines = Vector<String>()
 
     fun computeHighlighting() {
@@ -45,8 +54,7 @@ class Highlighting(val manager: CodeManager) {
         sub.unsubscribe()
 
         sub = x.subscribe({
-
-            area.setStyleSpans(0, computHighlighting(area.text))
+           runHighlighting()
         })
         val text = area.text
         area.clear()
@@ -140,27 +148,17 @@ class Highlighting(val manager: CodeManager) {
         return if (!case) Pattern.compile("(?<SEARCH>$content)", Pattern.CASE_INSENSITIVE) else Pattern.compile("(?<SEARCH>$content)")
     }
 
-    fun mapMarked() {
+    fun mapMarked(callback: () ->Unit) {
 
-        //manager.marked is a set of line-numbers
-        for (line in manager.marked) {
 
-            //is invoked from another thread so Platform.runLater is required
-            Platform.runLater {
-                //get the lines text
-                val text = area.paragraphs[line].text
-                //Currently 0 would be changed to absolute line start later
-                val start = 0
-                val end = text.length
-                //get the spans
-                val spans = area.getStyleSpans(start, end)
-                //The merge method we talked about before
-                val result = StyleSpanMerger.merge(spans, end)
-                //reset the style
-                area.setStyleSpans(start, end, result)
+            for (line in manager.marked.keys) {
+                val len = area.getParagraphLength(line)
+                val spans = area.getStyleSpans(line)
+                area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, "marked"))
             }
 
-        }
+            callback()
+
 
     }
 

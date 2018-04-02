@@ -77,6 +77,19 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.keyQuoteField.setOnKeyPressed {
             setShortcut(it, ctrl.keyQuoteField, "quote_cut")
         }
+
+        ctrl.autoCompleteCutField.text = coreManager.configManager.get("ac_cut").toString()
+        ctrl.autoCompleteCutField.setOnKeyPressed {
+            setShortcut(it, ctrl.autoCompleteCutField, "ac_cut")
+        }
+
+        ctrl.fixesCutField.text = coreManager.configManager.get("fx_cut").toString()
+        ctrl.fixesCutField.setOnKeyPressed {
+            setShortcut(it, ctrl.fixesCutField, "fx_cut")
+        }
+
+
+
         ctrl.okBtn.setOnAction {
             deleted.forEach {
                 serverManager.deleteServer(it)

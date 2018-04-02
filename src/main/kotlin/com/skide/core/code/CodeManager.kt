@@ -17,12 +17,13 @@ import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
 import org.fxmisc.richtext.CodeArea
-import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
 
 class CodeManager {
+
+
 
     lateinit var rootStructureItem: TreeItem<String>
     lateinit var area: CodeArea
@@ -34,10 +35,11 @@ class CodeManager {
     lateinit var findHandler: FindHandler
     lateinit var replaceHandler: ReplaceHandler
     lateinit var sequenceReplaceHandler: ReplaceSequence
+    lateinit var tooltipHandler: TooltipHandler
     lateinit var hBox: HBox
     private val parser = SkriptParser()
-    val marked = Vector<Int>()
-
+    val marked = HashMap<Int, String>()
+    private var inspectionsDisabled = false
 
     var contextMenu: ContextMenu? = null
 
@@ -53,7 +55,8 @@ class CodeManager {
         area = project.area
         findHandler = FindHandler(this, project)
         replaceHandler = ReplaceHandler(this, project)
-        marked.add(0)
+        tooltipHandler = TooltipHandler(this, project)
+        marked[0] = "This is a demo fix thing"
         if (project.coreManager.configManager.get("highlighting") == "true") {
             highlighter = Highlighting(this)
             highlighter.computeHighlighting()
@@ -69,10 +72,14 @@ class CodeManager {
                }
            }
 
-            println("Running inspections with SkriptInsight!")
-        //    highlighter.mapMarked()
-            var result = CoreManager.insightClient.inspectScript(area.text)
-            CoreManager.insightClient.handleSkriptInspections(area, result)
+           if(!inspectionsDisabled) {
+
+               println("Running inspections with SkriptInsight!")
+
+               var result = CoreManager.insightClient.inspectScript(area.text)
+               CoreManager.insightClient.handleSkriptInspections(area, result)
+           }
+
 
         }).start()
         if(project.coreManager.configManager.get("cross_auto_complete") == "true") {
@@ -84,6 +91,7 @@ class CodeManager {
         autoComplete = AutoCompleteCompute(this, project)
 
         registerEvents(project)
+        setupToolTip()
 
 
         area.moveTo(0)
@@ -124,6 +132,12 @@ class CodeManager {
             if(it.nodeType == NodeType.SET_VAR && it.fields["visibility"] == "global") { crossNodes[f]!!.add(it) }
         }
 
+
+    }
+
+    fun setupToolTip() {
+
+        if(this::tooltipHandler.isInitialized) tooltipHandler.setup()
 
     }
     private fun registerEvents(project: OpenFileHolder) {
@@ -169,6 +183,150 @@ class CodeManager {
 
                 var computed = true
                 val startPos = if ((area.caretPosition - 1) == -1) 0 else area.caretPosition
+
+                ////////////////
+
+                if (project.coreManager.configManager.get("fx_cut") != null) {
+                    val str = project.coreManager.configManager.get("fx_cut") as String
+                    val split = str.split("+")
+                    split.forEach {
+                        if (it == "CONTROL") {
+                            if (!ev.isControlDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "ALT") {
+                            if (!ev.isAltDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "SHIFT") {
+                            if (!ev.isShiftDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else {
+                            if (ev.isControlDown && !str.contains("CONTROL+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isShiftDown && !str.contains("SHIFT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isAltDown && !str.contains("ALT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.code.toString() != it) {
+                                computed = false
+                            }
+                        }
+                    }
+                } else {
+                    computed = false
+                }
+                if (computed) {
+                    val lForIndex =  area.getCaretLine() - 1
+
+                    if(marked.contains(lForIndex)) {
+
+                        Platform.runLater {
+                            autoComplete.hideList()
+
+                            autoComplete.addItem("Fix") {
+
+                                //TODO @NickAc
+                            }
+                            autoComplete.addItem("ignore for once") {
+                                marked.remove(lForIndex)
+                                highlighter.runHighlighting()
+                            }
+                            autoComplete.addItem("Disable Inspections for current Session") {
+                                inspectionsDisabled = true
+                                marked.clear()
+                            }
+                            autoComplete.addItem("Disable inspections for project") {
+                                //TODO
+                            }
+
+
+                            if (project.isExluded) {
+                                autoComplete.popUp.show(project.externStage)
+
+                            } else {
+                                autoComplete.popUp.show(project.openProject.guiHandler.window.stage)
+                            }
+                            autoComplete.fillList.selectionModel.select(0)
+
+                        }
+                    }
+
+                    return@setOnKeyPressed
+                }
+                computed = true
+
+                ///////////////
+
+                if (project.coreManager.configManager.get("ac_cut") != null) {
+                    val str = project.coreManager.configManager.get("ac_cut") as String
+                    val split = str.split("+")
+                    split.forEach {
+                        if (it == "CONTROL") {
+                            if (!ev.isControlDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "ALT") {
+                            if (!ev.isAltDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else if (it == "SHIFT") {
+                            if (!ev.isShiftDown) {
+                                computed = false
+                                return@forEach
+                            }
+                        } else {
+                            if (ev.isControlDown && !str.contains("CONTROL+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isShiftDown && !str.contains("SHIFT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.isAltDown && !str.contains("ALT+")) {
+                                computed = false
+                                return@forEach
+                            }
+                            if (ev.code.toString() != it) {
+                                computed = false
+                            }
+                        }
+                    }
+                } else {
+                    computed = false
+                }
+                if (computed) {
+                    if (!autoComplete.popUp.isShowing) {
+                        val paragraph = area.paragraphs[area.getCaretLine() - 1]
+                        if(paragraph.text.isEmpty()) {
+                            autoComplete.showGlobalAutoComplete(EditorUtils.getLineNode(area.getCaretLine(), parseResult)!!)
+                        } else {
+                            if (paragraph.text.isBlank() && area.caretColumn == 0)
+                                autoComplete.showGlobalAutoComplete(EditorUtils.getLineNode(area.getCaretLine(), parseResult)!!)
+                            else
+                                autoComplete.showLocalAutoComplete(false)
+                        }
+
+
+
+                    }
+                    return@setOnKeyPressed
+                }
+                computed = true
+
 
                 if (project.coreManager.configManager.get("bracket_cut") != null) {
                     val str = project.coreManager.configManager.get("bracket_cut") as String
@@ -399,23 +557,6 @@ class CodeManager {
                 }
                 if (ev.code == KeyCode.R) {
                     replaceHandler.switchGui()
-                }
-                if (ev.code == KeyCode.SPACE) {
-                    if (!autoComplete.popUp.isShowing) {
-                        parseResult = parseStructure()
-                        val node = EditorUtils.getLineNode(area.getCaretLine(), parseResult)
-
-                        if (node != null) {
-
-                            if (node.raw.replace("\t", "").isEmpty() && area.caretColumn == 0)
-                                autoComplete.showGlobalAutoComplete(node)
-                            else
-                                autoComplete.showLocalAutoComplete(false)
-
-                        } else {
-
-                        }
-                    }
                 }
             }
         }
