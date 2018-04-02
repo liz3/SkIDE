@@ -5,6 +5,7 @@ import com.skide.core.management.RunningServerManager
 import com.skide.gui.DragResizer
 import com.skide.gui.controllers.ProjectGUIController
 import com.skide.include.Server
+import com.skide.utils.setIcon
 import com.terminalfx.TerminalBuilder
 import javafx.application.Platform
 import javafx.scene.control.Button
@@ -37,11 +38,11 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
         val pane = BorderPane()
         val vBox = VBox()
         val reloadBtn = Button("R")
-        reloadBtn.setPrefSize(25.0, 25.0)
+        reloadBtn.setIcon("refresh", false)
         val stopBtn = Button("S")
-        stopBtn.setPrefSize(25.0, 25.0)
+        stopBtn.setIcon("stop", false)
         val cleanBtn = Button("C")
-        cleanBtn.setPrefSize(25.0, 25.0)
+        cleanBtn.setIcon("delete", false)
         cleanBtn.setOnAction {
             serverManager.cleanFiles()
         }
@@ -85,7 +86,6 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
 
     fun setup() {
 
-
         val buildLogTab = Tab("Build Log")
         buildLogTab.isDisable = true
         buildLogTab.content = buildLogArea
@@ -99,14 +99,20 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
             terminalBuilder.terminalConfig.foregroundColor = "#dbe0dc"
         }
 
+        ctrl.lowerTabPaneToggleBtn.setIcon("download")
         ctrl.lowerTabPaneToggleBtn.setOnAction {
             if (visible) {
+                ctrl.lowerTabPaneToggleBtn.setIcon("upload")
+
                 rootPane.prefHeight = 0.0
             } else {
+                ctrl.lowerTabPaneToggleBtn.setIcon("download")
                 rootPane.prefHeight = 200.0
             }
             visible = !visible
         }
+        ctrl.consoleAddBtn.setIcon("plus", false)
+
         ctrl.consoleAddBtn.setOnAction {
 
             val tab = terminalBuilder.newTerminal()
@@ -117,6 +123,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
 
             ctrl.consoleTabArea.selectionModel.select(tab)
         }
+        ctrl.consoleRemBtn.setIcon("delete", false)
         ctrl.consoleRemBtn.setOnAction {
             if (ctrl.consoleTabArea.tabs.size == 1) {
                 ctrl.consoleTabArea.tabs.clear()
@@ -142,6 +149,4 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
 
         tabPane.tabs[1]!!.isDisable = true
     }
-
-
 }

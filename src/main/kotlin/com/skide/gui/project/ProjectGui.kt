@@ -11,6 +11,7 @@ import com.skide.gui.controllers.GeneralSettingsGUIController
 import com.skide.gui.controllers.ProjectGUIController
 import com.skide.gui.settings.SettingsGUIHandler
 import com.skide.include.OpenFileHolder
+import com.skide.utils.setIcon
 import javafx.application.Platform
 import javafx.scene.control.*
 import javafx.scene.image.Image
@@ -83,6 +84,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
 class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGuiManager, private val controller: ProjectGUIController, val coreManager: CoreManager) {
 
+    var browserVisible = true
     var guiReady = {}
     var contextMenuVisible: ContextMenu? = null
 
@@ -365,6 +367,36 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private fun registerEditorEvents() {
 
+        controller.browserUpperHBox.setOnScroll { ev ->
+            if(browserVisible) {
+                val pane = controller.mainLeftBorderPane
+                val x = ev.deltaY
+
+                if(x < 0) {
+                    pane.prefWidth = pane.prefWidth - 6.0
+                } else {
+                    pane.prefWidth = pane.prefWidth + 6.0
+
+                }
+            }
+        }
+        controller.toggleTreeViewButton.setIcon("login")
+        controller.toggleTreeViewButton.setOnAction {
+            val tabPane = controller.browserTabPane
+            val pane = controller.mainLeftBorderPane
+            if (browserVisible) {
+                controller.toggleTreeViewButton.setIcon("exit")
+                browserVisible = false
+                pane.center = null
+                pane.maxWidth = 25.0
+            } else {
+                browserVisible = true
+                controller.toggleTreeViewButton.setIcon("login")
+                pane.maxWidth = 1500.0
+                pane.prefWidth = 200.0
+                pane.center = tabPane
+            }
+        }
         structureTab.second.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
 
             if (newValue != null) {
@@ -379,22 +411,22 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             }
         }
-      /*
-        controller.editorMainTabPane.setOnMousePressed {ev ->
-            if(ev.isSecondaryButtonDown) {
+        /*
+          controller.editorMainTabPane.setOnMousePressed {ev ->
+              if(ev.isSecondaryButtonDown) {
 
-                if(controller.editorMainTabPane.selectionModel.selectedItem == null) return@setOnMousePressed
-                openProjectGuiManager.openFiles.values.forEach {
+                  if(controller.editorMainTabPane.selectionModel.selectedItem == null) return@setOnMousePressed
+                  openProjectGuiManager.openFiles.values.forEach {
 
-                    if(it.tab == controller.editorMainTabPane.selectionModel.selectedItem && !it.area.isFocused) {
+                      if(it.tab == controller.editorMainTabPane.selectionModel.selectedItem && !it.area.isFocused) {
 
-                        Menus.getMenuForRootPane(it, controller.editorMainTabPane, ev.screenX, ev.screenY)
-                    }
-                }
+                          Menus.getMenuForRootPane(it, controller.editorMainTabPane, ev.screenX, ev.screenY)
+                      }
+                  }
 
-            }
-        }
-       */
+              }
+          }
+         */
         controller.editorMainTabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
             if (controller.editorMainTabPane.selectionModel.selectedItem != null) {

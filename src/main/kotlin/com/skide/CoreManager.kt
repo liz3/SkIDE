@@ -1,9 +1,7 @@
 package com.skide
 
-import com.skide.core.management.ConfigLoadResult
-import com.skide.core.management.ConfigManager
-import com.skide.core.management.ProjectManager
-import com.skide.core.management.ServerManager
+import com.skide.core.debugger.Debugger
+import com.skide.core.management.*
 import com.skide.gui.GUIManager
 import com.skide.gui.JavaFXBootstrapper
 import com.skide.gui.Prompts
@@ -15,7 +13,6 @@ import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
-import javafx.scene.control.Alert
 import javafx.scene.image.Image
 import javafx.scene.layout.Background
 import javafx.scene.layout.Pane
@@ -25,7 +22,7 @@ import javafx.stage.StageStyle
 import java.lang.management.ManagementFactory
 
 
-class CoreManager {
+class CoreManager(val debugger: Debugger) {
 
     companion object {
         lateinit var insightClient: SkriptInsightClient
@@ -38,11 +35,13 @@ class CoreManager {
     lateinit var serverManager: ServerManager
     lateinit var resourceManager: ResourceManager
     lateinit var saver: AutoSaver
+    lateinit var sockServer:SocketManager
     lateinit var skUnity: SkUnity
 
     private var debugLevel = DebugLevel.INFORMATION
 
     fun bootstrap(args: Array<String>) {
+
         val me = this
         guiManager.bootstrapCallback = { stage ->
             val loader = FXMLLoader()
@@ -77,8 +76,11 @@ class CoreManager {
                         resourceManager = ResourceManager(me)
                         saver = AutoSaver(me)
                         skUnity = SkUnity(me)
+                        sockServer = SocketManager(me)
                         insightClient = SkriptInsightClient()
                         insightClient.initEngine()
+                        sockServer.start()
+                        debugger.syserr.core = me
 
                         updateProgress(5.0, 100.0)
                         updateMessage("Loading Config...")
@@ -129,6 +131,11 @@ class CoreManager {
             thread.name = "Sk-IDE loader task"
             thread.start()
         }
+
+
+
+            handle(if(args.size >=1) args.first() else "")
+
         if (Platform.isFxApplicationThread()) {
             GUIManager.bootstrapCallback(Stage())
         } else {

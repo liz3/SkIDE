@@ -64,7 +64,7 @@ class ServerManager(val coreManager: CoreManager) {
 
     fun createServer(server: Server): Boolean {
         server.confFile = File(server.configuration.folder, ".server.skide")
-        if (servers.containsKey(server.configuration.name)) return false
+
         if (!server.configuration.folder.isDirectory) return false
         if (!server.configuration.folder.exists()) {
             if (!server.configuration.folder.mkdir()) return false

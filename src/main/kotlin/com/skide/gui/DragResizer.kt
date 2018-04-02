@@ -47,6 +47,6 @@ class DragResizer {
     private fun canDrag(windowHeight: Double, mousePosY: Double, bottomSecHeight: Double): Boolean {
         val bottomSecOffsetTop = windowHeight - bottomSecHeight
         val mousePosYRelativeToBottomSec = mousePosY - bottomSecOffsetTop
-        return mousePosYRelativeToBottomSec <= 50
+        return mousePosYRelativeToBottomSec <= 25
     }
 }

@@ -1,11 +1,14 @@
 package com.skide.utils
 
 import com.skide.gui.GUIManager
+import javafx.scene.control.Button
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import sun.font.LayoutPathImpl.getPath
 import java.awt.im.InputContext
 import java.util.ArrayList
 import java.io.File
-
+import kotlin.math.ln
 
 
 fun adjustVersion(value: String): String {
@@ -46,4 +49,16 @@ fun getLocale(): String {
 
     val context = InputContext.getInstance()
    return context.locale.toString()
+}
+fun Button.setIcon(name:String, replaceAble:Boolean = true) {
+    var lnk = "/$name"
+    if(replaceAble) lnk += if(GUIManager.settings.get("theme") == "Dark") "_white" else "_black"
+    lnk += ".png"
+    val image = Image(GUIManager::javaClass.javaClass.getResource(lnk).toExternalForm())
+    this.text = ""
+    this.style = "-fx-background-color: rgba(0,0,0,0.0);"
+    this.setPrefSize(image.width, image.height)
+    val view = ImageView(image)
+
+    this.graphic = view
 }

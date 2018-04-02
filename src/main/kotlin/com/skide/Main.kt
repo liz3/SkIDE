@@ -9,8 +9,8 @@ object Info {
 fun main(args: Array<String>) {
 
 
-    Debugger()
-    CoreManager().bootstrap(args)
+    val debugger = Debugger()
+    CoreManager(debugger).bootstrap(args)
 }
 
 

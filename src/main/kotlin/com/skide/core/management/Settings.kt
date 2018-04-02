@@ -245,11 +245,12 @@ class ConfigManager(val coreManager: CoreManager) {
         if(!folder.exists()) {
             folder.mkdir()
 
-            this.javaClass.getResourceAsStream("/Reset.css").copyTo(FileOutputStream(File(folder, "Reset.css")))
-           this.javaClass.getResourceAsStream("/DarkHighlighting.css").copyTo(FileOutputStream(File(folder, "DarkHighlighting.css")))
-           this.javaClass.getResourceAsStream("/HighlightingLight.css").copyTo(FileOutputStream(File(folder, "HighlightingLight.css")))
-           this.javaClass.getResourceAsStream("/ThemeDark.css").copyTo(FileOutputStream(File(folder, "ThemeDark.css")))
+
         }
+        this.javaClass.getResourceAsStream("/Reset.css").copyTo(FileOutputStream(File(folder, "Reset.css")))
+        this.javaClass.getResourceAsStream("/DarkHighlighting.css").copyTo(FileOutputStream(File(folder, "DarkHighlighting.css")))
+        this.javaClass.getResourceAsStream("/HighlightingLight.css").copyTo(FileOutputStream(File(folder, "HighlightingLight.css")))
+        this.javaClass.getResourceAsStream("/ThemeDark.css").copyTo(FileOutputStream(File(folder, "ThemeDark.css")))
     }
     private fun writeDefaultSettings() {
         set("auto_complete", "true")
@@ -260,7 +261,11 @@ class ConfigManager(val coreManager: CoreManager) {
     }
 
     fun get(key: String): Any? {
-        return settings[key]
+        return {
+            if(!settings.containsKey(key))set(key, "")
+
+            settings[key]
+        }.invoke()
     }
 
     fun set(key: String, value: Any) {

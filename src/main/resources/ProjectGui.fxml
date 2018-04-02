@@ -63,10 +63,17 @@
          <center>
             <TabPane fx:id="browserTabPane" prefHeight="200.0" prefWidth="200.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
          </center>
+         <top>
+            <HBox fx:id="browserUpperHBox" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="toggleTreeViewButton" mnemonicParsing="false" text="Button" />
+               </children>
+            </HBox>
+         </top>
       </BorderPane>
    </left>
    <top>
-      <BorderPane fx:id="mainUpperBorderPane" prefHeight="53.0" prefWidth="1068.0" BorderPane.alignment="CENTER">
+      <BorderPane fx:id="mainUpperBorderPane" prefHeight="16.0" prefWidth="1068.0" BorderPane.alignment="CENTER">
          <top>
             <MenuBar fx:id="mainBenuBar" BorderPane.alignment="CENTER">
               <menus>
@@ -89,7 +96,7 @@
             </MenuBar>
          </top>
          <center>
-            <HBox fx:id="controlsHBox" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <!--HBox fx:id="controlsHBox" minWidth="0.0" prefHeight="0.0" prefWidth="1068.0" BorderPane.alignment="CENTER" /-->
          </center>
       </BorderPane>
    </top>

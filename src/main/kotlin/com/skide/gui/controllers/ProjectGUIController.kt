@@ -36,8 +36,8 @@ class ProjectGUIController {
     @FXML
     lateinit var mainBenuBar: MenuBar
 
-    @FXML
-    lateinit var controlsHBox: HBox
+   /* @FXML
+    lateinit var controlsHBox: HBox */
 
     @FXML
     lateinit var mainCenterAnchorPane: AnchorPane
@@ -65,4 +65,10 @@ class ProjectGUIController {
 
     @FXML
     lateinit var runsTabPane: TabPane
+
+    @FXML
+    lateinit var toggleTreeViewButton:Button
+
+    @FXML
+    lateinit var browserUpperHBox:HBox
 }

@@ -7,6 +7,7 @@ import com.skide.include.OpenFileHolder
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.text.Font
 import javafx.stage.Popup
 import java.io.File
 
@@ -71,8 +72,11 @@ object Menus {
 
     fun getMenuForArea(codeManager: CodeManager, x: Double, y: Double): ContextMenu {
 
+        val defaultFont = Font.getDefault()
+
         val menu = ContextMenu()
 
+        menu.style = "-fx-font-family: ${defaultFont.name} !important; -fx-font-size: ${defaultFont.size}"
         val copyEntry = MenuItem("Copy")
         copyEntry.setOnAction {
             codeManager.area.copy()
