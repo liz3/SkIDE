@@ -33,6 +33,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("highlighting", "${ctrl.settingsHighlightingCheck.isSelected}")
         coreManager.configManager.set("theme", ctrl.settingsTheneComboBox.selectionModel.selectedItem)
         coreManager.configManager.set("auto_complete", "${ctrl.settingsAutoCompleteCheck.isSelected}")
+        coreManager.configManager.set("cross_auto_complete", "${ctrl.crossFileAutoComplete.isSelected}")
         coreManager.configManager.set("font", ctrl.settingsFontTextField.text)
         coreManager.configManager.set("font_size", ctrl.settingsFontSizeTextField.text)
     }
@@ -201,6 +202,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.serverSkriptVersionComboBox.items.addAll(coreManager.resourceManager.skriptVersions)
 
         ctrl.settingsAutoCompleteCheck.isSelected = coreManager.configManager.get("auto_complete") == "true"
+        ctrl.crossFileAutoComplete.isSelected = coreManager.configManager.get("cross_auto_complete") == "true"
         ctrl.settingsHighlightingCheck.isSelected = coreManager.configManager.get("highlighting") == "true"
         ctrl.settingsTheneComboBox.selectionModel.select(coreManager.configManager.get("theme").toString())
         ctrl.settingsFontTextField.text = coreManager.configManager.get("font").toString()

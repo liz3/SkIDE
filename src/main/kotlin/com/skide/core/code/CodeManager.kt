@@ -17,7 +17,9 @@ import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
 import org.fxmisc.richtext.CodeArea
+import java.io.File
 import java.util.*
+import kotlin.collections.HashMap
 
 
 class CodeManager {
@@ -28,6 +30,7 @@ class CodeManager {
     lateinit var autoComplete: AutoCompleteCompute
     lateinit var highlighter: Highlighting
     lateinit var parseResult: Vector<Node>
+    lateinit var crossNodes:HashMap<String, Vector<Node>>
     lateinit var findHandler: FindHandler
     lateinit var replaceHandler: ReplaceHandler
     lateinit var sequenceReplaceHandler: ReplaceSequence
@@ -60,6 +63,11 @@ class CodeManager {
 
 
         ChangeWatcher(area, 1500, {
+           if(project.coreManager.configManager.get("cross_auto_complete") == "true") {
+               project.openProject.guiHandler.openFiles.values.forEach {
+                  if(it.f.name != project.f.name) it.codeManager.updateCrossFileAutoComplete(project.f.name, area.text)
+               }
+           }
 
             println("Running inspections with SkriptInsight!")
         //    highlighter.mapMarked()
@@ -67,7 +75,10 @@ class CodeManager {
             CoreManager.insightClient.handleSkriptInspections(area, result)
 
         }).start()
-
+        if(project.coreManager.configManager.get("cross_auto_complete") == "true") {
+            crossNodes = HashMap()
+            loadCrossFileAutoComplete(project)
+        }
         area.appendText(content)
         if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
         autoComplete = AutoCompleteCompute(this, project)
@@ -78,12 +89,49 @@ class CodeManager {
         area.moveTo(0)
 
     }
+    private fun loadCrossFileAutoComplete(project: OpenFileHolder) {
 
+        project.openProject.project.fileManager.projectFiles.values.forEach {f ->
+
+            if(f.name.endsWith(".sk")) {
+
+                if(project.openProject.guiHandler.openFiles.containsKey(f)) {
+                    val openHolder = project.openProject.guiHandler.openFiles[f]
+                    if(openHolder!!.codeManager != this) updateCrossFileAutoComplete(openHolder.f.name, openHolder.area.text)
+                } else {
+                    updateCrossFileAutoComplete(f.name, readFile(f).second)
+                }
+            }
+
+        }
+
+    }
+    fun updateCrossFileAutoComplete(f:String, text:String) {
+        println("Adding $f")
+        val result = SkriptParser().superParse(text)
+        if(!crossNodes.containsKey(f))
+            crossNodes[f] = Vector()
+        else
+            crossNodes[f]!!.clear()
+
+        result.forEach {
+            if(it.nodeType == NodeType.FUNCTION) {
+                crossNodes[f]!!.add(it)
+            }
+        }
+        val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, result)
+        vars.forEach {
+            if(it.nodeType == NodeType.SET_VAR && it.fields["visibility"] == "global") { crossNodes[f]!!.add(it) }
+        }
+
+
+    }
     private fun registerEvents(project: OpenFileHolder) {
 
         area.focusedProperty().addListener { _, _, newValue ->
 
             if (!newValue) {
+                autoComplete.hideList()
                 project.saveCode()
                 project.openProject.runConfs.forEach {
                     if (it.value.runner === project) {

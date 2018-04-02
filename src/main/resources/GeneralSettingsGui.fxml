@@ -27,14 +27,15 @@
                         <CheckBox fx:id="settingsAutoCompleteCheck" layoutX="14.0" layoutY="64.0" mnemonicParsing="false" text="Enable Auto-complete" />
                         <CheckBox fx:id="settingsHighlightingCheck" layoutX="14.0" layoutY="89.0" mnemonicParsing="false" text="Enable Highlighting" />
                         <Button fx:id="settingsCssFileBtn" disable="true" layoutX="14.0" layoutY="437.0" mnemonicParsing="false" text="Open Highlighting File " />
-                        <Label layoutX="14.0" layoutY="116.0" text="Shortcut for (" />
-                        <TextField fx:id="keyParenField" layoutX="15.0" layoutY="133.0" />
-                        <Label layoutX="14.0" layoutY="158.0" text="Shortcut for [" />
-                        <TextField fx:id="keyBracketField" layoutX="15.0" layoutY="175.0" />
-                        <Label layoutX="14.0" layoutY="200.0" text="Shortcut for {" />
-                        <TextField fx:id="keyCurlyBracket" layoutX="15.0" layoutY="217.0" />
-                        <Label layoutX="14.0" layoutY="242.0" text="Shortcut for &quot;" />
-                        <TextField fx:id="keyQuoteField" layoutX="15.0" layoutY="259.0" />
+                        <Label layoutX="14.0" layoutY="147.0" text="Shortcut for (" />
+                        <TextField fx:id="keyParenField" layoutX="15.0" layoutY="164.0" />
+                        <Label layoutX="14.0" layoutY="189.0" text="Shortcut for [" />
+                        <TextField fx:id="keyBracketField" layoutX="15.0" layoutY="206.0" />
+                        <Label layoutX="14.0" layoutY="231.0" text="Shortcut for {" />
+                        <TextField fx:id="keyCurlyBracket" layoutX="15.0" layoutY="248.0" />
+                        <Label layoutX="14.0" layoutY="273.0" text="Shortcut for &quot;" />
+                        <TextField fx:id="keyQuoteField" layoutX="15.0" layoutY="290.0" />
+                        <CheckBox fx:id="crossFileAutoComplete" layoutX="169.0" layoutY="64.0" mnemonicParsing="false" text="Cross-file Auto-complete" />
                      </children>
                   </Pane>
                </content></Tab>

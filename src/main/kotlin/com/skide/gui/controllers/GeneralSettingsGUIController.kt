@@ -107,4 +107,7 @@ class GeneralSettingsGUIController {
 
     @FXML
     lateinit var keyQuoteField: TextField
+
+    @FXML
+    lateinit var crossFileAutoComplete:CheckBox
 }

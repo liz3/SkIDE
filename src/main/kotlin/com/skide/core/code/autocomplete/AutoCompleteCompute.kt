@@ -87,7 +87,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (fillList.selectionModel.selectedItem != null) {
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
                     value.caller.invoke(area.getInfo(manager))
-                    hideList()
+                    if(!globalCompleteVisible) hideList()
 
                 }
             }
@@ -263,6 +263,70 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "player")
                 })
             }
+
+            if(project.coreManager.configManager.get("cross_auto_complete") == "true") {
+
+                for((path, nodes) in manager.crossNodes) {
+
+                    nodes.forEach {
+
+                        if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
+                            val name = it.fields["name"] as String
+                            println("adding function: $name")
+                            val returnType = it.fields["return"] as String
+                            var paramsStr = ""
+                            var insertParams = ""
+                            (it.fields["params"] as Vector<*>).forEach {
+                                it as MethodParameter
+                                paramsStr += ",${it.name}:${it.type}"
+                                insertParams += ",${it.name}"
+                            }
+                            if (paramsStr != "") paramsStr = paramsStr.substring(1)
+                            if (insertParams != "") insertParams = insertParams.substring(1)
+                            val con = "$name($paramsStr):$returnType - $path"
+
+                            val insert = "$name($insertParams)"
+                            toAdd.put(con, Pair(NodeType.FUNCTION, { inf ->
+                                area.replaceText(area.caretPosition - inf.beforeString.length, area.caretPosition, insert)
+                            }))
+                        }
+                        if(it.nodeType == NodeType.SET_VAR) {
+                            if (!it.fields.containsKey("invalid")) {
+
+                                if (it.fields.contains("from_option")) {
+                                    val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
+                                    if (!found) {
+                                        addItem((it.fields["name"] as String) + " [from option] - $path", { info ->
+                                            area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
+                                            //TODO add path items as
+                                        })
+                                    }
+                                } else {
+                                    val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
+                                    if (!found) {
+                                        addItem({
+                                            if (it.fields["visibility"] == "global") {
+                                                ""
+                                            } else {
+                                                "_"
+                                            }
+                                        }.invoke() + it.fields["name"] as String  + " - $path", { info ->
+                                            if (it.fields["visibility"] == "global") {
+                                                area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{" + it.fields["name"] + "}")
+
+                                            } else {
+                                                area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.fields["name"] + "}")
+                                            }
+                                        })
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+
             manager.parseResult.forEach {
                 if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
                     val name = it.fields["name"] as String
@@ -319,6 +383,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     }
                 }
             }
+
+
 
             addonSupported.values.forEach {
                 it.forEach { item ->
@@ -475,6 +541,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     }
                 }
             }
+
 
             globalCompleteVisible = true
            if(project.isExluded) {
