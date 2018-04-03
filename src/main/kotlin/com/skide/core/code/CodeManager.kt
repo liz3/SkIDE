@@ -64,7 +64,7 @@ class CodeManager {
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox
 
-        ChangeWatcher(area, 1500, {
+        ChangeWatcher(area, 750, {
            if(project.coreManager.configManager.get("cross_auto_complete") == "true") {
                project.openProject.guiHandler.openFiles.values.forEach {
                   if(it.f.name != project.f.name) it.codeManager.updateCrossFileAutoComplete(project.f.name, area.text)
@@ -234,6 +234,11 @@ class CodeManager {
                             autoComplete.addItem("Fix") {
 
                                 //TODO @NickAc
+                                val startPosition = area.getAbsolutePosition(lForIndex, 0)
+                                val endPosition = area.getAbsolutePosition(lForIndex + 1, -1)
+
+                                area.replaceText(startPosition, endPosition, marked[lForIndex]?.fixedInspection)
+                                marked.remove(lForIndex)
                             }
                             autoComplete.addItem("ignore for once") {
                                 marked.remove(lForIndex)

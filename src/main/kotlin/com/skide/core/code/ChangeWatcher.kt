@@ -15,7 +15,6 @@ class ChangeWatcher(val area: CodeArea, val wait: Long, val caller: () -> Unit) 
                 caller()
                 lastEdited = 0
             }
-
         }
 
     }

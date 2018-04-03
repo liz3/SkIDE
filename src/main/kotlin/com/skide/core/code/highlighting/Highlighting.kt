@@ -152,9 +152,13 @@ class Highlighting(val manager: CodeManager) {
 
 
             for (line in manager.marked.keys) {
-                val len = area.getParagraphLength(line)
-                val spans = area.getStyleSpans(line)
-                area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, "marked"))
+                try {
+                    val len = area.getParagraphLength(line)
+                    val spans = area.getStyleSpans(line)
+                    area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, "marked"))
+                } catch (ex: IndexOutOfBoundsException) {
+                    ex.printStackTrace()
+                }
             }
 
             callback()
