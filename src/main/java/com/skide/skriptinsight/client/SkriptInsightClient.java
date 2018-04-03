@@ -2,11 +2,13 @@ package com.skide.skriptinsight.client;
 
 import com.skide.CoreManager;
 import com.skide.core.code.CodeManager;
+import com.skide.gui.GUIManager;
 import com.skide.skriptinsight.client.impl.InsightFutureWebSocketClient;
 import com.skide.skriptinsight.client.impl.InsightRequestType;
 import com.skide.skriptinsight.client.utils.InsightConstants;
 import com.skide.skriptinsight.model.*;
 import javafx.application.Platform;
+import kotlin.Unit;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -19,8 +21,11 @@ public class SkriptInsightClient {
     private Inspection[] registeredInspections;
 
     public SkriptInsightClient(CoreManager coreManager) {
-
         this.coreManager = coreManager;
+        GUIManager.INSTANCE.getClosingHooks().add(() -> {
+            stopEngine();
+            return Unit.INSTANCE;
+        });
     }
 
     public void initEngine() {
