@@ -11,7 +11,6 @@ import java.net.URI;
 import static java.lang.System.out;
 
 public class InsightWebSocketClient extends WebSocketClient {
-    public static final int skriptInsightPort = 1458;
     private final SkriptInsightClient client;
     private final InsightRequestType requestType;
 

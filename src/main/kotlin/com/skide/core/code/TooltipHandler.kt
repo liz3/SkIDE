@@ -1,11 +1,12 @@
 package com.skide.core.code
 
+import com.skide.CoreManager
 import com.skide.include.OpenFileHolder
 import com.skide.utils.getCaretLine
 import javafx.scene.control.Label
 import javafx.stage.Popup
-import java.time.Duration;
 import org.fxmisc.richtext.event.MouseOverTextEvent
+import java.time.Duration
 
 
 class TooltipHandler(val codeManager: CodeManager, project: OpenFileHolder) {
@@ -38,7 +39,7 @@ class TooltipHandler(val codeManager: CodeManager, project: OpenFileHolder) {
             }.invoke()
 
             if (codeManager.marked.containsKey(currLine)) {
-                popupMsg.text = codeManager.marked[currLine]
+                popupMsg.text = CoreManager.insightClient.GetInspectionFromClass(codeManager.marked[currLine]?.inspectionClass)?.description
                 popup.show(area, pos.x, pos.y + 10)
 
             }

@@ -1,20 +1,20 @@
 package com.skide.skriptinsight.client;
 
+import com.skide.CoreManager;
+import com.skide.core.code.CodeManager;
 import com.skide.skriptinsight.client.impl.InsightFutureWebSocketClient;
 import com.skide.skriptinsight.client.impl.InsightRequestType;
 import com.skide.skriptinsight.client.utils.InsightConstants;
-import com.skide.skriptinsight.model.Converter;
-import com.skide.skriptinsight.model.Inspection;
-import com.skide.skriptinsight.model.InspectionRequest;
-import com.skide.skriptinsight.model.InspectionResult;
-import org.fxmisc.richtext.CodeArea;
+import com.skide.skriptinsight.model.*;
+import javafx.application.Platform;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class SkriptInsightClient {
     private InsightFutureWebSocketClient inspectionsWebSocketClient;
-    private Inspection[] registedInspections;
+    private Inspection[] registeredInspections;
 
     public void initEngine() {
         /*
@@ -47,9 +47,9 @@ public class SkriptInsightClient {
     }
 
 
-    protected Inspection[] getRegisteredInspections() {
+    private Inspection[] getRegisteredInspections() {
         //Request all registered inspections or get from cached data.
-        if (registedInspections == null) {
+        if (registeredInspections == null) {
             InsightFutureWebSocketClient client = new InsightFutureWebSocketClient(
                     this,
                     InsightRequestType.INSPECTIONS_REQUEST,
@@ -59,7 +59,7 @@ public class SkriptInsightClient {
             );
             client.connect();
             try {
-                registedInspections = Converter.InspectionFromJsonString(client.getReturnedValue());
+                registeredInspections = Converter.InspectionFromJsonString(client.getReturnedValue());
             } catch (IOException e) {
                 System.out.println("An error occurred whilst trying to parse response from client.");
                 e.printStackTrace();
@@ -67,10 +67,10 @@ public class SkriptInsightClient {
                 client.close();
             }
         }
-        return registedInspections;
+        return registeredInspections;
     }
 
-    public InspectionResult inspectScript(String script) {
+    private InspectionResult inspectScript(String script) {
         if (inspectionsWebSocketClient != null) {
             try {
                 InspectionRequest request = new InspectionRequest();
@@ -86,8 +86,31 @@ public class SkriptInsightClient {
         return new InspectionResult();
     }
 
-    public void handleSkriptInspections(CodeArea area, InspectionResult result) {
+    public void inspectScriptInAnotherThread(String script, CodeManager manager) {
+        new Thread(() -> {
+            InspectionResult result = CoreManager.insightClient.inspectScript(script);
 
+            CoreManager.insightClient.handleSkriptInspections(manager, result);
+        }).start();
+    }
+
+    public Inspection GetInspectionFromClass(String className) {
+        for (Inspection inspection : getRegisteredInspections()) {
+            if (inspection.getTypeName().equals(className))
+                return inspection;
+        }
+        return null;
+    }
+
+    private void handleSkriptInspections(CodeManager manager, InspectionResult result) {
+        HashMap<Integer, InspectionResultElement> marked = manager.getMarked();
+        marked.clear();
+
+        for (InspectionResultElement resultElement : result.getInspectionResults()) {
+            if (!marked.containsKey((int) resultElement.getTargetLine() - 1))
+                marked.put((int) resultElement.getTargetLine() - 1,  resultElement);
+        }
+        Platform.runLater(() -> manager.highlighter.runHighlighting());
     }
 
 }

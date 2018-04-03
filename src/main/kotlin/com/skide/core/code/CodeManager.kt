@@ -9,6 +9,7 @@ import com.skide.gui.Menus
 import com.skide.include.Node
 import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
+import com.skide.skriptinsight.model.InspectionResultElement
 import com.skide.utils.*
 import javafx.application.Platform
 import javafx.scene.control.Button
@@ -38,7 +39,7 @@ class CodeManager {
     lateinit var tooltipHandler: TooltipHandler
     lateinit var hBox: HBox
     private val parser = SkriptParser()
-    val marked = HashMap<Int, String>()
+    val marked = HashMap<Int, InspectionResultElement>()
     private var inspectionsDisabled = false
 
     var contextMenu: ContextMenu? = null
@@ -56,7 +57,6 @@ class CodeManager {
         findHandler = FindHandler(this, project)
         replaceHandler = ReplaceHandler(this, project)
         tooltipHandler = TooltipHandler(this, project)
-        marked[0] = "This is a demo fix thing"
         if (project.coreManager.configManager.get("highlighting") == "true") {
             highlighter = Highlighting(this)
             highlighter.computeHighlighting()
@@ -75,9 +75,7 @@ class CodeManager {
            if(!inspectionsDisabled) {
 
                println("Running inspections with SkriptInsight!")
-
-               var result = CoreManager.insightClient.inspectScript(area.text)
-               CoreManager.insightClient.handleSkriptInspections(area, result)
+               CoreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
            }
 
 
