@@ -22,7 +22,7 @@ import javafx.stage.StageStyle
 import java.lang.management.ManagementFactory
 
 
-class CoreManager(val debugger: Debugger) {
+class CoreManager() {
 
     companion object {
         lateinit var insightClient: SkriptInsightClient
@@ -30,6 +30,7 @@ class CoreManager(val debugger: Debugger) {
 
 
     val guiManager = GUIManager
+    lateinit var debugger:Debugger
     lateinit var configManager: ConfigManager
     lateinit var projectManager: ProjectManager
     lateinit var serverManager: ServerManager
@@ -41,6 +42,8 @@ class CoreManager(val debugger: Debugger) {
     private var debugLevel = DebugLevel.INFORMATION
 
     fun bootstrap(args: Array<String>) {
+
+        debugger = Debugger()
 
         val me = this
         guiManager.bootstrapCallback = { stage ->

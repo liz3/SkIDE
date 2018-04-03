@@ -64,7 +64,6 @@ class CodeManager {
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox
 
-
         ChangeWatcher(area, 1500, {
            if(project.coreManager.configManager.get("cross_auto_complete") == "true") {
                project.openProject.guiHandler.openFiles.values.forEach {
@@ -113,7 +112,7 @@ class CodeManager {
 
     }
     fun updateCrossFileAutoComplete(f:String, text:String) {
-        println("Adding $f")
+        if(!f.endsWith(".sk")) return
         val result = SkriptParser().superParse(text)
         if(!crossNodes.containsKey(f))
             crossNodes[f] = Vector()
