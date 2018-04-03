@@ -1,6 +1,5 @@
 package com.skide.gui
 
-import com.skide.CoreManager
 import com.skide.core.management.ConfigManager
 import com.skide.include.ActiveWindow
 import com.skide.utils.Discord
@@ -24,9 +23,9 @@ object GUIManager {
 
     lateinit var settings:ConfigManager
 
-    val discord = Discord()
-
     val closingHooks = Vector<() -> Unit>()
+
+    val discord = Discord()
 
     val activeGuis: HashMap<Int, ActiveWindow> = HashMap()
     var idCounter = 0
