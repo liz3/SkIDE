@@ -43,7 +43,10 @@ public class SkriptInsightClient {
     public void stopEngine() {
         //This should always be run before the IDE is closed.
         //Otherwise, we will leave the process opened and cause some trouble.
-        new Thread(() -> inspectionsWebSocketClient.close()).start();
+        new Thread(() ->
+        {
+            if (inspectionsWebSocketClient != null) inspectionsWebSocketClient.close();
+        }).start();
     }
 
 
@@ -106,9 +109,10 @@ public class SkriptInsightClient {
         HashMap<Integer, InspectionResultElement> marked = manager.getMarked();
         marked.clear();
 
+        if (result == null || result.getInspectionResults() == null) return;
         for (InspectionResultElement resultElement : result.getInspectionResults()) {
             if (!marked.containsKey((int) resultElement.getTargetLine() - 1))
-                marked.put((int) resultElement.getTargetLine() - 1,  resultElement);
+                marked.put((int) resultElement.getTargetLine() - 1, resultElement);
         }
         Platform.runLater(() -> manager.highlighter.runHighlighting());
     }
