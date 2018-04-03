@@ -9,6 +9,7 @@ import com.skide.gui.Menus
 import com.skide.include.Node
 import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
+import com.skide.skriptinsight.client.utils.InsightConstants
 import com.skide.skriptinsight.model.InspectionResultElement
 import com.skide.utils.*
 import javafx.application.Platform
@@ -19,7 +20,10 @@ import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
 import org.fxmisc.richtext.CodeArea
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
+
+
 
 
 class CodeManager {
@@ -39,7 +43,7 @@ class CodeManager {
     lateinit var tooltipHandler: TooltipHandler
     lateinit var hBox: HBox
     private val parser = SkriptParser()
-    val marked = HashMap<Int, InspectionResultElement>()
+    val marked = ConcurrentHashMap<Int, InspectionResultElement>()
     private var inspectionsDisabled = false
 
     var contextMenu: ContextMenu? = null
@@ -233,7 +237,6 @@ class CodeManager {
 
                             autoComplete.addItem("Fix") {
 
-                                //TODO @NickAc
                                 val startPosition = area.getAbsolutePosition(lForIndex, 0)
                                 val endPosition = area.getAbsolutePosition(lForIndex + 1, -1)
 
@@ -242,7 +245,17 @@ class CodeManager {
                                 highlighter.runHighlighting()
 
                             }
-                            autoComplete.addItem("ignore for once") {
+                            autoComplete.addItem("Ignore for once") {
+
+                                val typeFullName = CoreManager.insightClient.GetInspectionFromClass(marked[lForIndex]?.inspectionClass).typeName;
+                                val typeClassName = typeFullName.substring(typeFullName.lastIndexOf('.') + 1)
+                                val startPosition = area.getAbsolutePosition(lForIndex, 0)
+                                val currentLine = area.getParagraph(lForIndex)
+                                val whitespaces = currentLine.text.takeWhile(Char::isWhitespace)
+
+
+                                area.insertText(startPosition, whitespaces + "#" + InsightConstants.Misc.DISABLE_ONCE_INSPECTION_PREFIX + typeClassName + System.lineSeparator())
+
                                 marked.remove(lForIndex)
                                 highlighter.runHighlighting()
                             }
