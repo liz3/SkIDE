@@ -9,8 +9,8 @@ import com.skide.skriptinsight.model.*;
 import javafx.application.Platform;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class SkriptInsightClient {
     private InsightFutureWebSocketClient inspectionsWebSocketClient;
@@ -106,13 +106,12 @@ public class SkriptInsightClient {
     }
 
     private void handleSkriptInspections(CodeManager manager, InspectionResult result) {
-        HashMap<Integer, InspectionResultElement> marked = manager.getMarked();
+        ConcurrentHashMap<Integer, InspectionResultElement> marked = manager.getMarked();
         marked.clear();
 
         if (result == null || result.getInspectionResults() == null) return;
         for (InspectionResultElement resultElement : result.getInspectionResults()) {
-            if (!marked.containsKey((int) resultElement.getTargetLine() - 1))
-                marked.put((int) resultElement.getTargetLine() - 1, resultElement);
+            marked.putIfAbsent((int) resultElement.getTargetLine() - 1, resultElement);
         }
         Platform.runLater(() -> manager.highlighter.runHighlighting());
     }
