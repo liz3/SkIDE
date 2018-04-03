@@ -157,7 +157,6 @@ class Highlighting(val manager: CodeManager) {
                     val spans = area.getStyleSpans(line)
                     area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, "marked"))
                 } catch (ex: IndexOutOfBoundsException) {
-                    ex.printStackTrace()
                 }
             }
 
