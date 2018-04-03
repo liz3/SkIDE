@@ -17,6 +17,7 @@ import javafx.stage.Stage
 import netscape.javascript.JSObject
 import java.awt.Desktop
 import java.net.URI
+import java.util.*
 
 
 object GUIManager {
@@ -24,6 +25,8 @@ object GUIManager {
     lateinit var settings:ConfigManager
 
     val discord = Discord()
+
+    val closingHooks = Vector<() -> Unit>()
 
     val activeGuis: HashMap<Int, ActiveWindow> = HashMap()
     var idCounter = 0
@@ -123,8 +126,10 @@ class JavaFXBootstrapper : Application() {
     override fun start(primaryStage: Stage) = GUIManager.bootstrapCallback(primaryStage)
 
     override fun stop() {
-        CoreManager.insightClient.stopEngine()
-        GUIManager.discord.stop()
+
+        GUIManager.closingHooks.forEach {
+            it()
+        }
         System.exit(0)
     }
 

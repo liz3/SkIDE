@@ -9,7 +9,7 @@ import org.fxmisc.richtext.event.MouseOverTextEvent
 import java.time.Duration
 
 
-class TooltipHandler(val codeManager: CodeManager, project: OpenFileHolder) {
+class TooltipHandler(val codeManager: CodeManager, val project: OpenFileHolder) {
 
     var popup = Popup()
     var popupMsg = Label()
@@ -39,7 +39,7 @@ class TooltipHandler(val codeManager: CodeManager, project: OpenFileHolder) {
             }.invoke()
 
             if (codeManager.marked.containsKey(currLine)) {
-                popupMsg.text = CoreManager.insightClient.GetInspectionFromClass(codeManager.marked[currLine]?.inspectionClass)?.description
+                popupMsg.text = project.coreManager.insightClient.GetInspectionFromClass(codeManager.marked[currLine]?.inspectionClass)?.description
                 popup.show(area, pos.x, pos.y + 10)
 
             }

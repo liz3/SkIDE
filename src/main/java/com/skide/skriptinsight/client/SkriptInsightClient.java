@@ -13,8 +13,15 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class SkriptInsightClient {
+
+    private CoreManager coreManager;
     private InsightFutureWebSocketClient inspectionsWebSocketClient;
     private Inspection[] registeredInspections;
+
+    public SkriptInsightClient(CoreManager coreManager) {
+
+        this.coreManager = coreManager;
+    }
 
     public void initEngine() {
         /*
@@ -91,9 +98,9 @@ public class SkriptInsightClient {
 
     public void inspectScriptInAnotherThread(String script, CodeManager manager) {
         new Thread(() -> {
-            InspectionResult result = CoreManager.insightClient.inspectScript(script);
+            InspectionResult result = coreManager.insightClient.inspectScript(script);
 
-            CoreManager.insightClient.handleSkriptInspections(manager, result);
+            coreManager.insightClient.handleSkriptInspections(manager, result);
         }).start();
     }
 

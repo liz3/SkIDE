@@ -24,19 +24,18 @@ import java.lang.management.ManagementFactory
 
 class CoreManager() {
 
-    companion object {
-        lateinit var insightClient: SkriptInsightClient
-    }
+
 
 
     val guiManager = GUIManager
-    lateinit var debugger:Debugger
+    lateinit var debugger: Debugger
     lateinit var configManager: ConfigManager
     lateinit var projectManager: ProjectManager
     lateinit var serverManager: ServerManager
+    lateinit var insightClient: SkriptInsightClient
     lateinit var resourceManager: ResourceManager
     lateinit var saver: AutoSaver
-    lateinit var sockServer:SocketManager
+    lateinit var sockServer: SocketManager
     lateinit var skUnity: SkUnity
 
     private var debugLevel = DebugLevel.INFORMATION
@@ -80,7 +79,7 @@ class CoreManager() {
                         saver = AutoSaver(me)
                         skUnity = SkUnity(me)
                         sockServer = SocketManager(me)
-                        insightClient = SkriptInsightClient()
+                        insightClient = SkriptInsightClient(me)
                         insightClient.initEngine()
                         sockServer.start()
                         debugger.syserr.core = me
@@ -120,7 +119,7 @@ class CoreManager() {
                             window.stage.show()
 
                         }
-                    }catch (e:Exception) {
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                     return null
@@ -137,7 +136,7 @@ class CoreManager() {
 
 
 
-            handle(if(args.size >=1) args.first() else "")
+        handle(if (args.size >= 1) args.first() else "")
 
         if (Platform.isFxApplicationThread()) {
             GUIManager.bootstrapCallback(Stage())

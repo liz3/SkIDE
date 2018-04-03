@@ -78,7 +78,7 @@ class CodeManager {
            if(!inspectionsDisabled) {
 
                println("Running inspections with SkriptInsight!")
-               CoreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
+               project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
            }
 
 
@@ -247,7 +247,7 @@ class CodeManager {
                             }
                             autoComplete.addItem("Ignore for once") {
 
-                                val typeFullName = CoreManager.insightClient.GetInspectionFromClass(marked[lForIndex]?.inspectionClass).typeName;
+                                val typeFullName = project.coreManager.insightClient.GetInspectionFromClass(marked[lForIndex]?.inspectionClass).typeName;
                                 val typeClassName = typeFullName.substring(typeFullName.lastIndexOf('.') + 1)
                                 val startPosition = area.getAbsolutePosition(lForIndex, 0)
                                 val currentLine = area.getParagraph(lForIndex)
