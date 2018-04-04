@@ -1,6 +1,5 @@
 package com.skide.core.code
 
-import com.skide.CoreManager
 import com.skide.core.code.autocomplete.AutoCompleteCompute
 import com.skide.core.code.autocomplete.ReplaceSequence
 import com.skide.core.code.highlighting.Highlighting
@@ -237,17 +236,18 @@ class CodeManager {
 
                             autoComplete.addItem("Fix") {
 
-                                val startPosition = area.getAbsolutePosition(lForIndex, 0)
-                                val endPosition = area.getAbsolutePosition(lForIndex + 1, -1)
+                                val fixedInspection = marked[lForIndex]?.fixedInspection
+                                val startPosition = area.getAbsolutePosition(lForIndex, if (fixedInspection?.length == 0 && lForIndex != 0) -1 else 0)
+                                val endPosition = area.getAbsolutePosition(lForIndex + 1, if (lForIndex == 0) 0 else -1)
 
-                                area.replaceText(startPosition, endPosition, marked[lForIndex]?.fixedInspection)
+                                area.replaceText(startPosition, endPosition, fixedInspection)
                                 marked.remove(lForIndex)
                                 highlighter.runHighlighting()
 
                             }
                             autoComplete.addItem("Ignore for once") {
 
-                                val typeFullName = project.coreManager.insightClient.GetInspectionFromClass(marked[lForIndex]?.inspectionClass).typeName;
+                                val typeFullName = project.coreManager.insightClient.getInspectionFromClass(marked[lForIndex]?.inspectionClass).typeName;
                                 val typeClassName = typeFullName.substring(typeFullName.lastIndexOf('.') + 1)
                                 val startPosition = area.getAbsolutePosition(lForIndex, 0)
                                 val currentLine = area.getParagraph(lForIndex)
