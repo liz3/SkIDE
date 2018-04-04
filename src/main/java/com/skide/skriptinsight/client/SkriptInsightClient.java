@@ -37,7 +37,7 @@ public class SkriptInsightClient {
          */
         Thread th = new Thread(() -> {
             int nrInspections = getRegisteredInspections().length;
-            System.out.printf("SkriptInsight: Loaded %d inspection %s%n", nrInspections, nrInspections != 1 ? "s" : "");
+            System.out.printf("SkriptInsight: Loaded %d inspection%s%n", nrInspections, nrInspections != 1 ? "s" : "");
 
             inspectionsWebSocketClient = new InsightFutureWebSocketClient(
                     this,
