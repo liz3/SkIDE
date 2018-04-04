@@ -47,7 +47,6 @@ public class SkriptInsightClient {
                     InsightConstants.Paths.INSPECT_PATH
             );
             inspectionsWebSocketClient.connect();
-
         });
         th.start();
     }
@@ -92,9 +91,16 @@ public class SkriptInsightClient {
                 request.setRequestID(UUID.randomUUID().toString());
                 request.setScriptContent(script);
 
+                if (!inspectionsWebSocketClient.isOpen()) {
+                    registeredInspections = null;
+                    int nrInspections = getRegisteredInspections().length;
+                    System.out.printf("SkriptInsight: Reconnected and loaded %d inspection%s%n", nrInspections, nrInspections != 1 ? "s" : "");
+
+                    inspectionsWebSocketClient.reconnectBlocking();
+                }
                 inspectionsWebSocketClient.send(Converter.InspectionRequestToJsonString(request));
                 return Converter.InspectionResultFromJsonString(inspectionsWebSocketClient.getReturnedValue());
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
