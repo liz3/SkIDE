@@ -10,14 +10,20 @@ import com.skide.gui.controllers.CreateProjectGUIController
 import com.skide.gui.controllers.GeneralSettingsGUIController
 import com.skide.gui.controllers.ProjectGUIController
 import com.skide.gui.settings.SettingsGUIHandler
+import com.skide.include.EditorMode
 import com.skide.include.OpenFileHolder
+import com.skide.main
 import com.skide.utils.setIcon
 import javafx.application.Platform
+import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.input.MouseButton
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.HBox
+import javafx.scene.layout.VBox
 import org.fxmisc.flowless.VirtualizedScrollPane
 import org.fxmisc.richtext.CodeArea
 import org.fxmisc.richtext.LineNumberFactory
@@ -27,10 +33,14 @@ import java.util.*
 
 class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreManager) {
 
+
+    var mode = EditorMode.NORMAL
     val openFiles = HashMap<File, OpenFileHolder>()
     val settings = SettingsGui(coreManager, this)
     val window = GUIManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
     lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
+    val otherTabPanes = Vector<TabPane>()
+    var paneHolderNode: Node = HBox()
 
 
     fun startGui(): ProjectGuiEventListeners {
@@ -55,6 +65,203 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
         return eventManager
     }
+
+    fun switchMode(mode: EditorMode) {
+        if(mode == this.mode) return
+        val modeBefore = this.mode
+
+        if (mode == EditorMode.NORMAL) {
+
+            if (modeBefore != EditorMode.NORMAL) {
+                val mainTabPane = openProject.eventManager.controller.editorMainTabPane
+                val root = openProject.eventManager.controller.mainCenterAnchorPane
+                otherTabPanes.forEach {
+                    mainTabPane.tabs.addAll(it.tabs)
+                }
+                otherTabPanes.clear()
+                root.children.clear()
+                root.children.add(mainTabPane)
+                AnchorPane.setTopAnchor(mainTabPane, 0.0)
+                AnchorPane.setRightAnchor(mainTabPane, 0.0)
+                AnchorPane.setBottomAnchor(mainTabPane, 0.0)
+                AnchorPane.setLeftAnchor(mainTabPane, 0.0)
+
+                this.mode = EditorMode.NORMAL
+            }
+        }
+        if (mode == EditorMode.SIDE_SPLIT) {
+            otherTabPanes.clear()
+            val box = HBox()
+            box.layoutBoundsProperty().addListener { observable, oldValue, newValue ->
+                val total = box.width
+                val panesHeight = total / otherTabPanes.size
+                box.children.forEach {
+                    it as TabPane
+
+                    it.setPrefSize(panesHeight, box.height)
+                }
+            }
+            AnchorPane.setTopAnchor(box, 0.0)
+            AnchorPane.setRightAnchor(box, 0.0)
+            AnchorPane.setBottomAnchor(box, 0.0)
+            AnchorPane.setLeftAnchor(box, 0.0)
+            val mainTabPane = openProject.eventManager.controller.editorMainTabPane
+            val root = openProject.eventManager.controller.mainCenterAnchorPane
+            val basePane = TabPane()
+            basePane.tabs.addAll(mainTabPane.tabs)
+            mainTabPane.tabs.clear()
+            box.children.add(basePane)
+            root.children.clear()
+            root.children.add(box)
+
+            otherTabPanes.addElement(basePane)
+            this.mode = EditorMode.SIDE_SPLIT
+            paneHolderNode = box
+        }
+        if (mode == EditorMode.DOWN_SPLIT) {
+            otherTabPanes.clear()
+            val box = VBox()
+            box.layoutBoundsProperty().addListener { observable, oldValue, newValue ->
+                val total = box.height
+                val panesHeight = total / otherTabPanes.size
+                box.children.forEach {
+                    it as TabPane
+
+                    it.setPrefSize(box.width, panesHeight)
+                }
+            }
+            AnchorPane.setTopAnchor(box, 0.0)
+            AnchorPane.setRightAnchor(box, 0.0)
+            AnchorPane.setBottomAnchor(box, 0.0)
+            AnchorPane.setLeftAnchor(box, 0.0)
+            val mainTabPane = openProject.eventManager.controller.editorMainTabPane
+            val root = openProject.eventManager.controller.mainCenterAnchorPane
+            val basePane = TabPane()
+            basePane.tabs.addAll(mainTabPane.tabs)
+            mainTabPane.tabs.clear()
+            box.children.add(basePane)
+            root.children.clear()
+            root.children.add(box)
+            otherTabPanes.addElement(mainTabPane)
+            this.mode = EditorMode.DOWN_SPLIT
+            paneHolderNode = box
+
+        }
+    }
+
+    fun addTabPane(tab: Tab) {
+
+        if (mode == EditorMode.NORMAL) return
+
+        otherTabPanes.forEach {
+            if(it.tabs.contains(tab)) it.tabs.remove(tab)
+        }
+
+        if (mode == EditorMode.SIDE_SPLIT) {
+
+            Platform.runLater {
+                val tabPane = TabPane()
+                tabPane.tabs.add(tab)
+                val box = this.paneHolderNode as HBox
+                otherTabPanes.addElement(tabPane)
+                box.children.add(tabPane)
+                tabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
+
+                    if(tabPane.tabs.size == 0) {
+                        box.children.remove(tabPane)
+                        otherTabPanes.remove(tabPane)
+
+                        val total = box.width
+                        val panesHeight = total / otherTabPanes.size
+                        box.children.forEach {
+                            it as TabPane
+
+                            it.setPrefSize(panesHeight, box.height)
+                        }
+                    }
+                    if(otherTabPanes.size == 1) {
+                        println("the size is one")
+                        val mainTabPane = openProject.eventManager.controller.editorMainTabPane
+                        val root = openProject.eventManager.controller.mainCenterAnchorPane
+                        otherTabPanes.forEach {
+
+                              mainTabPane.tabs.addAll(it.tabs)
+
+
+                        }
+                        otherTabPanes.clear()
+                        root.children.clear()
+                        root.children.add(mainTabPane)
+                        AnchorPane.setTopAnchor(mainTabPane, 0.0)
+                        AnchorPane.setRightAnchor(mainTabPane, 0.0)
+                        AnchorPane.setBottomAnchor(mainTabPane, 0.0)
+                        AnchorPane.setLeftAnchor(mainTabPane, 0.0)
+
+                        this.mode = EditorMode.NORMAL
+                    }
+                }
+                val total = box.width
+                val panesHeight = total / otherTabPanes.size
+                box.children.forEach {
+                    it as TabPane
+
+                    it.setPrefSize(panesHeight, box.height)
+                }
+            }
+
+        }
+        if (mode == EditorMode.DOWN_SPLIT) {
+            Platform.runLater {
+                val tabPane = TabPane()
+                tabPane.tabs.add(tab)
+                val box = this.paneHolderNode as VBox
+                otherTabPanes.addElement(tabPane)
+                box.children.add(tabPane)
+                tabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
+
+                    if(tabPane.tabs.size == 0) {
+                        box.children.remove(tabPane)
+                        otherTabPanes.remove(tabPane)
+
+                        val total = box.height
+                        val panesHeight = total / otherTabPanes.size
+                        box.children.forEach {
+                            it as TabPane
+
+                            it.setPrefSize(box.width, panesHeight)
+                        }
+                    }
+                    if(otherTabPanes.size == 1) {
+                        val mainTabPane = openProject.eventManager.controller.editorMainTabPane
+                        val root = openProject.eventManager.controller.mainCenterAnchorPane
+                        otherTabPanes.forEach {
+                            mainTabPane.tabs.addAll(it.tabs)
+                        }
+                        otherTabPanes.clear()
+                        root.children.clear()
+                        root.children.add(mainTabPane)
+                        AnchorPane.setTopAnchor(mainTabPane, 0.0)
+                        AnchorPane.setRightAnchor(mainTabPane, 0.0)
+                        AnchorPane.setBottomAnchor(mainTabPane, 0.0)
+                        AnchorPane.setLeftAnchor(mainTabPane, 0.0)
+
+                        this.mode = EditorMode.NORMAL
+                    }
+                }
+                val total = box.height
+                val panesHeight = total / otherTabPanes.size
+                box.children.forEach {
+                    it as TabPane
+
+                    it.setPrefSize(box.height, panesHeight)
+                }
+            }
+
+
+        }
+
+    }
+
 
     fun closeHook() {
         openFiles.values.forEach {
@@ -82,7 +289,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     val projectFiles = openProject.project.fileManager.projectFiles
 }
 
-class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGuiManager, private val controller: ProjectGUIController, val coreManager: CoreManager) {
+class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGuiManager, val controller: ProjectGUIController, val coreManager: CoreManager) {
 
     var browserVisible = true
     var guiReady = {}
@@ -132,6 +339,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         guiReady()
     }
 
+
     fun openFile(f: File, isExternal: Boolean = false) {
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
@@ -148,7 +356,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             return
         }
-        val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), controller.editorMainTabPane, BorderPane(), CodeArea(), coreManager, isExternal = isExternal)
+        val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if(openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), CodeArea(), coreManager, isExternal = isExternal)
 
         openProjectGuiManager.openFiles.put(f, holder)
         setupNewTabForDisplay(holder)
@@ -368,11 +576,11 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     private fun registerEditorEvents() {
 
         controller.browserUpperHBox.setOnScroll { ev ->
-            if(browserVisible) {
+            if (browserVisible) {
                 val pane = controller.mainLeftBorderPane
                 val x = ev.deltaY
 
-                if(x < 0) {
+                if (x < 0) {
                     pane.prefWidth = pane.prefWidth - 6.0
                 } else {
                     pane.prefWidth = pane.prefWidth + 6.0

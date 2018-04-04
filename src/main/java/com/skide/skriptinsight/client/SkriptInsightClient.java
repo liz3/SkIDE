@@ -123,6 +123,7 @@ public class SkriptInsightClient {
 
         if (result == null || result.getInspectionResults() == null) return;
         for (InspectionResultElement resultElement : result.getInspectionResults()) {
+            if(manager.getIgnored().containsKey((int) resultElement.getTargetLine() - 1)) continue;
             marked.putIfAbsent((int) resultElement.getTargetLine() - 1, resultElement);
         }
         Platform.runLater(() -> manager.highlighter.runHighlighting());
