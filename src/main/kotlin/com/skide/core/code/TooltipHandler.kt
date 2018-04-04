@@ -1,6 +1,5 @@
 package com.skide.core.code
 
-import com.skide.CoreManager
 import com.skide.include.OpenFileHolder
 import com.skide.utils.getCaretLine
 import javafx.scene.control.Label
@@ -39,7 +38,7 @@ class TooltipHandler(val codeManager: CodeManager, val project: OpenFileHolder) 
             }.invoke()
 
             if (codeManager.marked.containsKey(currLine)) {
-                popupMsg.text = project.coreManager.insightClient.GetInspectionFromClass(codeManager.marked[currLine]?.inspectionClass)?.description
+                popupMsg.text = project.coreManager.insightClient.getInspectionFromClass(codeManager.marked[currLine]?.inspectionClass)?.description
                 popup.show(area, pos.x, pos.y + 10)
 
             }

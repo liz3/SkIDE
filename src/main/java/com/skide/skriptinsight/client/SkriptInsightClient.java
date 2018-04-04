@@ -115,7 +115,7 @@ public class SkriptInsightClient {
         }).start();
     }
 
-    public Inspection GetInspectionFromClass(String className) {
+    public Inspection getInspectionFromClass(String className) {
         for (Inspection inspection : getRegisteredInspections()) {
             if (inspection.getTypeName().equals(className))
                 return inspection;
