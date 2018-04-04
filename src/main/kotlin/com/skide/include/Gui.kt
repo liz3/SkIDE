@@ -9,7 +9,6 @@ import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
 import javafx.scene.control.Tab
 import javafx.scene.control.TabPane
-import javafx.scene.layout.Border
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
@@ -43,7 +42,7 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String
         }.start()
     }
 
-    fun toggleExlude() {
+    fun toggleExclude() {
 
         if (isExluded) {
 
@@ -63,7 +62,7 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String
             externStage.title = f.name
 
             externStage.setOnCloseRequest {
-                toggleExlude()
+                toggleExclude()
             }
             tabPane.tabs.remove(tab)
 
@@ -90,4 +89,9 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String
             isExluded = true
         }
     }
+}
+enum class EditorMode {
+    NORMAL,
+    SIDE_SPLIT,
+    DOWN_SPLIT
 }

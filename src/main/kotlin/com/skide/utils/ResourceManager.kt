@@ -87,14 +87,18 @@ class ResourceManager(val coreManager: CoreManager) {
         if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
 
 
-        callback(total, 2, "Downloading: https://liz3.net/sk/?function=getAllSyntax")
-        downloadFile("https://liz3.net/sk/?function=getAllSyntax", file.absolutePath)
-        callback(total, 3, "Downloading: https://liz3.net/sk/?function=getAllAddons")
-        downloadFile("https://liz3.net/sk/?function=getAllAddons", addonsFile.absolutePath)
-        callback(total, 4, "Downloading: https://liz3.net/sk/?function=getAddonSyntax&addon=skript")
-        downloadFile("https://liz3.net/sk/?function=getAddonSyntax&addon=skript", skriptDoc.absolutePath)
-        callback(total, 5, "Downloading: https://skripttools.net/api.php?t=skript&action=getlist")
-        downloadFile("https://skripttools.net/api.php?t=skript&action=getlist", skriptVersionsFile.absolutePath)
+        try {
+            callback(total, 2, "Downloading: https://liz3.net/sk/?function=getAllSyntax")
+            downloadFile("https://liz3.net/sk/?function=getAllSyntax", file.absolutePath)
+            callback(total, 3, "Downloading: https://liz3.net/sk/?function=getAllAddons")
+            downloadFile("https://liz3.net/sk/?function=getAllAddons", addonsFile.absolutePath)
+            callback(total, 4, "Downloading: https://liz3.net/sk/?function=getAddonSyntax&addon=skript")
+            downloadFile("https://liz3.net/sk/?function=getAddonSyntax&addon=skript", skriptDoc.absolutePath)
+            callback(total, 5, "Downloading: https://skripttools.net/api.php?t=skript&action=getlist")
+            downloadFile("https://skripttools.net/api.php?t=skript&action=getlist", skriptVersionsFile.absolutePath)
+        }catch (e:Exception) {
+
+        }
 
         callback(total, 6, "Reading docs")
         parseCurrentSkriptVersionDocs()

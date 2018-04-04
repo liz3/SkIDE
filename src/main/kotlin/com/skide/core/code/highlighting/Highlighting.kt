@@ -152,6 +152,7 @@ class Highlighting(val manager: CodeManager) {
 
 
             for (line in manager.marked.keys) {
+
                 try {
                     val len = area.getParagraphLength(line)
                     val spans = area.getStyleSpans(line)

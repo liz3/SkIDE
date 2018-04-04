@@ -8,7 +8,6 @@ import com.skide.gui.Menus
 import com.skide.include.Node
 import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
-import com.skide.skriptinsight.client.utils.InsightConstants
 import com.skide.skriptinsight.model.InspectionResultElement
 import com.skide.utils.*
 import javafx.application.Platform
@@ -43,6 +42,7 @@ class CodeManager {
     lateinit var hBox: HBox
     private val parser = SkriptParser()
     val marked = ConcurrentHashMap<Int, InspectionResultElement>()
+    val ignored = HashMap<Int, String>()
     private var inspectionsDisabled = false
 
     var contextMenu: ContextMenu? = null
@@ -77,6 +77,9 @@ class CodeManager {
            if(!inspectionsDisabled) {
 
                println("Running inspections with SkriptInsight!")
+               val toRemove = Vector<Int>()
+               ignored.forEach { if(area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
+               toRemove.forEach { ignored.remove(it) }
                project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
            }
 
@@ -246,17 +249,8 @@ class CodeManager {
 
                             }
                             autoComplete.addItem("Ignore for once") {
-
-                                val typeFullName = project.coreManager.insightClient.getInspectionFromClass(marked[lForIndex]?.inspectionClass).typeName;
-                                val typeClassName = typeFullName.substring(typeFullName.lastIndexOf('.') + 1)
-                                val startPosition = area.getAbsolutePosition(lForIndex, 0)
-                                val currentLine = area.getParagraph(lForIndex)
-                                val whitespaces = currentLine.text.takeWhile(Char::isWhitespace)
-
-
-                                area.insertText(startPosition, whitespaces + "#" + InsightConstants.Misc.DISABLE_ONCE_INSPECTION_PREFIX + typeClassName + System.lineSeparator())
-
                                 marked.remove(lForIndex)
+                                ignored.put(lForIndex, area.paragraphs[lForIndex].text)
                                 highlighter.runHighlighting()
                             }
                             autoComplete.addItem("Disable Inspections for current Session") {
