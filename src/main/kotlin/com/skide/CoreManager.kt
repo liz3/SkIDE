@@ -33,6 +33,7 @@ class CoreManager() {
     lateinit var projectManager: ProjectManager
     lateinit var serverManager: ServerManager
     lateinit var insightClient: SkriptInsightClient
+    lateinit var insightsManager:InsightsManager
     lateinit var resourceManager: ResourceManager
     lateinit var saver: AutoSaver
     lateinit var sockServer: SocketManager
@@ -56,7 +57,6 @@ class CoreManager() {
             stage.sizeToScene()
             stage.centerOnScreen()
             stage.isResizable = false
-            stage.isAlwaysOnTop = true
             controller.view.image = Image(javaClass.getResource("/splash.png").toExternalForm())
             stage.show()
             val task = object : Task<Void>() {
@@ -78,9 +78,10 @@ class CoreManager() {
                         resourceManager = ResourceManager(me)
                         saver = AutoSaver(me)
                         skUnity = SkUnity(me)
+                        insightsManager = InsightsManager(me)
                         sockServer = SocketManager(me)
                         insightClient = SkriptInsightClient(me)
-                        insightClient.initEngine()
+
                         sockServer.start()
                         debugger.syserr.core = me
 
@@ -103,7 +104,15 @@ class CoreManager() {
                             updateProgress(50.0 + amount, 100.0)
                             updateMessage(name)
                         })
-                        updateProgress(90.0, 100.0)
+
+
+                        updateProgress(80.0, 100.0)
+                        updateMessage("Starting insights")
+                        insightsManager.setup()
+
+
+
+                        updateProgress(96.0, 100.0)
                         updateMessage("Starting gui...")
                         Prompts.theme = configManager.get("theme") as String
                         Prompts.configManager = configManager

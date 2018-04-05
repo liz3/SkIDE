@@ -16,6 +16,7 @@ class Highlighting(val manager: CodeManager) {
     var sub = x.subscribe({
         runHighlighting()
     })
+
     fun runHighlighting() {
         if (!changed) {
             changed = true
@@ -54,7 +55,7 @@ class Highlighting(val manager: CodeManager) {
         sub.unsubscribe()
 
         sub = x.subscribe({
-           runHighlighting()
+            runHighlighting()
         })
         val text = area.text
         area.clear()
@@ -148,20 +149,23 @@ class Highlighting(val manager: CodeManager) {
         return if (!case) Pattern.compile("(?<SEARCH>$content)", Pattern.CASE_INSENSITIVE) else Pattern.compile("(?<SEARCH>$content)")
     }
 
-    fun mapMarked(callback: () ->Unit) {
+    fun mapMarked(callback: () -> Unit) {
 
 
-            for (line in manager.marked.keys) {
+        for (line in manager.marked.keys) {
 
-                try {
-                    val len = area.getParagraphLength(line)
-                    val spans = area.getStyleSpans(line)
-                    area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, "marked"))
-                } catch (ex: IndexOutOfBoundsException) {
-                }
+            try {
+                val len = area.getParagraphLength(line)
+                val text = area.paragraphs[line].text
+                val offset = text.takeWhile { it.isWhitespace() }.length
+                val substr = text.takeLastWhile { it.isWhitespace() }.length
+                val spans = area.getStyleSpans(line)
+                area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, offset, len - offset - substr, "marked"))
+            } catch (ex: IndexOutOfBoundsException) {
             }
+        }
 
-            callback()
+        callback()
 
 
     }

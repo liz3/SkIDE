@@ -52,6 +52,8 @@ class CodeManager {
 
     var lastPos = 0
 
+
+    
     fun setup(project: OpenFileHolder) {
 
         rootStructureItem = TreeItem(project.name)

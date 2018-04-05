@@ -11,12 +11,12 @@ public class StyleSpanMerger {
 
 
     public static StyleSpans<Collection<String>> merge(@Nullable StyleSpans<Collection<String>>
-                                                               spans, int lineLength, String cssClass) {
+                                                               spans, int lineLength, int offset, int styleLength, String cssClass) {
         if (spans != null) {
             StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder();
-            builder.add(Collections.emptyList(), 0);
-            builder.add(Collections.singletonList(cssClass), lineLength);
-            builder.add(Collections.emptyList(), 0);
+            builder.add(Collections.emptyList(), offset);
+            builder.add(Collections.singletonList(cssClass), styleLength);
+            builder.add(Collections.emptyList(), lineLength - offset - styleLength);
             StyleSpans<Collection<String>> spansToGoOnTop = builder.create();
             spans = spans.overlay(spansToGoOnTop, (bottomSpan, list) -> {
                 List<String> l = new ArrayList<>(bottomSpan.size() + list.size());
