@@ -179,7 +179,6 @@ fun CodeArea.getInfo(manager: CodeManager): CurrentStateInfo {
 
     }
 
-
     return CurrentStateInfo(currentNode!!, actualCurrentString, column, currentWord, beforeStr, afterStr, charBeforeCaret, charAfterCaret, inString, inBrace)
 }
 

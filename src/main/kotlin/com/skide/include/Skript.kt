@@ -65,6 +65,9 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
         if (content.toLowerCase().startsWith("loop ")) {
             theType = NodeType.LOOP
         }
+        if (content.toLowerCase().startsWith("while ")) {
+            theType = NodeType.LOOP
+        }
         if (content.toLowerCase().startsWith("trigger:")) {
             theType = NodeType.TRIGGER
         }

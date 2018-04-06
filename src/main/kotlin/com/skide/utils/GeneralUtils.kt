@@ -16,24 +16,16 @@ import java.io.FileInputStream
 import java.util.zip.ZipInputStream
 
 
-/**
- * Unzip it
- * @param zipFile input zip file
- * @param output zip file output folder
- */
-fun unZipIt(zipFile: String, outputFolder: String) {
+
+fun unzip(zipFile: String, outputFolder: String) {
 
     val buffer = ByteArray(1024)
     try {
 
         val folder = File(outputFolder)
         if (!folder.exists()) folder.mkdir()
-
-
         val zis = ZipInputStream(FileInputStream(zipFile))
-        //get the zipped file list entry
         var ze: ZipEntry? = zis.nextEntry
-
         while (ze != null) {
 
             val fileName = ze.name

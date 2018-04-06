@@ -76,7 +76,7 @@ class CodeManager {
                }
            }
 
-           if(!inspectionsDisabled) {
+           if(!inspectionsDisabled && !autoComplete.stopped) {
 
                println("Running inspections with SkriptInsight!")
                val toRemove = Vector<Int>()

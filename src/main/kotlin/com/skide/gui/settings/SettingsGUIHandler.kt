@@ -98,7 +98,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
                 if (newServerAdded) {
                     newServerAdded = false
                 }
-                serverManager.saveServerConfigution(currentSelected())
+                if(currentSelected() != null)serverManager.saveServerConfigution(currentSelected()!!)
             }
 
             deleted.clear()
@@ -117,7 +117,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
                 if (newServerAdded) {
                     newServerAdded = false
                 }
-                serverManager.saveServerConfigution(currentSelected())
+                if(currentSelected() != null) serverManager.saveServerConfigution(currentSelected()!!)
             }
 
             deleted.clear()
@@ -129,7 +129,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         }
         ctrl.serverStartAgsTextField.textProperty().addListener { _, _, newValue ->
 
-            currentSelected().configuration.startAgrs = newValue
+            currentSelected()?.configuration?.startAgrs = newValue
         }
         ctrl.serverServerList.selectionModel.selectedItemProperty().addListener { _, oldValue, newValue ->
 
@@ -150,15 +150,15 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.serverServertPathChooseBtn.setOnAction {
             val file = getFile("Choose the Bukkit/Spigot Jar File")
             if (file != null) {
-                currentSelected().configuration.apiPath = file
+                currentSelected()?.configuration?.apiPath = file
                 ctrl.serverServerPathTextField.text = file.absolutePath
             }
         }
         ctrl.serverServerFolderPathChooseBtn.setOnAction {
             val file = getDir("Choose the Folder path")
             if (file != null) {
-                currentSelected().configuration.folder = file
-                currentSelected().confFile = File(file, ".server.skide")
+                currentSelected()?.configuration?.folder = file
+                currentSelected()?.confFile = File(file, ".server.skide")
                 ctrl.serverServerFolderPathTextField.text = file.absolutePath
             }
         }
@@ -172,17 +172,18 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             val file = File(ctrl.serverAddAddonFromFileTextField.text)
 
             if (file.exists()) {
-                currentSelected().configuration.addons.forEach {
+
+                currentSelected()?.configuration?.addons?.forEach {
                     if (it.file.absolutePath == file.absolutePath) return@setOnAction
                     println("Returning")
                 }
                 val item = ServerAddon(file.name, file, false)
-                currentSelected().configuration.addons.addElement(item)
+                currentSelected()?.configuration?.addons?.addElement(item)
                 ctrl.serverAddonList.items.add(item)
             }
         }
         ctrl.serverSkriptVersionComboBox.setOnAction {
-            if (currentSelected() != null) currentSelected().configuration.skriptVersion = ctrl.serverSkriptVersionComboBox.selectionModel.selectedItem as String
+            if (currentSelected() != null) currentSelected()?.configuration?.skriptVersion = ctrl.serverSkriptVersionComboBox.selectionModel.selectedItem as String
         }
         ctrl.serverServerDeleteBtn.setOnAction {
             deleted.add(currentSelected())
@@ -193,7 +194,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             if (ctrl.serverAddonList.selectionModel.selectedItem != null) {
                 val item = ctrl.serverAddonList.selectionModel.selectedItem
                 ctrl.serverAddonList.items.remove(item)
-                currentSelected().configuration.addons.remove(item)
+                currentSelected()?.configuration?.addons?.remove(item)
                 println()
             }
         }
@@ -224,12 +225,12 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
     private fun setNewValues() {
 
-        ctrl.serverServerNameTextField.text = currentSelected().configuration.name
-        ctrl.serverServerFolderPathTextField.text = currentSelected().configuration.folder.absolutePath
-        ctrl.serverServerPathTextField.text = currentSelected().configuration.apiPath.absolutePath
-        ctrl.serverSkriptVersionComboBox.selectionModel.select(currentSelected().configuration.skriptVersion)
+        ctrl.serverServerNameTextField.text = currentSelected()?.configuration?.name
+        ctrl.serverServerFolderPathTextField.text = currentSelected()?.configuration?.folder?.absolutePath
+        ctrl.serverServerPathTextField.text = currentSelected()?.configuration?.apiPath?.absolutePath
+        ctrl.serverSkriptVersionComboBox.selectionModel.select(currentSelected()?.configuration?.skriptVersion)
         ctrl.serverAddonList.items.clear()
-        currentSelected().configuration.addons.forEach {
+        currentSelected()?.configuration?.addons?.forEach {
             ctrl.serverAddonList.items.add(it)
         }
     }
@@ -264,5 +265,12 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         return dirChooser.showDialog(fileChooserWindow)
     }
 
-    private fun currentSelected() = ctrl.serverServerList.selectionModel.selectedItem
+    private fun currentSelected() : Server? {
+
+        if(ctrl.serverServerList.selectionModel.selectedItem == null) {
+            Prompts.infoCheck("Error", "Create a Serer first", "Please create or select a Server first before assigning things!", Alert.AlertType.ERROR)
+            return null
+        }
+        return ctrl.serverServerList.selectionModel.selectedItem
+    }
 }

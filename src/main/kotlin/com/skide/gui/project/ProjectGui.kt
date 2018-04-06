@@ -13,6 +13,8 @@ import com.skide.gui.controllers.ProjectGUIController
 import com.skide.gui.settings.SettingsGUIHandler
 import com.skide.include.EditorMode
 import com.skide.include.OpenFileHolder
+import com.skide.utils.OperatingSystemType
+import com.skide.utils.getOS
 import com.skide.utils.setIcon
 import javafx.application.Platform
 import javafx.scene.Node
@@ -513,6 +515,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private fun setupMainMenu() {
 
+        if(getOS() == OperatingSystemType.MAC_OS) controller.mainBenuBar.useSystemMenuBarProperty().set(true)
         val fileMenu = controller.mainBenuBar.menus[0]
         val closeItem = fileMenu.items.first()
         fileMenu.items.remove(closeItem)

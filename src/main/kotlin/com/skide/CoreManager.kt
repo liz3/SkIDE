@@ -108,26 +108,28 @@ class CoreManager() {
 
                         updateProgress(80.0, 100.0)
                         updateMessage("Starting insights")
-                        insightsManager.setup()
+                        insightsManager.setup {
+                            updateProgress(96.0, 100.0)
+                            updateMessage("Starting gui...")
+                            Prompts.theme = configManager.get("theme") as String
+                            Prompts.configManager = configManager
+                            attachDebugger()
+                            Platform.runLater {
+                                stage.close()
 
 
+                                GUIManager.discord.update("In the main menu", "Idle")
+                                val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, Stage())
+                                stage.isResizable = false
+                                (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
+                                window.stage.show()
 
-                        updateProgress(96.0, 100.0)
-                        updateMessage("Starting gui...")
-                        Prompts.theme = configManager.get("theme") as String
-                        Prompts.configManager = configManager
-                        attachDebugger()
-                        Platform.runLater {
-                            stage.close()
-
-
-                            GUIManager.discord.update("In the main menu", "Idle")
-                            val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, Stage())
-                            stage.isResizable = false
-                            (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
-                            window.stage.show()
-
+                            }
                         }
+
+
+
+
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
