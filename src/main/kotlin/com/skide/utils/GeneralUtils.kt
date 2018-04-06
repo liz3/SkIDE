@@ -9,7 +9,61 @@ import java.awt.im.InputContext
 import java.util.ArrayList
 import java.io.File
 import kotlin.math.ln
+import java.io.IOException
+import java.io.FileOutputStream
+import java.util.zip.ZipEntry
+import java.io.FileInputStream
+import java.util.zip.ZipInputStream
 
+
+/**
+ * Unzip it
+ * @param zipFile input zip file
+ * @param output zip file output folder
+ */
+fun unZipIt(zipFile: String, outputFolder: String) {
+
+    val buffer = ByteArray(1024)
+    try {
+
+        val folder = File(outputFolder)
+        if (!folder.exists()) folder.mkdir()
+
+
+        val zis = ZipInputStream(FileInputStream(zipFile))
+        //get the zipped file list entry
+        var ze: ZipEntry? = zis.nextEntry
+
+        while (ze != null) {
+
+            val fileName = ze.name
+            val newFile = File(outputFolder + File.separator + fileName)
+
+            File(newFile.parent).mkdirs()
+
+            val fos = FileOutputStream(newFile)
+
+            var len: Int
+            while (true) {
+                len = zis.read(buffer)
+                if(len <= 0) break
+                fos.write(buffer, 0, len)
+            }
+
+            fos.close()
+            ze = zis.nextEntry
+        }
+
+        zis.closeEntry()
+        zis.close()
+
+
+
+    } catch (ex: IOException) {
+        ex.printStackTrace()
+    }
+
+}
 
 fun adjustVersion(value: String): String {
 
