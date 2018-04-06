@@ -13,183 +13,215 @@ import kotlin.collections.HashMap
 
 class RunningObjectGuiBinder(val reloadBtn: Button, val stopBtn: Button, val srv: RunningServerManager, var runner: Any)
 
-class OpenProject(val project: Project, val coreManager: CoreManager) {
-
+class OpenProject(val project: Project, val coreManager: CoreManager){
     val guiHandler = OpenProjectGuiManager(this, coreManager)
+
     val eventManager = guiHandler.startGui()
+
     val addons = HashMap<String, Vector<AddonItem>>()
+
     val compiler = SkCompiler()
+
     val runConfs = HashMap<Server, RunningObjectGuiBinder>()
 
-    init {
+    init{
         updateAddons()
     }
 
-    fun updateAddons() {
-
+    fun updateAddons(){
         addons.clear()
 
-        project.fileManager.addons.forEach {
+        project.fileManager.addons.forEach{
             val addonName = it.key
+
             val version = Version(adjustVersion(it.value))
+
             addons[addonName] = Vector()
 
-            coreManager.resourceManager.addons[addonName]!!.versions.forEach { currAddonVersion ->
+            coreManager.resourceManager.addons[addonName]!!.versions.forEach{ currAddonVersion ->
                 val addonVersion = Version(adjustVersion(currAddonVersion.key))
+
                 val result = version.compareTo(addonVersion)
 
-                if (result < 0) {
-                } else {
+                if (result < 0){
+                    //unused
+                }else{
                     addons[addonName]!! += currAddonVersion.value
                 }
 
             }
         }
+
         addons["Skript"] = Vector()
+
         addons["Skript"]!! += coreManager.resourceManager.skriptDocList
+
         println(addons.size)
     }
 
-    fun run(server: Server, configuration: CompileOption) {
-
-        if (!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running) {
+    fun run(server: Server, configuration: CompileOption){
+        if (!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running){
             runConfs.remove(server)
-            val runningServer = coreManager.serverManager.getServerForRun(server) { srv ->
-                compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
 
-                    if (configuration.method == CompileOptionType.PER_FILE) {
-                        configuration.includedFiles.forEach {
+            val runningServer = coreManager.serverManager.getServerForRun(server){ srv ->
+                compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"),{},{
+                    if (configuration.method == CompileOptionType.PER_FILE){
+                        configuration.includedFiles.forEach{
                             srv.sendCommand("sk reload ${it.name}")
                         }
-                    } else {
+                    }else{
                         srv.sendCommand("sk reload ${project.name}.sk")
-
                     }
                 })
             }
+
             val guiReturn = guiHandler.lowerTabPaneEventManager.getServerTab(runningServer)
-            guiReturn.second.setOnAction {
+
+            guiReturn.second.setOnAction{
                 runningServer.sendCommand("rl")
             }
-            guiReturn.third.setOnAction {
+
+            guiReturn.third.setOnAction{
                 runningServer.sendCommand("stop")
             }
+
             runConfs[server] = RunningObjectGuiBinder(guiReturn.second, guiReturn.third, runningServer, configuration)
+
             return
         }
 
-        if (runConfs.containsKey(server) && runConfs[server]!!.runner === configuration) {
-            compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
-
-                if (configuration.method == CompileOptionType.PER_FILE) {
-                    configuration.includedFiles.forEach {
+        if (runConfs.containsKey(server) && runConfs[server]!!.runner === configuration){
+            compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"),{},{
+                if (configuration.method == CompileOptionType.PER_FILE){
+                    configuration.includedFiles.forEach{
                         runConfs[server]!!.srv.sendCommand("sk reload ${it.name}")
                     }
-                } else {
+                }else{
                     runConfs[server]!!.srv.sendCommand("sk reload ${project.name}.sk")
-
                 }
             })
-        } else {
+        }else{
             runConfs[server]!!.runner = configuration
-            compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
-                if (configuration.method == CompileOptionType.PER_FILE) {
-                    configuration.includedFiles.forEach {
+
+            compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"),{},{
+                if (configuration.method == CompileOptionType.PER_FILE){
+                    configuration.includedFiles.forEach{
                         runConfs[server]!!.srv.sendCommand("sk reload ${it.name}")
                     }
-                } else {
+                }else{
                     runConfs[server]!!.srv.sendCommand("sk reload ${project.name}.sk")
-
                 }
             })
         }
     }
 
-    fun run(server: Server, file: OpenFileHolder) {
-
-        if (!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running) {
+    fun run(server: Server, file: OpenFileHolder){
+        if (!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running){
             runConfs.remove(server)
-            val runningServer = coreManager.serverManager.getServerForRun(server) {
+
+            val runningServer = coreManager.serverManager.getServerForRun(server){
                 it.setSkriptFile(file.name, file.area.text)
             }
+
             val guiReturn = guiHandler.lowerTabPaneEventManager.getServerTab(runningServer)
-            guiReturn.second.setOnAction {
+
+            guiReturn.second.setOnAction{
                 runningServer.sendCommand("rl")
             }
-            guiReturn.third.setOnAction {
+
+            guiReturn.third.setOnAction{
                 runningServer.sendCommand("stop")
             }
+
             runConfs[server] = RunningObjectGuiBinder(guiReturn.second, guiReturn.third, runningServer, file)
+
             return
         }
 
-        if (runConfs.containsKey(server) && runConfs[server]!!.runner === file) {
+        if (runConfs.containsKey(server) && runConfs[server]!!.runner === file){
             runConfs[server]!!.srv.setSkriptFile(file.name, file.area.text)
-        } else {
+        }else{
             runConfs[server]!!.runner = file
+
             runConfs[server]!!.srv.setSkriptFile(file.name, file.area.text)
         }
-
     }
 
-
-    fun renameProject(name: String) {
+    fun renameProject(name: String){
         coreManager.configManager.alterProject(project.id, PointerHolder(project.id, name, project.folder.absolutePath))
+
         project.name = name
+
         guiHandler.window.stage.title = name
-        project.fileManager.rewriteConfig()
 
+        project.fileManager.rewriteConfig()
     }
 
-    fun changeSkriptVersion(version: String) {
+    fun changeSkriptVersion(version: String){
         project.skriptVersion = version
+
         project.fileManager.rewriteConfig()
     }
 
-    fun createNewFile(orig: String) {
+    fun createNewFile(orig: String){
         val name = if (!orig.contains(".")) "$orig.sk" else orig
+
         project.fileManager.addFile(name)
+
         eventManager.updateProjectFilesTreeView()
+
         eventManager.openFile(project.fileManager.projectFiles[name]!!)
     }
 
-    fun reName(oldName: String, newName: String, path: String) {
-
+    fun reName(oldName: String, newName: String, path: String){
         project.fileManager.reNameFile(oldName, newName)
 
         val toReplace = Vector<OpenFileHolder>()
-        for ((file, holder) in guiHandler.openFiles) {
-            if (file.absolutePath == path) {
+
+        for ((file, holder) in guiHandler.openFiles){
+            if (file.absolutePath == path){
                 toReplace.addElement(holder)
             }
         }
-        toReplace.forEach {
+
+        toReplace.forEach{
             guiHandler.openFiles.remove(it.f)
 
             it.tab.text = newName
+
             val holder = OpenFileHolder(this, project.fileManager.projectFiles[newName]!!, it.name, it.tab, it.tabPane, it.borderPane, it.area, coreManager, it.codeManager)
-            guiHandler.openFiles.put(project.fileManager.projectFiles[newName]!!, holder)
+
+            guiHandler.openFiles[project.fileManager.projectFiles[newName]!!] = holder
+
             eventManager.registerEventsForNewFile(holder)
         }
+
         toReplace.clear()
+
         System.gc()
+
         eventManager.updateProjectFilesTreeView()
     }
 
-    fun delete(f: File) {
-
+    fun delete(f: File){
         val toReplace = Vector<File>()
-        for ((file, _) in guiHandler.openFiles) {
-            if (file.absolutePath == f.absolutePath)
+
+        for ((file, _) in guiHandler.openFiles){
+            if (file.absolutePath == f.absolutePath) {
                 toReplace.addElement(file)
+            }
         }
-        toReplace.forEach {
+
+        toReplace.forEach{
             val value = guiHandler.openFiles.remove(it)
+
             value?.tabPane?.tabs?.remove(value.tab)
         }
+
         project.fileManager.deleteFile(f.name)
+
         eventManager.updateProjectFilesTreeView()
+
         System.gc()
     }
-
 }

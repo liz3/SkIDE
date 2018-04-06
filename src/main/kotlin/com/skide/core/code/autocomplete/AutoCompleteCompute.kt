@@ -21,15 +21,13 @@ import org.reactfx.value.Var
 import java.util.*
 import kotlin.collections.HashMap
 
-class ListHolderItem(val name: String, val caller: (info: CurrentStateInfo) -> Unit, val description: String = "", val hideListAfter: Boolean = true) {
-
-    override fun toString(): String {
+class ListHolderItem(val name: String, val caller: (info: CurrentStateInfo) -> Unit, val description: String = "", val hideListAfter: Boolean = true){
+    override fun toString(): String{
         return name
     }
 }
 
-class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder) {
-
+class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder){
     val area = manager.area
 
     var stopped = false
@@ -37,285 +35,342 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     var globalCompleteVisible = false
 
     val addonSupported = project.openProject.addons
+
     val removed = Vector<ListHolderItem>()
+
     val fillList = ListView<ListHolderItem>()
+
     val popUp = Popup()
 
     var currentLine = 0
+
     var lineBefore = 0
 
     var wasJustCalled = false
+
     var colPos = 0
+
     var coldPosOld = 0
 
-    init {
-
-        if (project.coreManager.configManager.get("auto_complete") == "true") {
+    init{
+        if (project.coreManager.configManager.get("auto_complete") == "true"){
             setupContextPopup()
+
             registerEventListener()
 
             currentLine = area.getCaretLine()
+
             lineBefore = currentLine
         }
-
     }
 
-    private fun setupContextPopup() {
+    private fun setupContextPopup(){
         val caretXOffset = 0.0
-        val caretYOffset = 0.0
-        val caretBounds = nonNullValuesOf(area.caretBoundsProperty())
-        val caretPopupSub = EventStreams.combine<Optional<Bounds>, Boolean>(caretBounds, Var.newSimpleVar(true).values())
-                .subscribe { tuple3 ->
-                    val opt = tuple3._1
-                    if (opt.isPresent) {
-                        val b = opt.get()
-                        popUp.x = b.maxX + caretXOffset
-                        popUp.y = b.maxY + caretYOffset
-                    } else {
 
-                    }
+        val caretYOffset = 0.0
+
+        val caretBounds = nonNullValuesOf(area.caretBoundsProperty())
+
+        val caretPopupSub = EventStreams.combine<Optional<Bounds>, Boolean>(caretBounds, Var.newSimpleVar(true).values())
+            .subscribe{ tuple3 ->
+                val opt = tuple3._1
+
+                if (opt.isPresent){
+                    val b = opt.get()
+
+                    popUp.x = b.maxX + caretXOffset
+
+                    popUp.y = b.maxY + caretYOffset
+                }else{
+                    //unused
                 }
+            }
 
         fillList.setPrefSize(280.0, 200.0)
+
         popUp.content.add(fillList)
+
         caretPopupSub.and(caretBounds.subscribe({ }))
+
         area.requestFollowCaret()
 
-
-        fillList.setOnMouseClicked { e ->
-            if (e.clickCount == 2) {
-                if (fillList.selectionModel.selectedItem != null) {
+        fillList.setOnMouseClicked{ e ->
+            if (e.clickCount == 2){
+                if (fillList.selectionModel.selectedItem != null){
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
-                    value.caller.invoke(area.getInfo(manager))
-                    if (!globalCompleteVisible && value.hideListAfter) hideList()
 
+                    value.caller.invoke(area.getInfo(manager))
+
+                    if (!globalCompleteVisible && value.hideListAfter){
+                        hideList()
+                    }
                 }
             }
         }
 
-        fillList.setOnKeyPressed { ev ->
-            if (ev.code == KeyCode.ESCAPE) {
+        fillList.setOnKeyPressed{ ev ->
+            if (ev.code == KeyCode.ESCAPE){
                 hideList()
-
             }
-            if (ev.code == KeyCode.ENTER) {
+
+            if (ev.code == KeyCode.ENTER){
                 ev.consume()
-                if (fillList.selectionModel.selectedItem != null) {
+
+                if (fillList.selectionModel.selectedItem != null){
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
+
                     value.caller.invoke(area.getInfo(manager))
-                    if (value.hideListAfter) hideList()
+
+                    if (value.hideListAfter){
+                        hideList()
+                    }
                 }
             }
-
-
         }
-
-
     }
 
+    fun addItem(label: String, hideListAfter: Boolean = true, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller, "", hideListAfter))
 
-     fun addItem(label: String, hideListAfter: Boolean = true, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller, "", hideListAfter))
-     fun addItem(label: String, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller, "", true))
+    fun addItem(label: String, caller: (info: CurrentStateInfo) -> Unit) = fillList.items.add(ListHolderItem(label, caller, "", true))
 
-
-    private fun registerEventListener() {
-
-        area.caretPositionProperty().addListener { _, _, _ ->
-
-
+    private fun registerEventListener(){
+        area.caretPositionProperty().addListener{ _, _, _ ->
             lineBefore = currentLine
+
             currentLine = area.getCaretLine()
+
             coldPosOld = colPos
+
             colPos = area.caretColumn
-            if (manager.mousePressed || stopped) {
-                if (lineBefore != currentLine && manager.sequenceReplaceHandler.computing) manager.sequenceReplaceHandler.cancel()
+
+            if (manager.mousePressed || stopped){
+                if (lineBefore != currentLine && manager.sequenceReplaceHandler.computing){
+                    manager.sequenceReplaceHandler.cancel()
+                }
 
                 return@addListener
             }
 
-            if (lineBefore != currentLine) {
+            if (lineBefore != currentLine){
                 onLineChange()
-            } else {
+            }else{
                 onColumnChange()
             }
-
         }
     }
 
-    private fun onColumnChange() {
-
-        if (colPos == (coldPosOld + 1)) {
-            if (wasJustCalled) {
+    private fun onColumnChange(){
+        if (colPos == (coldPosOld + 1)){
+            if (wasJustCalled){
                 wasJustCalled = false
-            } else {
-
-                if (area.caretColumn == 0) {
+            }else{
+                if (area.caretColumn == 0){
                     val node = EditorUtils.getLineNode(area.getCaretLine(), manager.parseResult)
-                    if (node?.tabLevel == 0) showGlobalAutoComplete(node)
 
-                } else {
-
+                    if (node?.tabLevel == 0){
+                        showGlobalAutoComplete(node)
+                    }
+                }else{
                     val curr = EditorUtils.getLineNode(currentLine, manager.parseResult)
-                    if (globalCompleteVisible) {
+
+                    if (globalCompleteVisible){
                         showGlobalAutoComplete(curr!!)
+
                         return
                     }
-                    if (curr?.content != "") showLocalAutoComplete(true) else manager.parseResult = manager.parseStructure()
+
+                    if (curr?.content != ""){
+                        showLocalAutoComplete(true)
+                    }else{
+                        manager.parseResult = manager.parseStructure()
+                    }
                 }
-
-
             }
         }
-        if (colPos == (coldPosOld - 1)) {
-            if (popUp.isShowing) {
+
+        if (colPos == (coldPosOld - 1)){
+            if (popUp.isShowing){
                 showLocalAutoComplete(true)
             }
         }
     }
 
-
-    fun hideList() {
+    fun hideList(){
         globalCompleteVisible = false
-        if (popUp.isShowing) {
+
+        if (popUp.isShowing){
             removed.clear()
+
             popUp.hide()
+
             fillList.items.clear()
-            Platform.runLater {
+
+            Platform.runLater{
                 area.requestFocus()
             }
         }
     }
 
-    fun showLocalAutoComplete(movedRight: Boolean) {
-
-
+    fun showLocalAutoComplete(movedRight: Boolean){
         val currentInfo = area.getInfo(manager)
 
-        if (globalCompleteVisible) {
+        if (globalCompleteVisible){
             showGlobalAutoComplete(currentInfo.currentNode)
+
             return
         }
 
-        if ((currentInfo.column - 2) >= 0) {
-
-            if (currentInfo.actualCurrentString[currentInfo.column - 2] == ' ' && currentInfo.charBeforeCaret == " ") {
+        if ((currentInfo.column - 2) >= 0){
+            if (currentInfo.actualCurrentString[currentInfo.column - 2] == ' ' && currentInfo.charBeforeCaret == " "){
                 hideList()
+
                 return
             }
         }
 
-
-        if (popUp.isShowing) {
-
-
+        if (popUp.isShowing){
             val replaced = getWordSearchReplace(currentInfo.currentWord, currentInfo)
-
 
             val toRemove = Vector<ListHolderItem>()
 
-            fillList.items.filterNotTo(toRemove) { it.name.startsWith(replaced, true) }
-            toRemove.forEach {
+            fillList.items.filterNotTo(toRemove){
+                it.name.startsWith(replaced, true)
+            }
+
+            toRemove.forEach{
                 fillList.items.remove(it)
+
                 removed.add(it)
             }
-            toRemove.clear()
-            removed.filterTo(toRemove) { it.name.startsWith(replaced, true) }
 
-            toRemove.forEach {
+            toRemove.clear()
+
+            removed.filterTo(toRemove){
+                it.name.startsWith(replaced, true)
+            }
+
+            toRemove.forEach{
                 removed.remove(it)
+
                 fillList.items.add(it)
             }
+
             fillList.refresh()
 
-            if (fillList.items.size == 0) {
+            if (fillList.items.size == 0){
                 hideList()
-
             }
 
             return
-        } else {
+        }else{
             if (currentInfo.inString) return
-            if (currentInfo.currentWord.endsWith("\"")) return
-            if (currentInfo.currentWord.endsWith("{")) return
-            if (currentInfo.currentNode.nodeType == NodeType.COMMENT) return
-            if (currentInfo.currentWord.endsWith(":") ||
-                    currentInfo.beforeString.endsWith(")") || currentInfo.beforeString.endsWith("(")) return
-            manager.parseResult = manager.parseStructure()
-            fillList.items.clear()
-            removed.clear()
-            val toAdd = HashMap<String, Pair<NodeType, (info: CurrentStateInfo) -> Unit>>()
-            val root = EditorUtils.getRootOf(currentInfo.currentNode)
 
+            if (currentInfo.currentWord.endsWith("\"")) return
+
+            if (currentInfo.currentWord.endsWith("{")) return
+
+            if (currentInfo.currentNode.nodeType == NodeType.COMMENT) return
+
+            if (currentInfo.currentWord.endsWith(":") || currentInfo.beforeString.endsWith(")") || currentInfo.beforeString.endsWith("(")) return
+
+            manager.parseResult = manager.parseStructure()
+
+            fillList.items.clear()
+
+            removed.clear()
+
+            val toAdd = HashMap<String, Pair<NodeType, (info: CurrentStateInfo) -> Unit>>()
+
+            val root = EditorUtils.getRootOf(currentInfo.currentNode)
 
             val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, manager.parseResult, currentInfo.currentNode)
 
-            if (root.nodeType == NodeType.FUNCTION && root.fields.contains("ready")) {
+            if (root.nodeType == NodeType.FUNCTION && root.fields.contains("ready")){
                 val params = root.fields["params"] as Vector<*>
 
-                params.forEach {
+                params.forEach{
                     it as MethodParameter
-                    toAdd["_" + it.name + " :" + it.type] = Pair(NodeType.SET_VAR, { info ->
+
+                    toAdd["_" + it.name + " :" + it.type] = Pair(NodeType.SET_VAR,{ info ->
                         area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.name + "}")
                     })
                 }
             }
-            if (root.nodeType == NodeType.EVENT || root.nodeType == NodeType.COMMAND) {
-                toAdd["player:Player"] = Pair(NodeType.SET_VAR, { info ->
+
+            if (root.nodeType == NodeType.EVENT || root.nodeType == NodeType.COMMAND){
+                toAdd["player:Player"] = Pair(NodeType.SET_VAR,{ info ->
                     area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "player")
                 })
             }
 
-            if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
-
-                for ((path, nodes) in manager.crossNodes) {
-
-                    nodes.forEach {
-
-                        if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
+            if (project.coreManager.configManager.get("cross_auto_complete") == "true"){
+                for ((path, nodes) in manager.crossNodes){
+                    nodes.forEach{
+                        if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")){
                             val name = it.fields["name"] as String
+
                             println("adding function: $name")
+
                             val returnType = it.fields["return"] as String
+
                             var paramsStr = ""
+
                             var insertParams = ""
-                            (it.fields["params"] as Vector<*>).forEach {
+
+                            (it.fields["params"] as Vector<*>).forEach{
                                 it as MethodParameter
+
                                 paramsStr += ",${it.name}:${it.type}"
+
                                 insertParams += ",${it.name}"
                             }
-                            if (paramsStr != "") paramsStr = paramsStr.substring(1)
-                            if (insertParams != "") insertParams = insertParams.substring(1)
+
+                            if (paramsStr != ""){
+                                paramsStr = paramsStr.substring(1)
+                            }
+
+                            if (insertParams != ""){
+                                insertParams = insertParams.substring(1)
+                            }
+
                             val con = "$name($paramsStr):$returnType - $path"
 
                             val insert = "$name($insertParams)"
-                            toAdd.put(con, Pair(NodeType.FUNCTION, { inf ->
-                                area.replaceText(area.caretPosition - inf.beforeString.length, area.caretPosition, insert)
-                            }))
-                        }
-                        if (it.nodeType == NodeType.SET_VAR) {
-                            if (!it.fields.containsKey("invalid")) {
 
-                                if (it.fields.contains("from_option")) {
-                                    val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
-                                    if (!found) {
-                                        addItem((it.fields["name"] as String) + " [from option] - $path", { info ->
+                            toAdd[con] = Pair(NodeType.FUNCTION,{ inf ->
+                                area.replaceText(area.caretPosition - inf.beforeString.length, area.caretPosition, insert)
+                            })
+                        }
+
+                        if (it.nodeType == NodeType.SET_VAR){
+                            if (!it.fields.containsKey("invalid")){
+                                if (it.fields.contains("from_option")){
+                                    val found = fillList.items.any{ c ->
+                                        c.name == ((it.fields["name"] as String) + " [from option]")
+                                    }
+
+                                    if (!found){
+                                        addItem((it.fields["name"] as String) + " [from option] - $path",{ info ->
                                             area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
                                             //TODO add path items as
                                         })
                                     }
-                                } else {
-                                    val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
-                                    if (!found) {
+                                }else{
+                                    val found = fillList.items.any{ c ->
+                                        c.name == (it.fields["name"] as String)
+                                    }
+
+                                    if (!found){
                                         addItem({
-                                            if (it.fields["visibility"] == "global") {
+                                            if (it.fields["visibility"] == "global"){
                                                 ""
-                                            } else {
+                                            }else{
                                                 "_"
                                             }
-                                        }.invoke() + it.fields["name"] as String + " - $path", { info ->
-                                            if (it.fields["visibility"] == "global") {
+                                        }.invoke() + it.fields["name"] as String + " - $path",{ info ->
+                                            if (it.fields["visibility"] == "global"){
                                                 area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{" + it.fields["name"] + "}")
-
-                                            } else {
+                                            }else{
                                                 area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.fields["name"] + "}")
                                             }
                                         })
@@ -324,59 +379,74 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                             }
                         }
                     }
-
                 }
             }
 
-            manager.parseResult.forEach {
-                if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
+            manager.parseResult.forEach{
+                if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")){
                     val name = it.fields["name"] as String
+
                     val returnType = it.fields["return"] as String
+
                     var paramsStr = ""
+
                     var insertParams = ""
-                    (it.fields["params"] as Vector<*>).forEach {
+
+                    (it.fields["params"] as Vector<*>).forEach{
                         it as MethodParameter
+
                         paramsStr += ",${it.name}:${it.type}"
+
                         insertParams += ",${it.name}"
                     }
-                    if (paramsStr != "") paramsStr = paramsStr.substring(1)
-                    if (insertParams != "") insertParams = insertParams.substring(1)
+
+                    if (paramsStr != ""){
+                        paramsStr = paramsStr.substring(1)
+                    }
+
+                    if (insertParams != ""){
+                        insertParams = insertParams.substring(1)
+                    }
+
                     val con = "$name($paramsStr):$returnType"
 
                     val insert = "$name($insertParams)"
-                    toAdd.put(con, Pair(NodeType.FUNCTION, { inf ->
+
+                    toAdd[con] = Pair(NodeType.FUNCTION,{ inf ->
                         area.replaceText(area.caretPosition - inf.beforeString.length, area.caretPosition, insert)
-                    }))
+                    })
                 }
             }
 
+            vars.forEach{
+                if (!it.fields.containsKey("invalid")){
+                    if (it.fields.contains("from_option")){
+                        val found = fillList.items.any{ c ->
+                            c.name == ((it.fields["name"] as String) + " [from option]")
+                        }
 
-            vars.forEach {
-                if (!it.fields.containsKey("invalid")) {
-
-                    if (it.fields.contains("from_option")) {
-                        val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
-                        if (!found) {
-                            addItem((it.fields["name"] as String) + " [from option]", { info ->
+                        if (!found){
+                            addItem((it.fields["name"] as String) + " [from option]",{ info ->
                                 area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
-
                                 //TODO add path items as
                             })
                         }
-                    } else {
-                        val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
-                        if (!found) {
+                    }else{
+                        val found = fillList.items.any{ c ->
+                            c.name == (it.fields["name"] as String)
+                        }
+
+                        if (!found){
                             addItem({
-                                if (it.fields["visibility"] == "global") {
+                                if (it.fields["visibility"] == "global"){
                                     ""
-                                } else {
+                                }else{
                                     "_"
                                 }
-                            }.invoke() + it.fields["name"] as String, { info ->
-                                if (it.fields["visibility"] == "global") {
+                            }.invoke() + it.fields["name"] as String,{ info ->
+                                if (it.fields["visibility"] == "global"){
                                     area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{" + it.fields["name"] + "}")
-
-                                } else {
+                                }else{
                                     area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.fields["name"] + "}")
                                 }
                             })
@@ -385,157 +455,198 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 }
             }
 
-
-
-            addonSupported.values.forEach {
-                it.forEach { item ->
-                    if (item.type != DocType.EVENT) {
-
-                        if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && !currentInfo.inBrace && currentInfo.charAfterCaret == ":") {
-
-                            if (item.type == DocType.TYPE) {
-                                addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
+            addonSupported.values.forEach{
+                it.forEach{ item ->
+                    if (item.type != DocType.EVENT){
+                        if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && !currentInfo.inBrace && currentInfo.charAfterCaret == ":"){
+                            if (item.type == DocType.TYPE){
+                                addItem("${item.name}:${item.type} - ${item.addon.name}",{ currInfo ->
                                     var toRem = currInfo.beforeString
+
                                     toRem = toRem.replace(":", "")
+
                                     val adder = item.name
+
                                     area.replaceText(area.caretPosition - toRem.length, area.caretPosition, adder)
+
                                     manager.parseResult = manager.parseStructure()
                                 })
                             }
-                        } else if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && currentInfo.inBrace) {
-                            if (item.type == DocType.TYPE) {
-                                addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
+                        }else if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && currentInfo.inBrace){
+                            if (item.type == DocType.TYPE){
+                                addItem("${item.name}:${item.type} - ${item.addon.name}",{ currInfo ->
                                     var toRem = currInfo.beforeString
+
                                     toRem = toRem.replace(")", "")
-                                    if (toRem.contains(":")) {
+
+                                    if (toRem.contains(":")){
                                         toRem = toRem.split(":")[1]
                                     }
+
                                     val adder = item.name
+
                                     area.replaceText(area.caretPosition - toRem.length, area.caretPosition, adder)
+
                                     manager.parseResult = manager.parseStructure()
                                 })
                             }
-
-                        } else {
-                            addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
+                        }else{
+                            addItem("${item.name}:${item.type} - ${item.addon.name}",{ currInfo ->
                                 val toRem = currInfo.beforeString.length
-                                var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
-                                if (item.type == DocType.CONDITION) if (!currInfo.actualCurrentString.contains("if ")) adder = "if $adder:"
+
+                                var adder = (if (item.pattern == ""){
+                                    item.name.toLowerCase()
+                                }else{
+                                    item.pattern
+                                }).replace("\n", "")
+
+                                if (item.type == DocType.CONDITION){
+                                    if (!currInfo.actualCurrentString.contains("if ")){
+                                        adder = "if $adder:"
+                                    }
+                                }
 
                                 area.replaceText(area.caretPosition - toRem, area.caretPosition, adder)
+
                                 manager.parseResult = manager.parseStructure()
 
                                 manager.sequenceReplaceHandler.compute(area.getInfo(manager))
                             })
                         }
-
-
                     }
                 }
             }
-            if (movedRight) {
-                toAdd.forEach {
-                    if (it.key.startsWith(currentInfo.beforeString, true))
+
+            if (movedRight){
+                toAdd.forEach{
+                    if (it.key.startsWith(currentInfo.beforeString, true)) {
                         addItem(it.key, it.value.second)
+                    }
                 }
-            } else {
-                toAdd.forEach {
+            }else{
+                toAdd.forEach{
                     addItem(it.key, it.value.second)
                 }
-                if (fillList.items.size == 0) {
+
+                if (fillList.items.size == 0){
                     hideList()
+
                     return
                 }
             }
+
             val toRemove = Vector<ListHolderItem>()
-            fillList.items.filterNotTo(toRemove) { it.name.startsWith(currentInfo.currentWord, true) }
-            toRemove.forEach {
+
+            fillList.items.filterNotTo(toRemove){
+                it.name.startsWith(currentInfo.currentWord, true)
+            }
+
+            toRemove.forEach{
                 fillList.items.remove(it)
+
                 removed.add(it)
             }
-            toRemove.clear()
-            removed.filterTo(toRemove) { it.name.startsWith(currentInfo.currentWord, true) }
 
-            toRemove.forEach {
+            toRemove.clear()
+
+            removed.filterTo(toRemove){ it.name.startsWith(currentInfo.currentWord, true) }
+
+            toRemove.forEach{
                 removed.remove(it)
+
                 fillList.items.add(it)
             }
+
             fillList.refresh()
 
         }
-        if (fillList.items.size == 0) {
+
+        if (fillList.items.size == 0){
             return
         }
-        if (project.isExluded) {
-            popUp.show(project.externStage)
 
-        } else {
+        if (project.isExluded){
+            popUp.show(project.externStage)
+        }else{
             popUp.show(project.openProject.guiHandler.window.stage)
         }
-
     }
 
-
-    fun showGlobalAutoComplete(node: Node) {
-
-
-        if (!popUp.isShowing) {
+    fun showGlobalAutoComplete(node: Node){
+        if (!popUp.isShowing){
             area.replaceText(area.caretPosition - area.caretColumn, area.caretPosition, "")
 
             manager.parseResult = manager.parseStructure()
-            //   if (area.getInfo(manager, currentLine).inString) return
 
+            //if (area.getInfo(manager, currentLine).inString) return
 
             fillList.items.clear()
+
             removed.clear()
 
-            addItem("Function") {
+            addItem("Function"){
                 area.replaceText(area.caretPosition, area.caretPosition, "function () :: :")
+
                 area.moveTo(area.caretPosition - 7)
             }
 
-            addItem("Generate Command") {
+            addItem("Generate Command"){
                 popUp.hide()
 
                 val window = GUIManager.getWindow("GenerateCommand.fxml", "Generate command", true)
-                val generate: GenerateCommandController = window.controller as GenerateCommandController;
-                generate.createButton.onMouseClicked = EventHandler<MouseEvent> { _ ->
-                    run {
+
+                val generate: GenerateCommandController = window.controller as GenerateCommandController
+
+                generate.createButton.onMouseClicked = EventHandler<MouseEvent>{ _ ->
+                    run{
                         area.replaceText(area.caretPosition, area.caretPosition, "command /" + generate.commandNameField.text + ":\n\tdescription: " + generate.descriptionField.text + "\n" + "\tpermission: " + generate.permissionField.text + "\n\ttrigger:\n\t\tsend \"hi\" to player")
 
                         GUIManager.closeGui(window.id);
                     }
                 }
-
             }
 
-            addItem("Generate Event", false) {
-
-
+            addItem("Generate Event", false){
                 fillList.items.clear()
+
                 removed.clear()
-                for (s in Arrays.asList("Join", "Quit")) {
-                    addItem("On $s", {
+
+                for (s in Arrays.asList("Join", "Quit")){
+                    addItem("On $s",{
                         hideList()
+
                         area.moveTo(area.caretPosition - it.actualCurrentString.length)
+
                         area.replaceText(area.caretPosition, area.caretPosition + it.actualCurrentString.length, "on " + s.toLowerCase() + ":\n\t")
+
                         area.moveTo(area.caretPosition - 1)
                     })
                 }
-                addonSupported.values.forEach {
-                    it.forEach { item ->
-                        if (item.type == DocType.EVENT) {
 
-                            addItem(item.name + " Addon: ${item.addon.name}", { info ->
+                addonSupported.values.forEach{
+                    it.forEach{ item ->
+                        if (item.type == DocType.EVENT){
+                            addItem(item.name + " Addon: ${item.addon.name}",{ info ->
                                 hideList()
-                                area.replaceText(area.caretPosition - info.actualCurrentString.length, area.caretPosition, {
+
+                                area.replaceText(area.caretPosition - info.actualCurrentString.length, area.caretPosition,{
                                     var text = item.pattern
-                                    if (text.isEmpty()) text = item.name
+
+                                    if (text.isEmpty()){
+                                        text = item.name
+                                    }
+
                                     text = text.replace("[on]", "on").replace("\n", "") + ":"
-                                    if (!text.startsWith("on ")) text = "on $text"
+
+                                    if (!text.startsWith("on ")){
+                                        text = "on $text"
+                                    }
+
                                     text
                                 }.invoke())
+
                                 manager.parseResult = manager.parseStructure()
+
                                 manager.sequenceReplaceHandler.compute(area.getInfo(manager))
                             })
                         }
@@ -543,87 +654,98 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 }
             }
 
-
             globalCompleteVisible = true
-            if (project.isExluded) {
-                popUp.show(project.externStage)
 
-            } else {
+            if (project.isExluded){
+                popUp.show(project.externStage)
+            }else{
                 popUp.show(project.openProject.guiHandler.window.stage)
             }
+
             fillList.selectionModel.select(0)
-
-        } else {
-
+        }else{
             val currentInfo = area.getInfo(manager)
 
             val toRemove = Vector<ListHolderItem>()
 
-            fillList.items.filterNotTo(toRemove) { it.name.startsWith(currentInfo.actualCurrentString, true) }
-            toRemove.forEach {
+            fillList.items.filterNotTo(toRemove){
+                it.name.startsWith(currentInfo.actualCurrentString, true)
+            }
+
+            toRemove.forEach{
                 fillList.items.remove(it)
+
                 removed.add(it)
             }
-            toRemove.clear()
-            removed.filterTo(toRemove) { it.name.startsWith(currentInfo.actualCurrentString, true) }
 
-            toRemove.forEach {
+            toRemove.clear()
+
+            removed.filterTo(toRemove){
+                it.name.startsWith(currentInfo.actualCurrentString, true)
+            }
+
+            toRemove.forEach{
                 removed.remove(it)
+
                 fillList.items.add(it)
             }
+
             fillList.refresh()
 
-            if (fillList.items.size == 0) {
+            if (fillList.items.size == 0){
                 hideList()
-
             }
-
         }
     }
 
-
-    private fun getWordSearchReplace(orig: String, currentInfo: CurrentStateInfo): String {
-
+    private fun getWordSearchReplace(orig: String, currentInfo: CurrentStateInfo): String{
         var replaced = orig
 
-        if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && currentInfo.inBrace) {
+        if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && currentInfo.inBrace){
             replaced = replaced.replace(")", "").replace(",", "")
-            if (replaced.contains(":")) {
+
+            if (replaced.contains(":")){
                 replaced = replaced.split(":")[1]
             }
-        } else if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && !currentInfo.inBrace && currentInfo.charAfterCaret == ":") {
+        }else if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && !currentInfo.inBrace && currentInfo.charAfterCaret == ":"){
             replaced = replaced.replace(":", "")
         }
 
         return replaced
     }
 
-    private fun onLineChange() {
-
-
+    private fun onLineChange(){
         val parseResult = manager.parseStructure()
+
         manager.parseResult = parseResult
 
         val old = EditorUtils.getLineNode(lineBefore, parseResult)
+
         val current = EditorUtils.getLineNode(currentLine, parseResult)
 
-        if (old != null && current != null) {
-
-            if (old.linenumber == current.linenumber - 1) {
-                if (current.nodeType == NodeType.UNDEFINED) {
+        if (old != null && current != null){
+            if (old.linenumber == current.linenumber - 1){
+                if (current.nodeType == NodeType.UNDEFINED){
                     val tabCount = old.tabLevel - 1
+
                     var str = ""
-                    for (x in 0..tabCount) {
+
+                    for (x in 0..tabCount){
                         str += "\t"
                     }
 
-                    if (old.nodeType != NodeType.EXECUTION && old.nodeType != NodeType.UNDEFINED && old.nodeType != NodeType.COMMENT && old.nodeType != NodeType.SET_VAR) str += "\t"
+                    if (old.nodeType != NodeType.EXECUTION && old.nodeType != NodeType.UNDEFINED && old.nodeType != NodeType.COMMENT && old.nodeType != NodeType.SET_VAR){
+                        str += "\t"
+                    }
+
                     area.replaceText(area.caretPosition, area.caretPosition, str)
                 }
+
                 return
             }
-            if (old.linenumber == current.linenumber + 1) {
-                if (popUp.isShowing) {
+
+            if (old.linenumber == current.linenumber + 1){
+                if (popUp.isShowing){
                     hideList()
                 }
             }

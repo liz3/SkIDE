@@ -1,73 +1,74 @@
 package com.skide.gui
 
-import com.skide.CoreManager
 import com.skide.gui.project.OpenProjectGuiManager
-import com.skide.gui.project.ProjectGuiEventListeners
 import javafx.scene.control.TabPane
-import jdk.nashorn.internal.objects.NativeRegExp.source
-import jnr.ffi.util.BufferUtil.putString
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
-import javafx.scene.input.Dragboard
 
-
-class MouseDragHandler(val pane: TabPane, val coreManager: OpenProjectGuiManager) {
-
-
-    fun setup() {
-
-        pane.setOnDragDetected {
+class MouseDragHandler(val pane: TabPane, val coreManager: OpenProjectGuiManager){
+    fun setup(){
+        pane.setOnDragDetected{
             println("${pane}Drag started")
 
             coreManager.draggedTab = pane.selectionModel.selectedItem
+
             /* drag was detected, start a drag-and-drop gesture*/
             /* allow any transfer mode */
+
             val db = pane.startDragAndDrop(*TransferMode.ANY)
+
             val content = ClipboardContent()
+
             content.putString("")
+
             db.setContent(content)
 
             it.consume()
-
         }
-        pane.setOnDragDropped {
+
+        pane.setOnDragDropped{
             println("${pane}Drag dropped")
-            if(coreManager.draggedTab != null) {
-            coreManager.dragDone = true
+            
+            if(coreManager.draggedTab != null){
+                coreManager.dragDone = true
+
                 pane.tabs.add(coreManager.draggedTab)
-            } else {
-                if(it.dragboard.hasFiles()) {
-                    it.dragboard.files.forEach {
+            }else{
+                if(it.dragboard.hasFiles()){
+                    it.dragboard.files.forEach{
                         coreManager.openProject.eventManager.openFile(it, pane, true)
                     }
                 }
             }
 
         }
-        pane.setOnDragExited {
+
+        pane.setOnDragExited{
             println("${pane}Drag exited")
         }
-        pane.setOnDragOver {
-            if (it.gestureSource != pane &&
-                    it.dragboard.hasString()) {
+
+        pane.setOnDragOver{
+            if (it.gestureSource != pane && it.dragboard.hasString()){
                 it.acceptTransferModes(*TransferMode.COPY_OR_MOVE)
-            } else if(it.dragboard.hasFiles()) {
+            }else if(it.dragboard.hasFiles()){
                 println("Contains files")
+
                 it.acceptTransferModes(*TransferMode.COPY_OR_MOVE)
             }
 
             it.consume()
         }
-        pane.setOnDragDone {
+
+        pane.setOnDragDone{
             println("${pane}Drag done")
-            if(coreManager.dragDone) {
+
+            if(coreManager.dragDone){
                 pane.tabs.remove(coreManager.draggedTab)
-
             }
-            coreManager.draggedTab = null
-            coreManager.dragDone = false
 
+            coreManager.draggedTab = null
+
+            coreManager.dragDone = false
         }
     }
-
 }

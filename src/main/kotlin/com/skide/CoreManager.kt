@@ -21,13 +21,9 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import java.lang.management.ManagementFactory
 
-
-class CoreManager() {
-
-
-
-
+class CoreManager{
     val guiManager = GUIManager
+
     lateinit var debugger: Debugger
     lateinit var configManager: ConfigManager
     lateinit var projectManager: ProjectManager
@@ -41,121 +37,173 @@ class CoreManager() {
 
     private var debugLevel = DebugLevel.INFORMATION
 
-    fun bootstrap(args: Array<String>) {
-
+    fun bootstrap(args: Array<String>){
         debugger = Debugger()
 
         val me = this
+
         guiManager.bootstrapCallback = { stage ->
             val loader = FXMLLoader()
+
             val parent = loader.load<Pane>(javaClass.getResourceAsStream("/LoadingGui.fxml"))
+
             parent.background = Background.EMPTY
+
             val controller = loader.getController<SplashGuiController>()
+
             stage.scene = Scene(parent)
+
             stage.initStyle(StageStyle.TRANSPARENT)
+
             stage.scene.fill = Color.TRANSPARENT
+
             stage.sizeToScene()
+
             stage.centerOnScreen()
+
             stage.isResizable = false
+
             controller.view.image = Image(javaClass.getResource("/splash.png").toExternalForm())
+
             stage.show()
-            val task = object : Task<Void>() {
+
+            val task = object : Task<Void>(){
                 @Throws(Exception::class)
-                override fun call(): Void? {
-                    try {
+                override fun call(): Void?{
+                    try{
                         Thread.sleep(250)
+
                         updateMessage("Initializing...")
+
                         updateProgress(0.0, 100.0)
-                        args.forEach {
+
+                        args.forEach{
                             //first lets set the debug level
-                            if (it.startsWith("--debug")) {
+                            if (it.startsWith("--debug")){
                                 debugLevel = DebugLevel.valueOf(it.split("=")[1].toUpperCase())
                             }
                         }
+
                         configManager = ConfigManager(me)
+
                         projectManager = ProjectManager(me)
+
                         serverManager = ServerManager(me)
+
                         resourceManager = ResourceManager(me)
+
                         saver = AutoSaver(me)
+
                         skUnity = SkUnity(me)
+
                         insightsManager = InsightsManager(me)
+
                         sockServer = SocketManager(me)
+
                         insightClient = SkriptInsightClient(me)
 
                         sockServer.start()
+
                         debugger.syserr.core = me
 
                         updateProgress(5.0, 100.0)
+
                         updateMessage("Loading Config...")
+
                         GUIManager.settings = configManager
+
                         val configLoadResult = configManager.load()
-                        if (configLoadResult == ConfigLoadResult.ERROR) return null
+
+                        if (configLoadResult == ConfigLoadResult.ERROR){
+                            return null
+                        }
+
                         updateProgress(25.0, 100.0)
+
                         updateMessage("Checking skUnity access...")
+
                         skUnity.load()
+
                         updateProgress(35.0, 100.0)
+
                         updateMessage("Initializing server manager")
+
                         serverManager.init()
+
                         updateProgress(50.0, 100.0)
+
                         updateMessage("Downloading latest Resources")
 
-                        resourceManager.loadResources({ total, current, name ->
-                            val amount = current * 5;
+                        resourceManager.loadResources({total, current, name ->
+                            val amount = (current * 5)
+
                             updateProgress(50.0 + amount, 100.0)
+
                             updateMessage(name)
                         })
 
-
                         updateProgress(80.0, 100.0)
+
                         updateMessage("Starting insights")
+
                         insightsManager.setup()
 
-
-
                         updateProgress(96.0, 100.0)
+
                         updateMessage("Starting gui...")
+
                         Prompts.theme = configManager.get("theme") as String
+
                         Prompts.configManager = configManager
+
                         attachDebugger()
-                        Platform.runLater {
+
+                        Platform.runLater{
                             stage.close()
 
-
                             GUIManager.discord.update("In the main menu", "Idle")
-                            val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, Stage())
-                            stage.isResizable = false
-                            (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
-                            window.stage.show()
 
+                            val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, Stage())
+
+                            stage.isResizable = false
+
+                            (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
+
+                            window.stage.show()
                         }
-                    } catch (e: Exception) {
+                    } catch (e: Exception){
                         e.printStackTrace()
                     }
+
                     return null
                 }
             }
+
             controller.label.textProperty().bind(task.messageProperty())
+
             controller.progressBar.progressProperty().bind(task.progressProperty())
 
             val thread = Thread(task)
+
             thread.isDaemon = true
+
             thread.name = "Sk-IDE loader task"
+
             thread.start()
         }
 
+        handle(if (args.isNotEmpty()) args.first() else "")
 
-
-        handle(if (args.size >= 1) args.first() else "")
-
-        if (Platform.isFxApplicationThread()) {
+        if (Platform.isFxApplicationThread()){
             GUIManager.bootstrapCallback(Stage())
-        } else {
+        } else{
             JavaFXBootstrapper.bootstrap()
         }
     }
 
-    fun attachDebugger() {
+    fun attachDebugger(){
         val id = ManagementFactory.getRuntimeMXBean().name.split("@").first()
+
         println(id)
     }
 }
