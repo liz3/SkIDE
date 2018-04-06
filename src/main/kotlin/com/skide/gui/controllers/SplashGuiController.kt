@@ -5,10 +5,7 @@ import javafx.fxml.FXML
 import javafx.scene.control.Label
 import javafx.scene.image.ImageView
 
-
-class SplashGuiController {
-
-
+class SplashGuiController{
     @FXML
     lateinit var view: ImageView
 
@@ -17,7 +14,4 @@ class SplashGuiController {
 
     @FXML
     lateinit var progressBar: ProgressBar
-
-
-
 }

@@ -6,9 +6,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 
-
-class FindFrameController {
-
+class FindFrameController{
     @FXML
     lateinit var searchField: TextField
 
@@ -23,11 +21,9 @@ class FindFrameController {
 
     @FXML
     lateinit var caseSensitive: CheckBox
-
 }
 
-class ReplaceFrameController {
-
+class ReplaceFrameController{
     @FXML
     lateinit var searchField: TextField
 
@@ -51,11 +47,9 @@ class ReplaceFrameController {
 
     @FXML
     lateinit var replaceAllBtn: Button
-
 }
 
-class SkunityQuestionFameController {
-
+class SkunityQuestionFameController{
     @FXML
     lateinit var sendBtn: Button
 
@@ -67,5 +61,4 @@ class SkunityQuestionFameController {
 
     @FXML
     lateinit var contentArea: TextArea
-
 }

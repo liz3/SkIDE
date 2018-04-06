@@ -1,25 +1,41 @@
 package com.skide.skriptinsight.model;
 
-import java.util.Map;
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class InspectionResultElement {
+public class InspectionResultElement{
     private long targetLine;
+    
     private String inspectionClass;
+    
     private String fixedInspection;
 
     @JsonProperty("TargetLine")
-    public long getTargetLine() { return targetLine; }
+    public long getTargetLine(){ 
+        return targetLine; 
+    }
+    
     @JsonProperty("TargetLine")
-    public void setTargetLine(long value) { this.targetLine = value; }
+    public void setTargetLine(long value){
+        this.targetLine = value;
+    }
 
     @JsonProperty("InspectionClass")
-    public String getInspectionClass() { return inspectionClass; }
+    public String getInspectionClass(){
+        return inspectionClass;
+    }
+
     @JsonProperty("InspectionClass")
-    public void setInspectionClass(String value) { this.inspectionClass = value; }
+    public void setInspectionClass(String value){
+        this.inspectionClass = value;
+    }
 
     @JsonProperty("FixedInspection")
-    public String getFixedInspection() { return fixedInspection; }
+    public String getFixedInspection(){
+        return fixedInspection;
+    }
+
     @JsonProperty("FixedInspection")
-    public void setFixedInspection(String value) { this.fixedInspection = value; }
+    public void setFixedInspection(String value){
+        this.fixedInspection = value;
+    }
 }

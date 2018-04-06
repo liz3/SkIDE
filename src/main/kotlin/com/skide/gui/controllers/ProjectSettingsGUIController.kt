@@ -9,9 +9,7 @@ import javafx.scene.control.ComboBox
 import javafx.scene.control.CheckBox
 import java.io.File
 
-
-class ProjectSettingsGUIController {
-
+class ProjectSettingsGUIController{
     @FXML
     lateinit var prNameTextField: TextField
 
@@ -86,5 +84,4 @@ class ProjectSettingsGUIController {
 
     @FXML
     lateinit var compileNewOptionsNameField: TextField
-
 }

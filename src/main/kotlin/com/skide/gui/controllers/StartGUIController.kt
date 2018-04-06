@@ -11,10 +11,7 @@ import javafx.scene.control.ListView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 
-
-class StartGUIController {
-
-
+class StartGUIController{
     @FXML
     private lateinit var projectsList: ListView<String>
 
@@ -29,67 +26,76 @@ class StartGUIController {
 
     @FXML
     private lateinit var settings: Label
+    
     @FXML
     private lateinit var versionLabel: Label
 
-    fun initGui(manager: CoreManager, thisWindow: ActiveWindow, firstRun: Boolean) {
-
+    fun initGui(manager: CoreManager, thisWindow: ActiveWindow, firstRun: Boolean){
         iconImage.image = Image(javaClass.getResource("/icon.png").toExternalForm())
 
-        createNewProject.setOnMouseClicked {
-
+        createNewProject.setOnMouseClicked{
             val window = GUIManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
+
             window.controller as CreateProjectGUIController
+
             window.controller.initGui(manager, window, thisWindow)
+
             window.stage.isResizable = false
+
             window.closeListener = {
                 thisWindow.stage.show()
             }
-            thisWindow.stage.hide()
-            window.stage.show()
 
+            thisWindow.stage.hide()
+
+            window.stage.show()
         }
-        projectsList.setOnMouseReleased {
+
+        projectsList.setOnMouseReleased{
             val selection = projectsList.selectionModel.selectedItem
 
-            if (selection != null) {
-                manager.configManager.projects.values.forEach {
-                    if ((it.name + "\n" + it.path) == selection) {
+            if (selection != null){
+                manager.configManager.projects.values.forEach{
+                    if ((it.name + "\n" + it.path) == selection){
                         manager.projectManager.openProject(it)
+
                         thisWindow.close()
                     }
-
                 }
             }
         }
-        versionLabel.text = "SK-IDE Ver. ${Info.version} Copyright Liz3|StabbedByFeather - GPL v2 License"
-        settings.setOnMouseReleased {
 
+        versionLabel.text = "SK-IDE Ver. ${Info.version} Copyright Liz3|StabbedByFeather - GPL v2 License"
+
+        settings.setOnMouseReleased{
             val window = GUIManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)
+
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, manager, window).init()
 
             window.stage.show()
         }
-        importProject.setOnMouseClicked {
 
+        importProject.setOnMouseClicked{
             val window = GUIManager.getWindow("ImportProjectGui.fxml", "Import Project", false)
             window.controller as ImportProjectGUIController
+
             window.controller.initGui(manager, window, thisWindow)
+
             window.stage.isResizable = false
+
             window.closeListener = {
                 thisWindow.stage.show()
             }
+
             thisWindow.stage.hide()
+
             window.stage.show()
-
         }
-        if (!firstRun) {
 
-            manager.configManager.projects.values.forEach {
+        if (!firstRun){
+            manager.configManager.projects.values.forEach{
                 projectsList.items.add("${it.name}\n${it.path}")
             }
         }
     }
-
-
 }
