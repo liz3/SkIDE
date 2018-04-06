@@ -8,35 +8,31 @@ import com.skide.include.Addon
 import java.util.*
 import kotlin.collections.HashMap
 
-class SettingsGui(val coreManager: CoreManager, val projGuiManager: OpenProjectGuiManager){
+class SettingsGui(val coreManager: CoreManager, val projGuiManager: OpenProjectGuiManager) {
+
     val project = projGuiManager.openProject.project
 
     var loaded = false
-    
-    val window: ActiveWindow by lazy{
+    val window: ActiveWindow by lazy {
         loaded = true
-        
         GUIManager.getWindow("ProjectSettingsGui.fxml", "Settings for ${project.name}", false)
     }
-    
-    fun show(){
-        if (!loaded){
+
+
+    fun show() {
+        if (!loaded) {
             val co = CompileOptionsGUI(projGuiManager.openProject, window.controller as ProjectSettingsGUIController)
-            
             co.init()
-            
             SettingsGuiEventListener(this, window.controller as ProjectSettingsGUIController, co).init()
         }
 
-        if (window.stage.isShowing){
-            return
-        }
-        
+        if (window.stage.isShowing) return
         window.stage.show()
     }
+
 }
 
-enum class SettingsChangeType{
+enum class SettingsChangeType {
     NAME_CHANGE,
     SKRIPT_VERSION_CHANGE,
     ADDON_ADD,
@@ -44,7 +40,9 @@ enum class SettingsChangeType{
     ADDON_ALTER
 }
 
-class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGUIController, val co: CompileOptionsGUI){
+class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGUIController, val co: CompileOptionsGUI) {
+
+
     val resourceManager = gui.coreManager.resourceManager
 
     val currentInstalled = gui.projGuiManager.openProject.project.fileManager.addons
@@ -55,193 +53,138 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
 
     var loaded = false
 
-    fun init(){
+    fun init() {
+
         ctrl.plListView.items.clear()
 
-        resourceManager.addons.forEach{
+        resourceManager.addons.forEach {
             ctrl.plListView.items.add(it.value)
         }
 
         ctrl.prNameTextField.text = gui.project.name
 
         ctrl.plNameLabel.text = ""
-
         ctrl.plDescriptionLabel.text = ""
-
         ctrl.plAuthorLabel.text = ""
-
-        if (!loaded){
+        if (!loaded) {
             loaded = true
 
             ctrl.skriptVersionComboBox.isDisable = true
+            ctrl.plListView.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
-            ctrl.plListView.selectionModel.selectedItemProperty().addListener{ _, _, _ ->
-                if (currItem() != null){
+                if (currItem() != null) {
+
                     val item = currItem()
-
                     ctrl.plNameLabel.text = "Name: ${item.name}"
-
                     ctrl.plAuthorLabel.text = "Author ${item.author}"
-
                     ctrl.enableSupportCheckBox.isSelected = {
                         var endVal = false
-
                         var found = false
-
-                        changes.forEach{
-                            if (it.first == currItem() && it.second != SettingsChangeType.ADDON_ALTER){
+                        changes.forEach {
+                            if (it.first == currItem() && it.second != SettingsChangeType.ADDON_ALTER) {
                                 found = true
-
                                 endVal = it.second == SettingsChangeType.ADDON_ADD
                             }
                         }
-
-                        if (!found){
+                        if (!found) {
                             endVal = currentInstalled.containsKey(item.name)
                         }
-
                         endVal
                     }.invoke()
-
                     ctrl.plVersionsComboBox.items.clear()
-
-                    item.versions.keys.forEach{
+                    item.versions.keys.forEach {
                         ctrl.plVersionsComboBox.items.add(it)
                     }
-
-                    if (alterValues.containsKey(currItem())){
+                    if (alterValues.containsKey(currItem())) {
                         ctrl.plVersionsComboBox.selectionModel.select(alterValues[currItem()])
                     }
+                    if (currentInstalled.containsKey(item.name)) ctrl.plVersionsComboBox.selectionModel.select(currentInstalled[item.name])
 
-                    if (currentInstalled.containsKey(item.name)){
-                        ctrl.plVersionsComboBox.selectionModel.select(currentInstalled[item.name])
-                    }
-
-                    if (ctrl.plVersionsComboBox.selectionModel.selectedItem == null){
+                    if (ctrl.plVersionsComboBox.selectionModel.selectedItem == null) {
                         ctrl.enableSupportCheckBox.isDisable = true
                     }
                 }
             }
-
-            ctrl.enableSupportCheckBox.setOnAction{
+            ctrl.enableSupportCheckBox.setOnAction {
                 val selected = ctrl.enableSupportCheckBox.isSelected
-
-                if (selected){
+                if (selected) {
                     var toRemove: Pair<Addon, SettingsChangeType>? = null
-
-                    changes.forEach{
-                        if (it.first == currItem()){
-                            if (it.second == SettingsChangeType.ADDON_REMOVE || it.second == SettingsChangeType.ADDON_ADD){
-                                toRemove = it
-                            }
+                    changes.forEach {
+                        if (it.first == currItem()) {
+                            if (it.second == SettingsChangeType.ADDON_REMOVE || it.second == SettingsChangeType.ADDON_ADD) toRemove = it
                         }
                     }
-
-                    if (toRemove != null){
-                        changes.remove(toRemove)
-                    }
-
+                    if (toRemove != null) changes.remove(toRemove)
                     changes.addElement(Pair(currItem(), SettingsChangeType.ADDON_ADD))
-                }else{
+                } else {
                     var toRemove: Pair<Addon, SettingsChangeType>? = null
-
-                    changes.forEach{
-                        if (it.first == currItem()){
-                            if (it.second == SettingsChangeType.ADDON_REMOVE || it.second == SettingsChangeType.ADDON_ADD){
-                                toRemove = it
-                            }
+                    changes.forEach {
+                        if (it.first == currItem()) {
+                            if (it.second == SettingsChangeType.ADDON_REMOVE || it.second == SettingsChangeType.ADDON_ADD) toRemove = it
                         }
                     }
-
-                    if (toRemove != null){
-                        changes.remove(toRemove)
-                    }
-
+                    if (toRemove != null) changes.remove(toRemove)
                     changes.addElement(Pair(currItem(), SettingsChangeType.ADDON_REMOVE))
                 }
             }
+            ctrl.plVersionsComboBox.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
-            ctrl.plVersionsComboBox.selectionModel.selectedItemProperty().addListener{ _, _, _ ->
                 ctrl.enableSupportCheckBox.isDisable = false
-
-                if (ctrl.plVersionsComboBox.selectionModel.selectedItem == null){
-                    return@addListener
-                }
-
+                if (ctrl.plVersionsComboBox.selectionModel.selectedItem == null) return@addListener
                 var toRemove: Pair<Addon, SettingsChangeType>? = null
-
-                changes.forEach{
-                    if (it.first == currItem()){
-                        if (it.second == SettingsChangeType.ADDON_ALTER){
-                            toRemove = it
-                        }
+                changes.forEach {
+                    if (it.first == currItem()) {
+                        if (it.second == SettingsChangeType.ADDON_ALTER) toRemove = it
                     }
                 }
-
-                if (toRemove != null){
-                    changes.remove(toRemove)
-                }
-
+                if (toRemove != null) changes.remove(toRemove)
                 val elem = Pair(currItem(), SettingsChangeType.ADDON_ALTER)
-
                 changes.addElement(elem)
-
                 alterValues[currItem()] = ctrl.plVersionsComboBox.selectionModel.selectedItem
-            }
 
-            ctrl.applyBtn.setOnAction{
+
+            }
+            ctrl.applyBtn.setOnAction {
                 performChanges()
             }
-
-            ctrl.okBtn.setOnAction{
+            ctrl.okBtn.setOnAction {
                 performChanges()
-
                 gui.window.close()
             }
-
-            ctrl.cancelBtn.setOnAction{
+            ctrl.cancelBtn.setOnAction {
                 gui.window.close()
             }
         }
+
     }
 
-    private fun performChanges(){
-        alterValues.forEach{
+    private fun performChanges() {
+
+        alterValues.forEach {
             currentInstalled[it.key.name] = it.value
         }
-
-        changes.forEach{
-            if (it.second == SettingsChangeType.ADDON_REMOVE){
-                if (currentInstalled.containsKey(it.first.name)){
-                    currentInstalled.remove(it.first.name)
-                }
+        changes.forEach {
+            if (it.second == SettingsChangeType.ADDON_REMOVE) {
+                if (currentInstalled.containsKey(it.first.name)) currentInstalled.remove(it.first.name)
             }
-
-            if (it.second == SettingsChangeType.ADDON_ADD){
-                if (currentInstalled.containsKey(it.first.name)){
+            if (it.second == SettingsChangeType.ADDON_ADD) {
+                if (currentInstalled.containsKey(it.first.name)) {
                     currentInstalled.remove(it.first.name)
-
                     val alterValue = alterValues[it.first]
-
                     currentInstalled[it.first.name] = alterValue!!
-
                     alterValues.remove(it.first)
                 }
             }
         }
 
-        if (ctrl.prNameTextField.text != gui.projGuiManager.openProject.project.name){
+
+        if (ctrl.prNameTextField.text != gui.projGuiManager.openProject.project.name) {
             gui.projGuiManager.openProject.renameProject(ctrl.prNameTextField.text)
         }
-
         gui.projGuiManager.openProject.project.fileManager.rewriteConfig()
-
         changes.clear()
-
         alterValues.clear()
-
         gui.projGuiManager.openProject.updateAddons()
-
         co.applyCurr()
     }
 

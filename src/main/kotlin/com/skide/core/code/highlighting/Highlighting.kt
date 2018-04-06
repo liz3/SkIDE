@@ -7,95 +7,84 @@ import org.fxmisc.richtext.model.StyleSpansBuilder
 import java.util.*
 import java.util.regex.Pattern
 
-class Highlighting(val manager: CodeManager){
-    var changed = false
-    
+
+class Highlighting(val manager: CodeManager) {
+
+    var changed = false;
     val area = manager.area
-    
     private val x = area.richChanges().filter({ ch -> ch.inserted != ch.removed })
-    
     var sub = x.subscribe({
         runHighlighting()
     })
 
-    fun runHighlighting(){
-        if (!changed){
+    fun runHighlighting() {
+        if (!changed) {
             changed = true
-            
             area.setStyleSpans(0, computHighlighting(area.text))
-            
-            mapMarked{
+            mapMarked {
                 changed = false
             }
+
         }
+
     }
 
     private val markedLines = Vector<String>()
 
-    fun computeHighlighting(){
+    fun computeHighlighting() {
         area.replaceText(0, 0, area.text)
     }
 
-    fun searchHighlighting(searched: String, case: Boolean, regex: Boolean){
+    fun searchHighlighting(searched: String, case: Boolean, regex: Boolean) {
+
+
         val pos = area.caretPosition
-        
         sub.unsubscribe()
-        
         sub = x.subscribe({ area.setStyleSpans(0, computeSearchHightlighting(area.text, searched, case, regex)) })
-        
         val text = area.text
 
         area.clear()
-        
         area.appendText(text)
-        
         area.moveTo(pos)
+
     }
 
-    fun restartHighlighting(){
-        val pos = area.caretPosition
+    fun restartHighlighting() {
 
+        val pos = area.caretPosition
         sub.unsubscribe()
 
         sub = x.subscribe({
             runHighlighting()
         })
-
         val text = area.text
-
         area.clear()
-
         area.appendText(text)
-
         area.moveTo(pos)
     }
 
-    fun stopHighLighting(){
+    fun stopHighLighting() {
+
         val pos = area.caretPosition
-
         sub.unsubscribe()
-
         area.clearStyle(0, area.text.length)
-
         val text = area.text
-
         area.clear()
-
         area.appendText(text)
-
         area.moveTo(pos)
     }
 
 
-    private fun computHighlighting(text: String): StyleSpans<Collection<String>>{
-        var lastKwEnd = 0
+    private fun computHighlighting(text: String): StyleSpans<Collection<String>> {
 
+
+        var lastKwEnd = 0
         val spansBuilder = StyleSpansBuilder<Collection<String>>()
 
-        val matcher = patternCompilerStatic.matcher(text)
 
-        while (matcher.find()){
-            val styleClass = when{
+        val matcher = patternCompilerStatic.matcher(text)
+        while (matcher.find()) {
+            val styleClass = when {
                 matcher.group("SECTION") != null -> "section"
                 matcher.group("COLOR0") != null -> "color-0"
                 matcher.group("COLOR1") != null -> "color-1"
@@ -124,111 +113,99 @@ class Highlighting(val manager: CodeManager){
                 else -> null
             }!!
 
+
             spansBuilder.add(emptyList(), matcher.start() - lastKwEnd)
-
             spansBuilder.add(setOf(styleClass), matcher.end() - matcher.start())
-
             lastKwEnd = matcher.end()
         }
-
         spansBuilder.add(emptyList(), text.length - lastKwEnd)
 
         return spansBuilder.create()
     }
 
-    private fun computeSearchHightlighting(text: String, search: String, case: Boolean, regex: Boolean): StyleSpans<Collection<String>>{
+    private fun computeSearchHightlighting(text: String, search: String, case: Boolean, regex: Boolean): StyleSpans<Collection<String>> {
+
         val matcher = searchPatternCompiler(search, case, regex).matcher(text)
-
         var lastKwEnd = 0
-
         val spansBuilder = StyleSpansBuilder<Collection<String>>()
 
-        while (matcher.find()){
-            val styleClass = when{
+        while (matcher.find()) {
+            val styleClass = when {
                 matcher.group("SEARCH") != null -> "marked"
                 else -> null
             }!!
-
             spansBuilder.add(emptyList(), matcher.start() - lastKwEnd)
-
             spansBuilder.add(setOf(styleClass), matcher.end() - matcher.start())
-
             lastKwEnd = matcher.end()
         }
-
         spansBuilder.add(emptyList(), text.length - lastKwEnd)
-
         return spansBuilder.create()
     }
 
-    private fun searchPatternCompiler(word: String, case: Boolean, regex: Boolean): Pattern{
-        val content = if (regex){
-            word
-        }else{
-            Pattern.quote(word)
-        }
+    private fun searchPatternCompiler(word: String, case: Boolean, regex: Boolean): Pattern {
 
-        return if (!case){
-            Pattern.compile("(?<SEARCH>$content)", Pattern.CASE_INSENSITIVE)
-        }else{
-            Pattern.compile("(?<SEARCH>$content)")
-        }
+        val content = if (regex) word else Pattern.quote(word)
+
+        return if (!case) Pattern.compile("(?<SEARCH>$content)", Pattern.CASE_INSENSITIVE) else Pattern.compile("(?<SEARCH>$content)")
     }
 
-    fun mapMarked(callback: () -> Unit){
-        for (line in manager.marked.keys){
-            try{
+    fun mapMarked(callback: () -> Unit) {
+
+
+        for (line in manager.marked.keys) {
+
+            try {
                 val len = area.getParagraphLength(line)
-
                 val text = area.paragraphs[line].text
-
-                val offset = text.takeWhile{
-                    it.isWhitespace()
-                }.length
-
-                val substr = text.takeLastWhile{
-                    it.isWhitespace()
-                }.length
-
+                val offset = text.takeWhile { it.isWhitespace() }.length
+                val substr = text.takeLastWhile { it.isWhitespace() }.length
                 val spans = area.getStyleSpans(line)
-
                 area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, offset, len - offset - substr, "marked"))
-            }catch (ex: IndexOutOfBoundsException){}
+            } catch (ex: IndexOutOfBoundsException) {
+            }
         }
 
         callback()
+
+
     }
 
     private val patternCompilerStatic = Pattern.compile(
-        "(?<SECTION>${HighlighterStatics.SECTION_PATTERN})" +
-        "|(?<COLOR0>${HighlighterStatics.COLOR_0_PATTERN})" +
-        "|(?<COLOR1>${HighlighterStatics.COLOR_1_PATTERN})" +
-        "|(?<COLOR2>${HighlighterStatics.COLOR_2_PATTERN})" +
-        "|(?<COLOR3>${HighlighterStatics.COLOR_3_PATTERN})" +
-        "|(?<COLOR4>${HighlighterStatics.COLOR_4_PATTERN})" +
-        "|(?<COLOR5>${HighlighterStatics.COLOR_5_PATTERN})" +
-        "|(?<COLOR6>${HighlighterStatics.COLOR_6_PATTERN})" +
-        "|(?<COLOR7>${HighlighterStatics.COLOR_7_PATTERN})" +
-        "|(?<COLOR8>${HighlighterStatics.COLOR_8_PATTERN})" +
-        "|(?<COLOR9>${HighlighterStatics.COLOR_9_PATTERN})" +
-        "|(?<COLORA>${HighlighterStatics.COLOR_A_PATTERN})" +
-        "|(?<COLORB>${HighlighterStatics.COLOR_B_PATTERN})" +
-        "|(?<COLORC>${HighlighterStatics.COLOR_C_PATTERN})" +
-        "|(?<COLORD>${HighlighterStatics.COLOR_D_PATTERN})" +
-        "|(?<COLORE>${HighlighterStatics.COLOR_E_PATTERN})" +
-        "|(?<COLORF>${HighlighterStatics.COLOR_F_PATTERN})" +
-        "|(?<NUMBERS>${HighlighterStatics.NUMBERS_PATTERN})" +
-        "|(?<OPERATORS>${HighlighterStatics.OPERATORS_PATTERN})" +
-        "|(?<COMMAND>${HighlighterStatics.COMMAND_PATTERN})" +
-        "|(?<PAREN>${HighlighterStatics.PAREN_PATTERN})" +
-        "|(?<BRACKET>${HighlighterStatics.BRACKET_PATTERN})" +
-        "|(?<STRING>${HighlighterStatics.STRING_PATTERN})" +
-        "|(?<COMMENT>${HighlighterStatics.COMMENT_PATTERN})" +
-        "|(?<VARS>${HighlighterStatics.VAR_PATTERN})")
+            "(?<SECTION>" + HighlighterStatics.SECTION_PATTERN + ")"
+                    + "|(?<COLOR0>" + HighlighterStatics.COLOR_0_PATTERN + ")"
+                    + "|(?<COLOR1>" + HighlighterStatics.COLOR_1_PATTERN + ")"
+                    + "|(?<COLOR2>" + HighlighterStatics.COLOR_2_PATTERN + ")"
+                    + "|(?<COLOR3>" + HighlighterStatics.COLOR_3_PATTERN + ")"
+                    + "|(?<COLOR4>" + HighlighterStatics.COLOR_4_PATTERN + ")"
+                    + "|(?<COLOR5>" + HighlighterStatics.COLOR_5_PATTERN + ")"
+                    + "|(?<COLOR6>" + HighlighterStatics.COLOR_6_PATTERN + ")"
+                    + "|(?<COLOR7>" + HighlighterStatics.COLOR_7_PATTERN + ")"
+                    + "|(?<COLOR8>" + HighlighterStatics.COLOR_8_PATTERN + ")"
+                    + "|(?<COLOR9>" + HighlighterStatics.COLOR_9_PATTERN + ")"
+                    + "|(?<COLORA>" + HighlighterStatics.COLOR_A_PATTERN + ")"
+                    + "|(?<COLORB>" + HighlighterStatics.COLOR_B_PATTERN + ")"
+                    + "|(?<COLORC>" + HighlighterStatics.COLOR_C_PATTERN + ")"
+                    + "|(?<COLORD>" + HighlighterStatics.COLOR_D_PATTERN + ")"
+                    + "|(?<COLORE>" + HighlighterStatics.COLOR_E_PATTERN + ")"
+                    + "|(?<COLORF>" + HighlighterStatics.COLOR_F_PATTERN + ")"
+
+                    + "|(?<NUMBERS>" + HighlighterStatics.NUMBERS_PATTERN + ")"
+
+                    + "|(?<OPERATORS>" + HighlighterStatics.OPERATORS_PATTERN + ")"
+                    + "|(?<COMMAND>" + HighlighterStatics.COMMAND_PATTERN + ")"
+
+                    + "|(?<PAREN>" + HighlighterStatics.PAREN_PATTERN + ")"
+                    + "|(?<BRACKET>" + HighlighterStatics.BRACKET_PATTERN + ")"
+                    + "|(?<STRING>" + HighlighterStatics.STRING_PATTERN + ")"
+                    + "|(?<COMMENT>" + HighlighterStatics.COMMENT_PATTERN + ")"
+                    + "|(?<VARS>" + HighlighterStatics.VAR_PATTERN + ")")
+
 }
 
-object HighlighterStatics{
+object HighlighterStatics {
+
     const val SECTION_PATTERN = "(?<=\\n)\\s*usage:|executable by:|aliases:|permission:|permission message:|description:|cooldown:|cooldown message:|cooldown bypass:|cooldown storage:"
+
     const val COLOR_0_PATTERN = "§0|&0"
     const val COLOR_1_PATTERN = "§1|&1"
     const val COLOR_2_PATTERN = "§2|&2"
@@ -245,7 +222,9 @@ object HighlighterStatics{
     const val COLOR_D_PATTERN = "§d|&d"
     const val COLOR_E_PATTERN = "§e|&e"
     const val COLOR_F_PATTERN = "§f|&f"
+
     const val NUMBERS_PATTERN = "[0-9]"
+
     const val COMMAND_PATTERN = "(?<=\\G|\\n)command(?=\\s)"
     const val OPERATORS_PATTERN = "trigger:|if |else:|else if |while |loop | is | contains |function |set |on "
     //val KEYWORDS = arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "cancel", "else", "else if")
@@ -256,4 +235,5 @@ object HighlighterStatics{
     const val STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\""
     fun joinBoundaryPattern(items: Array<String>) = "\\b(" + items.joinToString("|") + ")\\b"
     fun joinList(items: Array<String>) = items.joinToString("|")
+
 }

@@ -1,29 +1,19 @@
 package com.skide.skriptinsight.model;
 
+import java.util.Map;
 import com.fasterxml.jackson.annotation.*;
 
-public class Inspection{
+public class Inspection {
     private String typeName;
-
     private String description;
 
     @JsonProperty("TypeName")
-    public String getTypeName(){
-        return typeName;
-    }
-
+    public String getTypeName() { return typeName; }
     @JsonProperty("TypeName")
-    public void setTypeName(String value){
-        this.typeName = value;
-    }
+    public void setTypeName(String value) { this.typeName = value; }
 
     @JsonProperty("Description")
-    public String getDescription(){
-        return description;
-    }
-
+    public String getDescription() { return description; }
     @JsonProperty("Description")
-    public void setDescription(String value){
-        this.description = value;
-    }
+    public void setDescription(String value) { this.description = value; }
 }

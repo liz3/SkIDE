@@ -9,7 +9,11 @@ import javafx.scene.control.ListView
 import javafx.scene.control.TextField
 import javafx.scene.control.CheckBox
 
-class GeneralSettingsGUIController{
+
+
+
+class GeneralSettingsGUIController {
+
     @FXML
     lateinit var serverServerList: ListView<Server>
 
