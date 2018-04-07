@@ -286,7 +286,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                     it.value.srv.kill()
                 }
                 Platform.runLater {
-                    Prompts.infoCheck("Stopped Server", "Running servers had to be stopped", "SkIde stopped $am server", Alert.AlertType.INFORMATION)
+                    Prompts.infoCheck("Stopped Server", "Running servers had to be stopped", "Sk-IDE stopped $am server", Alert.AlertType.INFORMATION)
                 }
             }.start()
         }
@@ -572,7 +572,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             openProjectGuiManager.closeHook()
         }
 
-
         val newProject = MenuItem("New Project")
         newProject.setOnAction {
             val window = GUIManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
@@ -580,9 +579,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             window.controller.initGui(coreManager, window)
             window.stage.isResizable = false
 
-
             window.stage.show()
         }
+
         val compileMenu = Menu("Compile")
         fileMenu.setOnShowing {
             otherProjects.items.clear()
@@ -687,7 +686,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             }
         }
         structureTab.second.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-
             if (newValue != null) {
 
                 val item = newValue as TreeItem<String>
@@ -698,7 +696,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                         .filter { it.tab == tab }
                         .filter { it.name.endsWith(".sk") }
                         .forEach { it.codeManager.gotoItem(item) }
-
             }
         }
 
@@ -713,22 +710,16 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                         .forEach {
                             if (it.name.endsWith(".sk")) updateStructureTab(it)
 
-
                             if (!it.name.endsWith(".sk")) {
                                 GUIManager.discord.update("Editing ${it.name}", "Coding")
                             } else {
                                 GUIManager.discord.update("Editing script ${it.name}", "Coding")
                             }
                         }
-
             } else {
                 controller.browserTabPane.selectionModel.select(0)
                 structureTab.first.isDisable = true
             }
-
         }
-
     }
-
-
 }
