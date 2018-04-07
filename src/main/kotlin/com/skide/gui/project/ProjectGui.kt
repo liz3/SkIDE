@@ -406,7 +406,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         for ((name, _) in openProjectGuiManager.projectFiles) {
             val item = TreeItem<String>(name)
             if (name.endsWith(".sk")) {
-                val openIcon = Image(javaClass.getResource("/icon.png").toExternalForm())
+                val openIcon = Image(javaClass.getResource("/sk.png").toExternalForm())
                 val openView = ImageView(openIcon)
                 openView.fitWidth = 15.0
                 openView.fitHeight = 15.0
