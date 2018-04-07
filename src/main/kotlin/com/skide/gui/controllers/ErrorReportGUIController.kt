@@ -6,8 +6,6 @@ import javafx.scene.control.TextArea
 import javafx.scene.control.CheckBox
 
 
-
-
 class ErrorReportGUIController {
 
     @FXML

@@ -22,10 +22,7 @@ import javafx.stage.StageStyle
 import java.lang.management.ManagementFactory
 
 
-class CoreManager() {
-
-
-
+class CoreManager {
 
     val guiManager = GUIManager
     lateinit var debugger: Debugger
@@ -33,7 +30,7 @@ class CoreManager() {
     lateinit var projectManager: ProjectManager
     lateinit var serverManager: ServerManager
     lateinit var insightClient: SkriptInsightClient
-    lateinit var insightsManager:InsightsManager
+    lateinit var insightsManager: InsightsManager
     lateinit var resourceManager: ResourceManager
     lateinit var saver: AutoSaver
     lateinit var sockServer: SocketManager
@@ -116,18 +113,16 @@ class CoreManager() {
                             attachDebugger()
                             Platform.runLater {
                                 stage.close()
-
-
                                 GUIManager.discord.update("In the main menu", "Idle")
                                 val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, Stage())
                                 stage.isResizable = false
                                 (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
+                                window.stage.centerOnScreen()
+                                window.stage.isResizable = false
                                 window.stage.show()
 
                             }
                         }
-
-
 
 
                     } catch (e: Exception) {

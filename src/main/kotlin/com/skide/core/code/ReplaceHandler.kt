@@ -5,6 +5,7 @@ import com.skide.gui.controllers.ReplaceFrameController
 import com.skide.include.OpenFileHolder
 import com.skide.utils.StringSearchResult
 import com.skide.utils.search
+import com.skide.utils.setIcon
 import javafx.scene.input.KeyCode
 
 class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
@@ -17,6 +18,10 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
     var currentPoint = 0
 
     init {
+        (node.second as ReplaceFrameController).closeBtn.setIcon("delete", false)
+        (node.second as ReplaceFrameController).closeBtn.setOnAction {
+            switchGui()
+        }
         registerEvents()
     }
 
@@ -41,12 +46,12 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
     private fun clearSearchHighlighting() {
 
-        if (project.coreManager.configManager.get("highlighting") == "true")    manager.highlighter.restartHighlighting()
+        if (project.coreManager.configManager.get("highlighting") == "true") manager.highlighter.restartHighlighting()
 
     }
 
     private fun computeHighlight() {
-        if (project.coreManager.configManager.get("highlighting") == "true")    manager.highlighter.stopHighLighting()
+        if (project.coreManager.configManager.get("highlighting") == "true") manager.highlighter.stopHighLighting()
     }
 
     private fun check() {
@@ -103,7 +108,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
             currentPoint = 0
             executed
             entries.clear()
-            if (project.coreManager.configManager.get("highlighting") == "true")    manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
+            if (project.coreManager.configManager.get("highlighting") == "true") manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
 
             check()
         }
@@ -160,7 +165,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
             currentPoint = 0
             executed = false
             entries.clear()
-            if (project.coreManager.configManager.get("highlighting") == "true")   manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
+            if (project.coreManager.configManager.get("highlighting") == "true") manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
             check()
         }
         ctrl.regexEnableCheck.setOnAction {
@@ -170,7 +175,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
             currentPoint = 0
             executed = false
             entries.clear()
-            if (project.coreManager.configManager.get("highlighting") == "true")   manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
+            if (project.coreManager.configManager.get("highlighting") == "true") manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
             check()
         }
         ctrl.replaceBtn.setOnAction {
@@ -248,7 +253,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
         if (entries.size == 0) return
 
         println(currentPoint)
-        if(currentPoint + 1 == entries.size) currentPoint = 0
+        if (currentPoint + 1 == entries.size) currentPoint = 0
         val entry = entries[currentPoint]
         val toReplace = ctrl.replaceField.text
 

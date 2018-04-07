@@ -2,9 +2,11 @@ package com.skide.core.code
 
 import com.skide.gui.GUIManager
 import com.skide.gui.controllers.FindFrameController
+import com.skide.gui.controllers.ReplaceFrameController
 import com.skide.include.OpenFileHolder
 import com.skide.utils.StringSearchResult
 import com.skide.utils.search
+import com.skide.utils.setIcon
 import javafx.scene.input.KeyCode
 import kotlin.collections.ArrayList
 
@@ -19,6 +21,10 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
     var currentPoint = 0
 
     init {
+        (node.second as FindFrameController).closeBtn.setIcon("delete", false)
+        (node.second as FindFrameController).closeBtn.setOnAction {
+            switchGui()
+        }
         registerEvents()
     }
 
@@ -162,7 +168,7 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
             currentPoint = 0
             executed = false
             entries.clear()
-            if (project.coreManager.configManager.get("highlighting") == "true")  manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
+            if (project.coreManager.configManager.get("highlighting") == "true") manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
             check()
         }
         ctrl.prevEntry.setOnAction {

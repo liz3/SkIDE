@@ -22,10 +22,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
 
 
-
-
 class CodeManager {
-
 
 
     lateinit var rootStructureItem: TreeItem<String>
@@ -34,7 +31,7 @@ class CodeManager {
     lateinit var autoComplete: AutoCompleteCompute
     lateinit var highlighter: Highlighting
     lateinit var parseResult: Vector<Node>
-    lateinit var crossNodes:HashMap<String, Vector<Node>>
+    lateinit var crossNodes: HashMap<String, Vector<Node>>
     lateinit var findHandler: FindHandler
     lateinit var replaceHandler: ReplaceHandler
     lateinit var sequenceReplaceHandler: ReplaceSequence
@@ -53,7 +50,6 @@ class CodeManager {
     var lastPos = 0
 
 
-    
     fun setup(project: OpenFileHolder) {
 
         rootStructureItem = TreeItem(project.name)
@@ -70,24 +66,24 @@ class CodeManager {
         hBox = project.currentStackBox
 
         ChangeWatcher(area, 500, {
-           if(project.coreManager.configManager.get("cross_auto_complete") == "true") {
-               project.openProject.guiHandler.openFiles.values.forEach {
-                  if(it.f.name != project.f.name) it.codeManager.updateCrossFileAutoComplete(project.f.name, area.text)
-               }
-           }
+            if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
+                project.openProject.guiHandler.openFiles.values.forEach {
+                    if (it.f.name != project.f.name) it.codeManager.updateCrossFileAutoComplete(project.f.name, area.text)
+                }
+            }
 
-           if(!inspectionsDisabled && !autoComplete.stopped) {
+            if (!inspectionsDisabled && !autoComplete.stopped) {
 
-               println("Running inspections with SkriptInsight!")
-               val toRemove = Vector<Int>()
-               ignored.forEach { if(area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
-               toRemove.forEach { ignored.remove(it) }
-               project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
-           }
+                println("Running inspections with SkriptInsight!")
+                val toRemove = Vector<Int>()
+                ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
+                toRemove.forEach { ignored.remove(it) }
+                project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
+            }
 
 
         }).start()
-        if(project.coreManager.configManager.get("cross_auto_complete") == "true") {
+        if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
             crossNodes = HashMap()
             loadCrossFileAutoComplete(project)
         }
@@ -102,15 +98,16 @@ class CodeManager {
         area.moveTo(0)
 
     }
+
     private fun loadCrossFileAutoComplete(project: OpenFileHolder) {
 
-        project.openProject.project.fileManager.projectFiles.values.forEach {f ->
+        project.openProject.project.fileManager.projectFiles.values.forEach { f ->
 
-            if(f.name.endsWith(".sk")) {
+            if (f.name.endsWith(".sk")) {
 
-                if(project.openProject.guiHandler.openFiles.containsKey(f)) {
+                if (project.openProject.guiHandler.openFiles.containsKey(f)) {
                     val openHolder = project.openProject.guiHandler.openFiles[f]
-                    if(openHolder!!.codeManager != this) updateCrossFileAutoComplete(openHolder.f.name, openHolder.area.text)
+                    if (openHolder!!.codeManager != this) updateCrossFileAutoComplete(openHolder.f.name, openHolder.area.text)
                 } else {
                     updateCrossFileAutoComplete(f.name, readFile(f).second)
                 }
@@ -119,22 +116,25 @@ class CodeManager {
         }
 
     }
-    fun updateCrossFileAutoComplete(f:String, text:String) {
-        if(!f.endsWith(".sk")) return
+
+    fun updateCrossFileAutoComplete(f: String, text: String) {
+        if (!f.endsWith(".sk")) return
         val result = SkriptParser().superParse(text)
-        if(!crossNodes.containsKey(f))
+        if (!crossNodes.containsKey(f))
             crossNodes[f] = Vector()
         else
             crossNodes[f]!!.clear()
 
         result.forEach {
-            if(it.nodeType == NodeType.FUNCTION) {
+            if (it.nodeType == NodeType.FUNCTION) {
                 crossNodes[f]!!.add(it)
             }
         }
         val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, result)
         vars.forEach {
-            if(it.nodeType == NodeType.SET_VAR && it.fields["visibility"] == "global") { crossNodes[f]!!.add(it) }
+            if (it.nodeType == NodeType.SET_VAR && it.fields["visibility"] == "global") {
+                crossNodes[f]!!.add(it)
+            }
         }
 
 
@@ -142,9 +142,10 @@ class CodeManager {
 
     fun setupToolTip() {
 
-        if(this::tooltipHandler.isInitialized) tooltipHandler.setup()
+        if (this::tooltipHandler.isInitialized) tooltipHandler.setup()
 
     }
+
     private fun registerEvents(project: OpenFileHolder) {
 
         area.focusedProperty().addListener { _, _, newValue ->
@@ -163,11 +164,11 @@ class CodeManager {
 
         area.setOnKeyReleased {
 
-            if(it.code == KeyCode.COMMAND) cmdMacDown = false
+            if (it.code == KeyCode.COMMAND) cmdMacDown = false
         }
         area.setOnKeyPressed { ev ->
 
-            if(ev.code == KeyCode.COMMAND) cmdMacDown = true
+            if (ev.code == KeyCode.COMMAND) cmdMacDown = true
 
             if (ev.code == KeyCode.TAB) {
                 if (sequenceReplaceHandler.computing) {
@@ -232,9 +233,9 @@ class CodeManager {
                     computed = false
                 }
                 if (computed) {
-                    val lForIndex =  area.getCaretLine() - 1
+                    val lForIndex = area.getCaretLine() - 1
 
-                    if(marked.containsKey(lForIndex)) {
+                    if (marked.containsKey(lForIndex)) {
 
                         Platform.runLater {
                             autoComplete.hideList()
@@ -324,7 +325,7 @@ class CodeManager {
                 if (computed) {
                     if (!autoComplete.popUp.isShowing) {
                         val paragraph = area.paragraphs[area.getCaretLine() - 1]
-                        if(paragraph.text.isEmpty()) {
+                        if (paragraph.text.isEmpty()) {
                             autoComplete.showGlobalAutoComplete(EditorUtils.getLineNode(area.getCaretLine(), parseResult)!!)
                         } else {
                             if (paragraph.text.isBlank() && area.caretColumn == 0)
@@ -332,7 +333,6 @@ class CodeManager {
                             else
                                 autoComplete.showLocalAutoComplete(false)
                         }
-
 
 
                     }
@@ -536,15 +536,15 @@ class CodeManager {
                 computed = true
             }
 
-            if(cmdMacDown && getOS() == OperatingSystemType.MAC_OS) {
+            if (cmdMacDown && getOS() == OperatingSystemType.MAC_OS) {
                 if (ev.code == KeyCode.C) area.copy()
                 if (ev.code == KeyCode.Z) {
 
-                    if(getLocale().contains("de")) area.redo() else area.undo()
+                    if (getLocale().contains("de")) area.redo() else area.undo()
                 }
 
                 if (ev.code == KeyCode.Y) {
-                    if(getLocale().contains("de")) area.undo() else area.redo()
+                    if (getLocale().contains("de")) area.undo() else area.redo()
 
                 }
                 if (ev.code == KeyCode.V) area.paste()
@@ -620,7 +620,7 @@ class CodeManager {
             }
 
             if (ev.clickCount == 3) {
-                if(area.text.length < lastPos) return@setOnMouseClicked
+                if (area.text.length < lastPos) return@setOnMouseClicked
                 area.moveTo(lastPos)
                 area.selectLine()
                 lastPos = 0
@@ -672,7 +672,7 @@ class CodeManager {
                 b.setOnAction {
 
                     val index = area.text.indexOf(node.raw);
-                    if(index == -1) return@setOnAction
+                    if (index == -1) return@setOnAction
                     area.moveTo(index)
                     area.selectLine()
                     area.scrollYToPixel(node.linenumber * 14.95)

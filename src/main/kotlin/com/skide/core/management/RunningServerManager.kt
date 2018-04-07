@@ -23,7 +23,7 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
 
             area.isEditable = false
             val builder = ProcessBuilder()
-            val list = arrayListOf(File(File(System.getProperty("java.home"),"bin"),"java").absolutePath, "-jar", File(server.configuration.folder, "server.jar").absolutePath)
+            val list = arrayListOf(File(File(System.getProperty("java.home"), "bin"), "java").absolutePath, "-jar", File(server.configuration.folder, "server.jar").absolutePath)
             server.configuration.startAgrs.split(" ").forEach {
                 list += it
             }
@@ -85,7 +85,7 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
         try {
             process.outputStream.write("$msg\n".toByteArray())
             process.outputStream.flush()
-        }catch (e:Exception) {
+        } catch (e: Exception) {
             server.running = false
             coreManager.serverManager.running.remove(server)
             Platform.runLater {

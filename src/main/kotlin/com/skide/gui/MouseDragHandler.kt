@@ -32,11 +32,11 @@ class MouseDragHandler(val pane: TabPane, val coreManager: OpenProjectGuiManager
         }
         pane.setOnDragDropped {
             println("${pane}Drag dropped")
-            if(coreManager.draggedTab != null) {
-            coreManager.dragDone = true
+            if (coreManager.draggedTab != null) {
+                coreManager.dragDone = true
                 pane.tabs.add(coreManager.draggedTab)
             } else {
-                if(it.dragboard.hasFiles()) {
+                if (it.dragboard.hasFiles()) {
                     it.dragboard.files.forEach {
                         coreManager.openProject.eventManager.openFile(it, pane, true)
                     }
@@ -51,7 +51,7 @@ class MouseDragHandler(val pane: TabPane, val coreManager: OpenProjectGuiManager
             if (it.gestureSource != pane &&
                     it.dragboard.hasString()) {
                 it.acceptTransferModes(*TransferMode.COPY_OR_MOVE)
-            } else if(it.dragboard.hasFiles()) {
+            } else if (it.dragboard.hasFiles()) {
                 println("Contains files")
                 it.acceptTransferModes(*TransferMode.COPY_OR_MOVE)
             }
@@ -60,7 +60,7 @@ class MouseDragHandler(val pane: TabPane, val coreManager: OpenProjectGuiManager
         }
         pane.setOnDragDone {
             println("${pane}Drag done")
-            if(coreManager.dragDone) {
+            if (coreManager.dragDone) {
                 pane.tabs.remove(coreManager.draggedTab)
 
             }

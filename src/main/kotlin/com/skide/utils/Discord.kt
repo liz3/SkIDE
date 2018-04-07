@@ -3,7 +3,7 @@ package com.skide.utils
 import com.github.psnrigner.discordrpcjava.*
 import com.skide.gui.GUIManager
 
-class Discord (private var disabled : Boolean = false) {
+class Discord(private var disabled: Boolean = false) {
 
     private var discordRpc = DiscordRpc()
 

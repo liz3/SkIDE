@@ -16,7 +16,7 @@ object Prompts {
     fun textPrompt(title: String, header: String): String {
         val input = TextInputDialog()
 
-        if(theme == "Dark") {
+        if (theme == "Dark") {
             val dialogPane = input.dialogPane
             dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))
         }
@@ -34,7 +34,7 @@ object Prompts {
     fun passPrompt(): String {
         val pd = PasswordDialog()
 
-        if(theme == "Dark") {
+        if (theme == "Dark") {
             val dialogPane = pd.dialogPane
             dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))
         }
@@ -57,7 +57,7 @@ object Prompts {
         alert.isResizable = false
         alert.graphic = null
 
-        if(theme == "Dark") {
+        if (theme == "Dark") {
             val dialogPane = alert.dialogPane
             dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))
         }

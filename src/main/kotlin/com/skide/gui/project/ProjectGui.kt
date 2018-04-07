@@ -43,8 +43,9 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
     val otherTabPanes = Vector<TabPane>()
     var paneHolderNode: Node = HBox()
-    var draggedTab:Tab? = null
+    var draggedTab: Tab? = null
     var dragDone = false
+    var activeTab = Tab()
 
 
     fun startGui(): ProjectGuiEventListeners {
@@ -181,12 +182,10 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                     if (tabPane.tabs.size == 0) {
                         box.children.remove(tabPane)
                         otherTabPanes.remove(tabPane)
-
                         val total = box.width
                         val panesHeight = total / otherTabPanes.size
                         box.children.forEach {
                             it as TabPane
-
                             it.setPrefSize(panesHeight, box.height)
                         }
                     }
@@ -195,10 +194,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                         val mainTabPane = openProject.eventManager.controller.editorMainTabPane
                         val root = openProject.eventManager.controller.mainCenterAnchorPane
                         otherTabPanes.forEach {
-
                             mainTabPane.tabs.addAll(it.tabs)
-
-
                         }
                         otherTabPanes.clear()
                         root.children.clear()
@@ -270,17 +266,18 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                     it.setPrefSize(box.width, panesHeight)
                 }
             }
-
-
         }
-
     }
 
 
     fun closeHook() {
+        openProject.project.fileManager.lastOpen.clear()
         openFiles.values.forEach {
             it.saveCode()
+            openProject.project.fileManager.lastOpen.addElement(it.f.name)
+
         }
+        openProject.project.fileManager.rewriteConfig()
         if (openProject.runConfs.size != 0) {
 
             Thread {
@@ -289,10 +286,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                     it.value.srv.kill()
                 }
                 Platform.runLater {
-
                     Prompts.infoCheck("Stopped Server", "Running servers had to be stopped", "SkIde stopped $am server", Alert.AlertType.INFORMATION)
-
-
                 }
             }.start()
         }
@@ -353,6 +347,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         updateProjectFilesTreeView()
         mouseDragHandler.setup()
         guiReady()
+
+        openProjectGuiManager.openProject.project.fileManager.lastOpen.forEach {
+            openFile(openProjectGuiManager.openProject.project.fileManager.projectFiles[it]!!)
+        }
     }
 
 
@@ -377,6 +375,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         openProjectGuiManager.openFiles.put(f, holder)
         setupNewTabForDisplay(holder)
     }
+
     fun openFile(f: File, tabPane: TabPane, isExternal: Boolean = false) {
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
@@ -435,6 +434,11 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             holder.borderPane.center = VirtualizedScrollPane(holder.area)
             holder.borderPane.bottom = holder.currentStackBox
             holder.currentStackBox.prefHeight = 35.0
+            holder.tab.selectedProperty().addListener { _, _, newValue ->
+                if (newValue) {
+                    openProjectGuiManager.activeTab = holder.tab
+                }
+            }
             holder.tab.content = holder.borderPane
             holder.tab.contextMenu = Menus.getMenuForRootPane(holder)
             holder.area.paragraphGraphicFactory = LineNumberFactory.get(holder.area)
@@ -515,8 +519,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private fun setupMainMenu() {
 
-        if(getOS() == OperatingSystemType.MAC_OS) controller.mainBenuBar.useSystemMenuBarProperty().set(true)
+        if (getOS() == OperatingSystemType.MAC_OS) controller.mainBenuBar.useSystemMenuBarProperty().set(true)
         val fileMenu = controller.mainBenuBar.menus[0]
+        val editMenu = controller.mainBenuBar.menus[1]
         val closeItem = fileMenu.items.first()
         fileMenu.items.remove(closeItem)
 
@@ -531,6 +536,34 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         }
         controller.mainBenuBar.menus[2].items.add(skUnity)
 
+        editMenu.items.add(simpleMenuItem("Find") {
+            openProjectGuiManager.openFiles.values.forEach {
+                if (it.tab === openProjectGuiManager.activeTab) {
+                    it.codeManager.findHandler.switchGui()
+                }
+            }
+        })
+        editMenu.items.add(simpleMenuItem("Find/Replace") {
+            openProjectGuiManager.openFiles.values.forEach {
+                if (it.tab === openProjectGuiManager.activeTab) {
+                    it.codeManager.replaceHandler.switchGui()
+                }
+            }
+        })
+        editMenu.items.add(simpleMenuItem("Undo") {
+            openProjectGuiManager.openFiles.values.forEach {
+                if (it.tab === openProjectGuiManager.activeTab) {
+                    it.codeManager.area.undo()
+                }
+            }
+        })
+        editMenu.items.add(simpleMenuItem("Redo") {
+            openProjectGuiManager.openFiles.values.forEach {
+                if (it.tab === openProjectGuiManager.activeTab) {
+                    it.codeManager.area.redo()
+                }
+            }
+        })
 
         val otherProjects = Menu("Other projects")
 
@@ -538,6 +571,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             openProjectGuiManager.window.close()
             openProjectGuiManager.closeHook()
         }
+
 
         val newProject = MenuItem("New Project")
         newProject.setOnAction {
@@ -604,6 +638,15 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             }
         }
         fileMenu.items.addAll(newProject, projectSettings, otherProjects, compileMenu, generalSettings, editServerConfMenu, closeItem)
+    }
+
+    private fun simpleMenuItem(name: String, action: () -> Unit): MenuItem {
+        val item = MenuItem(name)
+        item.setOnAction {
+            action()
+        }
+
+        return item
     }
 
     private fun registerBrowserEvents() {

@@ -69,13 +69,13 @@ object Menus {
         val splitSide = MenuItem("Split vertically")
         splitSide.setOnAction {
             project.openProject.guiHandler.switchMode(EditorMode.SIDE_SPLIT)
-          //  project.tabPane.tabs.remove(project.tab)
+            //  project.tabPane.tabs.remove(project.tab)
             project.openProject.guiHandler.addTabPane(project.tab)
         }
         val splitDown = MenuItem("Split Horizontally")
         splitDown.setOnAction {
             project.openProject.guiHandler.switchMode(EditorMode.DOWN_SPLIT)
-          //  project.tabPane.tabs.remove(project.tab)
+            //  project.tabPane.tabs.remove(project.tab)
             project.openProject.guiHandler.addTabPane(project.tab)
         }
 

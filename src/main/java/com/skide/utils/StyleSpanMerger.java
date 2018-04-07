@@ -9,7 +9,6 @@ import java.util.*;
 public class StyleSpanMerger {
 
 
-
     public static StyleSpans<Collection<String>> merge(@Nullable StyleSpans<Collection<String>>
                                                                spans, int lineLength, int offset, int styleLength, String cssClass) {
         if (spans != null) {

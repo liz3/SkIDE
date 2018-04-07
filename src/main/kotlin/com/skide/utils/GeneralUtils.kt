@@ -16,7 +16,6 @@ import java.io.FileInputStream
 import java.util.zip.ZipInputStream
 
 
-
 fun unzip(zipFile: String, outputFolder: String) {
 
     val buffer = ByteArray(1024)
@@ -38,7 +37,7 @@ fun unzip(zipFile: String, outputFolder: String) {
             var len: Int
             while (true) {
                 len = zis.read(buffer)
-                if(len <= 0) break
+                if (len <= 0) break
                 fos.write(buffer, 0, len)
             }
 
@@ -48,7 +47,6 @@ fun unzip(zipFile: String, outputFolder: String) {
 
         zis.closeEntry()
         zis.close()
-
 
 
     } catch (ex: IOException) {
@@ -86,19 +84,21 @@ fun restart() {
     command.add(currentJar.path)
 
     val builder = ProcessBuilder(command)
-  Thread{
-      builder.start()
-  }.start()
+    Thread {
+        builder.start()
+    }.start()
     System.exit(0)
 }
+
 fun getLocale(): String {
 
     val context = InputContext.getInstance()
-   return context.locale.toString()
+    return context.locale.toString()
 }
-fun Button.setIcon(name:String, replaceAble:Boolean = true) {
+
+fun Button.setIcon(name: String, replaceAble: Boolean = true) {
     var lnk = "/$name"
-    if(replaceAble) lnk += if(GUIManager.settings.get("theme") == "Dark") "_white" else "_black"
+    if (replaceAble) lnk += if (GUIManager.settings.get("theme") == "Dark") "_white" else "_black"
     lnk += ".png"
     val image = Image(GUIManager::javaClass.javaClass.getResource(lnk).toExternalForm())
     this.text = ""

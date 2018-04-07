@@ -51,9 +51,9 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
         coreManager.configManager.set(key, content)
 
-      Platform.runLater {
-          field.text = content
-      }
+        Platform.runLater {
+            field.text = content
+        }
     }
 
     fun init() {
@@ -98,7 +98,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
                 if (newServerAdded) {
                     newServerAdded = false
                 }
-                if(currentSelected() != null)serverManager.saveServerConfigution(currentSelected()!!)
+                if (currentSelected() != null) serverManager.saveServerConfigution(currentSelected()!!)
             }
 
             deleted.clear()
@@ -117,7 +117,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
                 if (newServerAdded) {
                     newServerAdded = false
                 }
-                if(currentSelected() != null) serverManager.saveServerConfigution(currentSelected()!!)
+                if (currentSelected() != null) serverManager.saveServerConfigution(currentSelected()!!)
             }
 
             deleted.clear()
@@ -265,9 +265,9 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         return dirChooser.showDialog(fileChooserWindow)
     }
 
-    private fun currentSelected() : Server? {
+    private fun currentSelected(): Server? {
 
-        if(ctrl.serverServerList.selectionModel.selectedItem == null) {
+        if (ctrl.serverServerList.selectionModel.selectedItem == null) {
             Prompts.infoCheck("Error", "Create a Serer first", "Please create or select a Server first before assigning things!", Alert.AlertType.ERROR)
             return null
         }

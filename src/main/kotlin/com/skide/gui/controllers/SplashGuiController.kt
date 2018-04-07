@@ -19,5 +19,4 @@ class SplashGuiController {
     lateinit var progressBar: ProgressBar
 
 
-
 }

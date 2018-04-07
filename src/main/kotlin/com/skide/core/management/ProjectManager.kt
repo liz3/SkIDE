@@ -137,7 +137,7 @@ class ProjectFileManager(val project: Project) {
     private val compileOptsFile = File(project.folder, ".compileInfo.skide")
     val projectFiles = HashMap<String, File>()
     val addons = HashMap<String, String>()
-    val openFilesForSave = Vector<String>()
+    val lastOpen = Vector<String>()
     val compileOptions = HashMap<String, CompileOption>()
 
 
@@ -152,6 +152,7 @@ class ProjectFileManager(val project: Project) {
             it as JSONObject
             addons[it.getString("name")] = it.getString("version")
         }
+        loadLastOpen()
         rewriteConfig()
         if (compileOptsFile.exists()) {
             loadCompileOptions()
@@ -167,6 +168,16 @@ class ProjectFileManager(val project: Project) {
 
     }
 
+    fun loadLastOpen() {
+
+        val result = JSONObject(readFile(configFile).second)
+
+       if(result.has("last_open")) {
+           result.getJSONArray("last_open").forEach {
+               lastOpen.addElement(it as String)
+           }
+       }
+    }
     fun delCompileOption(name: String) {
         if (!compileOptions.containsKey(name)) return
         compileOptions.remove(name)
@@ -253,8 +264,12 @@ class ProjectFileManager(val project: Project) {
             addonObj.put("version", addon.value)
             addonsArray.put(addonObj)
         }
+        val lastOpenArr = JSONArray()
+        lastOpen.forEach { lastOpenArr.put(it) }
         obj.put("addons", addonsArray)
         obj.put("files", filesArr)
+        obj.put("last_open", lastOpenArr)
+
 
         writeFile(obj.toString().toByteArray(), configFile)
     }

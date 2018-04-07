@@ -11,7 +11,7 @@ class ChangeWatcher(val area: CodeArea, val wait: Long, val caller: () -> Unit) 
             Thread.sleep(125)
             val current = System.currentTimeMillis()
 
-            if(current - lastEdited in wait..25000) {
+            if (current - lastEdited in wait..25000) {
                 caller()
                 lastEdited = 0
             }

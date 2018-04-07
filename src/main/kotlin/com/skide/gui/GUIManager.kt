@@ -21,7 +21,7 @@ import java.util.*
 
 object GUIManager {
 
-    lateinit var settings:ConfigManager
+    lateinit var settings: ConfigManager
 
     val closingHooks = Vector<() -> Unit>()
 
@@ -42,7 +42,7 @@ object GUIManager {
         stage.icons.add(Image(javaClass.getResource("/icon.png").toExternalForm()))
         val scene = Scene(rootNode)
         scene.stylesheets.add(settings.getCssPath("Reset.css"))
-        if(settings.get("theme") == "Dark") {
+        if (settings.get("theme") == "Dark") {
             scene.stylesheets.add(settings.getCssPath("ThemeDark.css"))
         }
         stage.scene = scene

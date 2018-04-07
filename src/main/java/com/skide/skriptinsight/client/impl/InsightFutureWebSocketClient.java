@@ -33,6 +33,4 @@ public class InsightFutureWebSocketClient extends InsightWebSocketClient {
     }
 
 
-
-
 }

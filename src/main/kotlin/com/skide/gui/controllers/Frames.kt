@@ -24,6 +24,9 @@ class FindFrameController {
     @FXML
     lateinit var caseSensitive: CheckBox
 
+    @FXML
+    lateinit var closeBtn:Button
+
 }
 
 class ReplaceFrameController {
@@ -51,6 +54,9 @@ class ReplaceFrameController {
 
     @FXML
     lateinit var replaceAllBtn: Button
+
+    @FXML
+    lateinit var closeBtn:Button
 
 }
 

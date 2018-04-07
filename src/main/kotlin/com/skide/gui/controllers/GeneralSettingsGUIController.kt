@@ -10,8 +10,6 @@ import javafx.scene.control.TextField
 import javafx.scene.control.CheckBox
 
 
-
-
 class GeneralSettingsGUIController {
 
     @FXML
@@ -108,7 +106,7 @@ class GeneralSettingsGUIController {
     lateinit var keyQuoteField: TextField
 
     @FXML
-    lateinit var crossFileAutoComplete:CheckBox
+    lateinit var crossFileAutoComplete: CheckBox
 
     @FXML
     lateinit var autoCompleteCutField: TextField

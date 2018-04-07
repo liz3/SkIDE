@@ -34,7 +34,7 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String
     val currentStackBox = HBox()
     var isExluded = false
     lateinit var externStage: Stage
-    lateinit var externPane:BorderPane
+    lateinit var externPane: BorderPane
 
     fun saveCode() {
         Thread {
@@ -75,8 +75,8 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String
             pane.bottom = borderPane.bottom
             borderPane = pane
             externStage.scene = Scene(pane, 800.0, 600.0)
-                externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("Reset.css"))
-            if(openProject.coreManager.configManager.get("theme") == "Dark") {
+            externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("Reset.css"))
+            if (openProject.coreManager.configManager.get("theme") == "Dark") {
                 externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("ThemeDark.css"))
 
             }
@@ -90,6 +90,7 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String
         }
     }
 }
+
 enum class EditorMode {
     NORMAL,
     SIDE_SPLIT,

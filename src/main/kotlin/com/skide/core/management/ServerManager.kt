@@ -144,7 +144,7 @@ class ServerManager(val coreManager: CoreManager) {
         try {
             Files.copy(server.configuration.apiPath.toPath(), File(server.configuration.folder, "Server.jar").toPath(), StandardCopyOption.REPLACE_EXISTING)
         } catch (e: Exception) {
-           Prompts.infoCheck("Error", "Error while updating server files", "The file ${server.configuration.apiPath.absolutePath} cold not be copied to ${File(server.configuration.folder, "Server.jar").absolutePath} because ${e.message}", Alert.AlertType.ERROR)
+            Prompts.infoCheck("Error", "Error while updating server files", "The file ${server.configuration.apiPath.absolutePath} cold not be copied to ${File(server.configuration.folder, "Server.jar").absolutePath} because ${e.message}", Alert.AlertType.ERROR)
             return
         }
 
@@ -166,7 +166,7 @@ class ServerManager(val coreManager: CoreManager) {
 
         val downloaded = coreManager.resourceManager.downloadSkriptVersion(server.configuration.skriptVersion)
         try {
-        Files.copy(downloaded.toPath(), File(pluginDir, "Skript.jar").toPath(), StandardCopyOption.REPLACE_EXISTING)
+            Files.copy(downloaded.toPath(), File(pluginDir, "Skript.jar").toPath(), StandardCopyOption.REPLACE_EXISTING)
         } catch (e: Exception) {
             Prompts.infoCheck("Error", "Error while updating server files", "The file ${downloaded.absolutePath} cold not be copied to ${File(pluginDir, "Skript.jar").absolutePath} because ${e.message}", Alert.AlertType.ERROR)
             return

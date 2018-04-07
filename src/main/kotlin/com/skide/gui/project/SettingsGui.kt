@@ -23,10 +23,12 @@ class SettingsGui(val coreManager: CoreManager, val projGuiManager: OpenProjectG
         if (!loaded) {
             val co = CompileOptionsGUI(projGuiManager.openProject, window.controller as ProjectSettingsGUIController)
             co.init()
+
             SettingsGuiEventListener(this, window.controller as ProjectSettingsGUIController, co).init()
         }
 
         if (window.stage.isShowing) return
+        window.stage.isResizable = false
         window.stage.show()
     }
 

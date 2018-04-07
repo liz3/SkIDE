@@ -43,40 +43,27 @@ class ConfigManager(val coreManager: CoreManager) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
-    var defaultServerPath = File(System.getProperty("user.home"), "Sk-IDE-Server")
+    private var defaultServerPath = File(System.getProperty("user.home"), "Sk-IDE-Server")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
-    var lastOpened = -1
+    private var lastOpened = -1
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
 
 
-    val configFile = File(rootFolder, "settings.skide")
-    val projectsFile = File(rootFolder, "projects.skide")
-    val serversFile = File(rootFolder, "servers.skide")
+    private val configFile = File(rootFolder, "settings.skide")
+    private val projectsFile = File(rootFolder, "projects.skide")
+    private val serversFile = File(rootFolder, "servers.skide")
     val addonFile = File(rootFolder, "addons.skide")
-    val hostsFile = File(rootFolder, "hosts.skide")
+    private val hostsFile = File(rootFolder, "hosts.skide")
 
     val projects = HashMap<Long, PointerHolder>()
     val servers = HashMap<Long, PointerHolder>()
     fun load(): ConfigLoadResult {
-
-        val oldFolder = File(System.getProperty("user.home"), ".skide")
-        if (oldFolder.exists()) {
-            oldFolder.listFiles().forEach {
-                val out = File(rootFolder, it.name)
-                if (!it.isDirectory && !out.exists()) {
-                    out.createNewFile()
-                    Files.copy(it.toPath(), out.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                    it.delete()
-                }
-
-            }
-        }
 
         loaded = if (loaded) return ConfigLoadResult.SUCCESS else true
         var firstRun = false
@@ -84,11 +71,15 @@ class ConfigManager(val coreManager: CoreManager) {
         if (!rootFolder.exists()) firstRun = true
         if (!configFile.exists()) firstRun = true
 
-        if (firstRun) return if (createFiles()) ConfigLoadResult.FIRST_RUN else ConfigLoadResult.ERROR
+        if (firstRun) return if (createFiles()) {
+            checkCssFiles()
+            ConfigLoadResult.FIRST_RUN
+        } else ConfigLoadResult.ERROR
 
 
         //read the main Config
         readConfig()
+        checkCssFiles()
 
         val projectsFileResult = readFile(projectsFile)
         val serversFileResult = readFile(serversFile)
@@ -101,7 +92,7 @@ class ConfigManager(val coreManager: CoreManager) {
                 projects[it.getLong("id")] = PointerHolder(it.getLong("id"), it.getString("name"), it.getString("path"))
             }
         } else {
-            if(!projectsFile.exists()) {
+            if (!projectsFile.exists()) {
                 projectsFile.createNewFile()
                 restart()
             }
@@ -116,14 +107,13 @@ class ConfigManager(val coreManager: CoreManager) {
                 servers[it.getLong("id")] = PointerHolder(it.getLong("id"), it.getString("name"), it.getString("path"))
             }
         } else {
-            if(!serversFile.exists()) {
+            if (!serversFile.exists()) {
 
                 serversFile.createNewFile()
                 restart()
             }
         }
 
-        checkCssFiles()
         return ConfigLoadResult.SUCCESS
     }
 
@@ -225,7 +215,7 @@ class ConfigManager(val coreManager: CoreManager) {
 
         }
         configLoaded = true
-        if(get("theme") == "dark") set("theme", "Dark")
+        if (get("theme") == "dark") set("theme", "Dark")
         return true
     }
 
@@ -254,7 +244,7 @@ class ConfigManager(val coreManager: CoreManager) {
     fun checkCssFiles() {
 
         val folder = File(rootFolder, "css")
-        if(!folder.exists()) {
+        if (!folder.exists()) {
             folder.mkdir()
 
 
@@ -264,6 +254,7 @@ class ConfigManager(val coreManager: CoreManager) {
         this.javaClass.getResourceAsStream("/HighlightingLight.css").copyTo(FileOutputStream(File(folder, "HighlightingLight.css")))
         this.javaClass.getResourceAsStream("/ThemeDark.css").copyTo(FileOutputStream(File(folder, "ThemeDark.css")))
     }
+
     private fun writeDefaultSettings() {
         set("auto_complete", "true")
         set("theme", "Dark")
@@ -274,7 +265,7 @@ class ConfigManager(val coreManager: CoreManager) {
 
     fun get(key: String): Any? {
         return {
-            if(!settings.containsKey(key))set(key, "")
+            if (!settings.containsKey(key)) set(key, "")
 
             settings[key]
         }.invoke()
@@ -285,12 +276,13 @@ class ConfigManager(val coreManager: CoreManager) {
         writeFile(getConfigObject().toString().toByteArray(), configFile, false, false)
     }
 
-    fun getCssPath(name:String): String {
+    fun getCssPath(name: String): String {
 
         val file = File(File(rootFolder, "css"), name)
 
         return "file:///${file.absolutePath.replace("\\", "/")}"
     }
+
     private fun getConfigObject(): JSONObject {
 
         val obj = JSONObject()

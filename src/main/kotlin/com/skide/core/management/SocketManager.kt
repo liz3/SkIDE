@@ -58,9 +58,9 @@ class SocketManager(val core: CoreManager) {
                     }
                     c.close()
                 }
-                if(action == "focus") {
+                if (action == "focus") {
                     Platform.runLater {
-                        if (core.projectManager.openProjects.size != 0)core.projectManager.openProjects.first().guiHandler.window.stage.requestFocus()
+                        if (core.projectManager.openProjects.size != 0) core.projectManager.openProjects.first().guiHandler.window.stage.requestFocus()
                     }
                 }
             } catch (e: Exception) {
@@ -81,37 +81,37 @@ class SocketManager(val core: CoreManager) {
 fun handle(path: String) {
 
 
-         var start = 45664
+    var start = 45664
 
-        while (true) {
-            if (start == 45674) break
-            try {
+    while (true) {
+        if (start == 45674) break
+        try {
 
-                var buff = ByteArray(6)
-                val socket = Socket("127.0.0.1", start)
+            var buff = ByteArray(6)
+            val socket = Socket("127.0.0.1", start)
 
-                socket.getInputStream().read(buff)
-                if(String(buff) == "SK-IDE") {
-                    val f = File(path)
+            socket.getInputStream().read(buff)
+            if (String(buff) == "SK-IDE") {
+                val f = File(path)
 
-                    val obj = JSONObject()
-                    if(f.exists() && path != "") {
-                        obj.put("action", "open_file")
-                        obj.put("lnk", f.absolutePath)
-                    } else {
-                        obj.put("action", "focus")
-                    }
-
-
-
-                    socket.getOutputStream().write(obj.toString().toByteArray())
-                    socket.getOutputStream().flush()
-                    socket.close()
-                    System.exit(0)
+                val obj = JSONObject()
+                if (f.exists() && path != "") {
+                    obj.put("action", "open_file")
+                    obj.put("lnk", f.absolutePath)
+                } else {
+                    obj.put("action", "focus")
                 }
-            } catch (e: Exception) {
-                start++
+
+
+
+                socket.getOutputStream().write(obj.toString().toByteArray())
+                socket.getOutputStream().flush()
+                socket.close()
+                System.exit(0)
             }
+        } catch (e: Exception) {
+            start++
+        }
 
 
     }

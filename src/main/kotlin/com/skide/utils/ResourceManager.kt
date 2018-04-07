@@ -16,7 +16,6 @@ import kotlin.collections.HashMap
 class ResourceManager(val coreManager: CoreManager) {
 
 
-
     val addons = HashMap<String, Addon>()
     val cssFiles = HashMap<String, String>()
     val skriptDocList = Vector<AddonItem>()
@@ -27,9 +26,6 @@ class ResourceManager(val coreManager: CoreManager) {
     val skriptVersionsFile = File(coreManager.configManager.rootFolder, "skript-vers.json")
     val skriptVersionsFolder = File(coreManager.configManager.rootFolder, "skript-versions")
 
-    init {
-
-    }
 
     private fun parseCurrentSkriptVersionDocs() {
 
@@ -83,7 +79,6 @@ class ResourceManager(val coreManager: CoreManager) {
         //DO NOT TOUCH THIS LINE!!!!!!!
 
 
-
         if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
 
 
@@ -96,7 +91,7 @@ class ResourceManager(val coreManager: CoreManager) {
             downloadFile("https://liz3.net/sk/?function=getAddonSyntax&addon=skript", skriptDoc.absolutePath)
             callback(total, 5, "Downloading: https://skripttools.net/api.php?t=skript&action=getlist")
             downloadFile("https://skripttools.net/api.php?t=skript&action=getlist", skriptVersionsFile.absolutePath)
-        }catch (e:Exception) {
+        } catch (e: Exception) {
 
         }
 

@@ -20,6 +20,7 @@ class Debugger {
 
     val sysout = SystemOut()
     val syserr = SystemErr()
+
     init {
         System.setOut(sysout)
         System.setErr(syserr)
@@ -29,7 +30,7 @@ class Debugger {
 class SystemErr : PrintStream(System.err) {
 
     private var err = ""
-    lateinit var core:CoreManager
+    lateinit var core: CoreManager
     private var recording = false
 
     override fun println(raw: String) {
@@ -65,7 +66,7 @@ class SystemErr : PrintStream(System.err) {
                         val selected = x
 
 
-                        if(selected && this::core.isInitialized) {
+                        if (selected && this::core.isInitialized) {
 
                             theError = "OS: ${System.getProperty("os.name")} ${System.getProperty("os.arch")}\nJava: ${System.getProperty("java.runtime.version")}\nSK-IDE version: ${Info.version}\nTime: ${sdf.format(cal.time)}\n$trace\n\n"
 
@@ -80,12 +81,12 @@ class SystemErr : PrintStream(System.err) {
                                 theError += "   Folder: ${it.project.folder}\n"
                                 theError += "   Addons:\n"
                                 it.addons.forEach {
-                                theError += "       Name: ${it.key}\n"
+                                    theError += "       Name: ${it.key}\n"
 
                                 }
                                 theError += try {
                                     "   Config: ${readFile(File(it.project.folder, ".project.skide")).second}\n"
-                                }catch (e:Exception) {
+                                } catch (e: Exception) {
                                     "   Config: Failed to read: ${e.message}\n"
 
                                 }
@@ -103,7 +104,7 @@ class SystemErr : PrintStream(System.err) {
                                 theError += "   Folder: ${it.value.configuration.folder}\n"
                                 theError += try {
                                     "   Config: ${readFile(it.value.confFile).second}\n"
-                                }catch (e:Exception) {
+                                } catch (e: Exception) {
                                     "   Config: Failed to read: ${e.message}\n"
                                 }
                             }
