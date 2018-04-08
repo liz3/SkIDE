@@ -185,7 +185,6 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
                 currentSelected()?.configuration?.addons?.forEach {
                     if (it.file.absolutePath == file.absolutePath) return@setOnAction
-                    println("Returning")
                 }
                 val item = ServerAddon(file.name, file, false)
                 currentSelected()?.configuration?.addons?.addElement(item)
@@ -205,7 +204,6 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
                 val item = ctrl.serverAddonList.selectionModel.selectedItem
                 ctrl.serverAddonList.items.remove(item)
                 currentSelected()?.configuration?.addons?.remove(item)
-                println()
             }
         }
         ctrl.serverNewServerCreateBtn.setOnAction {

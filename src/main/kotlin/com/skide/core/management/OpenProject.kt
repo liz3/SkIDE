@@ -47,7 +47,6 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         }
         addons["Skript"] = Vector()
         addons["Skript"]!! += coreManager.resourceManager.skriptDocList
-        println(addons.size)
     }
 
     fun run(server: Server, configuration: CompileOption) {

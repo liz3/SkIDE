@@ -154,6 +154,5 @@ class CoreManager {
 
     fun attachDebugger() {
         val id = ManagementFactory.getRuntimeMXBean().name.split("@").first()
-        println(id)
     }
 }

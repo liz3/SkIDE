@@ -29,8 +29,6 @@ class Highlighting(val manager: CodeManager) {
 
     }
 
-    private val markedLines = Vector<String>()
-
     fun computeHighlighting() {
         area.replaceText(0, 0, area.text)
     }
@@ -38,40 +36,21 @@ class Highlighting(val manager: CodeManager) {
     fun searchHighlighting(searched: String, case: Boolean, regex: Boolean) {
 
 
-        val pos = area.caretPosition
-        sub.unsubscribe()
-        sub = x.subscribe({ area.setStyleSpans(0, computeSearchHightlighting(area.text, searched, case, regex)) })
-        val text = area.text
-
-        area.clear()
-        area.appendText(text)
-        area.moveTo(pos)
-
+        area.setStyleSpans(0, computeSearchHightlighting(area.text, searched, case, regex))
     }
 
     fun restartHighlighting() {
 
-        val pos = area.caretPosition
         sub.unsubscribe()
-
         sub = x.subscribe({
             runHighlighting()
         })
-        val text = area.text
-        area.clear()
-        area.appendText(text)
-        area.moveTo(pos)
+        runHighlighting()
+
     }
 
     fun stopHighLighting() {
-
-        val pos = area.caretPosition
         sub.unsubscribe()
-        area.clearStyle(0, area.text.length)
-        val text = area.text
-        area.clear()
-        area.appendText(text)
-        area.moveTo(pos)
     }
 
 
@@ -131,7 +110,7 @@ class Highlighting(val manager: CodeManager) {
 
         while (matcher.find()) {
             val styleClass = when {
-                matcher.group("SEARCH") != null -> "marked"
+                matcher.group("SEARCH") != null -> "searched"
                 else -> null
             }!!
             spansBuilder.add(emptyList(), matcher.start() - lastKwEnd)
@@ -152,6 +131,8 @@ class Highlighting(val manager: CodeManager) {
     fun mapMarked(callback: () -> Unit) {
 
 
+        callback()
+     /*
         for (line in manager.marked.keys) {
 
             try {
@@ -161,11 +142,13 @@ class Highlighting(val manager: CodeManager) {
                 val substr = text.takeLastWhile { it.isWhitespace() }.length
                 val spans = area.getStyleSpans(line)
                 area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, offset, len - offset - substr, "marked"))
-            } catch (ex: IndexOutOfBoundsException) {
+            } catch (ex: Exception) {
+
             }
         }
 
-        callback()
+
+      */
 
 
     }

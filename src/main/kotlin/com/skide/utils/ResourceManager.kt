@@ -130,7 +130,6 @@ class ResourceManager(val coreManager: CoreManager) {
 
                     devName
                 }.invoke()
-                if (author == "") println("dev null for $id $addonName in allSyntaxes")
                 val eventValues = if (it.has("eventvalues")) it.getString("eventvalues") else ""
                 val changers = if (it.has("changers")) it.getString("changers") else ""
                 val tags = if (it.has("tags")) it.getString("tags") else ""

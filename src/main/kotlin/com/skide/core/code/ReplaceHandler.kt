@@ -4,6 +4,7 @@ import com.skide.gui.GUIManager
 import com.skide.gui.controllers.ReplaceFrameController
 import com.skide.include.OpenFileHolder
 import com.skide.utils.StringSearchResult
+import com.skide.utils.getCaretLine
 import com.skide.utils.search
 import com.skide.utils.setIcon
 import javafx.scene.input.KeyCode
@@ -54,6 +55,14 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
         if (project.coreManager.configManager.get("highlighting") == "true") manager.highlighter.stopHighLighting()
     }
 
+    private fun goTo(absPos: Int, start: Int, end: Int) {
+
+        area.moveTo(absPos)
+        area.selectRange(start, end)
+        area.showParagraphAtTop(area.getCaretLine() - 1)
+
+    }
+
     private fun check() {
 
         val ctrl = node.second as ReplaceFrameController
@@ -73,8 +82,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
             if (entries.size == 0) return
 
             area.selectRange(0, 0)
-            area.moveTo(entries[currentPoint].start)
-            area.selectRange(entries[currentPoint].start, entries[currentPoint].end)
+            goTo(entries[currentPoint].start, entries[currentPoint].start, entries[currentPoint].end)
 
         } else {
 
@@ -109,7 +117,6 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
             executed
             entries.clear()
             if (project.coreManager.configManager.get("highlighting") == "true") manager.highlighter.searchHighlighting(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected)
-
             check()
         }
 
@@ -123,12 +130,11 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
                 area.selectRange(0, 0)
                 if (entries.size == 1) {
-                    area.moveTo(entries.first().start)
-                    area.selectRange(entries.first().start, entries.first().end)
+                    goTo(entries.first().start, entries.first().start, entries.first().end)
                     return@setOnAction
                 }
-                area.moveTo(entries[currentPoint + 1].start)
-                area.selectRange(entries[currentPoint + 1].start, entries[currentPoint + 1].end)
+                goTo(entries[currentPoint + 1].start, entries[currentPoint + 1].start, entries[currentPoint + 1].end)
+
                 currentPoint++
 
 
@@ -138,18 +144,15 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 area.selectRange(0, 0)
 
                 if (entries.size == 1) {
-                    area.moveTo(entries.first().start)
-                    area.selectRange(entries.first().start, entries.first().end)
+                    goTo(entries.first().start, entries.first().start, entries.first().end)
                     return@setOnAction
                 }
                 if (currentPoint == entries.size - 1) {
                     currentPoint = 0
-                    area.moveTo(entries.first().start)
-                    area.selectRange(entries.first().start, entries.first().end)
+                    goTo(entries.first().start, entries.first().start, entries.first().end)
                     return@setOnAction
                 }
-                area.moveTo(entries[currentPoint + 1].start)
-                area.selectRange(entries[currentPoint + 1].start, entries[currentPoint + 1].end)
+                goTo(entries[currentPoint + 1].start, entries[currentPoint + 1].start, entries[currentPoint + 1].end)
                 currentPoint++
             }
         }
@@ -181,7 +184,6 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
         ctrl.replaceBtn.setOnAction {
             replace()
         }
-
         ctrl.replaceAllBtn.setOnAction {
             if (!executed) {
                 executed = true
@@ -203,17 +205,13 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
             if (!executed) {
                 executed = true
                 entries = area.text.search(ctrl.searchField.text, ctrl.caseSensitive.isSelected, ctrl.regexEnableCheck.isSelected) as ArrayList<StringSearchResult>
-
                 if (entries.size == 0) return@setOnAction
-
                 area.selectRange(0, 0)
                 if (entries.size == 1) {
-                    area.moveTo(entries.first().start)
-                    area.selectRange(entries.first().start, entries.first().end)
+                    goTo(entries.first().start, entries.first().start, entries.first().end)
                     return@setOnAction
                 }
-                area.moveTo(entries[currentPoint + 1].start)
-                area.selectRange(entries[currentPoint + 1].start, entries[currentPoint + 1].end)
+                goTo(entries[currentPoint + 1].start, entries[currentPoint + 1].start, entries[currentPoint + 1].end)
                 currentPoint++
 
 
@@ -223,19 +221,18 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 area.selectRange(0, 0)
 
                 if (entries.size == 1) {
-                    area.moveTo(entries.first().start)
-                    area.selectRange(entries.first().start, entries.first().end)
+                    goTo(entries.first().start, entries.first().start, entries.first().end)
+
                     return@setOnAction
                 }
                 if (currentPoint == 0) {
                     currentPoint = entries.size - 1
-                    area.moveTo(entries.last().start)
-                    area.selectRange(entries.last().start, entries.last().end)
+                    goTo(entries.last().start, entries.last().start, entries.last().end)
                     return@setOnAction
                 }
 
-                area.moveTo(entries[currentPoint - 1].start)
-                area.selectRange(entries[currentPoint - 1].start, entries[currentPoint - 1].end)
+
+                goTo(entries[currentPoint - 1].start, entries[currentPoint - 1].start, entries[currentPoint - 1].end)
                 currentPoint--
             }
         }
@@ -252,7 +249,6 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
         }
         if (entries.size == 0) return
 
-        println(currentPoint)
         if (currentPoint + 1 == entries.size) currentPoint = 0
         val entry = entries[currentPoint]
         val toReplace = ctrl.replaceField.text
@@ -263,8 +259,8 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
         if (index < 0) index = 0
         if (entries.size != 0) {
-            area.moveTo(entries[index].start)
-            area.selectRange(entries[index].start, entries[index].end)
+            goTo(entries[index].start, entries[index].start, entries[index].end)
+
             if (currentPoint < 0) currentPoint = 0
         } else if (entries.size == 0) executed = false
 

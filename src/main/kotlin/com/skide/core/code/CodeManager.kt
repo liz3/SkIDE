@@ -74,7 +74,6 @@ class CodeManager {
 
             if (!inspectionsDisabled && !autoComplete.stopped) {
 
-                println("Running inspections with SkriptInsight!")
                 val toRemove = Vector<Int>()
                 ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
                 toRemove.forEach { ignored.remove(it) }
@@ -644,8 +643,7 @@ class CodeManager {
         Platform.runLater {
             area.requestFocus()
             area.moveTo(count)
-            //TODO still needs some adjustment
-            area.showParagraphAtTop(lineSearched)
+            area.showParagraphAtTop(lineSearched - 1)
             area.selectLine()
         }
     }

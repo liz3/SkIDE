@@ -11,7 +11,6 @@ class AutoSaver(coreManager: CoreManager) {
               coreManager.projectManager.openProjects.forEach {
                   it.guiHandler.openFiles.forEach { f ->
                       f.value.saveCode()
-                      println("Saved ${f.value.tab.text}")
                   }
               }
           }

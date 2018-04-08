@@ -86,7 +86,6 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
 
                 if (content.substring(3).trim().startsWith("{{")) {
                     val name = content.split("{")[2].split("}").first()
-                    println(name)
                     when {
                         name.startsWith("_") -> fields.put("visibility", "local")
                         name.startsWith("@") -> {
@@ -107,7 +106,6 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
 
                     if (content.contains("::")) {
                         val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
-                        println(listOrMapPath)
                         fields["path"] = listOrMapPath
                     }
 
@@ -132,7 +130,6 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
                     fields.put("set_value", content.split("to")[1])
                     if (content.contains("::")) {
                         val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
-                        println(listOrMapPath)
                         fields.put("path", listOrMapPath)
                     }
                 }

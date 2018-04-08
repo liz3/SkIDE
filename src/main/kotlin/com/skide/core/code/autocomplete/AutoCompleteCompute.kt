@@ -221,6 +221,10 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             if (popUp.isShowing) {
 
+                if(!movedRight && currentInfo.actualCurrentString == "") {
+                    hideList()
+                    return@runLater
+                }
 
                 val replaced = getWordSearchReplace(currentInfo.currentWord, currentInfo)
 
@@ -287,7 +291,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
                             if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
                                 val name = it.fields["name"] as String
-                                println("adding function: $name")
+
                                 val returnType = it.fields["return"] as String
                                 var paramsStr = ""
                                 var insertParams = ""

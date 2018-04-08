@@ -6,8 +6,3 @@ object Info {
 }
 
 fun main(args: Array<String>) = CoreManager().bootstrap(args)
-
-
-
-
-

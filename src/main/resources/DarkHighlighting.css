@@ -63,8 +63,11 @@
 }
 
 .styled-text-area .text.marked {
-
     -rtfx-background-color: rgba(218, 120, 70, 0.3);
+}
+.styled-text-area .text.searched {
+    -fx-fill: #d65a43;
+    -fx-font-weight: bold;
 
 }
 

@@ -5,6 +5,7 @@ import com.skide.gui.controllers.FindFrameController
 import com.skide.gui.controllers.ReplaceFrameController
 import com.skide.include.OpenFileHolder
 import com.skide.utils.StringSearchResult
+import com.skide.utils.getCaretLine
 import com.skide.utils.search
 import com.skide.utils.setIcon
 import javafx.scene.input.KeyCode
@@ -76,8 +77,8 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
             area.selectRange(0, 0)
 
-            area.moveTo(entries[currentPoint].start)
-            area.selectRange(entries[currentPoint].start, entries[currentPoint].end)
+            goTo(entries[currentPoint].start, entries[currentPoint].start, entries[currentPoint].end)
+
             currentPoint++
 
         } else {
@@ -88,6 +89,13 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
     }
 
+    private fun goTo(absPos:Int, start:Int, end:Int) {
+
+        area.moveTo(absPos)
+        area.selectRange(start, end)
+        area.showParagraphAtTop(area.getCaretLine() - 1)
+
+    }
     private fun registerEvents() {
 
         val ctrl = node.second as FindFrameController
@@ -121,12 +129,10 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
                 area.selectRange(0, 0)
                 if (entries.size == 1) {
-                    area.moveTo(entries.first().start)
-                    area.selectRange(entries.first().start, entries.first().end)
+                    goTo(entries.first().start, entries.first().start, entries.first().end)
                     return@setOnAction
                 }
-                area.moveTo(entries[currentPoint + 1].start)
-                area.selectRange(entries[currentPoint + 1].start, entries[currentPoint + 1].end)
+                goTo(entries[currentPoint + 1].start, entries[currentPoint + 1].start, entries[currentPoint + 1].end)
                 currentPoint++
 
 
@@ -136,18 +142,15 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 area.selectRange(0, 0)
 
                 if (entries.size == 1) {
-                    area.moveTo(entries[0].start)
-                    area.selectRange(entries[0].start, entries[0].end)
+                    goTo(entries[0].start, entries[0].start, entries[0].end)
                     return@setOnAction
                 }
                 if (currentPoint == entries.size - 1) {
                     currentPoint = 0
-                    area.moveTo(entries.first().start)
-                    area.selectRange(entries.first().start, entries.first().end)
+                    goTo(entries.first().start, entries.first().start, entries.first().end)
                     return@setOnAction
                 }
-                area.moveTo(entries[currentPoint + 1].start)
-                area.selectRange(entries[currentPoint + 1].start, entries[currentPoint + 1].end)
+                goTo(entries[currentPoint + 1].start, entries[currentPoint + 1].start, entries[currentPoint + 1].end)
                 currentPoint++
             }
         }
@@ -181,12 +184,10 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
                 area.selectRange(0, 0)
                 if (entries.size == 1) {
-                    area.moveTo(entries.first().start)
-                    area.selectRange(entries.first().start, entries.first().end)
+                    goTo(entries.first().start,entries.first().start, entries.first().end )
                     return@setOnAction
                 }
-                area.moveTo(entries[currentPoint + 1].start)
-                area.selectRange(entries[currentPoint + 1].start, entries[currentPoint + 1].end)
+                goTo(entries[currentPoint + 1].start, entries[currentPoint + 1].start, entries[currentPoint + 1].end)
                 currentPoint++
 
 
@@ -196,20 +197,16 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
                 area.selectRange(0, 0)
 
                 if (entries.size == 1) {
+                    goTo(entries[0].start, entries[0].start, entries[0].end)
 
-                    area.moveTo(entries[0].start)
-                    area.selectRange(entries[0].start, entries[0].end)
                     return@setOnAction
                 }
                 if (currentPoint == 0) {
                     currentPoint = entries.size - 1
-                    area.moveTo(entries.last().start)
-                    area.selectRange(entries.last().start, entries.last().end)
+                    goTo(entries.last().start, entries.last().start, entries.last().end)
                     return@setOnAction
                 }
-
-                area.moveTo(entries[currentPoint - 1].start)
-                area.selectRange(entries[currentPoint - 1].start, entries[currentPoint - 1].end)
+                goTo(entries[currentPoint - 1].start,entries[currentPoint - 1].start, entries[currentPoint - 1].end )
                 currentPoint--
             }
         }

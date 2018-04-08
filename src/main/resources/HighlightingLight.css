@@ -56,10 +56,11 @@
     -fx-fill: #680780;
     -fx-font-weight: bold;
 }
-
 .marked {
+    -rtfx-background-color: rgba(218, 120, 70, 0.3);
+}
+.searched {
     -fx-fill: #d6030b;
-    -fx-background-color: #500710;
     -fx-font-weight: bold;
 }
 

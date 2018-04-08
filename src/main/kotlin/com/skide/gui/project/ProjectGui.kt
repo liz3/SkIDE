@@ -190,7 +190,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                         }
                     }
                     if (otherTabPanes.size == 1) {
-                        println("the size is one")
                         val mainTabPane = openProject.eventManager.controller.editorMainTabPane
                         val root = openProject.eventManager.controller.mainCenterAnchorPane
                         otherTabPanes.forEach {
@@ -238,7 +237,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                         }
                     }
                     if (otherTabPanes.size == 1) {
-                        println("the size is one")
                         val mainTabPane = openProject.eventManager.controller.editorMainTabPane
                         val root = openProject.eventManager.controller.mainCenterAnchorPane
                         otherTabPanes.forEach {
@@ -373,7 +371,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), CodeArea(), coreManager, isExternal = isExternal)
 
         openProjectGuiManager.openFiles[f] = holder
-        println("Added ${f.absolutePath}")
         setupNewTabForDisplay(holder)
     }
 
@@ -456,7 +453,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     fun registerEventsForNewFile(holder: OpenFileHolder) {
 
         holder.tab.setOnCloseRequest {
-            println("called")
             holder.saveCode()
             openProjectGuiManager.openFiles.remove(holder.f)
             System.gc()

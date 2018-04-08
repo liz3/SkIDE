@@ -115,7 +115,6 @@ class LinkOpener {
 
     fun open(link: Any) {
 
-        println("called")
         Desktop.getDesktop().browse(URI(link.toString()))
     }
 }

@@ -63,7 +63,6 @@ class ProjectManager(val coreManager: CoreManager) {
         if (projectConfig.first == ProjectConfigurationLoadResult.SUCCESS && projectConfig.second != null) {
 
             openProjects.addElement(OpenProject(projectConfig.second!!, coreManager))
-            println("added pr")
         }
     }
 
