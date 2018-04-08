@@ -12,7 +12,7 @@ public class StyleSpanMerger {
     public static StyleSpans<Collection<String>> merge(@Nullable StyleSpans<Collection<String>>
                                                                spans, int lineLength, int offset, int styleLength, String cssClass) {
         if (spans != null) {
-            StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder();
+            StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
             builder.add(Collections.emptyList(), offset);
             builder.add(Collections.singletonList(cssClass), styleLength);
             builder.add(Collections.emptyList(), lineLength - offset - styleLength);

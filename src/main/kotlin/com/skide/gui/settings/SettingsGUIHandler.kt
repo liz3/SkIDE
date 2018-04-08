@@ -7,6 +7,8 @@ import com.skide.include.ActiveWindow
 import com.skide.include.Server
 import com.skide.include.ServerAddon
 import com.skide.include.ServerConfiguration
+import com.skide.utils.OperatingSystemType
+import com.skide.utils.getOS
 import com.skide.utils.restart
 import javafx.application.Platform
 import javafx.scene.control.Alert
@@ -36,6 +38,14 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("cross_auto_complete", "${ctrl.crossFileAutoComplete.isSelected}")
         coreManager.configManager.set("font", ctrl.settingsFontTextField.text)
         coreManager.configManager.set("font_size", ctrl.settingsFontSizeTextField.text)
+
+        if(coreManager.configManager.get("jre_home") == "" && getOS() == OperatingSystemType.MAC_OS) {
+            Platform.runLater {
+                val maybe = String(Runtime.getRuntime().exec("echo \$JAVA_HOME").inputStream.readBytes())
+
+                coreManager.configManager.set("jre_home", Prompts.textPrompt("JRE Path", "SK-IDE needs a JRE/JDK for Servers, please enter the Path to the java home here", maybe))
+            }
+        }
     }
 
     private fun setShortcut(ev: KeyEvent, field: TextField, key: String) {

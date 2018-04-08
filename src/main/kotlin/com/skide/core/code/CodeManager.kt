@@ -165,6 +165,8 @@ class CodeManager {
         area.setOnKeyReleased {
 
             if (it.code == KeyCode.COMMAND) cmdMacDown = false
+
+
         }
         area.setOnKeyPressed { ev ->
 
@@ -326,10 +328,10 @@ class CodeManager {
                     if (!autoComplete.popUp.isShowing) {
                         val paragraph = area.paragraphs[area.getCaretLine() - 1]
                         if (paragraph.text.isEmpty()) {
-                            autoComplete.showGlobalAutoComplete(EditorUtils.getLineNode(area.getCaretLine(), parseResult)!!)
+                            autoComplete.showGlobalAutoComplete()
                         } else {
                             if (paragraph.text.isBlank() && area.caretColumn == 0)
-                                autoComplete.showGlobalAutoComplete(EditorUtils.getLineNode(area.getCaretLine(), parseResult)!!)
+                                autoComplete.showGlobalAutoComplete()
                             else
                                 autoComplete.showLocalAutoComplete(false)
                         }

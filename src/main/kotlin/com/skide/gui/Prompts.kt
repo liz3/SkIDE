@@ -13,8 +13,8 @@ object Prompts {
     var theme = ""
     lateinit var configManager: ConfigManager
 
-    fun textPrompt(title: String, header: String): String {
-        val input = TextInputDialog()
+    fun textPrompt(title: String, header: String, default:String = ""): String {
+        val input = TextInputDialog(default)
 
         if (theme == "Dark") {
             val dialogPane = input.dialogPane
@@ -23,6 +23,7 @@ object Prompts {
 
         input.title = title
         input.headerText = header
+
 
         return try {
             input.showAndWait().get()

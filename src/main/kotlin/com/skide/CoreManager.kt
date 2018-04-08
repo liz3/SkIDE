@@ -50,6 +50,7 @@ class CoreManager {
             val controller = loader.getController<SplashGuiController>()
             stage.scene = Scene(parent)
             stage.initStyle(StageStyle.TRANSPARENT)
+            stage.icons.add(Image(javaClass.getResource("/icon.png").toExternalForm()))
             stage.scene.fill = Color.TRANSPARENT
             stage.sizeToScene()
             stage.centerOnScreen()
@@ -96,7 +97,7 @@ class CoreManager {
                         updateProgress(50.0, 100.0)
                         updateMessage("Downloading latest Resources")
 
-                        resourceManager.loadResources({ total, current, name ->
+                        resourceManager.loadResources({ _, current, name ->
                             val amount = current * 5;
                             updateProgress(50.0 + amount, 100.0)
                             updateMessage(name)

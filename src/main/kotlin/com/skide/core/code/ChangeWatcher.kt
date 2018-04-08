@@ -20,7 +20,7 @@ class ChangeWatcher(val area: CodeArea, val wait: Long, val caller: () -> Unit) 
     }
 
     fun start() {
-        area.textProperty().addListener { observable, oldValue, newValue ->
+        area.textProperty().addListener { _, _, _ ->
 
             Platform.runLater {
                 lastEdited = System.currentTimeMillis()

@@ -43,6 +43,6 @@ class TooltipHandler(val codeManager: CodeManager, val project: OpenFileHolder) 
 
             }
         }
-        area.addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END) { e -> popup.hide() }
+        area.addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END) { popup.hide() }
     }
 }

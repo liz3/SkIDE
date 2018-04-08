@@ -129,7 +129,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
         if (mode == EditorMode.DOWN_SPLIT) {
             otherTabPanes.clear()
             val box = VBox()
-            box.layoutBoundsProperty().addListener { observable, oldValue, newValue ->
+            box.layoutBoundsProperty().addListener { _, _, _ ->
                 val total = box.height
                 val panesHeight = total / otherTabPanes.size
                 box.children.forEach {
@@ -372,7 +372,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         }
         val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), CodeArea(), coreManager, isExternal = isExternal)
 
-        openProjectGuiManager.openFiles.put(f, holder)
+        openProjectGuiManager.openFiles[f] = holder
+        println("Added ${f.absolutePath}")
         setupNewTabForDisplay(holder)
     }
 
@@ -455,6 +456,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     fun registerEventsForNewFile(holder: OpenFileHolder) {
 
         holder.tab.setOnCloseRequest {
+            println("called")
             holder.saveCode()
             openProjectGuiManager.openFiles.remove(holder.f)
             System.gc()

@@ -143,6 +143,14 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
 
         }
+
+        area.textProperty().addListener { _, _, _ ->
+
+            project.tab.text.takeIf { !it.endsWith("*") }?.run {
+                project.tab.text = "${project.tab.text}*"
+            }
+
+        }
     }
 
     private fun onColumnChange() {
@@ -154,13 +162,13 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
                 if (area.caretColumn == 0) {
                     val node = EditorUtils.getLineNode(area.getCaretLine(), manager.parseResult)
-                    if (node?.tabLevel == 0) showGlobalAutoComplete(node)
+                    if (node?.tabLevel == 0) showGlobalAutoComplete()
 
                 } else {
 
                     val curr = EditorUtils.getLineNode(currentLine, manager.parseResult)
                     if (globalCompleteVisible) {
-                        showGlobalAutoComplete(curr!!)
+                        showGlobalAutoComplete()
                         return
                     }
                     if (curr?.content != "") showLocalAutoComplete(true) else manager.parseResult = manager.parseStructure()
@@ -197,7 +205,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             val currentInfo = area.getInfo(manager)
 
             if (globalCompleteVisible) {
-                showGlobalAutoComplete(currentInfo.currentNode)
+                showGlobalAutoComplete()
                 return@runLater
             }
 
@@ -484,14 +492,14 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
 
-    fun showGlobalAutoComplete(node: Node) {
+    fun showGlobalAutoComplete() {
 
 
         if (!popUp.isShowing) {
             area.replaceText(area.caretPosition - area.caretColumn, area.caretPosition, "")
 
             manager.parseResult = manager.parseStructure()
-            //   if (area.getInfo(manager, currentLine).inString) return
+
 
 
             fillList.items.clear()

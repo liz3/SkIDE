@@ -6,12 +6,15 @@ class AutoSaver(coreManager: CoreManager) {
 
     init {
         val thread = Thread {
-            Thread.sleep(25000)
-            coreManager.projectManager.openProjects.forEach {
-                it.guiHandler.openFiles.forEach { f ->
-                    f.value.saveCode()
-                }
-            }
+          while (true) {
+              Thread.sleep(25000)
+              coreManager.projectManager.openProjects.forEach {
+                  it.guiHandler.openFiles.forEach { f ->
+                      f.value.saveCode()
+                      println("Saved ${f.value.tab.text}")
+                  }
+              }
+          }
 
         }
         thread.name = "Sk-IDE Auto Save Thread"

@@ -61,30 +61,27 @@ object Menus {
     fun getMenuForRootPane(project: OpenFileHolder): ContextMenu {
 
         val menu = ContextMenu()
-
         val newWindowItem = MenuItem("Open in new Window")
         newWindowItem.setOnAction {
             project.toggleExclude()
 
         }
-        
-        val splitSide = MenuItem("Split Vertically")
+        val splitSide = MenuItem("Split vertically")
         splitSide.setOnAction {
-            if (project.openProject.guiHandler.mode != EditorMode.SIDE_SPLIT) {
+            if(project.tab.tabPane != null && project.tab.tabPane.tabs.size > 1) {
                 project.openProject.guiHandler.switchMode(EditorMode.SIDE_SPLIT)
-                //  project.tabPane.tabs.remove(project.tab)
                 project.openProject.guiHandler.addTabPane(project.tab)
             }
-        }
 
+        }
         val splitDown = MenuItem("Split Horizontally")
         splitDown.setOnAction {
-            if (project.openProject.guiHandler.mode != EditorMode.DOWN_SPLIT) {
-                project.openProject.guiHandler.switchMode(EditorMode.DOWN_SPLIT)
-                //  project.tabPane.tabs.remove(project.tab)
-                project.openProject.guiHandler.addTabPane(project.tab)
-            }
+          if(project.tab.tabPane != null && project.tab.tabPane.tabs.size > 1) {
+              project.openProject.guiHandler.switchMode(EditorMode.DOWN_SPLIT)
+              project.openProject.guiHandler.addTabPane(project.tab)
+          }
         }
+
 
         menu.items.addAll(newWindowItem, splitSide, splitDown)
         return menu
