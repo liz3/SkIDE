@@ -11,6 +11,7 @@ public class StyleSpanMerger {
 
     public static StyleSpans<Collection<String>> merge(@Nullable StyleSpans<Collection<String>>
                                                                spans, int lineLength, int offset, int styleLength, String cssClass) {
+        if(styleLength <= 0) return spans;
         if (spans != null) {
             StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
             builder.add(Collections.emptyList(), offset);

@@ -41,6 +41,7 @@ class CodeManager {
     val marked = ConcurrentHashMap<Int, InspectionResultElement>()
     val ignored = HashMap<Int, String>()
     private var inspectionsDisabled = false
+    var inspectionsStarted = false
 
     var contextMenu: ContextMenu? = null
 
@@ -72,7 +73,7 @@ class CodeManager {
                 }
             }
 
-            if (!inspectionsDisabled && !autoComplete.stopped) {
+            if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped) {
 
                 val toRemove = Vector<Int>()
                 ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
@@ -149,6 +150,7 @@ class CodeManager {
 
         area.focusedProperty().addListener { _, _, newValue ->
 
+            inspectionsStarted = newValue
             if (!newValue) {
                 autoComplete.hideList()
                 project.saveCode()

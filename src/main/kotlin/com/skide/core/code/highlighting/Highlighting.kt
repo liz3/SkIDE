@@ -130,9 +130,6 @@ class Highlighting(val manager: CodeManager) {
 
     fun mapMarked(callback: () -> Unit) {
 
-
-        callback()
-     /*
         for (line in manager.marked.keys) {
 
             try {
@@ -143,13 +140,10 @@ class Highlighting(val manager: CodeManager) {
                 val spans = area.getStyleSpans(line)
                 area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, offset, len - offset - substr, "marked"))
             } catch (ex: Exception) {
-
+                ex.printStackTrace()
             }
         }
-
-
-      */
-
+        callback()
 
     }
 
