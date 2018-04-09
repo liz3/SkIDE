@@ -24,7 +24,6 @@ import kotlin.collections.HashMap
 
 class CodeManager {
 
-
     lateinit var rootStructureItem: TreeItem<String>
     lateinit var area: CodeArea
     lateinit var content: String
@@ -37,6 +36,7 @@ class CodeManager {
     lateinit var sequenceReplaceHandler: ReplaceSequence
     lateinit var tooltipHandler: TooltipHandler
     lateinit var hBox: HBox
+
     private val parser = SkriptParser()
     val marked = ConcurrentHashMap<Int, InspectionResultElement>()
     val ignored = HashMap<Int, String>()
@@ -53,6 +53,7 @@ class CodeManager {
 
 
     fun setup(project: OpenFileHolder) {
+
 
         rootStructureItem = TreeItem(project.name)
         content = readFile(project.f).second
@@ -75,7 +76,7 @@ class CodeManager {
             }
             linesAmount = area.paragraphs.size
 
-            if(linesAmount > 2000) {
+            if (linesAmount > 2000) {
                 if (project.coreManager.configManager.get("highlighting") == "true") {
                     Platform.runLater {
                         highlighter.runHighlighting()
@@ -107,6 +108,7 @@ class CodeManager {
 
 
         area.moveTo(0)
+
 
     }
 

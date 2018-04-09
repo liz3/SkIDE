@@ -43,7 +43,7 @@ class Highlighting(val manager: CodeManager) {
 
         sub.unsubscribe()
         sub = x.subscribe({
-            runHighlighting()
+            if(manager.linesAmount <= 2000) runHighlighting()
         })
         runHighlighting()
 
@@ -172,7 +172,7 @@ class Highlighting(val manager: CodeManager) {
 
                     + "|(?<NUMBERS>" + HighlighterStatics.NUMBERS_PATTERN + ")"
 
-                    + "|(?<OPERATORS>" + HighlighterStatics.OPERATORS_PATTERN + ")"
+                    + "|(?<OPERATORS>" + HighlighterStatics.joinBoundaryPattern(HighlighterStatics.KEYWORDS) + ")"
                     + "|(?<COMMAND>" + HighlighterStatics.COMMAND_PATTERN + ")"
 
                     + "|(?<PAREN>" + HighlighterStatics.PAREN_PATTERN + ")"
@@ -207,8 +207,7 @@ object HighlighterStatics {
     const val NUMBERS_PATTERN = "[0-9]"
 
     const val COMMAND_PATTERN = "(?<=\\G|\\n)command(?=\\s)"
-    const val OPERATORS_PATTERN = "trigger:|if |else:|else if |while |loop | is | contains |function |set |on "
-    //val KEYWORDS = arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "cancel", "else", "else if")
+    val KEYWORDS = arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "else", "else if", "trigger", "on", "while", "is")
     const val COMMENT_PATTERN = "#[^\n]*"
     const val VAR_PATTERN = "\\{\\S*}"
     const val PAREN_PATTERN = "\\(|\\)"

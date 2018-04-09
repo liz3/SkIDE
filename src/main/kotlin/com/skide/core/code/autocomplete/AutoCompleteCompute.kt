@@ -258,6 +258,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (currentInfo.currentWord.endsWith("\"")) return@runLater
                 if (currentInfo.currentWord.endsWith("{")) return@runLater
                 if (currentInfo.currentNode.nodeType == NodeType.COMMENT) return@runLater
+                if (currentInfo.currentNode.nodeType == NodeType.SET_VAR && currentInfo.currentWord.startsWith("{")) return@runLater
                 if (currentInfo.currentWord.endsWith(":") ||
                         currentInfo.beforeString.endsWith(")") || currentInfo.beforeString.endsWith("(")) return@runLater
                 manager.parseResult = manager.parseStructure()

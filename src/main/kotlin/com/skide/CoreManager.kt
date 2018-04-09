@@ -61,7 +61,6 @@ class CoreManager {
                 @Throws(Exception::class)
                 override fun call(): Void? {
                     try {
-                        Thread.sleep(250)
                         updateMessage("Initializing...")
                         updateProgress(0.0, 100.0)
                         args.forEach {
@@ -80,8 +79,8 @@ class CoreManager {
                         sockServer = SocketManager(me)
                         insightClient = SkriptInsightClient(me)
 
-                        sockServer.start()
                         debugger.syserr.core = me
+                        sockServer.start()
 
                         updateProgress(5.0, 100.0)
                         updateMessage("Loading Config...")
@@ -94,24 +93,20 @@ class CoreManager {
                         updateProgress(35.0, 100.0)
                         updateMessage("Initializing server manager")
                         serverManager.init()
-                        updateProgress(50.0, 100.0)
+                        updateProgress(40.0, 100.0)
                         updateMessage("Downloading latest Resources")
-
                         resourceManager.loadResources({ _, current, name ->
                             val amount = current * 5;
                             updateProgress(50.0 + amount, 100.0)
                             updateMessage(name)
                         })
-
-
-                        updateProgress(80.0, 100.0)
+                        updateProgress(75.0, 100.0)
                         updateMessage("Starting insights")
                         insightsManager.setup {
                             updateProgress(96.0, 100.0)
                             updateMessage("Starting gui...")
-                            Prompts.theme = configManager.get("theme") as String
+                            Prompts.theme = (configManager.get("theme") as String)
                             Prompts.configManager = configManager
-                            attachDebugger()
                             Platform.runLater {
                                 stage.close()
                                 GUIManager.discord.update("In the main menu", "Idle")
@@ -121,11 +116,8 @@ class CoreManager {
                                 window.stage.centerOnScreen()
                                 window.stage.isResizable = false
                                 window.stage.show()
-
                             }
                         }
-
-
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
@@ -134,25 +126,12 @@ class CoreManager {
             }
             controller.label.textProperty().bind(task.messageProperty())
             controller.progressBar.progressProperty().bind(task.progressProperty())
-
             val thread = Thread(task)
             thread.isDaemon = true
             thread.name = "Sk-IDE loader task"
             thread.start()
         }
-
-
-
-        handle(if (args.size >= 1) args.first() else "")
-
-        if (Platform.isFxApplicationThread()) {
-            GUIManager.bootstrapCallback(Stage())
-        } else {
-            JavaFXBootstrapper.bootstrap()
-        }
-    }
-
-    fun attachDebugger() {
-        val id = ManagementFactory.getRuntimeMXBean().name.split("@").first()
+        handle(if (args.isNotEmpty()) args.first() else "")
+        if (Platform.isFxApplicationThread()) GUIManager.bootstrapCallback(Stage()) else JavaFXBootstrapper.bootstrap()
     }
 }
