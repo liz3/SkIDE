@@ -67,7 +67,7 @@ class CodeManager {
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox
 
-        ChangeWatcher(area, 500, {
+        ChangeWatcher(area, 1500, {
             if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
                 project.openProject.guiHandler.openFiles.values.forEach {
                     if (it.f.name != project.f.name) it.codeManager.updateCrossFileAutoComplete(project.f.name, area.text)

@@ -86,9 +86,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             if (e.clickCount == 2) {
                 if (fillList.selectionModel.selectedItem != null) {
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
+                    manager.parseResult = manager.parseStructure()
                     value.caller.invoke(area.getInfo(manager))
                     if (!globalCompleteVisible && value.hideListAfter) hideList()
-                    manager.parseResult = manager.parseStructure()
 
                 }
             }
@@ -103,10 +103,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 ev.consume()
                 if (fillList.selectionModel.selectedItem != null) {
                     val value = fillList.selectionModel.selectedItem as ListHolderItem
+                    manager.parseResult = manager.parseStructure()
                     value.caller.invoke(area.getInfo(manager))
                     if (value.hideListAfter) hideList()
-                    manager.parseResult = manager.parseStructure()
-
                 }
             }
 
@@ -171,7 +170,10 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         showGlobalAutoComplete()
                         return
                     }
-                    if (curr?.content != "") showLocalAutoComplete(true)
+                    if (curr?.raw != "") {
+                        println("lol")
+                        showLocalAutoComplete(true)
+                    }
                 }
 
 
@@ -231,13 +233,13 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
                 val toRemove = Vector<ListHolderItem>()
 
-                fillList.items.filterNotTo(toRemove) { it.name.startsWith(replaced, true) }
+                fillList.items.filterNotTo(toRemove) { it.name.contains(replaced, true) }
                 toRemove.forEach {
                     fillList.items.remove(it)
                     removed.add(it)
                 }
                 toRemove.clear()
-                removed.filterTo(toRemove) { it.name.startsWith(replaced, true) }
+                removed.filterTo(toRemove) { it.name.contains(replaced, true) }
 
                 toRemove.forEach {
                     removed.remove(it)
@@ -627,31 +629,33 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     private fun onLineChange() {
 
+        Platform.runLater {
 
-        val parseResult = manager.parseStructure()
-        manager.parseResult = parseResult
+            val parseResult = manager.parseStructure()
+            manager.parseResult = parseResult
 
-        val old = EditorUtils.getLineNode(lineBefore, parseResult)
-        val current = EditorUtils.getLineNode(currentLine, parseResult)
+            val old = EditorUtils.getLineNode(lineBefore, parseResult)
+            val current = EditorUtils.getLineNode(currentLine, parseResult)
 
-        if (old != null && current != null) {
+            if (old != null && current != null) {
 
-            if (old.linenumber == current.linenumber - 1) {
-                if (current.nodeType == NodeType.UNDEFINED) {
-                    val tabCount = old.tabLevel - 1
-                    var str = ""
-                    for (x in 0..tabCount) {
-                        str += "\t"
+                if (old.linenumber == current.linenumber - 1) {
+                    if (current.nodeType == NodeType.UNDEFINED) {
+                        val tabCount = old.tabLevel - 1
+                        var str = ""
+                        for (x in 0..tabCount) {
+                            str += "\t"
+                        }
+
+                        if (old.nodeType != NodeType.EXECUTION && old.nodeType != NodeType.UNDEFINED && old.nodeType != NodeType.COMMENT && old.nodeType != NodeType.SET_VAR) str += "\t"
+                        area.replaceText(area.caretPosition, area.caretPosition, str)
                     }
-
-                    if (old.nodeType != NodeType.EXECUTION && old.nodeType != NodeType.UNDEFINED && old.nodeType != NodeType.COMMENT && old.nodeType != NodeType.SET_VAR) str += "\t"
-                    area.replaceText(area.caretPosition, area.caretPosition, str)
+                    return@runLater
                 }
-                return
-            }
-            if (old.linenumber == current.linenumber + 1) {
-                if (popUp.isShowing) {
-                    hideList()
+                if (old.linenumber == current.linenumber + 1) {
+                    if (popUp.isShowing) {
+                        hideList()
+                    }
                 }
             }
         }
