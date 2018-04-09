@@ -50,7 +50,14 @@ class InsightsManager(val coreManager: CoreManager) {
     }
 
     fun setup(callback: () -> Unit) {
-        if (coreManager.configManager.get("disable_insights") == "true") return
+
+        if (coreManager.configManager.get("disable_insights") == "true") {
+            callback()
+            return
+        }
+        coreManager.configManager.set("disable_insights", "true")
+        callback()
+       /*
         val latest = checkVersion()
 
 
@@ -70,6 +77,7 @@ class InsightsManager(val coreManager: CoreManager) {
             }
 
         }
+        */
     }
 
     private fun update(inform: Boolean = false, callback: () -> Unit) {
@@ -93,7 +101,8 @@ class InsightsManager(val coreManager: CoreManager) {
                     else -> ""
 
                 }}/bin.zip"
-
+                if(!folder.exists()) folder.mkdir()
+                if(!binFolder.exists()) binFolder.mkdir()
                 if (!zipPath.exists()) zipPath.createNewFile()
                 downloadFile(lnk, zipPath.absolutePath)
 

@@ -73,7 +73,7 @@ class CodeManager {
                 }
             }
 
-            if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped) {
+            if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped && project.coreManager.configManager.get("disable_insights") != "true") {
 
                 val toRemove = Vector<Int>()
                 ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
@@ -550,7 +550,6 @@ class CodeManager {
                     if (getLocale().contains("de")) area.undo() else area.redo()
 
                 }
-                if (ev.code == KeyCode.V) area.paste()
                 if (ev.code == KeyCode.F) findHandler.switchGui()
                 if (ev.code == KeyCode.R) replaceHandler.switchGui()
 
@@ -564,9 +563,7 @@ class CodeManager {
                         area.replaceSelection("#$content")
                     }
                 }
-                if (ev.code == KeyCode.C) {
-                    area.copy()
-                }
+
 
                 if (ev.code == KeyCode.F) {
                     findHandler.switchGui()
