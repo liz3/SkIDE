@@ -68,7 +68,7 @@ class CodeManager {
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox
 
-        ChangeWatcher(area, 1500, {
+        ChangeWatcher(area, 500, {
             if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
                 project.openProject.guiHandler.openFiles.values.forEach {
                     if (it.f.name != project.f.name) it.codeManager.updateCrossFileAutoComplete(project.f.name, area.text)
@@ -79,7 +79,7 @@ class CodeManager {
             if (linesAmount > 2000) {
                 if (project.coreManager.configManager.get("highlighting") == "true") {
                     Platform.runLater {
-                        highlighter.runHighlighting()
+                        highlighter.runHighlighting(false)
 
                     }
                 }
@@ -264,13 +264,13 @@ class CodeManager {
 
                                 area.replaceText(startPosition, endPosition, fixedInspection)
                                 marked.remove(lForIndex)
-                                highlighter.runHighlighting()
+                                highlighter.runHighlighting(true)
 
                             }
                             autoComplete.addItem("Ignore for once") {
                                 marked.remove(lForIndex)
                                 ignored.put(lForIndex, area.paragraphs[lForIndex].text)
-                                highlighter.runHighlighting()
+                                highlighter.runHighlighting(true)
                             }
                             autoComplete.addItem("Disable Inspections for current Session") {
                                 inspectionsDisabled = true

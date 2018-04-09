@@ -9,6 +9,7 @@ import com.skide.skriptinsight.client.utils.InsightConstants;
 import com.skide.skriptinsight.model.*;
 import javafx.application.Platform;
 import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -112,6 +113,7 @@ public class SkriptInsightClient {
             InspectionResult result = coreManager.insightClient.inspectScript(script);
 
             coreManager.insightClient.handleSkriptInspections(manager, result);
+
         }).start();
     }
 
@@ -132,7 +134,9 @@ public class SkriptInsightClient {
             if (manager.getIgnored().containsKey((int) resultElement.getTargetLine() - 1)) continue;
             marked.putIfAbsent((int) resultElement.getTargetLine() - 1, resultElement);
         }
-        Platform.runLater(() -> manager.highlighter.runHighlighting());
+        Platform.runLater(() -> manager.getHighlighter().runHighlighting(true));
     }
+
+
 
 }

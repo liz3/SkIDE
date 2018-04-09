@@ -2,6 +2,7 @@ package com.skide.core.code.highlighting
 
 import com.skide.core.code.CodeManager
 import com.skide.utils.StyleSpanMerger
+import javafx.application.Platform
 import org.fxmisc.richtext.model.StyleSpans
 import org.fxmisc.richtext.model.StyleSpansBuilder
 import java.util.*
@@ -12,21 +13,14 @@ class Highlighting(val manager: CodeManager) {
 
     var changed = false;
     val area = manager.area
-    private val x = area.richChanges().filter({ ch -> ch.inserted != ch.removed })
+    private val x = area.plainTextChanges().filter({ x -> !x.isIdentity })
     var sub = x.subscribe({
-       if(manager.linesAmount <= 2000) runHighlighting()
+        if (manager.linesAmount <= 2000) runHighlighting(false)
     })
 
-    fun runHighlighting() {
-        if (!changed) {
-            changed = true
-            area.setStyleSpans(0, computHighlighting(area.text))
-            mapMarked {
-                changed = false
-            }
-
-        }
-
+    fun runHighlighting(withMapping:Boolean) {
+        area.setStyleSpans(0, computHighlighting(area.text))
+        if(withMapping) mapMarked {}
     }
 
     fun computeHighlighting() {
@@ -43,9 +37,9 @@ class Highlighting(val manager: CodeManager) {
 
         sub.unsubscribe()
         sub = x.subscribe({
-            if(manager.linesAmount <= 2000) runHighlighting()
+            if (manager.linesAmount <= 2000) runHighlighting(false)
         })
-        runHighlighting()
+        runHighlighting(false)
 
     }
 
@@ -130,7 +124,7 @@ class Highlighting(val manager: CodeManager) {
 
     fun mapMarked(callback: () -> Unit) {
 
-        /*
+
         for (line in manager.marked.keys) {
 
             try {
@@ -139,15 +133,17 @@ class Highlighting(val manager: CodeManager) {
                 val offset = text.takeWhile { it.isWhitespace() }.length
                 val substr = text.takeLastWhile { it.isWhitespace() }.length
                 val spans = area.getStyleSpans(line)
-                area.setStyleSpans(line, 0, StyleSpanMerger.merge(spans, len, offset, len - offset - substr, "marked"))
-
-
+                val styleLength = len - offset - substr
+                println("[$line]: Len: $len, offset: $offset, substr: $substr, style: $styleLength")
+                val result = StyleSpanMerger.merge(spans, len, offset, styleLength, "marked")
+            //    area.setStyleSpans(line, 0, result)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
-         */
+
         callback()
+
 
     }
 

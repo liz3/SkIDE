@@ -55,12 +55,7 @@ class InsightsManager(val coreManager: CoreManager) {
             callback()
             return
         }
-        coreManager.configManager.set("disable_insights", "true")
-        callback()
-       /*
         val latest = checkVersion()
-
-
         if (!versionFile.exists()) {
             update(true) {
                 callback()
@@ -77,7 +72,7 @@ class InsightsManager(val coreManager: CoreManager) {
             }
 
         }
-        */
+
     }
 
     private fun update(inform: Boolean = false, callback: () -> Unit) {

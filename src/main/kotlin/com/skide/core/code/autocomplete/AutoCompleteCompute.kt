@@ -79,7 +79,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         fillList.setPrefSize(280.0, 200.0)
         popUp.content.add(fillList)
         caretPopupSub.and(caretBounds.subscribe({ }))
-        area.requestFollowCaret()
+   //     area.requestFollowCaret()
 
 
         fillList.setOnMouseClicked { e ->
@@ -171,7 +171,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         return
                     }
                     if (curr?.raw != "") {
-                        println("lol")
                         showLocalAutoComplete(true)
                     }
                 }
@@ -262,7 +261,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (currentInfo.currentWord.endsWith(":") ||
                         currentInfo.beforeString.endsWith(")") || currentInfo.beforeString.endsWith("(")) return@runLater
                 manager.parseResult = manager.parseStructure()
-                println("Recreated popup")
                 fillList.items.clear()
                 removed.clear()
                 val toAdd = HashMap<String, Pair<NodeType, (info: CurrentStateInfo) -> Unit>>()

@@ -14,9 +14,9 @@ public class StyleSpanMerger {
         if(styleLength <= 0) return spans;
         if (spans != null) {
             StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
-            builder.add(Collections.emptyList(), offset);
-            builder.add(Collections.singletonList(cssClass), styleLength);
-            builder.add(Collections.emptyList(), lineLength - offset - styleLength);
+            builder.add(Collections.emptyList(), 0);
+            builder.add(Collections.singletonList(cssClass), lineLength);
+            builder.add(Collections.emptyList(), 0);
             StyleSpans<Collection<String>> spansToGoOnTop = builder.create();
             spans = spans.overlay(spansToGoOnTop, (bottomSpan, list) -> {
                 List<String> l = new ArrayList<>(bottomSpan.size() + list.size());
