@@ -14,7 +14,7 @@ class Highlighting(val manager: CodeManager) {
     val area = manager.area
     private val x = area.richChanges().filter({ ch -> ch.inserted != ch.removed })
     var sub = x.subscribe({
-        runHighlighting()
+       if(manager.linesAmount <= 2000) runHighlighting()
     })
 
     fun runHighlighting() {

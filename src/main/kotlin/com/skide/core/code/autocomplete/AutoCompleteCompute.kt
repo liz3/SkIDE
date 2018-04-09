@@ -171,7 +171,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         showGlobalAutoComplete()
                         return
                     }
-                    if (curr?.content != "") showLocalAutoComplete(true) else manager.parseResult = manager.parseStructure()
+                    if (curr?.content != "") showLocalAutoComplete(true)
                 }
 
 
@@ -259,6 +259,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (currentInfo.currentWord.endsWith(":") ||
                         currentInfo.beforeString.endsWith(")") || currentInfo.beforeString.endsWith("(")) return@runLater
                 manager.parseResult = manager.parseStructure()
+                println("Recreated popup")
                 fillList.items.clear()
                 removed.clear()
                 val toAdd = HashMap<String, Pair<NodeType, (info: CurrentStateInfo) -> Unit>>()
@@ -382,7 +383,13 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                 })
                             }
                         } else {
-                            val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
+                            val found = fillList.items.any { c -> c.name == ({
+                                if (it.fields["visibility"] == "global") {
+                                    ""
+                                } else {
+                                    "_"
+                                }
+                            }.invoke() + it.fields["name"] as String) }
                             if (!found) {
                                 addItem({
                                     if (it.fields["visibility"] == "global") {

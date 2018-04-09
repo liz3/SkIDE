@@ -42,6 +42,7 @@ class CodeManager {
     val ignored = HashMap<Int, String>()
     private var inspectionsDisabled = false
     var inspectionsStarted = false
+    var linesAmount = 0
 
     var contextMenu: ContextMenu? = null
 
@@ -70,6 +71,16 @@ class CodeManager {
             if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
                 project.openProject.guiHandler.openFiles.values.forEach {
                     if (it.f.name != project.f.name) it.codeManager.updateCrossFileAutoComplete(project.f.name, area.text)
+                }
+            }
+            linesAmount = area.paragraphs.size
+
+            if(linesAmount > 2000) {
+                if (project.coreManager.configManager.get("highlighting") == "true") {
+                    Platform.runLater {
+                        highlighter.runHighlighting()
+
+                    }
                 }
             }
 
@@ -651,7 +662,6 @@ class CodeManager {
 
         rootStructureItem.children.clear()
         val parseResult = parser.superParse(area.text)
-
         Platform.runLater {
             val stack = Vector<Node>()
             var currNode: Node? = EditorUtils.getLineNode(area.getCaretLine(), parseResult) ?: return@runLater
