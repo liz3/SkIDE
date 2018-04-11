@@ -20,7 +20,7 @@ class Highlighting(val manager: CodeManager) {
 
     fun runHighlighting(withMapping:Boolean) {
         area.setStyleSpans(0, computHighlighting(area.text))
-        if(withMapping) mapMarked {}
+        mapMarked {}
     }
 
     fun computeHighlighting() {
@@ -134,9 +134,9 @@ class Highlighting(val manager: CodeManager) {
                 val substr = text.takeLastWhile { it.isWhitespace() }.length
                 val spans = area.getStyleSpans(line)
                 val styleLength = len - offset - substr
-                println("[$line]: Len: $len, offset: $offset, substr: $substr, style: $styleLength")
+                println("[$line]: Len: $len, offset: $offset, substr: $substr, style: $styleLength, Text: $text")
                 val result = StyleSpanMerger.merge(spans, len, offset, styleLength, "marked")
-            //    area.setStyleSpans(line, 0, result)
+                area.setStyleSpans(line, 0, result)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

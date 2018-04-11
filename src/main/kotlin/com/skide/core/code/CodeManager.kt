@@ -87,10 +87,19 @@ class CodeManager {
 
             if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped && project.coreManager.configManager.get("disable_insights") != "true") {
 
-                val toRemove = Vector<Int>()
-                ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
-                toRemove.forEach { ignored.remove(it) }
-                project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
+                marked.clear()
+
+                marked.put(12, InspectionResultElement())
+                marked.put(101, InspectionResultElement())
+
+                Platform.runLater { highlighter.runHighlighting(true) }
+
+                /*
+                                val toRemove = Vector<Int>()
+                 ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
+                 toRemove.forEach { ignored.remove(it) }
+                 project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
+                 */
             }
 
 
