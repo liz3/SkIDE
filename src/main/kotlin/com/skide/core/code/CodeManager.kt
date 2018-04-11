@@ -16,6 +16,7 @@ import javafx.scene.control.ContextMenu
 import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
+import org.controlsfx.control.Notifications
 import org.fxmisc.richtext.CodeArea
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -42,12 +43,15 @@ class CodeManager {
     val ignored = HashMap<Int, String>()
     private var inspectionsDisabled = false
     var inspectionsStarted = false
+
     var linesAmount = 0
+    var informed = false
 
     var contextMenu: ContextMenu? = null
 
     var mousePressed = false
     var cmdMacDown = false
+
 
     var lastPos = 0
 
@@ -80,6 +84,13 @@ class CodeManager {
                 if (project.coreManager.configManager.get("highlighting") == "true") {
                     Platform.runLater {
                         highlighter.runHighlighting(false)
+                        if(!informed) {
+                            informed = true
+                            Notifications.create()
+                                    .title("Big file mode")
+                                    .text("File has over 2000 lines, using big file mode to increase performance").darkStyle()
+                                    .showInformation()
+                        }
 
                     }
                 }
@@ -87,19 +98,12 @@ class CodeManager {
 
             if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped && project.coreManager.configManager.get("disable_insights") != "true") {
 
-                marked.clear()
+                val toRemove = Vector<Int>()
+                ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
+                toRemove.forEach { ignored.remove(it) }
+                project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
+                println("Run them!")
 
-                marked.put(12, InspectionResultElement())
-                marked.put(101, InspectionResultElement())
-
-                Platform.runLater { highlighter.runHighlighting(true) }
-
-                /*
-                                val toRemove = Vector<Int>()
-                 ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
-                 toRemove.forEach { ignored.remove(it) }
-                 project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
-                 */
             }
 
 

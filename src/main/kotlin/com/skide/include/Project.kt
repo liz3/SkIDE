@@ -1,9 +1,7 @@
 package com.skide.include
 
 import com.skide.core.management.ProjectFileManager
-import com.sun.org.apache.xpath.internal.operations.Bool
 import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
 import java.util.*
 

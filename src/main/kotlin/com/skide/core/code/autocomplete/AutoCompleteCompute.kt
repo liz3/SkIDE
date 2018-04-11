@@ -79,7 +79,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         fillList.setPrefSize(280.0, 200.0)
         popUp.content.add(fillList)
         caretPopupSub.and(caretBounds.subscribe({ }))
-   //     area.requestFollowCaret()
+        //     area.requestFollowCaret()
 
 
         fillList.setOnMouseClicked { e ->
@@ -222,7 +222,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             if (popUp.isShowing) {
 
-                if(!movedRight && currentInfo.actualCurrentString == "") {
+                if (!movedRight && currentInfo.actualCurrentString == "") {
                     hideList()
                     return@runLater
                 }
@@ -384,13 +384,15 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                 })
                             }
                         } else {
-                            val found = fillList.items.any { c -> c.name == ({
-                                if (it.fields["visibility"] == "global") {
-                                    ""
-                                } else {
-                                    "_"
-                                }
-                            }.invoke() + it.fields["name"] as String) }
+                            val found = fillList.items.any { c ->
+                                c.name == ({
+                                    if (it.fields["visibility"] == "global") {
+                                        ""
+                                    } else {
+                                        "_"
+                                    }
+                                }.invoke() + it.fields["name"] as String)
+                            }
                             if (!found) {
                                 addItem({
                                     if (it.fields["visibility"] == "global") {
@@ -628,35 +630,32 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     private fun onLineChange() {
 
-        Platform.runLater {
 
-            val parseResult = manager.parseStructure()
-            manager.parseResult = parseResult
+        val parseResult = manager.parseStructure()
+        manager.parseResult = parseResult
 
-            val old = EditorUtils.getLineNode(lineBefore, parseResult)
-            val current = EditorUtils.getLineNode(currentLine, parseResult)
+        val old = EditorUtils.getLineNode(lineBefore, parseResult)
+        val current = EditorUtils.getLineNode(currentLine, parseResult)
 
-            if (old != null && current != null) {
+        if (old != null && current != null) {
 
-                if (old.linenumber == current.linenumber - 1) {
-                    if (current.nodeType == NodeType.UNDEFINED) {
-                        val tabCount = old.tabLevel - 1
-                        var str = ""
-                        for (x in 0..tabCount) {
-                            str += "\t"
-                        }
-
-                        if (old.nodeType != NodeType.EXECUTION && old.nodeType != NodeType.UNDEFINED && old.nodeType != NodeType.COMMENT && old.nodeType != NodeType.SET_VAR) str += "\t"
-                        area.replaceText(area.caretPosition, area.caretPosition, str)
+            if (old.linenumber == current.linenumber - 1) {
+                if (current.nodeType == NodeType.UNDEFINED) {
+                    val tabCount = old.tabLevel - 1
+                    var str = ""
+                    for (x in 0..tabCount) {
+                        str += "\t"
                     }
-                    return@runLater
+
+                    if (old.nodeType != NodeType.EXECUTION && old.nodeType != NodeType.UNDEFINED && old.nodeType != NodeType.COMMENT && old.nodeType != NodeType.SET_VAR) str += "\t"
+                    area.replaceText(area.caretPosition, area.caretPosition, str)
                 }
-                if (old.linenumber == current.linenumber + 1) {
-                    if (popUp.isShowing) {
-                        hideList()
-                    }
-                }
+                return
+            }
+            if (old.linenumber == current.linenumber + 1) {
+                if (popUp.isShowing) hideList()
             }
         }
+
     }
 }

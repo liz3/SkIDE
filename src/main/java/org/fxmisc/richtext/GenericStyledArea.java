@@ -1374,7 +1374,7 @@ public class GenericStyledArea<PS, SEG, S> extends Region
 
     /** Assumes this method is called within a {@link #suspendVisibleParsWhile(Runnable)} block */
     private void followCaret() {
-        if(true) return;
+
         int parIdx = getCurrentParagraph();
         Cell<Paragraph<PS, SEG, S>, ParagraphBox<PS, SEG, S>> cell = virtualFlow.getCell(parIdx);
         Bounds caretBounds = cell.getNode().getCaretBounds();

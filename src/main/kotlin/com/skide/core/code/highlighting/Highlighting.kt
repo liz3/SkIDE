@@ -28,8 +28,6 @@ class Highlighting(val manager: CodeManager) {
     }
 
     fun searchHighlighting(searched: String, case: Boolean, regex: Boolean) {
-
-
         area.setStyleSpans(0, computeSearchHightlighting(area.text, searched, case, regex))
     }
 
