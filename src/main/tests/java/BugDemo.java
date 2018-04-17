@@ -1,8 +1,7 @@
-package com.skide.utils;
-
 import javafx.application.Application;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -12,56 +11,69 @@ import org.fxmisc.richtext.model.PlainTextChange;
 import org.fxmisc.richtext.model.StyleSpans;
 import org.fxmisc.richtext.model.StyleSpansBuilder;
 import org.jetbrains.annotations.Nullable;
+import org.junit.Test;
 import org.reactfx.EventStream;
 import org.reactfx.EventStreams;
 import org.reactfx.Subscription;
 import org.reactfx.value.Var;
+import org.testfx.framework.junit.ApplicationTest;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class BugDemo extends Application{
+public class BugDemo extends ApplicationTest {
 
     private CodeArea area = new CodeArea();
     private Vector<Integer> marked = new Vector<>();
 
-    public static void main(String[] args) {
-        launch(args);
+
+    @Test
+    public void recreate_bug() {
+
+        moveTo(area);
+        area.moveTo(area.getAbsolutePosition(15, area.getParagraphLength(15)));
+        press(KeyCode.SPACE);
+        sleep(5000);
+        area.moveTo(area.getAbsolutePosition(25, area.getParagraphLength(25)));
+        moveTo(area);
+        sleep(5000);
+        press(KeyCode.X);
+        sleep(14000);
+
+
     }
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-
-
         EventStream<PlainTextChange> stream = area.plainTextChanges().filter(x -> !x.isIdentity());
-        stream.subscribe(e  -> runHighlighting());
-        VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(area);
+        stream.subscribe(e -> runHighlighting());
         BorderPane pane = new BorderPane();
-        pane.setCenter(scrollPane);
+        pane.setCenter(area);
         primaryStage.setScene(new Scene(pane, 800, 600));
         primaryStage.centerOnScreen();
         primaryStage.getScene().getStylesheets().add("/HighlightingLight.css");
         primaryStage.show();
 
         area.setParagraphGraphicFactory(LineNumberFactory.get(area));
-        area.replaceText(0,0, testcontent);
+        area.replaceText(0, 0, testcontent);
 
-        double caretXOffset = 0.0;
-        double caretYOffset = 0.0;
-
-        EventStream<Optional<Bounds>> caretBounds = EventStreams.nonNullValuesOf(area.caretBoundsProperty());
-
-        Subscription caretPopupSub = EventStreams.combine(caretBounds, Var.newSimpleVar(true).values()).subscribe(tuple3 -> {
-            Optional<Bounds> opt = tuple3._1;
-            if(opt.isPresent()) {
-                Bounds b = opt.get();
-            }
-        });
-        caretPopupSub.and(caretBounds.subscribe(x -> {}));
+        // If this code is removed, does the issue still occur?
+//        EventStream<Optional<Bounds>> caretBounds = EventStreams.nonNullValuesOf(area.caretBoundsProperty());
+//
+//        Subscription caretPopupSub = EventStreams.combine(caretBounds, Var.newSimpleVar(true).values()).subscribe(tuple3 -> {
+//            Optional<Bounds> opt = tuple3._1;
+//            if(opt.isPresent()) {
+//                Bounds b = opt.get();
+//            }
+//        });
+//        caretPopupSub.and(caretBounds.subscribe(x -> {}));
         marked.add(5);
         marked.add(25);
         marked.add(56);
+
+        area.moveTo(0);
     }
 
     private void runHighlighting() {
@@ -69,9 +81,10 @@ public class BugDemo extends Application{
         mappedMarked();
 
     }
+
     private void mappedMarked() {
 
-        for(int line : marked) {
+        for (int line : marked) {
 
             int len = area.getParagraphLength(line);
             StyleSpans<Collection<String>> spans = area.getStyleSpans(line);
@@ -98,7 +111,8 @@ public class BugDemo extends Application{
                                                                     matcher.group("STRING") != null ? "string" :
                                                                             matcher.group("COMMENT") != null ? "comment" :
                                                                                     matcher.group("VARS") != null ? "vars" :
-                                                                                            null; /* never happens */ assert styleClass != null;
+                                                                                            null; /* never happens */
+            assert styleClass != null;
 
             spansBuilder.add(Collections.emptyList(), matcher.start() - lastKwEnd);
             spansBuilder.add(Collections.singleton(styleClass), matcher.end() - matcher.start());
@@ -109,20 +123,17 @@ public class BugDemo extends Application{
         return spansBuilder.create();
     }
 
-    private static StyleSpans<Collection<String>> merge(@Nullable StyleSpans<Collection<String>>
-                                                                spans, int lineLength,  String cssClass) {
+    private static StyleSpans<Collection<String>> merge(StyleSpans<Collection<String>> spans, int lineLength,
+                                                        String cssClass) {
         if (spans != null) {
-            StyleSpansBuilder<Collection<String>> builder = new StyleSpansBuilder<>();
-            builder.add(Collections.emptyList(), 0);
-            builder.add(Collections.singletonList(cssClass), lineLength);
-            builder.add(Collections.emptyList(), 0);
-            StyleSpans<Collection<String>> spansToGoOnTop = builder.create();
-            spans = spans.overlay(spansToGoOnTop, (bottomSpan, list) -> {
-                List<String> l = new ArrayList<>(bottomSpan.size() + list.size());
-                l.addAll(bottomSpan);
-                l.addAll(list);
-                return l;
-            });
+            spans = spans.overlay(
+                    StyleSpans.singleton(Collections.singletonList(cssClass), lineLength),
+                    (bottomSpan, list) -> {
+                        List<String> l = new ArrayList<>(bottomSpan.size() + list.size());
+                        l.addAll(bottomSpan);
+                        l.addAll(list);
+                        return l;
+                    });
         }
 
         return spans;
@@ -137,9 +148,11 @@ public class BugDemo extends Application{
     private String PAREN_PATTERN = "\\(|\\)";
     private String BRACKET_PATTERN = "\\[|\\]";
     private String STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\"";
-    private String  joinBoundaryPattern(List<String> items) {
+
+    private String joinBoundaryPattern(List<String> items) {
         return "\\b(" + String.join("|", items) + ")\\b";
     }
+
     private Pattern patternCompilerStatic = Pattern.compile(
             "(?<SECTION>" + SECTION_PATTERN + ")"
                     + "|(?<NUMBERS>" + NUMBERS_PATTERN + ")"

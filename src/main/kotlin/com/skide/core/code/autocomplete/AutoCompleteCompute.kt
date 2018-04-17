@@ -43,6 +43,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     var currentLine = 0
     var lineBefore = 0
+    var changingLine = false
 
     var wasJustCalled = false
     var colPos = 0
@@ -170,7 +171,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         showGlobalAutoComplete()
                         return
                     }
-                    if (curr?.raw != "") {
+                    if (curr?.raw!!.isNotBlank() && !changingLine) {
                         showLocalAutoComplete(true)
                     }
                 }
@@ -200,21 +201,20 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     fun showLocalAutoComplete(movedRight: Boolean) {
 
-        Platform.runLater {
 
 
             val currentInfo = area.getInfo(manager)
 
             if (globalCompleteVisible) {
                 showGlobalAutoComplete()
-                return@runLater
+                return
             }
 
             if ((currentInfo.column - 2) >= 0) {
 
                 if (currentInfo.actualCurrentString[currentInfo.column - 2] == ' ' && currentInfo.charBeforeCaret == " ") {
                     hideList()
-                    return@runLater
+                    return
 
                 }
             }
@@ -224,7 +224,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
                 if (!movedRight && currentInfo.actualCurrentString == "") {
                     hideList()
-                    return@runLater
+                    return
                 }
 
                 val replaced = getWordSearchReplace(currentInfo.currentWord, currentInfo)
@@ -251,15 +251,15 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
                 }
 
-                return@runLater
+                return
             } else {
-                if (currentInfo.inString) return@runLater
-                if (currentInfo.currentWord.endsWith("\"")) return@runLater
-                if (currentInfo.currentWord.endsWith("{")) return@runLater
-                if (currentInfo.currentNode.nodeType == NodeType.COMMENT) return@runLater
-                if (currentInfo.currentNode.nodeType == NodeType.SET_VAR && currentInfo.currentWord.startsWith("{")) return@runLater
+                if (currentInfo.inString) return
+                if (currentInfo.currentWord.endsWith("\"")) return
+                if (currentInfo.currentWord.endsWith("{")) return
+                if (currentInfo.currentNode.nodeType == NodeType.COMMENT) return
+                if (currentInfo.currentNode.nodeType == NodeType.SET_VAR && currentInfo.currentWord.startsWith("{")) return
                 if (currentInfo.currentWord.endsWith(":") ||
-                        currentInfo.beforeString.endsWith(")") || currentInfo.beforeString.endsWith("(")) return@runLater
+                        currentInfo.beforeString.endsWith(")") || currentInfo.beforeString.endsWith("(")) return
                 manager.parseResult = manager.parseStructure()
                 fillList.items.clear()
                 removed.clear()
@@ -472,7 +472,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     }
                     if (fillList.items.size == 0) {
                         hideList()
-                        return@runLater
+                        return
                     }
                 }
                 val toRemove = Vector<ListHolderItem>()
@@ -492,7 +492,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             }
             if (fillList.items.size == 0) {
-                return@runLater
+                return
             }
             if (project.isExluded) {
                 popUp.show(project.externStage)
@@ -501,7 +501,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 popUp.show(project.openProject.guiHandler.window.stage)
             }
 
-        }
+
 
     }
 
@@ -585,6 +585,10 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
         } else {
 
+            /*
+echo '", "restart-command":"/var/run.sh", "application-logfile-path":"/home/clinet/data/application.log"}' >> $file
+
+             */
             val currentInfo = area.getInfo(manager)
 
             val toRemove = Vector<ListHolderItem>()
@@ -631,11 +635,10 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     private fun onLineChange() {
 
 
-        val parseResult = manager.parseStructure()
-        manager.parseResult = parseResult
 
-        val old = EditorUtils.getLineNode(lineBefore, parseResult)
-        val current = EditorUtils.getLineNode(currentLine, parseResult)
+
+        val old = EditorUtils.getLineNode(lineBefore, manager.parseResult)
+        val current = EditorUtils.getLineNode(currentLine, manager.parseResult)
 
         if (old != null && current != null) {
 
@@ -647,8 +650,12 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         str += "\t"
                     }
 
+                    changingLine = true
                     if (old.nodeType != NodeType.EXECUTION && old.nodeType != NodeType.UNDEFINED && old.nodeType != NodeType.COMMENT && old.nodeType != NodeType.SET_VAR) str += "\t"
                     area.replaceText(area.caretPosition, area.caretPosition, str)
+                    Platform.runLater {
+                        changingLine = false
+                    }
                 }
                 return
             }

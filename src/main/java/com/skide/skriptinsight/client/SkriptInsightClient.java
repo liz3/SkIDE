@@ -134,7 +134,7 @@ public class SkriptInsightClient {
             if (manager.getIgnored().containsKey((int) resultElement.getTargetLine() - 1)) continue;
             marked.putIfAbsent((int) resultElement.getTargetLine() - 1, resultElement);
         }
-        Platform.runLater(() -> manager.getHighlighter().mapMarked(() -> Unit.INSTANCE));
+        Platform.runLater(() -> manager.getHighlighter().runHighlighting());
     }
 
 

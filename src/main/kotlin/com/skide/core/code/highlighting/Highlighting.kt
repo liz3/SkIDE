@@ -1,12 +1,12 @@
 package com.skide.core.code.highlighting
 
 import com.skide.core.code.CodeManager
-import com.skide.utils.StyleSpanMerger
-import javafx.application.Platform
 import org.fxmisc.richtext.model.StyleSpans
 import org.fxmisc.richtext.model.StyleSpansBuilder
 import java.util.*
 import java.util.regex.Pattern
+import java.util.ArrayList
+import org.apache.commons.lang.StringUtils.overlay
 
 
 class Highlighting(val manager: CodeManager) {
@@ -15,12 +15,28 @@ class Highlighting(val manager: CodeManager) {
     val area = manager.area
     private val x = area.plainTextChanges().filter({ x -> !x.isIdentity })
     var sub = x.subscribe({
-        if (manager.linesAmount <= 2000) runHighlighting(false)
+        if (manager.linesAmount <= 2000) runHighlighting()
     })
 
-    fun runHighlighting(withMapping:Boolean) {
-        area.setStyleSpans(0, computHighlighting(area.text))
-        mapMarked {}
+    fun runHighlighting() {
+        val highlightedSpans = computHighlighting(area.text)
+        val marks = mapMarked()
+
+        val spans = highlightedSpans.overlay(
+                marks
+        ) { originalList, addedList ->
+            if (addedList.isEmpty()) {
+                originalList
+            } else {
+                val l = ArrayList<String>(originalList.size + addedList.size)
+                l.addAll(originalList)
+                l.addAll(addedList)
+                l
+            }
+
+
+        }
+        area.setStyleSpans(0, spans)
     }
 
     fun computeHighlighting() {
@@ -35,9 +51,9 @@ class Highlighting(val manager: CodeManager) {
 
         sub.unsubscribe()
         sub = x.subscribe({
-            if (manager.linesAmount <= 2000) runHighlighting(false)
+            if (manager.linesAmount <= 2000) runHighlighting()
         })
-        runHighlighting(false)
+        runHighlighting()
 
     }
 
@@ -120,27 +136,28 @@ class Highlighting(val manager: CodeManager) {
         return if (!case) Pattern.compile("(?<SEARCH>$content)", Pattern.CASE_INSENSITIVE) else Pattern.compile("(?<SEARCH>$content)")
     }
 
-    fun mapMarked(callback: () -> Unit) {
+    private fun mapMarked(): StyleSpans<Collection<String>>? {
 
 
-        for (line in manager.marked.keys) {
+        if (manager.marked.size == 0) return StyleSpans.singleton(emptyList(), 0)
 
-            try {
-                val len = area.getParagraphLength(line)
-                val text = area.paragraphs[line].text
-                val offset = text.takeWhile { it.isWhitespace() }.length
-                val substr = text.takeLastWhile { it.isWhitespace() }.length
-                val spans = area.getStyleSpans(line)
-                val styleLength = len - offset - substr
-                println("[$line]: Len: $len, offset: $offset, substr: $substr, style: $styleLength, Text: $text")
-                val result = StyleSpanMerger.merge(spans, len, offset, styleLength, "marked")
-                area.setStyleSpans(line, 0, result)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
+       val sorted = manager.marked.toSortedMap()
+
+        val builder = StyleSpansBuilder<Collection<String>>()
+        var endOfPrevStyle = 0
+        for (line in sorted.keys) {
+            val startStyle = area.getAbsolutePosition(line, 0)
+            builder.add(Collections.emptyList(), startStyle - endOfPrevStyle)
+            val lineLength = area.getParagraphLength(line)
+            val text = area.paragraphs[line].text
+            val offset = text.takeWhile { it.isWhitespace() }.length
+            val substr = text.takeLastWhile { it.isWhitespace() }.length
+            builder.add(emptyList(), offset)
+            builder.add(Collections.singletonList("marked"), lineLength - offset - substr)
+            builder.add(emptyList(), substr)
+            endOfPrevStyle = startStyle + lineLength
         }
-
-        callback()
+        return builder.create()
 
 
     }

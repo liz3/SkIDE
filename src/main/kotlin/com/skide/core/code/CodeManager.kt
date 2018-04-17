@@ -39,7 +39,7 @@ class CodeManager {
     lateinit var hBox: HBox
 
     private val parser = SkriptParser()
-    val marked = ConcurrentHashMap<Int, InspectionResultElement>()
+    var marked = ConcurrentHashMap<Int, InspectionResultElement>()
     val ignored = HashMap<Int, String>()
     private var inspectionsDisabled = false
     var inspectionsStarted = false
@@ -80,10 +80,30 @@ class CodeManager {
             }
             linesAmount = area.paragraphs.size
 
+            /*
+       if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped && project.coreManager.configManager.get("disable_insights") != "true") {
+
+           val toRemove = Vector<Int>()
+           ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
+           toRemove.forEach { ignored.remove(it) }
+           project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
+           println("Run them!")
+
+       }
+       */
+            println("Test")
+            marked.clear()
+            marked.put(13, InspectionResultElement())
+            marked.put(14, InspectionResultElement())
+            marked.put(15, InspectionResultElement())
+            marked.put(21, InspectionResultElement())
+            marked.put(22, InspectionResultElement())
+
+
             if (linesAmount > 2000) {
                 if (project.coreManager.configManager.get("highlighting") == "true") {
                     Platform.runLater {
-                        highlighter.runHighlighting(false)
+                        highlighter.runHighlighting()
                         if(!informed) {
                             informed = true
                             Notifications.create()
@@ -96,15 +116,12 @@ class CodeManager {
                 }
             }
 
-            if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped && project.coreManager.configManager.get("disable_insights") != "true") {
 
-                val toRemove = Vector<Int>()
-                ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
-                toRemove.forEach { ignored.remove(it) }
-                project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
-                println("Run them!")
 
-            }
+
+
+
+
 
 
         }).start()
@@ -277,13 +294,13 @@ class CodeManager {
 
                                 area.replaceText(startPosition, endPosition, fixedInspection)
                                 marked.remove(lForIndex)
-                                highlighter.runHighlighting(true)
+                                highlighter.runHighlighting()
 
                             }
                             autoComplete.addItem("Ignore for once") {
                                 marked.remove(lForIndex)
                                 ignored.put(lForIndex, area.paragraphs[lForIndex].text)
-                                highlighter.runHighlighting(true)
+                                highlighter.runHighlighting()
                             }
                             autoComplete.addItem("Disable Inspections for current Session") {
                                 inspectionsDisabled = true

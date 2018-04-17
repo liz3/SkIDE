@@ -6,7 +6,8 @@ buildscript {
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "de.dynamicfiles.projects.gradle.plugins:javafx-gradle-plugin:8.8.2"
+        classpath 'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.3.2'
+
     }
 }
 
@@ -18,6 +19,8 @@ plugins {
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'org.unbroken-dome.test-sets'
+
 
 group = 'com.skide'
 version = '0.0.6'
@@ -34,12 +37,10 @@ repositories {
 }
 
 dependencies {
+    testCompile "org.testfx:testfx-core:4.0.13-alpha"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     compile "com.jfoenix:jfoenix:8.0.3"
-    compile 'org.reactfx:reactfx:2.0-M5'
-    compile 'org.fxmisc.undo:undofx:1.4.0'
-    compile 'org.fxmisc.flowless:flowless:0.6'
-    compile 'org.fxmisc.wellbehaved:wellbehavedfx:0.3.1'
+    compile "org.fxmisc.richtext:richtextfx:0.8.2"
     compile 'org.controlsfx:controlsfx:8.40.14'
     compile "org.json:json:20180130"
     compile name: 'terminalfx-1.3'
@@ -47,6 +48,8 @@ dependencies {
     compile "org.java-websocket:Java-WebSocket:1.3.8"
     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.5'
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile "org.testfx:testfx-junit:4.0.13-alpha"
+
 }
 
 
@@ -55,6 +58,10 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = project.targetCompatibility
+}
+
+testSets {
+    integrationTest { dirName = 'main/tests' }
 }
 
 shadowJar {
@@ -76,23 +83,4 @@ jar {
         attributes 'Implementation-Version': version
         attributes 'Implementation-Vendor': name
     }
-}
-
-apply plugin: 'javafx-gradle-plugin'
-
-jfx {
-    verbose = true
-    mainClass = "com.skide.MainKt"
-    vendor = 'Liz3'
-    appName = "Sk-IDE"
-    nativeReleaseVersion = "0.0.4"
-    fileAssociations = [
-            [
-                    description: 'Njol Skript File',
-                    extensions: 'sk',
-                    contentType: 'application/skript',
-                    icon: 'src/main/deploy/skide.ico'
-            ]
-    ]
-
 }
