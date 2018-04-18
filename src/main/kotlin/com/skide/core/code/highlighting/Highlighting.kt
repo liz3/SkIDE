@@ -9,7 +9,6 @@ import java.util.regex.Pattern
 
 class Highlighting(val manager: CodeManager) {
 
-    var changed = false;
     val area = manager.area
     private val x = area.plainTextChanges().filter({ x -> !x.isIdentity })
     var sub = x.subscribe({

@@ -1,6 +1,7 @@
 package com.skide.core.management
 
 import com.skide.CoreManager
+import com.skide.gui.GUIManager
 import com.skide.include.CompileOption
 import com.skide.include.CompileOptionType
 import com.skide.include.Project
@@ -294,7 +295,10 @@ class ProjectFileManager(val project: Project) {
         if (projectFiles.containsKey(rName)) return false
         val file = File(project.folder, rName)
         file.createNewFile()
-        projectFiles.put(rName, file)
+        if(GUIManager.settings.get("generate_meta_data") == "true") {
+            writeFile("#Project: ${project.name}\n#File: $rName\n#Author: ${System.getProperty("user.name")}".toByteArray(), file, true, false)
+        }
+            projectFiles.put(rName, file)
         compileOptions.values.forEach {
             it.includedFiles.add(file)
         }

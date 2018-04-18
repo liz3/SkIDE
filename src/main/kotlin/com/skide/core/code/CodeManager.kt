@@ -81,7 +81,7 @@ class CodeManager {
             linesAmount = area.paragraphs.size
 
 
-            if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped && project.coreManager.configManager.get("disable_insights") != "true") {
+            if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped && project.coreManager.configManager.get("enable_inspections") == "true") {
 
                 val toRemove = Vector<Int>()
                 ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }

@@ -38,6 +38,9 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("cross_auto_complete", "${ctrl.crossFileAutoComplete.isSelected}")
         coreManager.configManager.set("font", ctrl.settingsFontTextField.text)
         coreManager.configManager.set("font_size", ctrl.settingsFontSizeTextField.text)
+        coreManager.configManager.set("generate_meta_data", "${ctrl.metaDataGenerateCheck.isSelected}")
+        coreManager.configManager.set("enable_inspections", "${ctrl.settingsInsightsCheck.isSelected}")
+        coreManager.configManager.set("inspections_port", ctrl.settingsInsightsPortField.text)
 
         if(coreManager.configManager.get("jre_home") == "" && getOS() == OperatingSystemType.MAC_OS) {
             Platform.runLater {
@@ -229,6 +232,9 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.settingsTheneComboBox.selectionModel.select(coreManager.configManager.get("theme").toString())
         ctrl.settingsFontTextField.text = coreManager.configManager.get("font").toString()
         ctrl.settingsFontSizeTextField.text = coreManager.configManager.get("font_size").toString()
+        ctrl.metaDataGenerateCheck.isSelected = coreManager.configManager.get("generate_meta_data") == "true"
+        ctrl.settingsInsightsCheck.isSelected = coreManager.configManager.get("enable_inspections") == "true"
+        ctrl.settingsInsightsPortField.text = ( coreManager.configManager.get("inspections_port") as String)
     }
 
     private fun setNewValues() {

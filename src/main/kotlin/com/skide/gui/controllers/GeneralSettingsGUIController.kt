@@ -113,4 +113,13 @@ class GeneralSettingsGUIController {
 
     @FXML
     lateinit var fixesCutField: TextField
+
+    @FXML
+    lateinit var settingsInsightsCheck:CheckBox
+
+    @FXML
+    lateinit var metaDataGenerateCheck:CheckBox
+
+    @FXML
+    lateinit var settingsInsightsPortField:TextField
 }

@@ -54,6 +54,6 @@ fun writeFile(data: ByteArray, file: File, append: Boolean = false, createIfNotE
         Pair(FileReturnResult.SUCCESS, "")
     } catch (e: Exception) {
         e.printStackTrace()
-        Pair(FileReturnResult.ERROR, "")
+        Pair(FileReturnResult.ERROR, e.message!!)
     }
 }

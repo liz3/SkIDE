@@ -51,7 +51,7 @@ class InsightsManager(val coreManager: CoreManager) {
 
     fun setup(callback: () -> Unit) {
 
-        if (coreManager.configManager.get("disable_insights") == "true") {
+        if (coreManager.configManager.get("enable_inspections") != "true") {
             callback()
             return
         }
