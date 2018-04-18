@@ -47,8 +47,14 @@ public class SkriptInsightClient {
                     InsightConstants.Misc.SERVER_PORT,
                     InsightConstants.Paths.INSPECT_PATH
             );
-            inspectionsWebSocketClient.connect();
+           try {
+               inspectionsWebSocketClient.connect();
+               System.out.println("Connected to the Inspections server.");
+           }catch (Exception e) {
+               System.out.println("Failed to connect to the Inspection servers.");
+           }
         });
+        th.setName("SK-IDE Inspections connection server");
         th.start();
     }
 

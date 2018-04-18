@@ -5,8 +5,6 @@ import org.fxmisc.richtext.model.StyleSpans
 import org.fxmisc.richtext.model.StyleSpansBuilder
 import java.util.*
 import java.util.regex.Pattern
-import java.util.ArrayList
-import org.apache.commons.lang.StringUtils.overlay
 
 
 class Highlighting(val manager: CodeManager) {
@@ -152,6 +150,7 @@ class Highlighting(val manager: CodeManager) {
             val text = area.paragraphs[line].text
             val offset = text.takeWhile { it.isWhitespace() }.length
             val substr = text.takeLastWhile { it.isWhitespace() }.length
+            if(lineLength - offset - substr <= 0) continue
             builder.add(emptyList(), offset)
             builder.add(Collections.singletonList("marked"), lineLength - offset - substr)
             builder.add(emptyList(), substr)

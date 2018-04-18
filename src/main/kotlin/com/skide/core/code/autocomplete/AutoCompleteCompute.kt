@@ -171,9 +171,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         showGlobalAutoComplete()
                         return
                     }
-                    if (curr?.raw!!.isNotBlank() && !changingLine) {
-                        showLocalAutoComplete(true)
-                    }
+                    if (curr?.raw?.isNotBlank() == true && !changingLine) showLocalAutoComplete(true)
+
                 }
 
 
@@ -634,9 +633,7 @@ echo '", "restart-command":"/var/run.sh", "application-logfile-path":"/home/clin
 
     private fun onLineChange() {
 
-
-
-
+        manager.parseResult = manager.parseStructure()
         val old = EditorUtils.getLineNode(lineBefore, manager.parseResult)
         val current = EditorUtils.getLineNode(currentLine, manager.parseResult)
 

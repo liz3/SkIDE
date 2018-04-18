@@ -80,48 +80,27 @@ class CodeManager {
             }
             linesAmount = area.paragraphs.size
 
-            /*
-       if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped && project.coreManager.configManager.get("disable_insights") != "true") {
 
-           val toRemove = Vector<Int>()
-           ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
-           toRemove.forEach { ignored.remove(it) }
-           project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
-           println("Run them!")
+            if (!inspectionsDisabled && inspectionsStarted && !autoComplete.stopped && project.coreManager.configManager.get("disable_insights") != "true") {
 
-       }
-       */
-            println("Test")
-            marked.clear()
-            marked.put(13, InspectionResultElement())
-            marked.put(14, InspectionResultElement())
-            marked.put(15, InspectionResultElement())
-            marked.put(21, InspectionResultElement())
-            marked.put(22, InspectionResultElement())
-
-
+                val toRemove = Vector<Int>()
+                ignored.forEach { if (area.paragraphs[it.key].text != it.value) toRemove.add(it.key) }
+                toRemove.forEach { ignored.remove(it) }
+                project.coreManager.insightClient.inspectScriptInAnotherThread(area.text, this)
+            }
             if (linesAmount > 2000) {
-                if (project.coreManager.configManager.get("highlighting") == "true") {
+                if (!informed) {
                     Platform.runLater {
-                        highlighter.runHighlighting()
-                        if(!informed) {
-                            informed = true
-                            Notifications.create()
-                                    .title("Big file mode")
-                                    .text("File has over 2000 lines, using big file mode to increase performance").darkStyle()
-                                    .showInformation()
-                        }
-
+                        informed = true
+                        Notifications.create()
+                                .title("Big file mode")
+                                .text("File has over 2000 lines, using big file mode to increase performance").darkStyle()
+                                .showInformation()
                     }
+
+
                 }
             }
-
-
-
-
-
-
-
 
 
         }).start()
