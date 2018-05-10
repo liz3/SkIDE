@@ -122,4 +122,7 @@ class GeneralSettingsGUIController {
 
     @FXML
     lateinit var settingsInsightsPortField:TextField
+
+    @FXML
+    lateinit var settingsUpdateDataCheck:CheckBox
 }

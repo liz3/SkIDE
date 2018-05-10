@@ -9,6 +9,7 @@ import java.util.regex.Pattern
 
 class Highlighting(val manager: CodeManager) {
 
+    private var stopped = false
     val area = manager.area
     private val x = area.plainTextChanges().filter({ x -> !x.isIdentity })
     var sub = x.subscribe({
@@ -16,6 +17,7 @@ class Highlighting(val manager: CodeManager) {
     })
 
     fun runHighlighting() {
+        if(stopped) return
         val highlightedSpans = computHighlighting(area.text)
         val marks = mapMarked()
 
@@ -45,7 +47,7 @@ class Highlighting(val manager: CodeManager) {
     }
 
     fun restartHighlighting() {
-
+        stopped = false
         sub.unsubscribe()
         sub = x.subscribe({
             if (manager.linesAmount <= 2000) runHighlighting()
@@ -56,6 +58,7 @@ class Highlighting(val manager: CodeManager) {
 
     fun stopHighLighting() {
         sub.unsubscribe()
+        stopped = true
     }
 
 

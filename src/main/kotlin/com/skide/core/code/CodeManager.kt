@@ -97,9 +97,14 @@ class CodeManager {
                                 .text("File has over 2000 lines, using big file mode to increase performance").darkStyle()
                                 .showInformation()
                     }
-
-
                 }
+                if (project.coreManager.configManager.get("highlighting") == "true") {
+
+                    Platform.runLater {
+                        highlighter.runHighlighting()
+                    }
+                }
+
             }
 
 

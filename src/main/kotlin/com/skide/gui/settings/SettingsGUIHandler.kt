@@ -41,6 +41,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("generate_meta_data", "${ctrl.metaDataGenerateCheck.isSelected}")
         coreManager.configManager.set("enable_inspections", "${ctrl.settingsInsightsCheck.isSelected}")
         coreManager.configManager.set("inspections_port", ctrl.settingsInsightsPortField.text)
+        coreManager.configManager.set("meta_update", "${ctrl.settingsUpdateDataCheck.isSelected}")
 
         if(coreManager.configManager.get("jre_home") == "" && getOS() == OperatingSystemType.MAC_OS) {
             Platform.runLater {
@@ -234,6 +235,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.settingsFontSizeTextField.text = coreManager.configManager.get("font_size").toString()
         ctrl.metaDataGenerateCheck.isSelected = coreManager.configManager.get("generate_meta_data") == "true"
         ctrl.settingsInsightsCheck.isSelected = coreManager.configManager.get("enable_inspections") == "true"
+        ctrl.settingsUpdateDataCheck.isSelected = coreManager.configManager.get("meta_update") == "true"
         ctrl.settingsInsightsPortField.text = ( coreManager.configManager.get("inspections_port") as String)
     }
 
