@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
@@ -71,6 +72,35 @@
                      </children>
                   </Pane>
                </content>
+            </Tab>
+            <Tab text="Deploy">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="14.0" layoutY="14.0" text="Deploy Targets" />
+                        <ListView fx:id="deployList" layoutX="14.0" layoutY="35.0" prefHeight="200.0" prefWidth="200.0" />
+                        <TextField fx:id="deployNewTextField" layoutX="261.0" layoutY="10.0" prefHeight="25.0" prefWidth="222.0" />
+                        <Label layoutX="223.0" layoutY="14.0" text="Name" />
+                        <Button fx:id="deployNewButton" layoutX="487.0" layoutY="10.0" mnemonicParsing="false" text="New" />
+                        <TextField fx:id="deployHostTextField" layoutX="226.0" layoutY="108.0" prefHeight="25.0" prefWidth="222.0" />
+                        <Label layoutX="226.0" layoutY="91.0" text="Host" />
+                        <TextField fx:id="deployPortTextField" layoutX="454.0" layoutY="108.0" prefHeight="25.0" prefWidth="53.0" />
+                        <Label layoutX="454.0" layoutY="91.0" text="Port" />
+                        <TextField fx:id="deployFolderPathTextField" layoutX="226.0" layoutY="154.0" prefHeight="25.0" prefWidth="222.0" />
+                        <Label layoutX="226.0" layoutY="137.0" text="Folder Path" />
+                        <Label layoutX="225.0" layoutY="43.0" text="Method" />
+                        <ComboBox fx:id="deployMethodComboBox" layoutX="226.0" layoutY="60.0" prefWidth="150.0" />
+                        <Label layoutX="227.0" layoutY="234.0" text="Password/Passphrase(SFTP)" />
+                        <Label layoutX="452.0" layoutY="234.0" text="Private key file(SFTP)" />
+                        <Button fx:id="deployPassphraseButton" layoutX="451.0" layoutY="251.0" mnemonicParsing="false" text="..." />
+                        <Label fx:id="deployPassphraseLabel" layoutX="482.0" layoutY="255.0" prefHeight="17.0" prefWidth="416.0" text="Label" />
+                        <Button fx:id="deployDeleteBtn" layoutX="163.0" layoutY="242.0" mnemonicParsing="false" text="Delete" />
+                        <PasswordField fx:id="deployPasswordField" layoutX="226.0" layoutY="251.0" prefHeight="25.0" prefWidth="222.0" />
+                        <TextField fx:id="deployUsernameTextField" layoutX="226.0" layoutY="209.0" prefHeight="25.0" prefWidth="222.0" />
+                        <Label layoutX="226.0" layoutY="192.0" text="Username" />
+                     </children>
+                  </AnchorPane>
+              </content>
             </Tab>
         </tabs>
       </TabPane>

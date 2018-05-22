@@ -3,6 +3,7 @@ package com.skide.gui.controllers
 import com.skide.include.Addon
 import com.skide.include.CompileOption
 import com.skide.include.CompileOptionType
+import com.skide.include.RemoteHost
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.control.ComboBox
@@ -86,5 +87,41 @@ class ProjectSettingsGUIController {
 
     @FXML
     lateinit var compileNewOptionsNameField: TextField
+
+    @FXML
+    lateinit var deployList: ListView<RemoteHost>
+
+    @FXML
+    lateinit var deployNewTextField: TextField
+
+    @FXML
+    lateinit var deployNewButton: Button
+
+    @FXML
+    lateinit var deployHostTextField: TextField
+
+    @FXML
+    lateinit var deployPortTextField: TextField
+
+    @FXML
+    lateinit var deployFolderPathTextField: TextField
+
+    @FXML
+    lateinit var deployUsernameTextField: TextField
+
+    @FXML
+    lateinit var deployMethodComboBox: ComboBox<String>
+
+    @FXML
+    lateinit var deployPasswordField: PasswordField
+
+    @FXML
+    lateinit var deployPassphraseButton: Button
+
+    @FXML
+    lateinit var deployPassphraseLabel: Label
+
+    @FXML
+    lateinit var deployDeleteBtn: Button
 
 }

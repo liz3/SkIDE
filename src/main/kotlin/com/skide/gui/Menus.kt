@@ -162,6 +162,14 @@ object Menus {
             }
             runFileMenu.items.add(serverItem)
         }
+        val uploadFile = Menu("Upload this file")
+        codeManager.findHandler.project.openProject.project.fileManager.hosts.forEach {
+            val deployItem = MenuItem(it.name)
+            deployItem.setOnAction {ev ->
+                codeManager.findHandler.project.openProject.deployer.deploy(codeManager.area.text, codeManager.findHandler.project.f.name, it)
+            }
+            uploadFile.items.add(deployItem)
+        }
         val runConfMenu = Menu("Run Configuration")
         for ((name, opt) in codeManager.findHandler.project.openProject.project.fileManager.compileOptions) {
             val confItem = Menu(name)
@@ -182,6 +190,7 @@ object Menus {
 
         menu.items.add(runFileMenu)
         menu.items.add(runConfMenu)
+        menu.items.add(uploadFile)
         menu.show(codeManager.area, x, y)
 
         return menu

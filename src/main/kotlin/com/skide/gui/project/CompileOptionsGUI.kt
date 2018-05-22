@@ -111,6 +111,7 @@ class CompileOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICo
 
     }
 
+
     private fun insertCurrentValues() {
         ctrl.compileIncludedFileList.items.clear()
         ctrl.compileExcludedFileList.items.clear()

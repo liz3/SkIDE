@@ -3,11 +3,13 @@ package com.skide.core.management
 import com.skide.CoreManager
 import com.skide.gui.project.OpenProjectGuiManager
 import com.skide.include.*
+import com.skide.utils.RemoteDeployer
 import com.skide.utils.Version
 import com.skide.utils.adjustVersion
 import com.skide.utils.skcompiler.SkCompiler
 import javafx.scene.control.Button
 import java.io.File
+import java.rmi.Remote
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -19,6 +21,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
     val eventManager = guiHandler.startGui()
     val addons = HashMap<String, Vector<AddonItem>>()
     val compiler = SkCompiler()
+    val deployer = RemoteDeployer(this)
     val runConfs = HashMap<Server, RunningObjectGuiBinder>()
 
     init {

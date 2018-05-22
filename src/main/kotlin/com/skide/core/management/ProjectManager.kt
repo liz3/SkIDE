@@ -2,9 +2,7 @@ package com.skide.core.management
 
 import com.skide.CoreManager
 import com.skide.gui.GUIManager
-import com.skide.include.CompileOption
-import com.skide.include.CompileOptionType
-import com.skide.include.Project
+import com.skide.include.*
 import com.skide.utils.FileReturnResult
 import com.skide.utils.readFile
 import com.skide.utils.writeFile
@@ -136,10 +134,12 @@ class ProjectFileManager(val project: Project) {
 
     val configFile = File(project.folder, ".project.skide")
     private val compileOptsFile = File(project.folder, ".compileInfo.skide")
+    private val hostOptsFile = File(project.folder, ".hosts.skide")
     val projectFiles = HashMap<String, File>()
     val addons = HashMap<String, String>()
     val lastOpen = Vector<String>()
     val compileOptions = HashMap<String, CompileOption>()
+    val hosts = Vector<RemoteHost>()
 
 
     init {
@@ -166,6 +166,12 @@ class ProjectFileManager(val project: Project) {
             writeCompileOptions()
 
         }
+        if(!hostOptsFile.exists()) {
+            writeFile("[]".toByteArray(), hostOptsFile, false, true)
+        } else {
+            loadHosts()
+        }
+
 
     }
 
@@ -195,6 +201,43 @@ class ProjectFileManager(val project: Project) {
         writeCompileOptions()
     }
 
+    private fun loadHosts() {
+
+        val content = JSONArray(readFile(hostOptsFile).second)
+
+        content.forEach {
+            it as JSONObject
+
+            hosts.add(RemoteHost(it.getString("name"), RemoteHostType.valueOf(it.getString("type")),
+                    it.getString("host"),
+                    it.getInt("port"),
+                    it.getBoolean("pass_saved"),
+                    it.getBoolean("has_private_key"),
+                    it.getString("key_path"),
+                    it.getString("password"),
+                    it.getString("path"),
+                    it.getString("username")))
+        }
+
+    }
+    fun writeHosts() {
+        val arr = JSONArray()
+        hosts.forEach {
+            val obj = JSONObject()
+            obj.put("name", it.name)
+            obj.put("type", it.type.toString())
+            obj.put("host", it.host)
+            obj.put("username", it.username)
+            obj.put("port", it.port)
+            obj.put("pass_saved", it.passwordSaved)
+            obj.put("has_private_key", it.isPrivateKey)
+            obj.put("key_path", it.privateKeyPath)
+            obj.put("password", it.password)
+            obj.put("path", it.folderPath)
+            arr.put(obj)
+        }
+        writeFile(arr.toString().toByteArray(), hostOptsFile, false, false)
+    }
     private fun loadCompileOptions() {
         JSONArray(readFile(compileOptsFile).second).forEach { current ->
             if (current is JSONObject) {

@@ -80,7 +80,7 @@ class ResourceManager(val coreManager: CoreManager) {
 
         if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
 
-        if (coreManager.configManager.get("meta_update") == "true") {
+        if (!file.exists() || coreManager.configManager.get("meta_update") == "true") {
             try {
                 callback(total, 2, "Downloading: https://liz3.net/sk/?function=getAllSyntax")
                 downloadFile("https://liz3.net/sk/?function=getAllSyntax", file.absolutePath)

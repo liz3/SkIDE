@@ -80,6 +80,52 @@ class SkCompiler {
             }
         }.start()
     }
+    fun compile(project: Project, opts: CompileOption, caller: (String) -> Unit, returner: (String) -> Unit) {
+        Thread {
+            caller("Starting compile process...")
+
+            val optimised = HashMap<File, Vector<Node>>()
+
+            opts.includedFiles.forEach {
+                caller("Parsing file ${it.absolutePath}")
+                val result = parser.superParse(readFile(it).second)
+                caller("Optimizing file ${it.absolutePath}")
+                val filtered = Vector<Node>()
+                for (node in result) {
+                    if (!isValid(node, opts)) continue
+
+
+                    val toRemove = Vector<Node>()
+                    node.childNodes.forEach { child ->
+                        getToRemove(child, opts)
+                    }
+                    node.childNodes.forEach {
+                        if (!isValid(it, opts)) toRemove.add(it)
+                    }
+                    toRemove.forEach {
+                        node.childNodes.remove(it)
+                    }
+                    filtered.add(node)
+                }
+                optimised[it] = filtered
+            }
+
+
+            if (opts.method == CompileOptionType.CONCATENATE) {
+
+                var out = ""
+                optimised.values.forEach { arr ->
+
+                    for (node in arr) {
+                        out += computeString(node)
+                    }
+                }
+                returner(out.substring(1))
+                caller("Finished")
+            }
+
+        }.start()
+    }
 
     fun compileForServer(project: Project, opts: CompileOption, skFolder: File, caller: (String) -> Unit, finished: () -> Unit) {
         Thread {
