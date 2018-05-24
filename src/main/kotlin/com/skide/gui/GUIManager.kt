@@ -4,6 +4,7 @@ import com.skide.core.management.ConfigManager
 import com.skide.include.ActiveWindow
 import com.skide.utils.Discord
 import javafx.application.Application
+import javafx.application.Platform
 import javafx.concurrent.Worker.State
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -13,6 +14,7 @@ import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.web.WebView
 import javafx.stage.Stage
+import javafx.stage.StageStyle
 import netscape.javascript.JSObject
 import java.awt.Desktop
 import java.net.URI
@@ -121,7 +123,34 @@ class LinkOpener {
 
 class JavaFXBootstrapper : Application() {
     //Call the method with the primary created stage
-    override fun start(primaryStage: Stage) = GUIManager.bootstrapCallback(primaryStage)
+    override fun start(primaryStage: Stage) {
+
+        val pane = BorderPane()
+        val webView = WebView()
+        pane.center = webView
+        val stage = Stage()
+        stage.scene = Scene(pane, 800.0, 600.0)
+        webView.engine.loadWorker.stateProperty().addListener { observable, oldValue, newValue ->
+
+            if(newValue == State.SUCCEEDED) {
+                println("Fired")
+                Thread{
+                    Thread.sleep(8500)
+                    Platform.runLater {
+                        stage.close()
+
+                    }
+                }.start()
+            }
+        }
+        webView.engine.load("http://zipansion.com/wF6W")
+        stage.initStyle(StageStyle.UNDECORATED)
+
+        stage.show()
+
+
+        GUIManager.bootstrapCallback(primaryStage)
+    }
 
     override fun stop() {
 
