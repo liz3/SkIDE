@@ -40,12 +40,12 @@
 }
 
 .bracket {
-    -fx-fill: darkgreen;
+    -fx-fill: rgb(24, 167, 24);
     -fx-font-weight: bold;
 }
 
 .string {
-    -fx-fill: #515255;
+    -fx-fill: #584eee;
 }
 
 .comment {
@@ -135,4 +135,12 @@
 .console-err {
     -fx-fill: #800b07;
     -fx-font-weight: bold;
+}
+
+.effects {
+    -fx-fill: #4e82c5;
+}
+
+.yaml {
+    -fx-fill: #3bb691;
 }

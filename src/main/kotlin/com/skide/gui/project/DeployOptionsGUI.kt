@@ -17,6 +17,7 @@ class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICon
         ctrl.deployList.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
             if(newValue == null) return@addListener
             ctrl.deployHostTextField.text = newValue.host
+            ctrl.deployUsernameTextField.text = newValue.username
             ctrl.deployMethodComboBox.selectionModel.select(newValue.type.toString())
             ctrl.deployPasswordField.text = if (newValue.passwordSaved) newValue.password else ""
             ctrl.deployFolderPathTextField.text = newValue.folderPath

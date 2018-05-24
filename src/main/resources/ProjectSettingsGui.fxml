@@ -98,6 +98,7 @@
                         <PasswordField fx:id="deployPasswordField" layoutX="226.0" layoutY="251.0" prefHeight="25.0" prefWidth="222.0" />
                         <TextField fx:id="deployUsernameTextField" layoutX="226.0" layoutY="209.0" prefHeight="25.0" prefWidth="222.0" />
                         <Label layoutX="226.0" layoutY="192.0" text="Username" />
+                        <Label layoutX="224.0" layoutY="276.0" text="Password saved in Plain Text!" />
                      </children>
                   </AnchorPane>
               </content>

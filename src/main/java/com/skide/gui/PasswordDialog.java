@@ -17,7 +17,7 @@ public class PasswordDialog extends Dialog<String> {
 
     public PasswordDialog() {
         setTitle("Password");
-        setHeaderText("Please enter your skUnity password.");
+        setHeaderText("Enter Password.");
 
         ButtonType passwordButtonType = new ButtonType("Ok", ButtonData.OK_DONE);
         getDialogPane().getButtonTypes().addAll(passwordButtonType, ButtonType.CANCEL);

@@ -17,7 +17,7 @@ class Highlighting(val manager: CodeManager) {
     })
 
     fun runHighlighting() {
-        if(stopped) return
+        if (stopped) return
         val highlightedSpans = computHighlighting(area.text)
         val marks = mapMarked()
 
@@ -97,6 +97,8 @@ class Highlighting(val manager: CodeManager) {
                 matcher.group("STRING") != null -> "string"
                 matcher.group("COMMENT") != null -> "comment"
                 matcher.group("VARS") != null -> "vars"
+                matcher.group("YAML") != null -> "yaml"
+
                 else -> null
             }!!
 
@@ -141,7 +143,7 @@ class Highlighting(val manager: CodeManager) {
 
         if (manager.marked.size == 0) return StyleSpans.singleton(emptyList(), 0)
 
-       val sorted = manager.marked.toSortedMap()
+        val sorted = manager.marked.toSortedMap()
 
         val builder = StyleSpansBuilder<Collection<String>>()
         var endOfPrevStyle = 0
@@ -152,7 +154,7 @@ class Highlighting(val manager: CodeManager) {
             val text = area.paragraphs[line].text
             val offset = text.takeWhile { it.isWhitespace() }.length
             val substr = text.takeLastWhile { it.isWhitespace() }.length
-            if(lineLength - offset - substr <= 0) continue
+            if (lineLength - offset - substr <= 0) continue
             builder.add(emptyList(), offset)
             builder.add(Collections.singletonList("marked"), lineLength - offset - substr)
             builder.add(emptyList(), substr)
@@ -181,17 +183,15 @@ class Highlighting(val manager: CodeManager) {
                     + "|(?<COLORD>" + HighlighterStatics.COLOR_D_PATTERN + ")"
                     + "|(?<COLORE>" + HighlighterStatics.COLOR_E_PATTERN + ")"
                     + "|(?<COLORF>" + HighlighterStatics.COLOR_F_PATTERN + ")"
-
                     + "|(?<NUMBERS>" + HighlighterStatics.NUMBERS_PATTERN + ")"
-
                     + "|(?<OPERATORS>" + HighlighterStatics.joinBoundaryPattern(HighlighterStatics.KEYWORDS) + ")"
                     + "|(?<COMMAND>" + HighlighterStatics.COMMAND_PATTERN + ")"
-
                     + "|(?<PAREN>" + HighlighterStatics.PAREN_PATTERN + ")"
                     + "|(?<BRACKET>" + HighlighterStatics.BRACKET_PATTERN + ")"
                     + "|(?<STRING>" + HighlighterStatics.STRING_PATTERN + ")"
                     + "|(?<COMMENT>" + HighlighterStatics.COMMENT_PATTERN + ")"
-                    + "|(?<VARS>" + HighlighterStatics.VAR_PATTERN + ")")
+                    + "|(?<VARS>" + HighlighterStatics.VAR_PATTERN + ")"
+                    + "|(?<YAML>" + HighlighterStatics.YAML_PATTERN + ")")
 
 }
 
@@ -225,6 +225,9 @@ object HighlighterStatics {
     const val PAREN_PATTERN = "\\(|\\)"
     const val BRACKET_PATTERN = "\\[|\\]"
     const val STRING_PATTERN = "\"([^\"\\\\]|\\\\.)*\""
+
+    const val YAML_PATTERN = "yaml"
+
     fun joinBoundaryPattern(items: Array<String>) = "\\b(" + items.joinToString("|") + ")\\b"
     fun joinList(items: Array<String>) = items.joinToString("|")
 

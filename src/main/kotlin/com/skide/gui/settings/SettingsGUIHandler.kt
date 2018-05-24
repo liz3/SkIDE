@@ -284,7 +284,6 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
     private fun currentSelected(): Server? {
 
         if (ctrl.serverServerList.selectionModel.selectedItem == null) {
-            Prompts.infoCheck("Error", "Create a Serer first", "Please create or select a Server first before assigning things!", Alert.AlertType.ERROR)
             return null
         }
         return ctrl.serverServerList.selectionModel.selectedItem

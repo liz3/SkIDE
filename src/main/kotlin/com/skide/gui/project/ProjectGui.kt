@@ -623,6 +623,18 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             window.stage.show()
 
         }
+        val deployMenu = Menu("Deploy")
+        openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach {compOpt ->
+            val item = Menu(compOpt.key)
+            openProjectGuiManager.openProject.project.fileManager.hosts.forEach {
+                val depItem = MenuItem(it.name)
+                depItem.setOnAction { ev ->
+                    openProjectGuiManager.openProject.deployer.depploy(compOpt.value, it)
+                }
+                item.items.add(depItem)
+            }
+            deployMenu.items.add(item)
+        }
         val editServerConfMenu = Menu("Edit server Configuration")
         coreManager.serverManager.servers.forEach {
             val file = File(it.value.configuration.folder, "server.properties")
@@ -634,7 +646,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 editServerConfMenu.items.add(tItem)
             }
         }
-        fileMenu.items.addAll(newProject, projectSettings, otherProjects, compileMenu, generalSettings, editServerConfMenu, closeItem)
+        fileMenu.items.addAll(newProject, projectSettings, otherProjects, compileMenu, generalSettings, editServerConfMenu, deployMenu, closeItem)
     }
 
     private fun simpleMenuItem(name: String, action: () -> Unit): MenuItem {
