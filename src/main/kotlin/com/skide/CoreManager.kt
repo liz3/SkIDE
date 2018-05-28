@@ -55,6 +55,7 @@ class CoreManager {
             stage.centerOnScreen()
             stage.isResizable = false
             controller.view.image = Image(javaClass.getResource("/splash.png").toExternalForm())
+            controller.logoView.image = Image(javaClass.getResource("/21xayah.png").toExternalForm())
             stage.show()
             val task = object : Task<Void>() {
                 @Throws(Exception::class)

@@ -13,6 +13,9 @@ class SplashGuiController {
     lateinit var view: ImageView
 
     @FXML
+    lateinit var logoView: ImageView
+
+    @FXML
     lateinit var label: Label
 
     @FXML
