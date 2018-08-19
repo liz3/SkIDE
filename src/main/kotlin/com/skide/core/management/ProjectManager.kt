@@ -181,7 +181,8 @@ class ProjectFileManager(val project: Project) {
 
        if(result.has("last_open")) {
            result.getJSONArray("last_open").forEach {
-               lastOpen.addElement(it as String)
+               if(projectFiles.containsKey(it as String))
+               lastOpen.addElement(it)
            }
        }
     }

@@ -125,4 +125,7 @@ class GeneralSettingsGUIController {
 
     @FXML
     lateinit var settingsUpdateDataCheck:CheckBox
+
+    @FXML
+    lateinit var displayAdCheckBox:CheckBox
 }

@@ -84,9 +84,10 @@ class CoreManager {
 
                         updateProgress(5.0, 100.0)
                         updateMessage("Loading Config...")
-                        GUIManager.settings = configManager
                         val configLoadResult = configManager.load()
                         if (configLoadResult == ConfigLoadResult.ERROR) return null
+                        GUIManager.settings = configManager
+                        GUIManager.displayAdd()
                         updateProgress(25.0, 100.0)
                         updateMessage("Checking skUnity access...")
                         skUnity.load()
@@ -95,11 +96,11 @@ class CoreManager {
                         serverManager.init()
                         updateProgress(40.0, 100.0)
                         updateMessage("Downloading latest Resources")
-                        resourceManager.loadResources({ _, current, name ->
-                            val amount = current * 5;
+                        resourceManager.loadResources { _, current, name ->
+                            val amount = current * 5
                             updateProgress(50.0 + amount, 100.0)
                             updateMessage(name)
-                        })
+                        }
                         updateProgress(75.0, 100.0)
                         updateMessage("Starting insights")
                         insightsManager.setup {

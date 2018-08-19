@@ -258,6 +258,7 @@ class ConfigManager(val coreManager: CoreManager) {
     private fun writeDefaultSettings() {
         set("auto_complete", "true")
         set("theme", "Dark")
+        set("display_add", "false")
         set("highlighting", "true")
         set("font", "Source Code Pro")
         set("font_size", "15")

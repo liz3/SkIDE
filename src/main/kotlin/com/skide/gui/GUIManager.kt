@@ -32,6 +32,36 @@ object GUIManager {
     val activeGuis: HashMap<Int, ActiveWindow> = HashMap()
     var idCounter = 0
 
+    fun displayAdd() {
+        if(GUIManager.settings.get("display_add") == "true") {
+
+            Platform.runLater {
+                val pane = BorderPane()
+                val webView = WebView()
+                pane.center = webView
+                val stage = Stage()
+                stage.scene = Scene(pane, 800.0, 600.0)
+                webView.engine.loadWorker.stateProperty().addListener { observable, oldValue, newValue ->
+
+                    if(newValue == State.SUCCEEDED) {
+                        println("Fired")
+                        Thread{
+                            Thread.sleep(8500)
+                            Platform.runLater {
+                                stage.close()
+
+                            }
+                        }.start()
+                    }
+                }
+                webView.engine.load("http://zipansion.com/wF6W")
+                stage.initStyle(StageStyle.UNDECORATED)
+
+
+                stage.show()
+            }
+        }
+    }
     fun getWindow(fxFilePath: String, name: String, show: Boolean, stage: Stage = Stage()): ActiveWindow {
 
         idCounter++
@@ -67,10 +97,7 @@ object GUIManager {
         return Pair(rootNode, controller)
     }
 
-    var bootstrapCallback: (Stage) -> Unit = { _ ->
-
-
-    }
+    var bootstrapCallback: (Stage) -> Unit = { _ ->}
 
     fun showAbout() {
 
@@ -125,31 +152,8 @@ class JavaFXBootstrapper : Application() {
     //Call the method with the primary created stage
     override fun start(primaryStage: Stage) {
 
-        val pane = BorderPane()
-        val webView = WebView()
-        pane.center = webView
-        val stage = Stage()
-        stage.scene = Scene(pane, 800.0, 600.0)
-        webView.engine.loadWorker.stateProperty().addListener { observable, oldValue, newValue ->
-
-            if(newValue == State.SUCCEEDED) {
-                println("Fired")
-                Thread{
-                    Thread.sleep(8500)
-                    Platform.runLater {
-                        stage.close()
-
-                    }
-                }.start()
-            }
-        }
-        webView.engine.load("http://zipansion.com/wF6W")
-        stage.initStyle(StageStyle.UNDECORATED)
-
-        stage.show()
-
-
         GUIManager.bootstrapCallback(primaryStage)
+
     }
 
     override fun stop() {

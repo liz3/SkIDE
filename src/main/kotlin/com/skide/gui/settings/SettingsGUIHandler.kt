@@ -42,6 +42,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("enable_inspections", "${ctrl.settingsInsightsCheck.isSelected}")
         coreManager.configManager.set("inspections_port", ctrl.settingsInsightsPortField.text)
         coreManager.configManager.set("meta_update", "${ctrl.settingsUpdateDataCheck.isSelected}")
+        coreManager.configManager.set("display_add", "${ctrl.displayAdCheckBox.isSelected}")
 
         if(coreManager.configManager.get("jre_home") == "" && getOS() == OperatingSystemType.MAC_OS) {
             Platform.runLater {
@@ -236,6 +237,8 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.metaDataGenerateCheck.isSelected = coreManager.configManager.get("generate_meta_data") == "true"
         ctrl.settingsInsightsCheck.isSelected = coreManager.configManager.get("enable_inspections") == "true"
         ctrl.settingsUpdateDataCheck.isSelected = coreManager.configManager.get("meta_update") == "true"
+        ctrl.displayAdCheckBox.isSelected = coreManager.configManager.get("display_add") == "true"
+
         ctrl.settingsInsightsPortField.text = ( coreManager.configManager.get("inspections_port") as String)
     }
 

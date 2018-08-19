@@ -104,9 +104,10 @@ class ResourceManager(val coreManager: CoreManager) {
 
 
         val str = readFile(file.absolutePath)
+        println(str)
+        val obj = JSONObject(str.second)
 
         val addonDevs = JSONObject(readFile(addonsFile).second).getJSONArray("result")
-        val obj = JSONObject(str.second)
 
         callback(total, 8, "Parsing Addons...")
 
