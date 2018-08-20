@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html, body {
+            overflow: hidden
+        }
+    </style>
+</head>
+<body style="margin: 0">
+<div id="root" style="height: 100vh; width: 100vw;"></div>
+
+
+<script src="lib/vs/loader.js" type="application/javascript"></script>
+<script src="integrator.js" type="application/javascript"></script>
+
+<script type="application/javascript">
+
+    var getObj = function () {
+        return {};
+    };
+    var getArr = function () {
+        return [];
+    };
+    var getHook = function () {
+        return skide;
+    };
+    var editor = null;
+    var selection = null;
+    require.config({paths: {'vs': 'lib/vs'}});
+    require(['vs/editor/editor.main'], function () {
+
+        registerSkript();
+        selection = monaco.Selection;
+        editor = monaco.editor.create(document.getElementById('root'), {
+            language: 'skript',
+            theme: 'vs-dark',
+            automaticLayout: true,
+            mouseWheelScrollSensitivity: 0.1
+        });
+
+        editor.onDidChangeModel(function (ev) {
+            if(ev == null) {
+                getHook().eventNotify("onDidChangeModel", {})
+            } else {
+                getHook().eventNotify("onDidChangeModel", ev)
+
+            }
+        });
+        editor.onDidChangeModelContent(function (ev) {
+            console.log(ev);
+            if(ev == null) {
+                getHook().eventNotify("onDidChangeModelContent", {})
+            } else {
+                getHook().eventNotify("onDidChangeModelContent", ev)
+
+            }
+        });
+        cbh.call();
+
+
+
+
+    });
+</script>
+</body>
+</html>
