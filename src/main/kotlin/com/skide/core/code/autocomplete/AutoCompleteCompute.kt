@@ -1,25 +1,8 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
-import com.skide.gui.GUIManager
-import com.skide.gui.controllers.GenerateCommandController
-import com.skide.include.*
+import com.skide.include.OpenFileHolder
 import com.skide.utils.CurrentStateInfo
-import com.skide.utils.EditorUtils
-import com.skide.utils.getCaretLine
-import com.skide.utils.getInfo
-import javafx.application.Platform
-import javafx.event.EventHandler
-import javafx.geometry.Bounds
-import javafx.scene.control.ListView
-import javafx.scene.input.KeyCode
-import javafx.scene.input.MouseEvent
-import javafx.stage.Popup
-import org.reactfx.EventStreams
-import org.reactfx.EventStreams.nonNullValuesOf
-import org.reactfx.value.Var
-import java.util.*
-import kotlin.collections.HashMap
 
 class ListHolderItem(val name: String, val caller: (info: CurrentStateInfo) -> Unit, val description: String = "", val hideListAfter: Boolean = true) {
 
@@ -30,6 +13,7 @@ class ListHolderItem(val name: String, val caller: (info: CurrentStateInfo) -> U
 
 class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder) {
 
+  /*
     val area = manager.area
 
     var stopped = false
@@ -131,7 +115,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             coldPosOld = colPos
             colPos = area.caretColumn
             if (lineBefore != currentLine && manager.sequenceReplaceHandler.computing) manager.sequenceReplaceHandler.cancel()
-            if (manager.mousePressed || stopped) {
+            if (manager.mousePressed || stopped || changingLine) {
 
                 return@addListener
             }
@@ -171,7 +155,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         showGlobalAutoComplete()
                         return
                     }
-                    if (curr?.raw?.isNotBlank() == true && !changingLine) showLocalAutoComplete(true)
+                    if (curr?.raw?.isNotBlank() == true && !changingLine)
+                        showLocalAutoComplete(true)
 
                 }
 
@@ -316,10 +301,10 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                     if (it.fields.contains("from_option")) {
                                         val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
                                         if (!found) {
-                                            addItem((it.fields["name"] as String) + " [from option] - $path", { info ->
+                                            addItem((it.fields["name"] as String) + " [from option] - $path") { info ->
                                                 area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
                                                 //TODO add path items as
-                                            })
+                                            }
                                         }
                                     } else {
                                         val found = fillList.items.any { c -> c.name == (it.fields["name"] as String) }
@@ -330,14 +315,14 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                                 } else {
                                                     "_"
                                                 }
-                                            }.invoke() + it.fields["name"] as String + " - $path", { info ->
+                                            }.invoke() + it.fields["name"] as String + " - $path") { info ->
                                                 if (it.fields["visibility"] == "global") {
                                                     area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{" + it.fields["name"] + "}")
 
                                                 } else {
                                                     area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.fields["name"] + "}")
                                                 }
-                                            })
+                                            }
                                         }
                                     }
                                 }
@@ -376,11 +361,11 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         if (it.fields.contains("from_option")) {
                             val found = fillList.items.any { c -> c.name == ((it.fields["name"] as String) + " [from option]") }
                             if (!found) {
-                                addItem((it.fields["name"] as String) + " [from option]", { info ->
+                                addItem((it.fields["name"] as String) + " [from option]") { info ->
                                     area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{{@" + it.fields["name"] + "}::PATH}")
 
                                     //TODO add path items as
-                                })
+                                }
                             }
                         } else {
                             val found = fillList.items.any { c ->
@@ -399,14 +384,14 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                     } else {
                                         "_"
                                     }
-                                }.invoke() + it.fields["name"] as String, { info ->
+                                }.invoke() + it.fields["name"] as String) { info ->
                                     if (it.fields["visibility"] == "global") {
                                         area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{" + it.fields["name"] + "}")
 
                                     } else {
                                         area.replaceText(area.caretPosition - info.beforeString.length, area.caretPosition, "{_" + it.fields["name"] + "}")
                                     }
-                                })
+                                }
                             }
                         }
                     }
@@ -421,17 +406,17 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                             if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && !currentInfo.inBrace && currentInfo.charAfterCaret == ":") {
 
                                 if (item.type == DocType.TYPE) {
-                                    addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
+                                    addItem("${item.name}:${item.type} - ${item.addon.name}") { currInfo ->
                                         var toRem = currInfo.beforeString
                                         toRem = toRem.replace(":", "")
                                         val adder = item.name
                                         area.replaceText(area.caretPosition - toRem.length, area.caretPosition, adder)
                                         manager.parseResult = manager.parseStructure()
-                                    })
+                                    }
                                 }
                             } else if (currentInfo.currentNode.nodeType == NodeType.FUNCTION && currentInfo.inBrace) {
                                 if (item.type == DocType.TYPE) {
-                                    addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
+                                    addItem("${item.name}:${item.type} - ${item.addon.name}") { currInfo ->
                                         var toRem = currInfo.beforeString
                                         toRem = toRem.replace(")", "")
                                         if (toRem.contains(":")) {
@@ -440,11 +425,11 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                         val adder = item.name
                                         area.replaceText(area.caretPosition - toRem.length, area.caretPosition, adder)
                                         manager.parseResult = manager.parseStructure()
-                                    })
+                                    }
                                 }
 
                             } else {
-                                addItem("${item.name}:${item.type} - ${item.addon.name}", { currInfo ->
+                                addItem("${item.name}:${item.type} - ${item.addon.name}") { currInfo ->
                                     val toRem = currInfo.beforeString.length
                                     var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
                                     if (item.type == DocType.CONDITION) if (!currInfo.actualCurrentString.contains("if ")) adder = "if $adder:"
@@ -453,7 +438,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                     manager.parseResult = manager.parseStructure()
 
                                     manager.sequenceReplaceHandler.compute(area.getInfo(manager))
-                                })
+                                }
                             }
 
 
@@ -544,18 +529,18 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 fillList.items.clear()
                 removed.clear()
                 for (s in Arrays.asList("Join", "Quit")) {
-                    addItem("On $s", {
+                    addItem("On $s") {
                         hideList()
                         area.moveTo(area.caretPosition - it.actualCurrentString.length)
                         area.replaceText(area.caretPosition, area.caretPosition + it.actualCurrentString.length, "on " + s.toLowerCase() + ":\n\t")
                         area.moveTo(area.caretPosition - 1)
-                    })
+                    }
                 }
                 addonSupported.values.forEach {
                     it.forEach { item ->
                         if (item.type == DocType.EVENT) {
 
-                            addItem(item.name + " Addon: ${item.addon.name}", { info ->
+                            addItem(item.name + " Addon: ${item.addon.name}") { info ->
                                 hideList()
                                 area.replaceText(area.caretPosition - info.actualCurrentString.length, area.caretPosition, {
                                     var text = item.pattern
@@ -566,7 +551,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                                 }.invoke())
                                 manager.parseResult = manager.parseStructure()
                                 manager.sequenceReplaceHandler.compute(area.getInfo(manager))
-                            })
+                            }
                         }
                     }
                 }
@@ -649,8 +634,9 @@ echo '", "restart-command":"/var/run.sh", "application-logfile-path":"/home/clin
 
                     changingLine = true
                     if (old.nodeType != NodeType.EXECUTION && old.nodeType != NodeType.UNDEFINED && old.nodeType != NodeType.COMMENT && old.nodeType != NodeType.SET_VAR) str += "\t"
-                    area.replaceText(area.caretPosition, area.caretPosition, str)
                     Platform.runLater {
+                        area.replaceText(area.caretPosition, area.caretPosition, str)
+
                         changingLine = false
                     }
                 }
@@ -662,4 +648,5 @@ echo '", "restart-command":"/var/run.sh", "application-logfile-path":"/home/clin
         }
 
     }
+   */
 }

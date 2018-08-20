@@ -96,11 +96,9 @@ object Menus {
         menu.style = "-fx-font-family: ${defaultFont.name} !important; -fx-font-size: ${defaultFont.size}"
         val copyEntry = MenuItem("Copy")
         copyEntry.setOnAction {
-            codeManager.area.copy()
         }
         val pasteEntry = MenuItem("Paste")
         pasteEntry.setOnAction {
-            codeManager.area.paste()
         }
         val skUnityEntry = MenuItem("Ask on skUnity")
 
@@ -115,7 +113,7 @@ object Menus {
                 popUp.hide()
             }
 
-            controller.contentArea.text = "[CODE=SKRIPT]${codeManager.area.selectedText}[/CODE]\n"
+          //  controller.contentArea.text = "[CODE=SKRIPT]${codeManager.area.selectedText}[/CODE]\n"
 
 
             controller.cancelBtn.setOnAction {
@@ -149,7 +147,7 @@ object Menus {
             }
             compileMenu.items.add(compileEntry)
         }
-        if (codeManager.area.selectedText.isNotEmpty()) menu.items.add(copyEntry)
+     //   if (codeManager.area.selectedText.isNotEmpty()) menu.items.add(copyEntry)
         menu.items.add(pasteEntry)
         if (codeManager.findHandler.project.coreManager.skUnity.loggedIn) menu.items.add(skUnityEntry)
         menu.items.add(compileMenu)
@@ -191,7 +189,7 @@ object Menus {
         menu.items.add(runFileMenu)
         menu.items.add(runConfMenu)
         menu.items.add(uploadFile)
-        menu.show(codeManager.area, x, y)
+
 
         return menu
     }

@@ -2,10 +2,8 @@ package com.skide.core.code
 
 import com.skide.gui.GUIManager
 import com.skide.gui.controllers.FindFrameController
-import com.skide.gui.controllers.ReplaceFrameController
 import com.skide.include.OpenFileHolder
 import com.skide.utils.StringSearchResult
-import com.skide.utils.getCaretLine
 import com.skide.utils.search
 import com.skide.utils.setIcon
 import javafx.scene.input.KeyCode
@@ -14,6 +12,7 @@ import kotlin.collections.ArrayList
 
 class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
+   /*
     private val area = manager.area
     private var visible = false
     private val node = GUIManager.getScene("SearchFrame.fxml")
@@ -35,9 +34,9 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
             clearSearchHighlighting()
             project.borderPane.top = null
             visible = false
-            manager.autoComplete.stopped = false
+
         } else {
-            manager.autoComplete.stopped = true
+
             project.borderPane.top = node.first
             visible = true
             (node.second as FindFrameController).searchField.requestFocus()
@@ -211,5 +210,6 @@ class FindHandler(val manager: CodeManager, val project: OpenFileHolder) {
             }
         }
     }
+    */
 }
 

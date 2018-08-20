@@ -1,15 +1,8 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
-import com.skide.core.code.highlighting.HighlighterStatics
-import com.skide.utils.CurrentStateInfo
-import com.skide.utils.EditorUtils
-import org.fxmisc.wellbehaved.event.EventPattern
-import org.fxmisc.wellbehaved.event.InputMap
-import org.fxmisc.wellbehaved.event.Nodes
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.math.abs
 
 object SequenceReplacePattern {
 
@@ -39,6 +32,7 @@ data class ReplaceSeuenceItem(val absoluteStart: Int, val absoluteEnd: Int, val 
 class ReplaceSequence(val manager: CodeManager) {
 
 
+   /*
     val area = manager.area
     var computing = false
     val list = Vector<ReplaceSeuenceItem>()
@@ -114,4 +108,5 @@ class ReplaceSequence(val manager: CodeManager) {
         lineIndex = 0
 
     }
+    */
 }

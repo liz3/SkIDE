@@ -1,7 +1,6 @@
 package com.skide.core.code
 
-import javafx.application.Platform
-import org.fxmisc.richtext.CodeArea
+
 
 class ChangeWatcher(val area: CodeArea, val wait: Long, val caller: () -> Unit) {
 
@@ -20,6 +19,7 @@ class ChangeWatcher(val area: CodeArea, val wait: Long, val caller: () -> Unit) 
     }
 
     fun start() {
+        /*
         area.textProperty().addListener { _, _, _ ->
 
             Platform.runLater {
@@ -27,8 +27,9 @@ class ChangeWatcher(val area: CodeArea, val wait: Long, val caller: () -> Unit) 
             }
         }
         th.start()
-    }
 
+         */
+    }
     init {
 
     }

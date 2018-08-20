@@ -117,6 +117,7 @@ class CoreManager {
                                 window.stage.centerOnScreen()
                                 window.stage.isResizable = false
                                 window.stage.show()
+
                             }
                         }
                     } catch (e: Exception) {

@@ -1,6 +1,9 @@
 package com.skide.core.management
 
 import com.skide.CoreManager
+import com.skide.gui.GUIManager
+import com.skide.utils.readFile
+import com.skide.utils.writeFile
 import javafx.application.Platform
 import org.json.JSONObject
 import java.io.File
@@ -14,10 +17,11 @@ class SocketManager(val core: CoreManager) {
     private var running = false
     fun start() {
 
+        val lockfile = File(File(CoreManager::class.java.protectionDomain.codeSource.location.toURI()).parent, "lockfile")
         var start = 45664
 
         while (true) {
-            if (start == 45674) break
+            if (start == 45974) break
             try {
                 socket = ServerSocket(start)
 
@@ -26,8 +30,10 @@ class SocketManager(val core: CoreManager) {
                 start++
             }
         }
-        running = true
 
+        running = true
+        writeFile("$start".toByteArray(), lockfile, false, true)
+        lockfile.deleteOnExit()
         val th = Thread {
             while (running) {
                 val sk = socket.accept()
@@ -60,7 +66,10 @@ class SocketManager(val core: CoreManager) {
                 }
                 if (action == "focus") {
                     Platform.runLater {
-                        if (core.projectManager.openProjects.size != 0) core.projectManager.openProjects.first().guiHandler.window.stage.requestFocus()
+                        if (core.projectManager.openProjects.size != 0)
+                            core.projectManager.openProjects.first().guiHandler.window.stage.requestFocus()
+                        else
+                            GUIManager.activeGuis[1]?.stage!!.requestFocus()
                     }
                 }
             } catch (e: Exception) {
@@ -79,40 +88,37 @@ class SocketManager(val core: CoreManager) {
 }
 
 fun handle(path: String) {
+    val lockfile = File(File(CoreManager::class.java.protectionDomain.codeSource.location.toURI()).parent, "lockfile")
+    if (lockfile.exists()) {
 
+        val result = readFile(lockfile).second
 
-    var start = 45664
+        val port = result.toInt()
 
-    while (true) {
-        if (start == 45674) break
         try {
-
-            var buff = ByteArray(6)
-            val socket = Socket("127.0.0.1", start)
+            val buff = ByteArray(6)
+            val socket = Socket("127.0.0.1", port)
 
             socket.getInputStream().read(buff)
             if (String(buff) == "SK-IDE") {
                 val f = File(path)
 
                 val obj = JSONObject()
-                if (f.exists() && path != "") {
+                if (path != "" && f.exists()) {
                     obj.put("action", "open_file")
                     obj.put("lnk", f.absolutePath)
                 } else {
                     obj.put("action", "focus")
                 }
-
-
-
                 socket.getOutputStream().write(obj.toString().toByteArray())
                 socket.getOutputStream().flush()
                 socket.close()
                 System.exit(0)
             }
         } catch (e: Exception) {
-            start++
+
         }
-
-
     }
+
+
 }

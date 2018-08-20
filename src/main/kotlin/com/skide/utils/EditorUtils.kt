@@ -3,7 +3,6 @@ package com.skide.utils
 import com.skide.core.code.CodeManager
 import com.skide.include.Node
 import com.skide.include.NodeType
-import org.fxmisc.richtext.CodeArea
 import java.util.*
 import java.util.regex.Pattern
 
@@ -112,76 +111,14 @@ object EditorUtils {
     }
 }
 
-fun CodeArea.getCaretLine() = this.caretSelectionBind.paragraphIndex + 1
+
 
 class StringSearchResult(val start: Int, val end: Int, val str: String)
 
 class CurrentStateInfo(val currentNode: Node, val actualCurrentString: String, val column: Int, val currentWord: String,
                        val beforeString: String, val afterString: String, val charBeforeCaret: String, val charAfterCaret: String, val inString: Boolean, val inBrace: Boolean)
 
-fun CodeArea.getInfo(manager: CodeManager): CurrentStateInfo {
-    val currentLine = manager.area.getCaretLine()
 
-
-    var currentNode = EditorUtils.getLineNode(currentLine, manager.parseResult)
-
-    if (currentNode == null) {
-        currentNode = EditorUtils.getLineNode(currentLine - 1, manager.parseResult)
-    }
-    val actualCurrentString = if (currentLine == 0) this.paragraphs[currentLine].text else this.paragraphs[currentLine - 1].text
-    val column = this.caretColumn
-    var currentWord = ""
-    var beforeStr = ""
-    var inString = false
-    var inBrace = false
-    var afterStr = ""
-    val charBeforeCaret = {
-        if (column == 0) {
-            ""
-        } else {
-            actualCurrentString[column - 1].toString()
-        }
-    }.invoke()
-    val charAfterCaret = {
-        if (column == actualCurrentString.length) {
-            ""
-        } else {
-            actualCurrentString[column].toString()
-        }
-    }.invoke()
-
-    for (x in 0 until actualCurrentString.length) {
-        if (x == column) break
-        val c = actualCurrentString[x]
-        if (c == '"') inString = !inString
-    }
-    for (x in 0 until actualCurrentString.length) {
-        if (x == column) break
-        val c = actualCurrentString[x]
-        if (c == '(' || c == ')') inBrace = !inBrace
-    }
-    if (charBeforeCaret != "") {
-        var count = column
-        while (count > 0 && actualCurrentString[count - 1].toString() != " " && actualCurrentString[count - 1].toString() != "\n") {
-
-            count--
-            beforeStr = actualCurrentString[count].toString() + beforeStr
-        }
-        count = column - 1
-        while (count < actualCurrentString.length - 1 && actualCurrentString[count].toString() != " " && actualCurrentString[count].toString() != "\n") {
-            count++
-            afterStr += actualCurrentString[count].toString()
-        }
-
-        beforeStr = beforeStr.replace("\t", "").replace(" ", "")
-        afterStr = afterStr.replace("\t", "").replace(" ", "")
-        currentWord = beforeStr + afterStr
-
-
-    }
-
-    return CurrentStateInfo(currentNode!!, actualCurrentString, column, currentWord, beforeStr, afterStr, charBeforeCaret, charAfterCaret, inString, inBrace)
-}
 
 fun String.search(what: String, ignoreCase: Boolean, regex: Boolean): List<StringSearchResult> {
     val found = java.util.ArrayList<StringSearchResult>()

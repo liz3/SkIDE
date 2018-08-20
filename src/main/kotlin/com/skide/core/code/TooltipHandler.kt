@@ -1,10 +1,8 @@
 package com.skide.core.code
 
 import com.skide.include.OpenFileHolder
-import com.skide.utils.getCaretLine
 import javafx.scene.control.Label
 import javafx.stage.Popup
-import org.fxmisc.richtext.event.MouseOverTextEvent
 import java.time.Duration
 
 
@@ -15,6 +13,7 @@ class TooltipHandler(val codeManager: CodeManager, val project: OpenFileHolder) 
 
     val area = codeManager.area
 
+    /*
     fun setup() {
 
         popupMsg.style = "-fx-background-color: black;" +
@@ -45,4 +44,5 @@ class TooltipHandler(val codeManager: CodeManager, val project: OpenFileHolder) 
         }
         area.addEventHandler(MouseOverTextEvent.MOUSE_OVER_TEXT_END) { popup.hide() }
     }
+     */
 }

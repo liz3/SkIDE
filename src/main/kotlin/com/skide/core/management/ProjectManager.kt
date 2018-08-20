@@ -35,7 +35,8 @@ class ProjectManager(val coreManager: CoreManager) {
 
             return
         }
-        if (open) openProject(pointHolder)
+        if (open)
+            openProject(pointHolder)
 
 
     }

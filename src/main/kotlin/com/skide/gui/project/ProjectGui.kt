@@ -1,6 +1,7 @@
 package com.skide.gui.project
 
 import com.skide.CoreManager
+import com.skide.core.code.CodeArea
 import com.skide.core.management.ExternalHandler
 import com.skide.core.management.OpenProject
 import com.skide.gui.GUIManager
@@ -16,6 +17,7 @@ import com.skide.include.OpenFileHolder
 import com.skide.utils.OperatingSystemType
 import com.skide.utils.getOS
 import com.skide.utils.setIcon
+import com.sun.org.apache.bcel.internal.classfile.Code
 import javafx.application.Platform
 import javafx.scene.Node
 import javafx.scene.control.*
@@ -26,9 +28,7 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
-import org.fxmisc.flowless.VirtualizedScrollPane
-import org.fxmisc.richtext.CodeArea
-import org.fxmisc.richtext.LineNumberFactory
+import javafx.scene.web.WebView
 import java.io.File
 import java.util.*
 
@@ -368,10 +368,15 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             return
         }
-        val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), CodeArea(), coreManager, isExternal = isExternal)
+        CodeArea {
 
-        openProjectGuiManager.openFiles[f] = holder
-        setupNewTabForDisplay(holder)
+            val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
+
+            it.openFileHolder = holder
+            openProjectGuiManager.openFiles[f] = holder
+            setupNewTabForDisplay(holder)
+        }
+
     }
 
     fun openFile(f: File, tabPane: TabPane, isExternal: Boolean = false) {
@@ -390,10 +395,14 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             return
         }
-        val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), tabPane, BorderPane(), CodeArea(), coreManager, isExternal = isExternal)
 
-        openProjectGuiManager.openFiles.put(f, holder)
-        setupNewTabForDisplay(holder)
+        CodeArea{
+            val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), tabPane, BorderPane(), it, coreManager, isExternal = isExternal)
+            it.openFileHolder = holder
+            openProjectGuiManager.openFiles.put(f, holder)
+            setupNewTabForDisplay(holder)
+        }
+
     }
 
     fun updateProjectFilesTreeView() {
@@ -427,10 +436,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     private fun setupNewTabForDisplay(holder: OpenFileHolder) {
 
         Platform.runLater {
-            holder.area.style = "-fx-font-family: \"${coreManager.configManager.get("font")}\" !important; -fx-font-size: ${coreManager.configManager.get("font_size")}px;"
+            //       holder.area.style = "-fx-font-family: \"${coreManager.configManager.get("font")}\" !important; -fx-font-size: ${coreManager.configManager.get("font_size")}px;"
             holder.tab.isClosable = true
-            holder.borderPane.center = VirtualizedScrollPane(holder.area)
             holder.borderPane.bottom = holder.currentStackBox
+            holder.borderPane.center = holder.area.view
             holder.currentStackBox.prefHeight = 35.0
             holder.tab.selectedProperty().addListener { _, _, newValue ->
                 if (newValue) {
@@ -439,7 +448,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             }
             holder.tab.content = holder.borderPane
             holder.tab.contextMenu = Menus.getMenuForRootPane(holder)
-            holder.area.paragraphGraphicFactory = LineNumberFactory.get(holder.area)
             if (holder.name.endsWith(".sk")) holder.codeManager.setup(holder) else ExternalHandler(holder)
             registerEventsForNewFile(holder)
             holder.tabPane.tabs.add(holder.tab)
@@ -537,28 +545,28 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         editMenu.items.add(simpleMenuItem("Find") {
             openProjectGuiManager.openFiles.values.forEach {
                 if (it.tab === openProjectGuiManager.activeTab) {
-                    it.codeManager.findHandler.switchGui()
+
                 }
             }
         })
         editMenu.items.add(simpleMenuItem("Find/Replace") {
             openProjectGuiManager.openFiles.values.forEach {
                 if (it.tab === openProjectGuiManager.activeTab) {
-                    it.codeManager.replaceHandler.switchGui()
+
                 }
             }
         })
         editMenu.items.add(simpleMenuItem("Undo") {
             openProjectGuiManager.openFiles.values.forEach {
                 if (it.tab === openProjectGuiManager.activeTab) {
-                    it.codeManager.area.undo()
+
                 }
             }
         })
         editMenu.items.add(simpleMenuItem("Redo") {
             openProjectGuiManager.openFiles.values.forEach {
                 if (it.tab === openProjectGuiManager.activeTab) {
-                    it.codeManager.area.redo()
+
                 }
             }
         })
@@ -624,7 +632,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         }
         val deployMenu = Menu("Deploy")
-        openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach {compOpt ->
+        openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach { compOpt ->
             val item = Menu(compOpt.key)
             openProjectGuiManager.openProject.project.fileManager.hosts.forEach {
                 val depItem = MenuItem(it.name)

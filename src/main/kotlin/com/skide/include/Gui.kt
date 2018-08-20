@@ -1,6 +1,7 @@
 package com.skide.include
 
 import com.skide.CoreManager
+import com.skide.core.code.CodeArea
 import com.skide.core.code.CodeManager
 import com.skide.core.management.OpenProject
 import com.skide.gui.GUIManager
@@ -14,8 +15,8 @@ import javafx.scene.control.TabPane
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
+import javafx.scene.web.WebView
 import javafx.stage.Stage
-import org.fxmisc.richtext.CodeArea
 import java.io.File
 
 class ActiveWindow(val stage: Stage, val scene: Scene, val loader: FXMLLoader, val controller: Any, val id: Int) {
@@ -41,8 +42,8 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String
 
     fun saveCode() {
         Thread {
-            writeFile(area.text.toByteArray(), f)
             Platform.runLater {
+            writeFile(area.text.toByteArray(), f)
                 if(tab.text.endsWith("*")) tab.text = tab.text.substring(0, tab.text.length - 1)
             }
         }.start()

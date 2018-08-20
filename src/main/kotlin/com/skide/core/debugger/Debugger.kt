@@ -93,7 +93,7 @@ class SystemErr : PrintStream(System.err) {
                                 theError += "   Metadata of open files:\n"
                                 it.guiHandler.openFiles.forEach {
                                     theError += "       Name: ${it.key}\n"
-                                    theError += "       Caret-pos: ${it.value.area.caretPosition}\n"
+
 
                                 }
                             }

@@ -1,8 +1,6 @@
 package com.skide.core.code.highlighting
 
 import com.skide.core.code.CodeManager
-import org.fxmisc.richtext.model.StyleSpans
-import org.fxmisc.richtext.model.StyleSpansBuilder
 import java.util.*
 import java.util.regex.Pattern
 
@@ -11,11 +9,8 @@ class Highlighting(val manager: CodeManager) {
 
     private var stopped = false
     val area = manager.area
-    private val x = area.plainTextChanges().filter({ x -> !x.isIdentity })
-    var sub = x.subscribe({
-        if (manager.linesAmount <= 2000) runHighlighting()
-    })
 
+  /*
     fun runHighlighting() {
         if (stopped) return
         val highlightedSpans = computHighlighting(area.text)
@@ -164,6 +159,7 @@ class Highlighting(val manager: CodeManager) {
 
 
     }
+   */
 
     private val patternCompilerStatic = Pattern.compile(
             "(?<SECTION>" + HighlighterStatics.SECTION_PATTERN + ")"

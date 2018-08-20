@@ -1,13 +1,8 @@
 package com.skide.core.code
 
 import com.skide.gui.GUIManager
-import com.skide.gui.controllers.ReplaceFrameController
 import com.skide.include.OpenFileHolder
 import com.skide.utils.StringSearchResult
-import com.skide.utils.getCaretLine
-import com.skide.utils.search
-import com.skide.utils.setIcon
-import javafx.scene.input.KeyCode
 
 class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
@@ -18,6 +13,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
     var executed = false
     var currentPoint = 0
 
+   /*
     init {
         (node.second as ReplaceFrameController).closeBtn.setIcon("delete", false)
         (node.second as ReplaceFrameController).closeBtn.setOnAction {
@@ -265,4 +261,5 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
         } else if (entries.size == 0) executed = false
 
     }
+    */
 }
