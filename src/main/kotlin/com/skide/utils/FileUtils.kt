@@ -3,9 +3,9 @@ package com.skide.utils
 import java.io.File
 import java.io.FileInputStream
 import java.nio.charset.Charset
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
+import java.io.IOException
+import java.nio.file.*
+
 
 enum class FileReturnResult {
     ERROR,
@@ -14,6 +14,17 @@ enum class FileReturnResult {
     NOT_FOUND
 }
 
+
+fun deleteDirectoryRecursion(path: Path) {
+    if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+        Files.newDirectoryStream(path).use { entries ->
+            for (entry in entries) {
+                deleteDirectoryRecursion(entry)
+            }
+        }
+    }
+    Files.delete(path)
+}
 fun readFile(path: String) = readFile(File(path))
 fun writeFile(data: ByteArray, path: String, append: Boolean = false, createIfNotExists: Boolean = false) = writeFile(data, File(path), append, createIfNotExists)
 fun writeFile(data: ByteArray, path: String) = writeFile(data, File(path))

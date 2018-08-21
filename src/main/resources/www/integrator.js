@@ -145,14 +145,16 @@ function registerSkript() {
     });
     monaco.languages.registerDefinitionProvider('skript', {
         provideDefinition: function (model, position, token) {
-
+            var result = skide.gotoCall(model, position, token);
             return {
+               /*
                 range: {
                     startLineNumber: 70, endLineNumber: 70, startColumn: 5, endColumn: 38
                 },
-                uri: model.uri
+                */
+                uri: model.uri,
+                range: result
             }
         }
-
     });
 }

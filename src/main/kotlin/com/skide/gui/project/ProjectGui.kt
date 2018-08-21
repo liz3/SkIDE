@@ -368,7 +368,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             return
         }
-        CodeArea {
+        CodeArea(coreManager) {
 
             val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
 
@@ -396,7 +396,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             return
         }
 
-        CodeArea{
+        CodeArea(coreManager) {
             val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), tabPane, BorderPane(), it, coreManager, isExternal = isExternal)
             it.openFileHolder = holder
             openProjectGuiManager.openFiles.put(f, holder)

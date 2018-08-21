@@ -13,6 +13,7 @@ import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.HashMap
 
+
 class ResourceManager(val coreManager: CoreManager) {
 
 
@@ -25,7 +26,6 @@ class ResourceManager(val coreManager: CoreManager) {
     val skriptDoc = File(coreManager.configManager.rootFolder, "skript.json")
     val skriptVersionsFile = File(coreManager.configManager.rootFolder, "skript-vers.json")
     val skriptVersionsFolder = File(coreManager.configManager.rootFolder, "skript-versions")
-
 
     private fun parseCurrentSkriptVersionDocs() {
 
@@ -172,3 +172,4 @@ class ResourceManager(val coreManager: CoreManager) {
         return skFile
     }
 }
+

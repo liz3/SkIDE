@@ -50,6 +50,7 @@ class CoreManager {
             stage.scene = Scene(parent)
             stage.initStyle(StageStyle.TRANSPARENT)
             stage.icons.add(Image(javaClass.getResource("/icon.png").toExternalForm()))
+            println(javaClass.getResource("/icon.png").toExternalForm())
             stage.scene.fill = Color.TRANSPARENT
             stage.sizeToScene()
             stage.centerOnScreen()
