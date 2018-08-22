@@ -1,19 +1,27 @@
 package com.skide.utils
 
 import com.skide.CoreManager
+import com.skide.gui.GUIManager
 import com.skide.gui.Prompts
+import com.skide.gui.controllers.SkunityQuestionFameController
 import javafx.scene.control.Alert
+import javafx.stage.Popup
 import org.json.JSONObject
+import java.util.*
 
 
 class SkUnity(val coreManager: CoreManager) {
 
+    private val callers = Vector<() -> Unit>()
     var loggedIn = false
         private set
     var key = coreManager.configManager.skUnityKey
     var username = ""
 
 
+     fun addListener(callback: () -> Unit) {
+            callers.add(callback)
+    }
     fun load() {
         if (coreManager.configManager.skUnityKey != "") {
             loggedIn = true
@@ -55,9 +63,42 @@ class SkUnity(val coreManager: CoreManager) {
         Prompts.infoCheck("Success", "You are logged in into SkUnity!", "You can now use SkUnity Features in Sk-IDE", Alert.AlertType.INFORMATION)
         username = name
         coreManager.configManager.skUnityUsername = username
+        callers.forEach {
+            it()
+        }
         return true
     }
 
+    fun initer(content:String) {
+
+        val scene = GUIManager.getWindow("SkUnityQuestionFrame.fxml", "Ask on skUnity", true)
+        val controller = scene.controller as SkunityQuestionFameController
+
+        val popUp = Popup()
+
+        controller.cancelBtn.setOnAction {
+            popUp.hide()
+        }
+
+          controller.contentArea.text = "[CODE=SKRIPT]$content[/CODE]\n"
+
+
+        controller.cancelBtn.setOnAction {
+            scene.stage.close()
+
+        }
+        controller.sendBtn.setOnAction {
+            val title = controller.titleBar.text
+            val msg = controller.contentArea.text
+
+            if (title != "" || msg != "") {
+               report(title, msg)
+                scene.stage.close()
+            }
+
+        }
+
+    }
     fun report(title: String, msg: String) {
 
         val headers = HashMap<String, String>()

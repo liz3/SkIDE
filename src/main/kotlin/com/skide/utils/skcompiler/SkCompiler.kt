@@ -128,6 +128,9 @@ class SkCompiler {
     }
 
     fun compileForServer(project: Project, opts: CompileOption, skFolder: File, caller: (String) -> Unit, finished: () -> Unit) {
+        if(!skFolder.exists()) {
+            skFolder.mkdirs()
+        }
         Thread {
             caller("Starting compile process...")
 

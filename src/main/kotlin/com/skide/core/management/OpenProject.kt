@@ -7,6 +7,7 @@ import com.skide.utils.RemoteDeployer
 import com.skide.utils.Version
 import com.skide.utils.adjustVersion
 import com.skide.utils.skcompiler.SkCompiler
+import javafx.application.Platform
 import javafx.scene.control.Button
 import java.io.File
 import java.rmi.Remote
@@ -112,7 +113,9 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         if (!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running) {
             runConfs.remove(server)
             val runningServer = coreManager.serverManager.getServerForRun(server) {
-                it.setSkriptFile(file.name, file.area.text)
+              Platform.runLater {
+                  it.setSkriptFile(file.name, file.area.text)
+              }
             }
             val guiReturn = guiHandler.lowerTabPaneEventManager.getServerTab(runningServer)
             guiReturn.second.setOnAction {

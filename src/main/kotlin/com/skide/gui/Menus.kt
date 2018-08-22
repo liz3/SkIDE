@@ -87,6 +87,7 @@ object Menus {
         return menu
     }
 
+
     fun getMenuForArea(codeManager: CodeManager, x: Double, y: Double): ContextMenu {
 
         val defaultFont = Font.getDefault()
@@ -102,37 +103,7 @@ object Menus {
         }
         val skUnityEntry = MenuItem("Ask on skUnity")
 
-        skUnityEntry.setOnAction {
 
-            val scene = GUIManager.getWindow("SkUnityQuestionFrame.fxml", "Ask on skUnity", true)
-            val controller = scene.controller as SkunityQuestionFameController
-
-            val popUp = Popup()
-
-            controller.cancelBtn.setOnAction {
-                popUp.hide()
-            }
-
-          //  controller.contentArea.text = "[CODE=SKRIPT]${codeManager.area.selectedText}[/CODE]\n"
-
-
-            controller.cancelBtn.setOnAction {
-                scene.stage.close()
-
-            }
-            controller.sendBtn.setOnAction {
-                val title = controller.titleBar.text
-                val msg = controller.contentArea.text
-
-                if (title != "" || msg != "") {
-                    codeManager.findHandler.project.coreManager.skUnity.report(title, msg)
-
-                    scene.stage.close()
-                }
-
-            }
-
-        }
 
 
         val compileMenu = Menu("Export/Compile")

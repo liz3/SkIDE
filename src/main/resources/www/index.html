@@ -57,6 +57,9 @@
 
             }
         });
+        editor.onMouseDown(function (ev) {
+            getHook().contextMenuEmit(ev);
+        });
         return editor;
     }
 

@@ -1,6 +1,8 @@
 package com.skide.core.code
 
 import com.skide.CoreManager
+import com.skide.gui.ListViewPopUp
+import com.skide.gui.Menus
 import com.skide.include.OpenFileHolder
 import javafx.application.Platform
 import javafx.concurrent.Worker
@@ -14,6 +16,7 @@ import javafx.stage.StageStyle
 import javafx.stage.Stage
 import javafx.event.EventHandler;
 import javafx.scene.control.Label
+import javafx.scene.control.MenuItem
 import javafx.scene.web.*;
 
 
@@ -42,6 +45,22 @@ class EventHandler(val area: CodeArea) {
                 Pair("endColumn", 38)))
     }
 
+    fun contextMenuEmit(ev: JSObject) {
+        if (((ev.getMember("event") as JSObject).getMember("leftButton") as Boolean) &&
+                !((ev.getMember("event") as JSObject).getMember("rightButton") as Boolean)) return
+
+        println("Executing event")
+        val selection = area.getSelection()
+
+        if (selection.startColumn == selection.endColumn && selection.startLineNumber == selection.endLineNumber && area.editorActions.containsKey("skunityReport")) {
+            println("true")
+            area.removeAction("skunityReport");
+        } else if (area.coreManager.skUnity.loggedIn && !area.editorActions.containsKey("skunityReport")) {
+            area.addSkUnityReportAction()
+        }
+
+    }
+
     fun actionFire(id: String, ev: Any) {
 
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
@@ -67,6 +86,87 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
 
     val eventHandler = EventHandler(this)
 
+
+    fun addSkUnityReportAction() {
+        addAction("skunityReport", "Ask on skUnity") {
+            val selection = getSelection()
+            val content = getContentRange(selection.startLineNumber, selection.endLineNumber, selection.startColumn, selection.endColumn)
+            coreManager.skUnity.initer(content)
+        }
+    }
+
+    private fun prepareEditorActions() {
+
+        if (coreManager.skUnity.loggedIn) {
+            addSkUnityReportAction()
+        } else {
+            coreManager.skUnity.addListener {
+                addSkUnityReportAction()
+            }
+        }
+
+        addAction("compile", "Export/Compile") {
+            val openProject = openFileHolder.openProject
+            val map = HashMap<String, () -> Unit>()
+            for ((name, opt) in openProject.project.fileManager.compileOptions) {
+
+                map[name] = {
+                    openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
+                    openProject.compiler.compile(openProject.project, opt,
+                            openProject.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput())
+                }
+
+            }
+
+            ListViewPopUp("Compile/Export", map) {}
+        }
+        addAction("run", "Run this File") {
+            val map = HashMap<String, () -> Unit>()
+            coreManager.serverManager.servers.forEach {
+
+                map[it.value.configuration.name] = {
+
+                    openFileHolder.openProject.run(it.value, openFileHolder)
+
+                }
+            }
+
+            ListViewPopUp("Run this file", map) {}
+        }
+        addAction("upload", "Upload this file") {
+            val map = HashMap<String, () -> Unit>()
+
+            openFileHolder.openProject.project.fileManager.hosts.forEach {
+                map[it.name] = {
+                    openFileHolder.openProject.deployer.deploy(text, openFileHolder.f.name, it)
+
+                }
+            }
+            ListViewPopUp("Upload this file", map) {}
+        }
+        addAction("runc", "Run Configuration") {
+            val map = HashMap<String, () -> Unit>()
+
+            for ((name, opt) in openFileHolder.openProject.project.fileManager.compileOptions) {
+                map[name] = {
+                    val map2 = HashMap<String, () -> Unit>()
+                    coreManager.serverManager.servers.forEach {
+
+                        map2[it.value.configuration.name] = {
+                            openFileHolder.openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
+                            openFileHolder.openProject.run(it.value, opt)
+                        }
+
+
+                    }
+                    ListViewPopUp(name, map2) {}
+                }
+            }
+            ListViewPopUp("Run Configuration", map) {}
+        }
+
+
+    }
 
     init {
         Platform.runLater {
@@ -100,24 +200,21 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     println("Failed to load webpage")
                 }
                 if (newValue === Worker.State.SUCCEEDED) {
-                    try {
-                        val win = view.engine.executeScript("window") as JSObject
-                        val cbHook = CallbackHook {
+
+                    val win = view.engine.executeScript("window") as JSObject
+                    val cbHook = CallbackHook {
 
 
-                            startEditor(engine.executeScript("getDefaultOptions();") as JSObject)
-                            selection = engine.executeScript("selection") as JSObject
-                            addAction("testAction", "Test Action") {
-                                println("called")
-                            }
-                            rdy(this)
-                        }
-                        win.setMember("skide", eventHandler)
-                        win.setMember("cbh", cbHook)
-                        engine.executeScript("cbhReady();")
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                        startEditor(engine.executeScript("getDefaultOptions();") as JSObject)
+                        selection = engine.executeScript("selection") as JSObject
+
+                        prepareEditorActions()
+
+                        rdy(this)
                     }
+                    win.setMember("skide", eventHandler)
+                    win.setMember("cbh", cbHook)
+                    engine.executeScript("cbhReady();")
 
                 }
             }
@@ -140,7 +237,6 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     fun removeAction(id: String) {
         if (!editorActions.containsKey(id)) return
         val action = editorActions[id]
-
         if (action != null) {
             (action.instance as JSObject).call("dispose")
             editorActions.remove(id)
@@ -163,7 +259,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         return obj
     }
 
-    class Selection(val endColumn: Int, val endLineNumber: Int, val positionColumn: Int, val positionLineNumber: Int, val selectionStartColumn: Int, val selectionStartLineNumber: Int, val startColumn: Int, val startLineNumber: Int)
+    data class Selection(val endColumn: Int, val endLineNumber: Int, val positionColumn: Int, val positionLineNumber: Int, val selectionStartColumn: Int, val selectionStartLineNumber: Int, val startColumn: Int, val startLineNumber: Int)
 
     fun getSelection(): Selection {
         val result = editor.call("getSelection") as JSObject
@@ -185,7 +281,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         return model.call("getLineCount") as Int
     }
 
-    fun getLastColumnFromLine(line: Int): Int {
+    fun getColumnLineAmount(line: Int): Int {
         val model = engine.executeScript("editor.getModel()") as JSObject
         return model.call("getLineMaxColumn", line) as Int
     }
@@ -199,6 +295,13 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     fun getCurentColumn() = engine.executeScript("editor.getPosition().column") as Int
 
     fun setCursorPosition(line: Int, column: Int) = editor.call("setPosition", createObjectFromMap(hashMapOf(Pair("lineNumber", line), Pair("column", column))))
+
+    fun getContentRange(startLine: Int, endLine: Int, startColumn: Int, endColumn: Int): String {
+
+        val model = engine.executeScript("editor.getModel()") as JSObject
+        return model.call("getValueInRange", createObjectFromMap(hashMapOf(Pair("endColumn", endColumn), Pair("endLineNumber", endLine),
+                Pair("startColumn", startColumn), Pair("startLineNumber", startLine)))) as String
+    }
 
     fun getLineContent(line: Int): String {
         val model = engine.executeScript("editor.getModel()") as JSObject
