@@ -21,21 +21,14 @@ import javafx.scene.web.*;
 
 
 class CallbackHook(val rdy: () -> Unit) {
-
-
     fun call() {
-
         rdy()
     }
-
 }
 
 class EventHandler(val area: CodeArea) {
 
-    fun eventNotify(name: String, ev: Any) {
-
-
-    }
+    fun eventNotify(name: String, ev: Any) {}
 
     fun gotoCall(model: Any, position: Any, token: Any): Any {
         return area.createObjectFromMap(hashMapOf(
@@ -58,20 +51,15 @@ class EventHandler(val area: CodeArea) {
         } else if (area.coreManager.skUnity.loggedIn && !area.editorActions.containsKey("skunityReport")) {
             area.addSkUnityReportAction()
         }
-
     }
 
     fun actionFire(id: String, ev: Any) {
-
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
-
-
     }
 
 }
 
 class EditorActionBinder(val id: String, val cb: () -> Unit) {
-
     lateinit var instance: Any
 }
 
@@ -96,7 +84,6 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     }
 
     private fun prepareEditorActions() {
-
         if (coreManager.skUnity.loggedIn) {
             addSkUnityReportAction()
         } else {
@@ -104,7 +91,6 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                 addSkUnityReportAction()
             }
         }
-
         addAction("compile", "Export/Compile") {
             val openProject = openFileHolder.openProject
             val map = HashMap<String, () -> Unit>()
@@ -153,7 +139,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     coreManager.serverManager.servers.forEach {
 
                         map2[it.value.configuration.name] = {
-                            openFileHolder.openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
+                            openFileHolder.openProject.guiHandler.openFiles.forEach { code -> code.value.saveCode() }
                             openFileHolder.openProject.run(it.value, opt)
                         }
 
@@ -164,14 +150,13 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             }
             ListViewPopUp("Run Configuration", map) {}
         }
-
-
+        addAction("test", "ReplaceTest") {
+            replaceContentInRange(getCurrentLine(), 1, getCurrentLine(), getColumnLineAmount(getCurrentLine()), "teeeeesssst")
+        }
     }
 
     init {
         Platform.runLater {
-
-
             view = WebView()
             engine = view.engine
 
@@ -191,47 +176,48 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                 popup.scene = Scene(content)
                 popup.showAndWait()
             }
-
-
             view.engine.loadWorker.stateProperty().addListener { _, _, newValue ->
-
-
                 if (newValue === Worker.State.FAILED) {
                     println("Failed to load webpage")
                 }
                 if (newValue === Worker.State.SUCCEEDED) {
-
-                    val win = view.engine.executeScript("window") as JSObject
+                    val win = getWindow()
                     val cbHook = CallbackHook {
-
-
                         startEditor(engine.executeScript("getDefaultOptions();") as JSObject)
                         selection = engine.executeScript("selection") as JSObject
-
                         prepareEditorActions()
-
                         rdy(this)
                     }
                     win.setMember("skide", eventHandler)
                     win.setMember("cbh", cbHook)
                     engine.executeScript("cbhReady();")
-
                 }
             }
-
             val url = this.javaClass.getResource("/www/index.html")
             engine.load(url.toString())
-
-
         }
+    }
+
+    private fun getArray() = engine.executeScript("getArr();") as JSObject
+    private fun getObject() = engine.executeScript("getObj();") as JSObject
+    private fun getFunction() = engine.executeScript("getFunc();") as JSObject
+    private fun getWindow() = engine.executeScript("window") as JSObject
+    private fun getModel() = engine.executeScript("editor.getModel()") as JSObject
+    private fun startEditor(options: Any) {
+        editor = getWindow().call("startEditor", options) as JSObject
+    }
+
+    fun createObjectFromMap(fields: Map<String, Any>): JSObject {
+        val obj = getObject()
+        for ((key, value) in fields) obj.setMember(key, value)
+        return obj
     }
 
     fun addAction(id: String, label: String, cb: () -> Unit) {
         if (editorActions.containsKey(id)) return
         val action = EditorActionBinder(id, cb)
-        action.instance = (engine.executeScript("window") as JSObject).call("addAction", id, label)
+        action.instance = getWindow().call("addAction", id, label)
         editorActions[id] = action
-
     }
 
     fun removeAction(id: String) {
@@ -240,31 +226,13 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         if (action != null) {
             (action.instance as JSObject).call("dispose")
             editorActions.remove(id)
-
         }
-    }
-
-    fun startEditor(options: Any) {
-        editor = (engine.executeScript("window") as JSObject).call("startEditor", options) as JSObject
-
-    }
-
-    fun createObjectFromMap(fields: Map<String, Any>): JSObject {
-        val obj = engine.executeScript("getObj();") as JSObject
-
-        for ((key, value) in fields) {
-            obj.setMember(key, value)
-        }
-
-        return obj
     }
 
     data class Selection(val endColumn: Int, val endLineNumber: Int, val positionColumn: Int, val positionLineNumber: Int, val selectionStartColumn: Int, val selectionStartLineNumber: Int, val startColumn: Int, val startLineNumber: Int)
 
     fun getSelection(): Selection {
         val result = editor.call("getSelection") as JSObject
-
-
         return Selection(
                 result.getMember("endColumn") as Int,
                 result.getMember("endLineNumber") as Int,
@@ -276,14 +244,10 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                 result.getMember("startLineNumber") as Int)
     }
 
-    fun getLineCount(): Int {
-        val model = engine.executeScript("editor.getModel()") as JSObject
-        return model.call("getLineCount") as Int
-    }
-
-    fun getColumnLineAmount(line: Int): Int {
-        val model = engine.executeScript("editor.getModel()") as JSObject
-        return model.call("getLineMaxColumn", line) as Int
+    fun getLineCount() = getModel().call("getLineCount") as Int
+    fun getColumnLineAmount(line: Int) = getModel().call("getLineMaxColumn", line) as Int
+    fun getWordAtPosition(line: Int = getCurrentLine(), column: Int = getCurentColumn()): String {
+        return (getModel().call("getWordAtPosition", createObjectFromMap(hashMapOf(Pair("lineNumber", line), Pair("column", column)))) as JSObject).getMember("word") as String
     }
 
     fun setPosition(line: Int, column: Int) = editor.call("setPosition", createObjectFromMap(hashMapOf(Pair("column", column), Pair("lineNumber", line))))
@@ -297,16 +261,25 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     fun setCursorPosition(line: Int, column: Int) = editor.call("setPosition", createObjectFromMap(hashMapOf(Pair("lineNumber", line), Pair("column", column))))
 
     fun getContentRange(startLine: Int, endLine: Int, startColumn: Int, endColumn: Int): String {
-
-        val model = engine.executeScript("editor.getModel()") as JSObject
-        return model.call("getValueInRange", createObjectFromMap(hashMapOf(Pair("endColumn", endColumn), Pair("endLineNumber", endLine),
+        return getModel().call("getValueInRange", createObjectFromMap(hashMapOf(Pair("endColumn", endColumn), Pair("endLineNumber", endLine),
                 Pair("startColumn", startColumn), Pair("startLineNumber", startLine)))) as String
     }
 
-    fun getLineContent(line: Int): String {
-        val model = engine.executeScript("editor.getModel()") as JSObject
-        return model.call("getLineContent", line) as String
+    fun replaceContentInRange(startLine: Int, startCol: Int, endLine: Int, endColumn: Int, replace: String) {
+        val selections = editor.call("getSelections")
+        val replaceObject = createObjectFromMap(hashMapOf(Pair("range",
+                createObjectFromMap(hashMapOf(Pair("startLineNumber", startLine), Pair("startColumn", startCol), Pair("endLineNumber", endLine), Pair("endColumn", endColumn)))),
+                Pair("text", replace)))
+        val arr = getArray()
+        arr.setSlot(0, replaceObject)
+        getModel().call("pushEditOperations", selections, arr, getFunction())
     }
+
+    fun replaceLine(number: Int, text: String) {
+        replaceContentInRange(number, 1, number, getColumnLineAmount(number), text)
+    }
+
+    fun getLineContent(line: Int) = getModel().call("getLineContent", line) as String
 
     var text: String
         set(value) {
