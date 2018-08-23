@@ -1,8 +1,8 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
+import com.skide.core.code.CurrentStateInfo
 import com.skide.include.OpenFileHolder
-import com.skide.utils.CurrentStateInfo
 
 class ListHolderItem(val name: String, val caller: (info: CurrentStateInfo) -> Unit, val description: String = "", val hideListAfter: Boolean = true) {
 

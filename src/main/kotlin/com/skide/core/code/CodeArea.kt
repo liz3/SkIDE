@@ -1,9 +1,14 @@
 package com.skide.core.code
 
 import com.skide.CoreManager
+import com.skide.core.code.autocomplete.AutoCompleteItem
+import com.skide.core.code.autocomplete.CompletionType
 import com.skide.gui.ListViewPopUp
 import com.skide.gui.Menus
+import com.skide.include.DocType
+import com.skide.include.Node
 import com.skide.include.OpenFileHolder
+import com.skide.utils.EditorUtils
 import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.scene.web.WebEngine
@@ -30,12 +35,48 @@ class EventHandler(val area: CodeArea) {
 
     fun eventNotify(name: String, ev: Any) {}
 
+    fun cmdCall(key: String) {
+        if (area.editorCommands.containsKey(key)) {
+            area.editorCommands[key]!!.cb()
+        }
+    }
+
     fun gotoCall(model: Any, position: Any, token: Any): Any {
         return area.createObjectFromMap(hashMapOf(
                 Pair("startLineNumber", 75),
                 Pair("endLineNumber", 75),
                 Pair("startColumn", 5),
                 Pair("endColumn", 38)))
+    }
+
+    fun autoCompleteRequest(doc: Any, pos: Any, token: Any, context: Any): JSObject {
+        val array = area.getArray()
+
+        var count = 0
+        if (area.getCurentColumn() == 1) {
+
+            array.setSlot(count, AutoCompleteItem("function", CompletionType.FUNCTION, "function () :: :", "Generates a function", "This will create a function").createObject(area.getObject()))
+            count++
+
+            area.openFileHolder.openProject.addons.values.forEach {
+                it.forEach { ev ->
+                    if (ev.type == DocType.EVENT) {
+
+                        array.setSlot(count, AutoCompleteItem("EVENT: ${ev.name} (${ev.addon.name})", CompletionType.METHOD, {
+                            var text = ev.pattern
+                            if (text.isEmpty()) text = ev.name
+                            text = text.replace("[on]", "on").replace("\n", "") + ":"
+                            if (!text.startsWith("on ")) text = "on $text"
+                            text + "\n\t"
+                        }.invoke()).createObject(area.getObject()))
+
+                        count++
+                    }
+                }
+            }
+        }
+
+        return array
     }
 
     fun contextMenuEmit(ev: JSObject) {
@@ -45,7 +86,8 @@ class EventHandler(val area: CodeArea) {
         println("Executing event")
         val selection = area.getSelection()
 
-        if (selection.startColumn == selection.endColumn && selection.startLineNumber == selection.endLineNumber && area.editorActions.containsKey("skunityReport")) {
+        if (selection.startColumn == selection.endColumn && selection.startLineNumber == selection.endLineNumber &&
+                area.editorActions.containsKey("skunityReport")) {
             println("true")
             area.removeAction("skunityReport");
         } else if (area.coreManager.skUnity.loggedIn && !area.editorActions.containsKey("skunityReport")) {
@@ -63,6 +105,19 @@ class EditorActionBinder(val id: String, val cb: () -> Unit) {
     lateinit var instance: Any
 }
 
+class EditorCommandBinder(val id: String, val cb: () -> Unit) {
+    lateinit var instance: JSObject
+
+    fun activate() {
+        instance.call("set", true)
+    }
+
+    fun deactivate() {
+        instance.call("set", false)
+    }
+
+}
+
 class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
 
     lateinit var view: WebView
@@ -71,6 +126,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     lateinit var selection: JSObject
     lateinit var openFileHolder: OpenFileHolder
     val editorActions = HashMap<String, EditorActionBinder>()
+    val editorCommands = HashMap<String, EditorCommandBinder>()
 
     val eventHandler = EventHandler(this)
 
@@ -78,7 +134,8 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     fun addSkUnityReportAction() {
         addAction("skunityReport", "Ask on skUnity") {
             val selection = getSelection()
-            val content = getContentRange(selection.startLineNumber, selection.endLineNumber, selection.startColumn, selection.endColumn)
+            val content = getContentRange(selection.startLineNumber, selection.endLineNumber,
+                    selection.startColumn, selection.endColumn)
             coreManager.skUnity.initer(content)
         }
     }
@@ -95,37 +152,28 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             val openProject = openFileHolder.openProject
             val map = HashMap<String, () -> Unit>()
             for ((name, opt) in openProject.project.fileManager.compileOptions) {
-
                 map[name] = {
                     openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
                     openProject.compiler.compile(openProject.project, opt,
                             openProject.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput())
                 }
-
             }
-
             ListViewPopUp("Compile/Export", map) {}
         }
         addAction("run", "Run this File") {
             val map = HashMap<String, () -> Unit>()
             coreManager.serverManager.servers.forEach {
-
                 map[it.value.configuration.name] = {
-
                     openFileHolder.openProject.run(it.value, openFileHolder)
-
                 }
             }
-
             ListViewPopUp("Run this file", map) {}
         }
         addAction("upload", "Upload this file") {
             val map = HashMap<String, () -> Unit>()
-
             openFileHolder.openProject.project.fileManager.hosts.forEach {
                 map[it.name] = {
                     openFileHolder.openProject.deployer.deploy(text, openFileHolder.f.name, it)
-
                 }
             }
             ListViewPopUp("Upload this file", map) {}
@@ -137,13 +185,10 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                 map[name] = {
                     val map2 = HashMap<String, () -> Unit>()
                     coreManager.serverManager.servers.forEach {
-
                         map2[it.value.configuration.name] = {
                             openFileHolder.openProject.guiHandler.openFiles.forEach { code -> code.value.saveCode() }
                             openFileHolder.openProject.run(it.value, opt)
                         }
-
-
                     }
                     ListViewPopUp(name, map2) {}
                 }
@@ -151,8 +196,14 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             ListViewPopUp("Run Configuration", map) {}
         }
         addAction("test", "ReplaceTest") {
-            replaceContentInRange(getCurrentLine(), 1, getCurrentLine(), getColumnLineAmount(getCurrentLine()), "teeeeesssst")
+            replaceContentInRange(getCurrentLine(), 1, getCurrentLine(), getColumnLineAmount(getCurrentLine()),
+                    "teeeeesssst")
         }
+
+        addCommand("sequence_replacer", 9) {
+                    openFileHolder.codeManager.sequenceReplaceHandler.fire()
+        }
+
     }
 
     init {
@@ -160,10 +211,8 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             view = WebView()
             engine = view.engine
 
-
             engine.onAlert = EventHandler<WebEvent<String>> { event ->
                 val popup = Stage()
-
                 popup.initStyle(StageStyle.UTILITY)
                 popup.initModality(Modality.WINDOW_MODAL)
 
@@ -172,14 +221,12 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                         Label(event.data)
                 )
                 content.setPrefSize(200.0, 100.0)
-
                 popup.scene = Scene(content)
                 popup.showAndWait()
             }
             view.engine.loadWorker.stateProperty().addListener { _, _, newValue ->
-                if (newValue === Worker.State.FAILED) {
+                if (newValue === Worker.State.FAILED)
                     println("Failed to load webpage")
-                }
                 if (newValue === Worker.State.SUCCEEDED) {
                     val win = getWindow()
                     val cbHook = CallbackHook {
@@ -198,13 +245,33 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         }
     }
 
-    private fun getArray() = engine.executeScript("getArr();") as JSObject
-    private fun getObject() = engine.executeScript("getObj();") as JSObject
-    private fun getFunction() = engine.executeScript("getFunc();") as JSObject
+    fun getArray() = engine.executeScript("getArr();") as JSObject
+    fun getObject() = engine.executeScript("getObj();") as JSObject
+    fun getFunction() = engine.executeScript("getFunc();") as JSObject
     private fun getWindow() = engine.executeScript("window") as JSObject
     private fun getModel() = engine.executeScript("editor.getModel()") as JSObject
     private fun startEditor(options: Any) {
         editor = getWindow().call("startEditor", options) as JSObject
+    }
+
+    fun activateCommand(key: String) {
+        if (!editorCommands.containsKey(key)) return
+
+        editorCommands[key]!!.activate()
+    }
+
+    fun deactivateCommand(key: String) {
+        if (!editorCommands.containsKey(key)) return
+        editorCommands[key]!!.deactivate()
+    }
+
+    fun addCommand(key: String, keyId: Int, cb: () -> Unit) {
+        if (editorCommands.containsKey(key)) return
+        val cont = getWindow().call("addCondition", key, keyId)
+
+        val command = EditorCommandBinder(key, cb)
+        command.instance = cont as JSObject
+        editorCommands[key] = command
     }
 
     fun createObjectFromMap(fields: Map<String, Any>): JSObject {
@@ -229,7 +296,9 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         }
     }
 
-    data class Selection(val endColumn: Int, val endLineNumber: Int, val positionColumn: Int, val positionLineNumber: Int, val selectionStartColumn: Int, val selectionStartLineNumber: Int, val startColumn: Int, val startLineNumber: Int)
+    data class Selection(val endColumn: Int, val endLineNumber: Int, val positionColumn: Int,
+                         val positionLineNumber: Int, val selectionStartColumn: Int, val selectionStartLineNumber: Int,
+                         val startColumn: Int, val startLineNumber: Int)
 
     fun getSelection(): Selection {
         val result = editor.call("getSelection") as JSObject
@@ -246,23 +315,30 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
 
     fun getLineCount() = getModel().call("getLineCount") as Int
     fun getColumnLineAmount(line: Int) = getModel().call("getLineMaxColumn", line) as Int
+
     fun getWordAtPosition(line: Int = getCurrentLine(), column: Int = getCurentColumn()): String {
-        return (getModel().call("getWordAtPosition", createObjectFromMap(hashMapOf(Pair("lineNumber", line), Pair("column", column)))) as JSObject).getMember("word") as String
+        return (getModel().call("getWordAtPosition", createObjectFromMap(hashMapOf(Pair("lineNumber", line),
+                Pair("column", column)))) as JSObject).getMember("word") as String
     }
 
-    fun setPosition(line: Int, column: Int) = editor.call("setPosition", createObjectFromMap(hashMapOf(Pair("column", column), Pair("lineNumber", line))))
 
-    fun updateOptions(fields: Map<String, Any>) = editor.call("updateOptions", createObjectFromMap(fields))
+    fun setPosition(line: Int, column: Int) = editor.call("setPosition",
+            createObjectFromMap(hashMapOf(Pair("column", column), Pair("lineNumber", line))))
+
+    fun updateOptions(fields: Map<String, Any>) = editor.call("updateOptions",
+            createObjectFromMap(fields))
 
     fun getCurrentLine() = engine.executeScript("editor.getPosition().lineNumber") as Int
 
     fun getCurentColumn() = engine.executeScript("editor.getPosition().column") as Int
 
-    fun setCursorPosition(line: Int, column: Int) = editor.call("setPosition", createObjectFromMap(hashMapOf(Pair("lineNumber", line), Pair("column", column))))
+    fun setCursorPosition(line: Int, column: Int) = editor.call("setPosition",
+            createObjectFromMap(hashMapOf(Pair("lineNumber", line), Pair("column", column))))
 
     fun getContentRange(startLine: Int, endLine: Int, startColumn: Int, endColumn: Int): String {
-        return getModel().call("getValueInRange", createObjectFromMap(hashMapOf(Pair("endColumn", endColumn), Pair("endLineNumber", endLine),
-                Pair("startColumn", startColumn), Pair("startLineNumber", startLine)))) as String
+        return getModel().call("getValueInRange",
+                createObjectFromMap(hashMapOf(Pair("endColumn", endColumn), Pair("endLineNumber", endLine),
+                        Pair("startColumn", startColumn), Pair("startLineNumber", startLine)))) as String
     }
 
     fun replaceContentInRange(startLine: Int, startCol: Int, endLine: Int, endColumn: Int, replace: String) {
@@ -279,8 +355,10 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         replaceContentInRange(number, 1, number, getColumnLineAmount(number), text)
     }
 
+    fun setSelection(startLine: Int, startCol: Int, endLine: Int, endColumn: Int) {
+        editor.call("setSelection", createObjectFromMap(hashMapOf(Pair("endColumn", endColumn), Pair("endLineNumber", endLine), Pair("startColumn", startCol), Pair("startLineNumber", startLine))))
+    }
     fun getLineContent(line: Int) = getModel().call("getLineContent", line) as String
-
     var text: String
         set(value) {
             editor.call("setValue", value)
@@ -288,4 +366,74 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         get() {
             return editor.call("getValue") as String
         }
+
+
+    fun getInfo(manager: CodeManager): CurrentStateInfo {
+        val currentLine = getCurrentLine()
+
+
+        var currentNode = EditorUtils.getLineNode(currentLine, manager.parseResult)
+
+        if (currentNode == null) {
+            currentNode = EditorUtils.getLineNode(currentLine - 1, manager.parseResult)
+        }
+        val actualCurrentString = getLineContent(currentLine)
+        val column = getCurentColumn()
+        var currentWord = ""
+        var beforeStr = ""
+        var inString = false
+        var inBrace = false
+        var afterStr = ""
+        val charBeforeCaret = {
+            if (column == 0) {
+                ""
+            } else {
+                actualCurrentString[column - 1].toString()
+            }
+        }.invoke()
+        val charAfterCaret = {
+            if (column == actualCurrentString.length) {
+                ""
+            } else {
+                actualCurrentString[column].toString()
+            }
+        }.invoke()
+
+        for (x in 0 until actualCurrentString.length) {
+            if (x == column) break
+            val c = actualCurrentString[x]
+            if (c == '"') inString = !inString
+        }
+        for (x in 0 until actualCurrentString.length) {
+            if (x == column) break
+            val c = actualCurrentString[x]
+            if (c == '(' || c == ')') inBrace = !inBrace
+        }
+        if (charBeforeCaret != "") {
+            var count = column
+            while (count > 0 && actualCurrentString[count - 1].toString() != " " && actualCurrentString[count - 1].toString() != "\n") {
+
+                count--
+                beforeStr = actualCurrentString[count].toString() + beforeStr
+            }
+            count = column - 1
+            while (count < actualCurrentString.length - 1 && actualCurrentString[count].toString() != " " && actualCurrentString[count].toString() != "\n") {
+                count++
+                afterStr += actualCurrentString[count].toString()
+            }
+
+            beforeStr = beforeStr.replace("\t", "").replace(" ", "")
+            afterStr = afterStr.replace("\t", "").replace(" ", "")
+            currentWord = beforeStr + afterStr
+
+
+        }
+
+        return CurrentStateInfo(currentNode!!, actualCurrentString, column, currentWord, beforeStr, afterStr, charBeforeCaret, charAfterCaret, inString, inBrace)
+    }
+
 }
+
+class CurrentStateInfo(val currentNode: Node, val actualCurrentString: String, val column: Int, val currentWord: String,
+                       val beforeString: String, val afterString: String, val charBeforeCaret: String, val charAfterCaret: String, val inString: Boolean, val inBrace: Boolean)
+

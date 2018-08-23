@@ -115,10 +115,6 @@ object EditorUtils {
 
 class StringSearchResult(val start: Int, val end: Int, val str: String)
 
-class CurrentStateInfo(val currentNode: Node, val actualCurrentString: String, val column: Int, val currentWord: String,
-                       val beforeString: String, val afterString: String, val charBeforeCaret: String, val charAfterCaret: String, val inString: Boolean, val inBrace: Boolean)
-
-
 
 fun String.search(what: String, ignoreCase: Boolean, regex: Boolean): List<StringSearchResult> {
     val found = java.util.ArrayList<StringSearchResult>()

@@ -32,6 +32,17 @@ function startEditor(options) {
     });
     return editor;
 }
+function addCondition(key, keyId) {
+
+    var condition = editor.createContextKey(key, false);
+    editor.addCommand(keyId, function() {
+
+        skide.cmdCall(key);
+
+    }, key)
+
+    return condition;
+}
 function addAction(id, label) {
     return editor.addAction({
         id: id,
@@ -64,7 +75,6 @@ var getArr = function () {
 var getHook = function () {
     return skide;
 };
-
 function cbhReady() {
     require.config({paths: {'vs': 'lib/vs'}});
     require(['vs/editor/editor.main'], function () {

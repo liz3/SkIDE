@@ -1,6 +1,7 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
+import com.skide.core.code.CurrentStateInfo
 import java.util.*
 import java.util.regex.Pattern
 
@@ -32,24 +33,20 @@ data class ReplaceSeuenceItem(val absoluteStart: Int, val absoluteEnd: Int, val 
 class ReplaceSequence(val manager: CodeManager) {
 
 
-   /*
+
     val area = manager.area
     var computing = false
     val list = Vector<ReplaceSeuenceItem>()
     var atIndex = -1
-    val im = InputMap.consume(
-            EventPattern.keyTyped("\t"),
-            { })
+
     var originalLength = 0
     var lineIndex = 0
 
     fun compute(info: CurrentStateInfo) {
         if (computing) return
         computing = true
-        manager.autoComplete.stopped = true
-        manager.autoComplete.hideList()
+        area.activateCommand("sequence_replacer")
         parse(info)
-        Nodes.addInputMap(area, im)
     }
 
 
@@ -59,7 +56,6 @@ class ReplaceSequence(val manager: CodeManager) {
         lineIndex = info.currentNode.linenumber
         originalLength = info.currentNode.raw.length
 
-        val absStart = area.caretPosition - area.caretColumn
         val matcher = SequenceReplacePattern.patternCompiler.matcher(info.currentNode.raw)
 
         while (matcher.find()) {
@@ -68,9 +64,9 @@ class ReplaceSequence(val manager: CodeManager) {
 
 
             if (matcher.group("VALUE") != null) {
-                list.add(ReplaceSeuenceItem(absStart + start, absStart + end, ReplaceSequenceType.VALUE))
+                list.add(ReplaceSeuenceItem(start, end, ReplaceSequenceType.VALUE))
             } else {
-                list.add(ReplaceSeuenceItem(absStart + start, absStart + end, ReplaceSequenceType.VALUE))
+                list.add(ReplaceSeuenceItem(start, end, ReplaceSequenceType.VALUE))
             }
         }
 
@@ -87,10 +83,10 @@ class ReplaceSequence(val manager: CodeManager) {
             return
         }
         val currentItem = list[atIndex]
-        val nowLength = area.paragraphs[lineIndex - 1].text.length
+        val nowLength = area.getLineContent(lineIndex).length
 
         if (currentItem != null) {
-            area.selectRange(currentItem.absoluteStart + (nowLength - originalLength), currentItem.absoluteEnd + (nowLength - originalLength))
+            area.setSelection(lineIndex, (nowLength - originalLength) + 1, lineIndex,  currentItem.absoluteEnd + (nowLength - originalLength))
         } else {
             cancel()
         }
@@ -98,15 +94,14 @@ class ReplaceSequence(val manager: CodeManager) {
 
     fun cancel() {
         if (!computing) return
-        Nodes.removeInputMap(area, im)
 
         computing = false
-        manager.autoComplete.stopped = false
         list.clear()
         atIndex = -1
         originalLength = 0
         lineIndex = 0
+        area.deactivateCommand("sequence_replacer")
 
     }
-    */
+
 }

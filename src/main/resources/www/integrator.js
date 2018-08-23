@@ -137,10 +137,14 @@ function registerSkript() {
             }
         ];
     }
+    monaco.languages.registerCodeActionProvider('skript', {
+        provideCodeActions: function (model, range, context, token) {
+
+        }
+    });
     monaco.languages.registerCompletionItemProvider('skript', {
-        provideCompletionItems: function(model, position) {
-            var textUntilPosition = model.getValueInRange({startLineNumber: 1, startColumn: 1, endLineNumber: position.lineNumber, endColumn: position.column});
-            return [];
+        provideCompletionItems: function(model, position, token, context) {
+            return skide.autoCompleteRequest(model, position, token, context);
         }
     });
     monaco.languages.registerDefinitionProvider('skript', {
