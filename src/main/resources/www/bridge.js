@@ -32,6 +32,16 @@ function startEditor(options) {
     });
     return editor;
 }
+function addCommand(id) {
+
+    editor._commandService.addCommand({
+        id: id,
+        handler: function () {
+            return getHook().commandFire(id);
+        }
+    })
+
+}
 function addCondition(key, keyId) {
 
     var condition = editor.createContextKey(key, false);

@@ -3,12 +3,15 @@ package com.skide.core.code
 import com.skide.CoreManager
 import com.skide.core.code.autocomplete.AutoCompleteItem
 import com.skide.core.code.autocomplete.CompletionType
+import com.skide.gui.GUIManager
 import com.skide.gui.ListViewPopUp
 import com.skide.gui.Menus
+import com.skide.gui.controllers.GenerateCommandController
 import com.skide.include.DocType
 import com.skide.include.Node
 import com.skide.include.OpenFileHolder
 import com.skide.utils.EditorUtils
+import com.skide.utils.getOS
 import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.scene.web.WebEngine
@@ -55,20 +58,22 @@ class EventHandler(val area: CodeArea) {
         var count = 0
         if (area.getCurentColumn() == 1) {
 
-            array.setSlot(count, AutoCompleteItem("function", CompletionType.FUNCTION, "function () :: :", "Generates a function", "This will create a function").createObject(area.getObject()))
+            array.setSlot(count, AutoCompleteItem(area, "function", CompletionType.FUNCTION, "function () :: :", "Generates a function", "This will create a function").createObject(area.getObject()))
+            count++
+            array.setSlot(count, AutoCompleteItem(area, "Command", CompletionType.CONSTRUCTOR, "", "Generates a Command", "This will open a Window to create a ", commandId = "create_command").createObject(area.getObject()))
             count++
 
             area.openFileHolder.openProject.addons.values.forEach {
                 it.forEach { ev ->
                     if (ev.type == DocType.EVENT) {
 
-                        array.setSlot(count, AutoCompleteItem("EVENT: ${ev.name} (${ev.addon.name})", CompletionType.METHOD, {
+                        array.setSlot(count, AutoCompleteItem(area, "EVENT: ${ev.name} (${ev.addon.name})", CompletionType.METHOD, {
                             var text = ev.pattern
                             if (text.isEmpty()) text = ev.name
                             text = text.replace("[on]", "on").replace("\n", "") + ":"
                             if (!text.startsWith("on ")) text = "on $text"
-                            text + "\n\t"
-                        }.invoke()).createObject(area.getObject()))
+                            text
+                        }.invoke(), commandId = "general_auto_complete_finish").createObject(area.getObject()))
 
                         count++
                     }
@@ -97,6 +102,10 @@ class EventHandler(val area: CodeArea) {
 
     fun actionFire(id: String, ev: Any) {
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
+    }
+    fun commandFire(id: String): JSObject {
+        if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
+        return area.getObject();
     }
 
 }
@@ -200,7 +209,26 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     "teeeeesssst")
         }
 
-        addCommand("sequence_replacer", 9) {
+        addAction("general_auto_complete_finish") {
+            openFileHolder.codeManager.sequenceReplaceHandler.compute(getCurrentLine(), getLineContent(getCurrentLine()))
+        }
+        addAction("create_command") {
+
+            val window = GUIManager.getWindow("GenerateCommand.fxml", "Generate command", true)
+            val generate = window.controller as GenerateCommandController
+
+            generate.cancelButton.setOnAction {
+                GUIManager.closeGui(window.id)
+            }
+            generate.createButton.setOnAction {
+                val line = getCurrentLine()
+                replaceContentInRange(line, 1, line, getColumnLineAmount(line), "command /" + generate.commandNameField.text + ":\n\tdescription: " + generate.descriptionField.text + "\n" + "\tpermission: " + generate.permissionField.text + "\n\ttrigger:\n\t\tsend \"hi\" to player")
+                GUIManager.closeGui(window.id)
+            }
+
+        }
+
+        addCommand("sequence_replacer", 2) {
                     openFileHolder.codeManager.sequenceReplaceHandler.fire()
         }
 
@@ -284,6 +312,13 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         if (editorActions.containsKey(id)) return
         val action = EditorActionBinder(id, cb)
         action.instance = getWindow().call("addAction", id, label)
+        editorActions[id] = action
+    }
+
+    fun addAction(id: String,  cb: () -> Unit) {
+        if (editorActions.containsKey(id)) return
+        val action = EditorActionBinder(id, cb)
+        action.instance = getWindow().call("addCommand", id)
         editorActions[id] = action
     }
 

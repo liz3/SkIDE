@@ -19,7 +19,6 @@ object SequenceReplacePattern {
                     + "|(?<OPTIONALGROUP>" + optionalGroupPattern + ")")
 }
 
-//	if [the] Bedwars game [(named|with name)] %string% is (startable|able to start):
 enum class ReplaceSequenceType {
     OPTIONAL,
     GROUP,
@@ -42,21 +41,21 @@ class ReplaceSequence(val manager: CodeManager) {
     var originalLength = 0
     var lineIndex = 0
 
-    fun compute(info: CurrentStateInfo) {
+    fun compute(lineNumber:Int, lineContent:String) {
         if (computing) return
         computing = true
         area.activateCommand("sequence_replacer")
-        parse(info)
+        parse(lineNumber, lineContent)
     }
 
 
-    private fun parse(info: CurrentStateInfo) {
+    private fun parse(lineNumber:Int, lineContent:String) {
 
         list.clear()
-        lineIndex = info.currentNode.linenumber
-        originalLength = info.currentNode.raw.length
+        lineIndex = lineNumber
+        originalLength = lineContent.length
 
-        val matcher = SequenceReplacePattern.patternCompiler.matcher(info.currentNode.raw)
+        val matcher = SequenceReplacePattern.patternCompiler.matcher(lineContent)
 
         while (matcher.find()) {
             val start = matcher.start()
@@ -86,7 +85,7 @@ class ReplaceSequence(val manager: CodeManager) {
         val nowLength = area.getLineContent(lineIndex).length
 
         if (currentItem != null) {
-            area.setSelection(lineIndex, (nowLength - originalLength) + 1, lineIndex,  currentItem.absoluteEnd + (nowLength - originalLength))
+            area.setSelection(lineIndex, currentItem.absoluteStart + (nowLength - originalLength) + 1, lineIndex,  currentItem.absoluteEnd + (nowLength - originalLength) + 1)
         } else {
             cancel()
         }

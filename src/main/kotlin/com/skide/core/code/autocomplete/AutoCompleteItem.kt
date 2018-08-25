@@ -1,5 +1,6 @@
 package com.skide.core.code.autocomplete
 
+import com.skide.core.code.CodeArea
 import netscape.javascript.JSObject
 
 enum class CompletionType(val num:Int) {
@@ -26,7 +27,7 @@ enum class CompletionType(val num:Int) {
 
 }
 
-class AutoCompleteItem(val label:String, val kind:CompletionType, val insertText:String, val detail:String = "", val documentation:String = "") {
+class AutoCompleteItem(val area:CodeArea, val label:String, val kind:CompletionType, val insertText:String, val detail:String = "", val documentation:String = "", val commandId:String = "") {
 
     fun createObject(obj:JSObject): JSObject {
 
@@ -36,6 +37,9 @@ class AutoCompleteItem(val label:String, val kind:CompletionType, val insertText
         obj.setMember("detail", detail)
         obj.setMember("documentation", documentation)
 
+        if(commandId != "") {
+           obj.setMember("command",  area.createObjectFromMap(hashMapOf(Pair("title", ""), Pair("id", commandId))))
+        }
 
         return obj
     }
