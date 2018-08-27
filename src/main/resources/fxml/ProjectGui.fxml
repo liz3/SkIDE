@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="1068.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectGUIController">
+<BorderPane fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="646.0" prefWidth="1068.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectGUIController">
    <bottom>
       <BorderPane fx:id="mainLowerBorderPane" prefHeight="201.0" prefWidth="1068.0" BorderPane.alignment="CENTER">
          <center>
@@ -66,7 +66,8 @@
          <top>
             <HBox fx:id="browserUpperHBox" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="toggleTreeViewButton" mnemonicParsing="false" text="Button" />
+                  <Label fx:id="activeSideLabel" alignment="CENTER" prefHeight="26.0" prefWidth="168.0" text="Label" />
+                  <Button fx:id="toggleTreeViewButton" mnemonicParsing="false" text="X" />
                </children>
             </HBox>
          </top>

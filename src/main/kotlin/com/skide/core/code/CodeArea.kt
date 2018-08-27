@@ -5,13 +5,11 @@ import com.skide.core.code.autocomplete.AutoCompleteItem
 import com.skide.core.code.autocomplete.CompletionType
 import com.skide.gui.GUIManager
 import com.skide.gui.ListViewPopUp
-import com.skide.gui.Menus
 import com.skide.gui.controllers.GenerateCommandController
 import com.skide.include.DocType
 import com.skide.include.Node
 import com.skide.include.OpenFileHolder
 import com.skide.utils.EditorUtils
-import com.skide.utils.getOS
 import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.scene.web.WebEngine
@@ -24,7 +22,6 @@ import javafx.stage.StageStyle
 import javafx.stage.Stage
 import javafx.event.EventHandler;
 import javafx.scene.control.Label
-import javafx.scene.control.MenuItem
 import javafx.scene.web.*;
 
 
@@ -103,6 +100,7 @@ class EventHandler(val area: CodeArea) {
     fun actionFire(id: String, ev: Any) {
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
     }
+
     fun commandFire(id: String): JSObject {
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
         return area.getObject();
@@ -214,7 +212,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         }
         addAction("create_command") {
 
-            val window = GUIManager.getWindow("GenerateCommand.fxml", "Generate command", true)
+            val window = GUIManager.getWindow("fxml/GenerateCommand.fxml", "Generate command", true)
             val generate = window.controller as GenerateCommandController
 
             generate.cancelButton.setOnAction {
@@ -229,7 +227,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         }
 
         addCommand("sequence_replacer", 2) {
-                    openFileHolder.codeManager.sequenceReplaceHandler.fire()
+            openFileHolder.codeManager.sequenceReplaceHandler.fire()
         }
 
     }
@@ -258,7 +256,10 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                 if (newValue === Worker.State.SUCCEEDED) {
                     val win = getWindow()
                     val cbHook = CallbackHook {
-                        startEditor(engine.executeScript("getDefaultOptions();") as JSObject)
+                        val settings = engine.executeScript("getDefaultOptions();") as JSObject
+                        settings.setMember("fontSize", coreManager.configManager.get("font_size"))
+                        settings.setMember("theme", "vs-dark")
+                        startEditor(settings)
                         selection = engine.executeScript("selection") as JSObject
                         prepareEditorActions()
                         rdy(this)
@@ -268,8 +269,8 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     engine.executeScript("cbhReady();")
                 }
             }
-            val url = this.javaClass.getResource("/www/index.html")
-            engine.load(url.toString())
+
+            engine.load(this.javaClass.getResource("/www/index.html").toString())
         }
     }
 
@@ -315,7 +316,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         editorActions[id] = action
     }
 
-    fun addAction(id: String,  cb: () -> Unit) {
+    fun addAction(id: String, cb: () -> Unit) {
         if (editorActions.containsKey(id)) return
         val action = EditorActionBinder(id, cb)
         action.instance = getWindow().call("addCommand", id)
@@ -393,6 +394,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     fun setSelection(startLine: Int, startCol: Int, endLine: Int, endColumn: Int) {
         editor.call("setSelection", createObjectFromMap(hashMapOf(Pair("endColumn", endColumn), Pair("endLineNumber", endLine), Pair("startColumn", startCol), Pair("startLineNumber", startLine))))
     }
+
     fun getLineContent(line: Int) = getModel().call("getLineContent", line) as String
     var text: String
         set(value) {

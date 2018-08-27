@@ -1,11 +1,9 @@
 package com.skide.gui
 
 import com.skide.core.management.ConfigManager
-import com.sun.jna.platform.win32.Guid
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TextInputDialog
-import java.util.Optional
 
 
 object Prompts {

@@ -34,7 +34,6 @@
     -fx-focus-color: transparent;
 
 }
-
 .tab:selected .tab-label {
     -fx-border-style: none;
     -fx-focus-color: transparent;

@@ -17,7 +17,6 @@ import com.skide.include.OpenFileHolder
 import com.skide.utils.OperatingSystemType
 import com.skide.utils.getOS
 import com.skide.utils.setIcon
-import com.sun.org.apache.bcel.internal.classfile.Code
 import javafx.application.Platform
 import javafx.scene.Node
 import javafx.scene.control.*
@@ -28,7 +27,6 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
-import javafx.scene.web.WebView
 import java.io.File
 import java.util.*
 
@@ -39,7 +37,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     var mode = EditorMode.NORMAL
     val openFiles = HashMap<File, OpenFileHolder>()
     val settings = SettingsGui(coreManager, this)
-    val window = GUIManager.getWindow("ProjectGui.fxml", openProject.project.name, false)
+    val window = GUIManager.getWindow("fxml/ProjectGui.fxml", openProject.project.name, false)
     lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
     val otherTabPanes = Vector<TabPane>()
     var paneHolderNode: Node = HBox()
@@ -50,11 +48,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
     fun startGui(): ProjectGuiEventListeners {
 
-        if (coreManager.configManager.get("theme") == "Dark") {
-            window.scene.stylesheets.add(coreManager.configManager.getCssPath("DarkHighlighting.css"))
-        } else {
-            window.scene.stylesheets.add(coreManager.configManager.getCssPath("HighlightingLight.css"))
-        }
 
         val controller = window.controller as ProjectGUIController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
@@ -413,14 +406,14 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         for ((name, _) in openProjectGuiManager.projectFiles) {
             val item = TreeItem<String>(name)
             if (name.endsWith(".sk")) {
-                val openIcon = Image(javaClass.getResource("/sk.png").toExternalForm())
+                val openIcon = Image(javaClass.getResource("/images/sk.png").toExternalForm())
                 val openView = ImageView(openIcon)
                 openView.fitWidth = 15.0
                 openView.fitHeight = 15.0
                 item.graphic = openView
             }
             if (name.endsWith(".yml")) {
-                val openIcon = Image(javaClass.getResource("/yaml.png").toExternalForm())
+                val openIcon = Image(javaClass.getResource("/images/yaml.png").toExternalForm())
                 val openView = ImageView(openIcon)
                 openView.fitWidth = 25.0
                 openView.fitHeight = 15.0
@@ -520,6 +513,15 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         controller.browserTabPane.tabs.addAll(filesTab.first, structureTab.first)
 
+        controller.activeSideLabel.text = "Files"
+        controller.browserTabPane.selectionModel.selectedItemProperty().addListener { observableValue, tab, newTab ->
+            if (newTab == filesTab.first) {
+                controller.activeSideLabel.text = "Files"
+            } else {
+                controller.activeSideLabel.text = "Structure"
+
+            }
+        }
 
     }
 
@@ -580,7 +582,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         val newProject = MenuItem("New Project")
         newProject.setOnAction {
-            val window = GUIManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
+            val window = GUIManager.getWindow("fxml/NewProjectGui.fxml", "Create new Project", false)
             window.controller as CreateProjectGUIController
             window.controller.initGui(coreManager, window)
             window.stage.isResizable = false
@@ -624,7 +626,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         val generalSettings = MenuItem("General Settings")
         generalSettings.setOnAction {
 
-            val window = GUIManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)
+            val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
 
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, coreManager, window).init()
 

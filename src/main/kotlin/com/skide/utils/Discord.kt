@@ -43,7 +43,6 @@ class Discord(private var disabled: Boolean = false) {
 
             discordRpc.runCallbacks()
         } catch (e: RuntimeException) {
-            e.printStackTrace()
             disabled = true
             println("Discord RPC disabled")
         }

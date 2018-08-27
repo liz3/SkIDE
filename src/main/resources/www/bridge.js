@@ -3,7 +3,6 @@ var selection = null;
 function getDefaultOptions() {
     return {
         language: 'skript',
-        theme: 'vs-dark',
         automaticLayout: true,
         mouseWheelScrollSensitivity: 0.1
     };

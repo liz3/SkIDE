@@ -34,11 +34,11 @@ class StartGUIController {
 
     fun initGui(manager: CoreManager, thisWindow: ActiveWindow, firstRun: Boolean) {
 
-        iconImage.image = Image(javaClass.getResource("/icon.png").toExternalForm())
+        iconImage.image = Image(javaClass.getResource("/images/icon.png").toExternalForm())
 
         createNewProject.setOnMouseClicked {
 
-            val window = GUIManager.getWindow("NewProjectGui.fxml", "Create new Project", false)
+            val window = GUIManager.getWindow("fxml/NewProjectGui.fxml", "Create new Project", false)
             window.controller as CreateProjectGUIController
             window.controller.initGui(manager, window, thisWindow)
             window.stage.isResizable = false
@@ -65,14 +65,14 @@ class StartGUIController {
         versionLabel.text = "SK-IDE Ver. ${Info.version} Copyright 21Xayah.com - GPL v2 License"
         settings.setOnMouseReleased {
 
-            val window = GUIManager.getWindow("GeneralSettingsGui.fxml", "Settings", false)
+            val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, manager, window).init()
 
             window.stage.show()
         }
         importProject.setOnMouseClicked {
 
-            val window = GUIManager.getWindow("ImportProjectGui.fxml", "Import Project", false)
+            val window = GUIManager.getWindow("fxml/ImportProjectGui.fxml", "Import Project", false)
             window.controller as ImportProjectGUIController
             window.controller.initGui(manager, window, thisWindow)
             window.stage.isResizable = false

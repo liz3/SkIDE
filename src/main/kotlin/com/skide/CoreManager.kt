@@ -44,19 +44,19 @@ class CoreManager {
         val me = this
         guiManager.bootstrapCallback = { stage ->
             val loader = FXMLLoader()
-            val parent = loader.load<Pane>(javaClass.getResourceAsStream("/LoadingGui.fxml"))
+            val parent = loader.load<Pane>(javaClass.getResourceAsStream("/fxml/LoadingGui.fxml"))
             parent.background = Background.EMPTY
             val controller = loader.getController<SplashGuiController>()
             stage.scene = Scene(parent)
             stage.initStyle(StageStyle.TRANSPARENT)
-            stage.icons.add(Image(javaClass.getResource("/icon.png").toExternalForm()))
-            println(javaClass.getResource("/icon.png").toExternalForm())
+            stage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
+            println(javaClass.getResource("/images/icon.png").toExternalForm())
             stage.scene.fill = Color.TRANSPARENT
             stage.sizeToScene()
             stage.centerOnScreen()
             stage.isResizable = false
-            controller.view.image = Image(javaClass.getResource("/splash.png").toExternalForm())
-            controller.logoView.image = Image(javaClass.getResource("/21xayah.png").toExternalForm())
+            controller.view.image = Image(javaClass.getResource("/images/splash.png").toExternalForm())
+            controller.logoView.image = Image(javaClass.getResource("/images/21xayah.png").toExternalForm())
             stage.show()
             val task = object : Task<Void>() {
                 @Throws(Exception::class)
@@ -112,10 +112,9 @@ class CoreManager {
                             Platform.runLater {
                                 stage.close()
                                 GUIManager.discord.update("In the main menu", "Idle")
-                                val window = guiManager.getWindow("StartGui.fxml", "Sk-IDE", false, Stage())
+                                val window = guiManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false, Stage())
                                 stage.isResizable = false
                                 (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
-                                window.stage.centerOnScreen()
                                 window.stage.isResizable = false
                                 window.stage.show()
 

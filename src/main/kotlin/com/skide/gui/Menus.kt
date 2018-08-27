@@ -2,14 +2,12 @@ package com.skide.gui
 
 import com.skide.core.code.CodeManager
 import com.skide.core.management.OpenProject
-import com.skide.gui.controllers.SkunityQuestionFameController
 import com.skide.include.EditorMode
 import com.skide.include.OpenFileHolder
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
 import javafx.scene.text.Font
-import javafx.stage.Popup
 import java.io.File
 
 object Menus {
@@ -18,8 +16,8 @@ object Menus {
 
         val menu = ContextMenu()
 
-        val openIcon = Image(javaClass.getResource("/icon.png").toExternalForm())
-        val yaml = Image(javaClass.getResource("/yaml.png").toExternalForm())
+        val openIcon = Image(javaClass.getResource("/images/icon.png").toExternalForm())
+        val yaml = Image(javaClass.getResource("/images/yaml.png").toExternalForm())
 
         val yamlView = ImageView(yaml)
         yamlView.fitWidth = 25.0

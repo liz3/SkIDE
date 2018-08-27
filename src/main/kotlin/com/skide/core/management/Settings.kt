@@ -9,8 +9,6 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 
 
 class PointerHolder(val id: Long, val name: String, val path: String)
@@ -249,10 +247,8 @@ class ConfigManager(val coreManager: CoreManager) {
 
 
         }
-        this.javaClass.getResourceAsStream("/Reset.css").copyTo(FileOutputStream(File(folder, "Reset.css")))
-        this.javaClass.getResourceAsStream("/DarkHighlighting.css").copyTo(FileOutputStream(File(folder, "DarkHighlighting.css")))
-        this.javaClass.getResourceAsStream("/HighlightingLight.css").copyTo(FileOutputStream(File(folder, "HighlightingLight.css")))
-        this.javaClass.getResourceAsStream("/ThemeDark.css").copyTo(FileOutputStream(File(folder, "ThemeDark.css")))
+        this.javaClass.getResourceAsStream("/css/Reset.css").copyTo(FileOutputStream(File(folder, "Reset.css")))
+        this.javaClass.getResourceAsStream("/css/ThemeDark.css").copyTo(FileOutputStream(File(folder, "ThemeDark.css")))
     }
 
     private fun writeDefaultSettings() {

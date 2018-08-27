@@ -28,7 +28,7 @@ class ListViewPopUp(val info:String, val items:HashMap<String, () -> Unit>, done
             stage.isResizable = false
             stage.centerOnScreen()
 
-            val scene = GUIManager.getScene("ListView.fxml")
+            val scene = GUIManager.getScene("fxml/ListView.fxml")
 
             stage.scene = Scene(scene.first)
             stage.sizeToScene()

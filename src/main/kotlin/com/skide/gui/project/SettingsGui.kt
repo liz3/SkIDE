@@ -15,7 +15,7 @@ class SettingsGui(val coreManager: CoreManager, val projGuiManager: OpenProjectG
     var loaded = false
     val window: ActiveWindow by lazy {
         loaded = true
-        GUIManager.getWindow("ProjectSettingsGui.fxml", "Settings for ${project.name}", false)
+        GUIManager.getWindow("fxml/ProjectSettingsGui.fxml", "Settings for ${project.name}", false)
     }
 
 

@@ -97,7 +97,7 @@ fun getLocale(): String {
 }
 
 fun Button.setIcon(name: String, replaceAble: Boolean = true) {
-    var lnk = "/$name"
+    var lnk = "/images/$name"
     if (replaceAble) lnk += if (GUIManager.settings.get("theme") == "Dark") "_white" else "_black"
     lnk += ".png"
     val image = Image(GUIManager::javaClass.javaClass.getResource(lnk).toExternalForm())

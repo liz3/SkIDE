@@ -56,7 +56,7 @@ class SystemErr : PrintStream(System.err) {
 
                 val trace = err
                 Platform.runLater {
-                    val win = GUIManager.getWindow("ErrorReport.fxml", "Error", false)
+                    val win = GUIManager.getWindow("fxml/ErrorReport.fxml", "Error", false)
                     val ctrl = win.controller as ErrorReportGUIController
 
                     var theError = "OS: ${System.getProperty("os.name")} ${System.getProperty("os.arch")}\nJava: ${System.getProperty("java.runtime.version")}\nSK-IDE version: ${Info.version}\nTime: ${sdf.format(cal.time)}\n$trace"
@@ -133,7 +133,7 @@ class SystemErr : PrintStream(System.err) {
                         Desktop.getDesktop().browse(URI("https://discord.gg/Ud2WdVU"))
                     }
                     ctrl.githubLink.setOnAction {
-                        Desktop.getDesktop().browse(URI("https://github.com/Sk-IDE/SkIDE/issues"))
+                        Desktop.getDesktop().browse(URI("https://gitlab.com/sk-ide/SkIDE/issues"))
                     }
                     ctrl.copyToClipBoard.setOnAction {
                         val stringSelection = StringSelection(theError)

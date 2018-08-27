@@ -93,7 +93,7 @@ class ReplaceSequence(val manager: CodeManager) {
 
     fun cancel() {
         if (!computing) return
-
+        area.setPosition(area.getCurrentLine(), area.getColumnLineAmount(area.getCurrentLine()))
         computing = false
         list.clear()
         atIndex = -1

@@ -71,7 +71,7 @@ class SkUnity(val coreManager: CoreManager) {
 
     fun initer(content:String) {
 
-        val scene = GUIManager.getWindow("SkUnityQuestionFrame.fxml", "Ask on skUnity", true)
+        val scene = GUIManager.getWindow("fxml/SkUnityQuestionFrame.fxml", "Ask on skUnity", true)
         val controller = scene.controller as SkunityQuestionFameController
 
         val popUp = Popup()

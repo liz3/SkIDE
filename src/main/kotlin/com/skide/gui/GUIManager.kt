@@ -71,7 +71,7 @@ object GUIManager {
         val loader = FXMLLoader()
         val rootNode: Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
         val controller = loader.getController<Any>()
-        stage.icons.add(Image(javaClass.getResource("/icon.png").toExternalForm()))
+        stage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
         val scene = Scene(rootNode)
         scene.stylesheets.add(settings.getCssPath("Reset.css"))
         if (settings.get("theme") == "Dark") {
@@ -83,7 +83,7 @@ object GUIManager {
         if (show) stage.show()
 
         val window = ActiveWindow(stage, scene, loader, controller, idCounter)
-        activeGuis.put(idCounter, window)
+        activeGuis[idCounter] = window
         return window
     }
 

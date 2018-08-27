@@ -8,7 +8,7 @@ class ReplaceHandler(val manager: CodeManager, val project: OpenFileHolder) {
 
     private val area = manager.area
     private var visible = false
-    private val node = GUIManager.getScene("ReplaceFrame.fxml")
+    private val node = GUIManager.getScene("fxml/ReplaceFrame.fxml")
     private var entries = ArrayList<StringSearchResult>()
     var executed = false
     var currentPoint = 0

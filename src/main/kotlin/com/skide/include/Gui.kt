@@ -15,7 +15,6 @@ import javafx.scene.control.TabPane
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
-import javafx.scene.web.WebView
 import javafx.stage.Stage
 import java.io.File
 
@@ -74,16 +73,11 @@ class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String
             this.tabPane.tabs.remove(this.tab)
             tabPane.tabs.add(this.tab)
             externStage.title = f.name
-            externStage.icons.add(Image(javaClass.getResource("/icon.png").toExternalForm()))
+            externStage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
             externStage.scene = Scene(tabPane, 800.0, 600.0)
             externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("Reset.css"))
             if (openProject.coreManager.configManager.get("theme") == "Dark") {
                 externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("ThemeDark.css"))
-            }
-            if (coreManager.configManager.get("theme") == "Dark") {
-                externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("DarkHighlighting.css"))
-            } else {
-                externStage.scene.stylesheets.add(coreManager.configManager.getCssPath("HighlightingLight.css"))
             }
             externStage.setOnCloseRequest {
                 toggleExclude()

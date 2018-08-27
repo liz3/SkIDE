@@ -68,4 +68,7 @@ class ProjectGUIController {
 
     @FXML
     lateinit var browserUpperHBox: HBox
+
+    @FXML
+    lateinit var activeSideLabel:Label
 }
