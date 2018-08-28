@@ -1,5 +1,6 @@
 var editor = null;
 var selection = null;
+
 function getDefaultOptions() {
     return {
         language: 'skript',
@@ -7,6 +8,7 @@ function getDefaultOptions() {
         mouseWheelScrollSensitivity: 0.1
     };
 }
+
 function startEditor(options) {
     editor = monaco.editor.create(document.getElementById('root'), options);
     editor.onDidChangeModel(function (ev) {
@@ -31,6 +33,7 @@ function startEditor(options) {
     });
     return editor;
 }
+
 function addCommand(id) {
 
     editor._commandService.addCommand({
@@ -41,17 +44,16 @@ function addCommand(id) {
     })
 
 }
+
 function addCondition(key, keyId) {
-
     var condition = editor.createContextKey(key, false);
-    editor.addCommand(keyId, function() {
-
+    editor.addCommand(keyId, function () {
         skide.cmdCall(key);
-
-    }, key)
+    }, key);
 
     return condition;
 }
+
 function addAction(id, label) {
     return editor.addAction({
         id: id,
@@ -71,6 +73,7 @@ function addAction(id, label) {
         }
     });
 }
+
 var getFunc = function () {
     return function () {
     };
@@ -84,12 +87,12 @@ var getArr = function () {
 var getHook = function () {
     return skide;
 };
+
 function cbhReady() {
     require.config({paths: {'vs': 'lib/vs'}});
     require(['vs/editor/editor.main'], function () {
         registerSkript();
         selection = monaco.Selection;
         cbh.call();
-
     });
 }

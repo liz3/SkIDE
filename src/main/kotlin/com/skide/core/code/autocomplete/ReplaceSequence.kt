@@ -1,7 +1,6 @@
 package com.skide.core.code.autocomplete
 
 import com.skide.core.code.CodeManager
-import com.skide.core.code.CurrentStateInfo
 import java.util.*
 import java.util.regex.Pattern
 

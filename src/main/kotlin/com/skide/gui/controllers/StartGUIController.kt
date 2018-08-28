@@ -29,6 +29,9 @@ class StartGUIController {
 
     @FXML
     private lateinit var settings: Label
+
+    @FXML
+    private lateinit var aboutLabel: Label
     @FXML
     private lateinit var versionLabel: Label
 
@@ -61,6 +64,9 @@ class StartGUIController {
 
                 }
             }
+        }
+        aboutLabel.setOnMouseReleased {
+            GUIManager.showAbout()
         }
         versionLabel.text = "SK-IDE Ver. ${Info.version} Copyright 21Xayah.com - GPL v2 License"
         settings.setOnMouseReleased {

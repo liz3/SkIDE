@@ -73,7 +73,6 @@ class CodeManager {
         parseStructure()
 
     }
-
     private fun loadCrossFileAutoComplete(project: OpenFileHolder) {
 
         project.openProject.project.fileManager.projectFiles.values.forEach { f ->

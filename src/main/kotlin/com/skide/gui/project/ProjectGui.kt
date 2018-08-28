@@ -296,7 +296,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     val mouseDragHandler = MouseDragHandler(controller.editorMainTabPane, this.openProjectGuiManager)
 
     val filesTab = {
-        val tab = Tab("Project files")
+        val tab = Tab()
+        val iconView = ImageView(Image(javaClass.getResource("/images/files_main.png").toExternalForm()))
+        tab.graphic = iconView
         val treeView = TreeView<String>()
         //set the root item
         treeView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
@@ -320,7 +322,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         Pair(tab, treeView)
     }.invoke()
     val structureTab = {
-        val tab = Tab("Skript Structure")
+        val tab = Tab()
+        val iconView = ImageView(Image(javaClass.getResource("/images/file_skriptstructure.png").toExternalForm()))
+
+        tab.graphic = iconView
         val treeView = TreeView<String>()
         tab.content = treeView
         tab.isDisable = true
@@ -511,8 +516,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         }
 
+        controller.browserTabPane.style = "-fx-tab-min-width:5px;"
         controller.browserTabPane.tabs.addAll(filesTab.first, structureTab.first)
-
+        controller.browserTabPane.id = "sideTabArea"
         controller.activeSideLabel.text = "Files"
         controller.browserTabPane.selectionModel.selectedItemProperty().addListener { observableValue, tab, newTab ->
             if (newTab == filesTab.first) {

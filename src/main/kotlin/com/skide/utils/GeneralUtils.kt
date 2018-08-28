@@ -108,3 +108,17 @@ fun Button.setIcon(name: String, replaceAble: Boolean = true) {
 
     this.graphic = view
 }
+fun Button.setIcon(name: String, w:Double, h:Double, replaceAble: Boolean = true) {
+    var lnk = "/images/$name"
+    if (replaceAble) lnk += if (GUIManager.settings.get("theme") == "Dark") "_white" else "_black"
+    lnk += ".png"
+    val image = Image(GUIManager::javaClass.javaClass.getResource(lnk).toExternalForm())
+
+    this.text = ""
+    this.style = "-fx-background-color: rgba(0,0,0,0.0);"
+    this.setPrefSize(image.width, image.height)
+    val view = ImageView(image)
+    view.fitWidth = w
+    view.fitHeight = h
+    this.graphic = view
+}

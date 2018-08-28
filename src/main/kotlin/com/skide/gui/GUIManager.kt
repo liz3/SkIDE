@@ -1,8 +1,11 @@
 package com.skide.gui
 
+import com.skide.Info
 import com.skide.core.management.ConfigManager
+import com.skide.gui.controllers.AboutController
 import com.skide.include.ActiveWindow
 import com.skide.utils.Discord
+import com.skide.utils.setIcon
 import javafx.application.Application
 import javafx.application.Platform
 import javafx.concurrent.Worker.State
@@ -101,34 +104,30 @@ object GUIManager {
 
     fun showAbout() {
 
+        val win = getWindow("fxml/About.fxml", "About", false)
+        win.stage.isResizable = false
+        val controller = win.controller as AboutController
 
-        val stage = Stage()
-        val pane = BorderPane()
-        val view = WebView()
-        pane.center = view
-        stage.isResizable = false
-        stage.title = "About"
-        stage.scene = Scene(pane, 800.0, 450.0)
-
-        view.setOnMouseReleased {
-
+        controller.discordBtn.setIcon("discord" ,35.0, 35.0)
+        controller.gitlabBtn.setIcon("gitlab",35.0, 35.0, false)
+        controller.donateBtn.setIcon("donate",35.0, 35.0)
+        controller.imageView.image = Image(javaClass.getResource("/images/icon.png").toExternalForm())
+        controller.versionLabel.text = Info.version
+        controller.okBtn.setOnAction {
+            win.stage.close()
         }
-        view.engine.loadWorker.stateProperty().addListener { _, _, newValue ->
-
-            if (newValue === State.SUCCEEDED) {
-                val win = view.engine.executeScript("window") as JSObject
-                val instance = LinkOpener()
-                win.setMember("skide", instance)
-                stage.show()
-                Prompts.infoCheck("Attention", "reopen if links dont work!", "If you want to open a link, but it does not work, restart about!", Alert.AlertType.INFORMATION)
-
-            }
+        controller.discordBtn.setOnAction {
+            Desktop.getDesktop().browse(URI("https://discord.gg/Ud2WdVU"))
         }
-        view.engine.load("https://liz3.net/sk/about/")
-
-
+        controller.gitlabBtn.setOnAction {
+            Desktop.getDesktop().browse(URI("https://gitlab.com/sk-ide/SkIDE/issues"))
+        }
+        controller.donateBtn.setOnAction {
+            Desktop.getDesktop().browse(URI("https://paypal.me/liz3de"))
+        }
+        controller.infoTextLabel.text = "Developed and maintained by Liz3 aka 21 Xayah\nContributors: NickAc, 4rno, BaeFell, NanoDankster, Nicofisi, Scrumplex"
+        win.stage.show()
     }
-
     fun closeGui(id: Int) {
         val window = activeGuis[id]
 

@@ -1,9 +1,4 @@
-/*
-.code-area {
-    -fx-font-family: "Source Code Pro" !important;
-    -fx-font-size: 15px;
-}
- */
+
 .context-menu {
      -fx-padding: 0;
      -fx-font-size: 12px;
@@ -21,7 +16,6 @@
     -fx-background-color:  derive(-fx-base, -10%);
 
 }
-
 .tab-pane .tab:selected
 {
     -fx-background-color:  derive(-fx-base, -10%);
@@ -37,4 +31,9 @@
 .tab:selected .tab-label {
     -fx-border-style: none;
     -fx-focus-color: transparent;
+}
+
+#sideTabArea .tab:selected{
+    -fx-focus-color: transparent;
+    -fx-border-width: 0 0 0px 0;
 }
