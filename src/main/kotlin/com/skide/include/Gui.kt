@@ -16,6 +16,7 @@ import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.stage.Stage
+import org.controlsfx.control.BreadCrumbBar
 import java.io.File
 
 class ActiveWindow(val stage: Stage, val scene: Scene, val loader: FXMLLoader, val controller: Any, val id: Int) {
@@ -34,10 +35,18 @@ class ActiveWindow(val stage: Stage, val scene: Scene, val loader: FXMLLoader, v
 
 class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String, val tab: Tab, val tabPane: TabPane, var borderPane: BorderPane, val area: CodeArea, val coreManager: CoreManager, val codeManager: CodeManager = CodeManager(), val isExternal: Boolean = false) {
 
-    val currentStackBox = HBox()
+    val currentStackBox = BreadCrumbBar<Node>()
     var isExluded = false
     lateinit var externStage: Stage
 
+    init {
+        currentStackBox.style = "-fx-color: -fx-base;"
+        currentStackBox.setOnCrumbAction {
+            val line = it.selectedCrumb.value.linenumber
+            area.moveLineToCenter(line)
+            area.setSelection(line, 1, line, area.getColumnLineAmount(line))
+        }
+    }
 
     fun saveCode() {
         Thread {

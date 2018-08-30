@@ -37,7 +37,6 @@ class MouseDragHandler(val pane: TabPane, val coreManager: OpenProjectGuiManager
                     }
                 }
             }
-
         }
         pane.setOnDragOver {
             if (it.gestureSource != pane &&

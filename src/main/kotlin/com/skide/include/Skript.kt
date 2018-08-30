@@ -144,6 +144,7 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
         theType
     }.invoke()
 
+    override fun toString() = content
     init {
         var inBrace = false
         val arr = content.toCharArray()

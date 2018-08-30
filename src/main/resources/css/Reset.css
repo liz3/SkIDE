@@ -26,14 +26,17 @@
 .tab .tab-label {
     -fx-border-style: none;
     -fx-focus-color: transparent;
+}
 
+.menu-entry {
+    -fx-background-color:  derive(-fx-base, +15%);
 }
 .tab:selected .tab-label {
     -fx-border-style: none;
     -fx-focus-color: transparent;
 }
-
 #sideTabArea .tab:selected{
     -fx-focus-color: transparent;
     -fx-border-width: 0 0 0px 0;
+    -fx-background-color:  derive(-fx-background, +10%);
 }

@@ -17,6 +17,8 @@ import javafx.scene.control.TreeItem
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.HBox
 import netscape.javascript.JSObject
+import org.controlsfx.control.BreadCrumbBar
+import sun.reflect.generics.tree.Tree
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
@@ -35,7 +37,7 @@ class CodeManager {
     lateinit var replaceHandler: ReplaceHandler
     lateinit var sequenceReplaceHandler: ReplaceSequence
     lateinit var tooltipHandler: TooltipHandler
-    lateinit var hBox: HBox
+    lateinit var hBox: BreadCrumbBar<Node>
 
 
     private val parser = SkriptParser()
@@ -73,6 +75,7 @@ class CodeManager {
         parseStructure()
 
     }
+
     private fun loadCrossFileAutoComplete(project: OpenFileHolder) {
 
         project.openProject.project.fileManager.projectFiles.values.forEach { f ->
@@ -135,36 +138,28 @@ class CodeManager {
         val parseResult = parser.superParse(area.text)
         Platform.runLater {
             val stack = Vector<Node>()
-            //   var currNode: Node? = EditorUtils.getLineNode(area.getCaretLine(), parseResult) ?: return@runLater
-            /*
-             stack.addElement(currNode)
+            var currNode: Node? = EditorUtils.getLineNode(area.getCurrentLine(), parseResult) ?: return@runLater
 
-             while (currNode!!.parent != null) {
-                 stack.add(currNode.parent)
-                 currNode = currNode.parent!!
-             }
+            stack.addElement(currNode)
 
-             stack.reverse()
-             */
-
-            hBox.children.clear()
-            stack.forEach { node ->
-                val b = Button(node.content)
-                b.setPrefSize(80.0, 23.0)
-                b.setOnAction {
-
-                    val index = area.text.indexOf(node.raw);
-                    if (index == -1) return@setOnAction
-                    /*
-                        area.moveTo(index)
-                        area.selectLine()
-                        area.scrollYToPixel(node.linenumber * 14.95)
-                     */
-
-                }
-
-                hBox.children.add(b)
+            while (currNode != null) {
+                if(!stack.contains(currNode))stack.add(currNode)
+                if(currNode.parent == null) break
+                currNode = currNode.parent!!
             }
+
+            stack.reverse()
+
+            val root = TreeItem<Node>(Node(null, area.openFileHolder.name, 0, 1))
+            var item = root
+
+            stack.forEach {
+                val next = TreeItem<Node>(it)
+                item.children.add(next)
+                item = next
+            }
+            hBox.selectedCrumb = item
+
         }
         parseResult.forEach {
             if (it.nodeType != NodeType.UNDEFINED) addNodeToItemTree(rootStructureItem, it)

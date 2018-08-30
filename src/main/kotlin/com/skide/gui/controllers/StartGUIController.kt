@@ -39,6 +39,14 @@ class StartGUIController {
 
         iconImage.image = Image(javaClass.getResource("/images/icon.png").toExternalForm())
 
+        createNewProject.setOnMouseEntered { createNewProject.styleClass.add("menu-entry") }
+        createNewProject.setOnMouseExited { createNewProject.styleClass.remove("menu-entry") }
+        importProject.setOnMouseEntered { importProject.styleClass.add("menu-entry") }
+        importProject.setOnMouseExited { importProject.styleClass.remove("menu-entry") }
+        settings.setOnMouseEntered { settings.styleClass.add("menu-entry") }
+        settings.setOnMouseExited { settings.styleClass.remove("menu-entry") }
+        aboutLabel.setOnMouseEntered { aboutLabel.styleClass.add("menu-entry") }
+        aboutLabel.setOnMouseExited { aboutLabel.styleClass.remove("menu-entry") }
         createNewProject.setOnMouseClicked {
 
             val window = GUIManager.getWindow("fxml/NewProjectGui.fxml", "Create new Project", false)
@@ -52,6 +60,7 @@ class StartGUIController {
             window.stage.show()
 
         }
+
         projectsList.setOnMouseReleased {
             val selection = projectsList.selectionModel.selectedItem
 

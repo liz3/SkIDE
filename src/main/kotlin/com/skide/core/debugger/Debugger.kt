@@ -151,15 +151,8 @@ class SystemErr : PrintStream(System.err) {
 
         }
 
-
-
-
-
-
         super.println("[" + sdf.format(cal.time) + " | ERROR]" + msg)
     }
-
-
     override fun println(x: Any?) {
         println(x.toString())
     }
@@ -167,15 +160,12 @@ class SystemErr : PrintStream(System.err) {
 }
 
 class SystemOut : PrintStream(System.out) {
-
-
     override fun println(orig: String) {
         var msg = orig
         val cal = Calendar.getInstance();
         val sdf = SimpleDateFormat("d.M.Y HH:mm:ss");
         if (!msg.startsWith("["))
             msg = " $msg"
-        // area.appendText("$msg\n")
         super.println("[" + sdf.format(cal.time) + " | MSG]" + msg)
     }
 

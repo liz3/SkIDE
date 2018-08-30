@@ -66,37 +66,27 @@ object GUIManager {
         }
     }
     fun getWindow(fxFilePath: String, name: String, show: Boolean, stage: Stage = Stage()): ActiveWindow {
-
         idCounter++
         stage.title = name
-
-
         val loader = FXMLLoader()
         val rootNode: Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
         val controller = loader.getController<Any>()
         stage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
         val scene = Scene(rootNode)
         scene.stylesheets.add(settings.getCssPath("Reset.css"))
-        if (settings.get("theme") == "Dark") {
-            scene.stylesheets.add(settings.getCssPath("ThemeDark.css"))
-        }
+        if (settings.get("theme") == "Dark") scene.stylesheets.add(settings.getCssPath("ThemeDark.css"))
         stage.scene = scene
         stage.sizeToScene()
-
         if (show) stage.show()
-
         val window = ActiveWindow(stage, scene, loader, controller, idCounter)
         activeGuis[idCounter] = window
         return window
     }
 
     fun getScene(fxFilePath: String): Pair<Parent, Any> {
-
         val loader = FXMLLoader()
         val rootNode: Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
         val controller = loader.getController<Any>()
-
-
         return Pair(rootNode, controller)
     }
 
@@ -116,15 +106,9 @@ object GUIManager {
         controller.okBtn.setOnAction {
             win.stage.close()
         }
-        controller.discordBtn.setOnAction {
-            Desktop.getDesktop().browse(URI("https://discord.gg/Ud2WdVU"))
-        }
-        controller.gitlabBtn.setOnAction {
-            Desktop.getDesktop().browse(URI("https://gitlab.com/sk-ide/SkIDE/issues"))
-        }
-        controller.donateBtn.setOnAction {
-            Desktop.getDesktop().browse(URI("https://paypal.me/liz3de"))
-        }
+        controller.discordBtn.setOnAction { Desktop.getDesktop().browse(URI("https://discord.gg/Ud2WdVU")) }
+        controller.gitlabBtn.setOnAction { Desktop.getDesktop().browse(URI("https://gitlab.com/sk-ide/SkIDE/issues")) }
+        controller.donateBtn.setOnAction { Desktop.getDesktop().browse(URI("https://paypal.me/liz3de")) }
         controller.infoTextLabel.text = "Developed and maintained by Liz3 aka 21 Xayah\nContributors: NickAc, 4rno, BaeFell, NanoDankster, Nicofisi, Scrumplex"
         win.stage.show()
     }

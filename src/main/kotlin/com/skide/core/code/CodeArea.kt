@@ -26,14 +26,16 @@ class CallbackHook(private val rdy: () -> Unit) {
 
 class EventHandler(val area: CodeArea) {
 
-    fun eventNotify(name: String, ev: Any) {}
+    fun eventNotify(name: String, ev: Any) {
+
+    //    println(name)
+    }
 
     fun cmdCall(key: String) {
         if (area.editorCommands.containsKey(key)) {
             area.editorCommands[key]!!.cb()
         }
     }
-
     fun gotoCall(model: Any, position: Any, token: Any): Any {
         return area.createObjectFromMap(hashMapOf(
                 Pair("startLineNumber", 75),
@@ -41,7 +43,6 @@ class EventHandler(val area: CodeArea) {
                 Pair("startColumn", 5),
                 Pair("endColumn", 38)))
     }
-
     fun autoCompleteRequest(doc: Any, pos: Any, token: Any, context: Any): JSObject {
         val array = area.getArray()
         if (area.getCurrentColumn() == 1) {
@@ -49,8 +50,8 @@ class EventHandler(val area: CodeArea) {
         }
         return array
     }
-
     fun contextMenuEmit(ev: JSObject) {
+        area.openFileHolder.codeManager.parseStructure()
         if (((ev.getMember("event") as JSObject).getMember("leftButton") as Boolean) &&
                 !((ev.getMember("event") as JSObject).getMember("rightButton") as Boolean)) return
 
@@ -67,6 +68,7 @@ class EventHandler(val area: CodeArea) {
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
     }
 
+
     fun commandFire(id: String): JSObject {
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
         return area.getObject()
@@ -80,15 +82,8 @@ class EditorActionBinder(val id: String, val cb: () -> Unit) {
 
 class EditorCommandBinder(val id: String, val cb: () -> Unit) {
     lateinit var instance: JSObject
-
-    fun activate() {
-        instance.call("set", true)
-    }
-
-    fun deactivate() {
-        instance.call("set", false)
-    }
-
+    fun activate() = instance.call("set", true)
+    fun deactivate() = instance.call("set", false)
 }
 
 class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
@@ -148,7 +143,6 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     engine.executeScript("cbhReady();")
                 }
             }
-
             engine.load(this.javaClass.getResource("/www/index.html").toString())
         }
     }
@@ -310,6 +304,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     }
 
 
+    fun moveLineToCenter(line:Int) = editor.call("revealLineInCenter", line)
     fun setPosition(line: Int, column: Int) = editor.call("setPosition",
             createObjectFromMap(hashMapOf(Pair("column", column), Pair("lineNumber", line))))
     fun updateOptions(fields: Map<String, Any>) = editor.call("updateOptions", createObjectFromMap(fields))
