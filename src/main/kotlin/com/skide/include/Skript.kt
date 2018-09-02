@@ -59,7 +59,7 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
         if (content.toLowerCase().startsWith("if ")) {
             theType = NodeType.IF_STATEMENT
         }
-        if (content.toLowerCase().startsWith("else ")) {
+        if (content.toLowerCase().startsWith("else ") ||content.toLowerCase().startsWith("else if")) {
             theType = NodeType.ELSE_STATEMENT
         }
         if (content.toLowerCase().startsWith("loop ")) {

@@ -144,6 +144,8 @@ function registerSkript() {
     });
     monaco.languages.registerCompletionItemProvider('skript', {
         provideCompletionItems: function(model, position, token, context) {
+            var line = editor.getPosition().lineNumber;
+            var col = editor.getPosition().column
             return skide.autoCompleteRequest(model, position, token, context);
         }
     });

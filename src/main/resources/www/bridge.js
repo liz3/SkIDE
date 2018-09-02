@@ -19,6 +19,17 @@ function startEditor(options) {
 
         }
     });
+    editor.addCommand(9, function() {
+        getHook().escapePressed()
+    });
+    editor.onDidChangeCursorPosition(function (ev) {
+        if (ev == null) {
+            getHook().eventNotify("onDidChangeCursorPosition", {})
+        } else {
+            getHook().eventNotify("onDidChangeCursorPosition", ev)
+
+        }
+    });
     editor.onDidChangeModelContent(function (ev) {
         console.log(ev);
         if (ev == null) {

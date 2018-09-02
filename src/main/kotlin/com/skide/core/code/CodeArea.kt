@@ -28,13 +28,26 @@ class EventHandler(val area: CodeArea) {
 
     fun eventNotify(name: String, ev: Any) {
 
-    //    println(name)
+        if(name == "onDidChangeCursorPosition") {
+            if(area.line != area.getCurrentLine()) {
+                if(area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
+                    area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
+            }
+            area.line = area.getCurrentLine()
+
+        }
+
     }
 
     fun cmdCall(key: String) {
         if (area.editorCommands.containsKey(key)) {
             area.editorCommands[key]!!.cb()
         }
+    }
+
+    fun escapePressed() {
+        if(area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
+            area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
     }
     fun gotoCall(model: Any, position: Any, token: Any): Any {
         return area.createObjectFromMap(hashMapOf(
@@ -45,13 +58,17 @@ class EventHandler(val area: CodeArea) {
     }
     fun autoCompleteRequest(doc: Any, pos: Any, token: Any, context: Any): JSObject {
         val array = area.getArray()
-        if (area.getCurrentColumn() == 1) {
-            area.openFileHolder.codeManager.autoComplete.showGlobalAutoComplete(array)
+        if(area.coreManager.configManager.get("auto_complete") == "true") {
+            if (area.getCurrentColumn() <= 1) {
+                area.openFileHolder.codeManager.autoComplete.showGlobalAutoComplete(array)
+            } else {
+                area.openFileHolder.codeManager.autoComplete.showLocalAutoComplete(array)
+            }
         }
         return array
     }
+
     fun contextMenuEmit(ev: JSObject) {
-        area.openFileHolder.codeManager.parseStructure()
         if (((ev.getMember("event") as JSObject).getMember("leftButton") as Boolean) &&
                 !((ev.getMember("event") as JSObject).getMember("rightButton") as Boolean)) return
 
@@ -88,6 +105,7 @@ class EditorCommandBinder(val id: String, val cb: () -> Unit) {
 
 class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
 
+    var line = 1
     lateinit var view: WebView
     lateinit var engine: WebEngine
     lateinit var editor: JSObject
@@ -140,7 +158,9 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     }
                     win.setMember("skide", eventHandler)
                     win.setMember("cbh", cbHook)
-                    engine.executeScript("cbhReady();")
+                  Platform.runLater {
+                      engine.executeScript("cbhReady();")
+                  }
                 }
             }
             engine.load(this.javaClass.getResource("/www/index.html").toString())
@@ -155,6 +175,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             coreManager.skUnity.initer(content)
         }
     }
+
     private fun prepareEditorActions() {
         if (coreManager.skUnity.loggedIn) {
             addSkUnityReportAction()
@@ -210,10 +231,6 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             }
             ListViewPopUp("Run Configuration", map)
         }
-        addAction("test", "ReplaceTest") {
-            replaceContentInRange(getCurrentLine(), 1, getCurrentLine(), getColumnLineAmount(getCurrentLine()),
-                    "teeeeesssst")
-        }
 
         addAction("general_auto_complete_finish") {
             openFileHolder.codeManager.sequenceReplaceHandler.compute(getCurrentLine(), getLineContent(getCurrentLine()))
@@ -227,7 +244,6 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         }
 
     }
-
 
 
     fun activateCommand(key: String) {
@@ -304,9 +320,20 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     }
 
 
-    fun moveLineToCenter(line:Int) = editor.call("revealLineInCenter", line)
+    data class WordAtPos(val word: String, val endColumn: Int, val startColumn: Int)
+
+    fun getWordUntilPosition(line: Int = getCurrentLine(), pos: Int = getCurrentColumn()): WordAtPos {
+        val result = getModel().call("getWordUntilPosition",
+                createObjectFromMap(hashMapOf(Pair("column", pos), Pair("lineNumber", line)))) as JSObject
+
+        return WordAtPos(result.getMember("word") as String, result.getMember("endColumn") as Int, result.getMember("startColumn") as Int)
+    }
+
+
+    fun moveLineToCenter(line: Int) = editor.call("revealLineInCenter", line)
     fun setPosition(line: Int, column: Int) = editor.call("setPosition",
             createObjectFromMap(hashMapOf(Pair("column", column), Pair("lineNumber", line))))
+
     fun updateOptions(fields: Map<String, Any>) = editor.call("updateOptions", createObjectFromMap(fields))
 
     fun getCurrentLine() = engine.executeScript("editor.getPosition().lineNumber") as Int

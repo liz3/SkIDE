@@ -26,10 +26,12 @@ enum class CompletionType(val num:Int) {
     VARIABLE(5)
 
 }
-
+fun addSuggestionToObject(sugg:AutoCompleteItem, target: JSObject, index:Int) {
+    target.setSlot(index, sugg.createObject())
+}
 class AutoCompleteItem(val area:CodeArea, val label:String, val kind:CompletionType, val insertText:String, val detail:String = "", val documentation:String = "", val commandId:String = "") {
 
-    fun createObject(obj:JSObject): JSObject {
+    fun createObject(obj:JSObject = area.getObject()): JSObject {
 
         obj.setMember("kind", kind.num)
         obj.setMember("label", label)

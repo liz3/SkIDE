@@ -21,8 +21,6 @@ object EditorUtils {
 
         return null
     }
-
-
     private fun searchNode(line: Int, node: Node): Node? {
 
         if (node.linenumber == line) return node
@@ -56,42 +54,19 @@ object EditorUtils {
         return n
     }
 
-    fun filterByNodeType(type: NodeType, list: Vector<Node>, limiter: Node): Vector<Node> {
+    fun filterByNodeType(type: NodeType, node: Node): Vector<Node> {
 
         val found = Vector<Node>()
-
-        for (item in list) {
-            val result = filterByNodeTypeIterator(type, item, limiter)
-
-            for (resultItem in result) {
-                if (resultItem.first) return found
-                found.addElement(resultItem.second)
-            }
-        }
-
+        nodeByTypeIterator(type, node, found)
         return found
     }
 
-
-    private fun filterByNodeTypeIterator(type: NodeType, node: Node, limiter: Node): Vector<Pair<Boolean, Node>> {
-
-        val found = Vector<Pair<Boolean, Node>>()
-
-        if (node !== limiter) {
-            if (node.nodeType == type) found.add(Pair(false, node))
-
-            for (child in node.childNodes) {
-                val result = filterByNodeTypeIterator(type, child, limiter)
-                for (r in result) {
-                    found.add(r)
-                    if (r.first) return found
-                }
-            }
-        } else {
-            found.add(Pair(true, node))
+    private fun nodeByTypeIterator(type:NodeType, node:Node, list: Vector<Node>) {
+          node.childNodes.forEach {
+            nodeByTypeIterator(type, it, list)
         }
+        if(node.nodeType == type && !list.contains(node)) list.addElement(node)
 
-        return found
     }
 
     private fun filterByNodeTypeIterator(type: NodeType, node: Node): Vector<Node> {
