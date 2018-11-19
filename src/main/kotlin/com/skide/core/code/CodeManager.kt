@@ -112,12 +112,8 @@ class CodeManager {
     }
 
     fun gotoItem(item: TreeItem<String>) {
-
         if (item == rootStructureItem) return
         val lineSearched = item.value.split(" ")[0].toInt()
-        val split = area.text.split("\n")
-        val count = (0 until lineSearched - 1).sumBy { split[it].length + 1 }
-
         Platform.runLater {
             val length = area.getLineContent(lineSearched).length
             area.editor.call("revealLineInCenter", lineSearched)

@@ -1,13 +1,14 @@
 package com.skide.gui
 
-import com.skide.core.code.CodeManager
 import com.skide.core.management.OpenProject
 import com.skide.include.EditorMode
 import com.skide.include.OpenFileHolder
-import javafx.scene.control.*
+import javafx.scene.control.Alert
+import javafx.scene.control.ContextMenu
+import javafx.scene.control.MenuItem
+import javafx.scene.control.TreeView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
-import javafx.scene.text.Font
 import java.io.File
 
 object Menus {
@@ -82,84 +83,6 @@ object Menus {
 
 
         menu.items.addAll(newWindowItem, splitSide, splitDown)
-        return menu
-    }
-
-
-    fun getMenuForArea(codeManager: CodeManager, x: Double, y: Double): ContextMenu {
-
-        val defaultFont = Font.getDefault()
-
-        val menu = ContextMenu()
-
-        menu.style = "-fx-font-family: ${defaultFont.name} !important; -fx-font-size: ${defaultFont.size}"
-        val copyEntry = MenuItem("Copy")
-        copyEntry.setOnAction {
-        }
-        val pasteEntry = MenuItem("Paste")
-        pasteEntry.setOnAction {
-        }
-        val skUnityEntry = MenuItem("Ask on skUnity")
-
-
-
-
-        val compileMenu = Menu("Export/Compile")
-        for ((name, opt) in codeManager.findHandler.project.openProject.project.fileManager.compileOptions) {
-
-            val compileEntry = MenuItem(name)
-            compileEntry.setOnAction {
-
-                codeManager.findHandler.project.openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
-                codeManager.findHandler.project.openProject.compiler.compile(codeManager.findHandler.project.openProject.project, opt,
-                        codeManager.findHandler.project.openProject.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput())
-            }
-            compileMenu.items.add(compileEntry)
-        }
-     //   if (codeManager.area.selectedText.isNotEmpty()) menu.items.add(copyEntry)
-        menu.items.add(pasteEntry)
-        if (codeManager.findHandler.project.coreManager.skUnity.loggedIn) menu.items.add(skUnityEntry)
-        menu.items.add(compileMenu)
-        val runFileMenu = Menu("Run this File")
-        codeManager.findHandler.project.coreManager.serverManager.servers.forEach {
-
-            val serverItem = MenuItem(it.value.configuration.name)
-            serverItem.setOnAction { _ ->
-                codeManager.findHandler.project.openProject.run(it.value, codeManager.findHandler.project)
-            }
-            runFileMenu.items.add(serverItem)
-        }
-        val uploadFile = Menu("Upload this file")
-        codeManager.findHandler.project.openProject.project.fileManager.hosts.forEach {
-            val deployItem = MenuItem(it.name)
-            deployItem.setOnAction {ev ->
-                codeManager.findHandler.project.openProject.deployer.deploy(codeManager.area.text, codeManager.findHandler.project.f.name, it)
-            }
-            uploadFile.items.add(deployItem)
-        }
-        val runConfMenu = Menu("Run Configuration")
-        for ((name, opt) in codeManager.findHandler.project.openProject.project.fileManager.compileOptions) {
-            val confItem = Menu(name)
-            codeManager.findHandler.project.coreManager.serverManager.servers.forEach {
-
-                val serverItem = MenuItem(it.value.configuration.name)
-                serverItem.setOnAction { _ ->
-                    codeManager.findHandler.project.openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
-                    codeManager.findHandler.project.openProject.run(it.value, opt)
-                }
-                confItem.items.add(serverItem)
-            }
-            runConfMenu.items.add(confItem)
-
-
-        }
-
-
-        menu.items.add(runFileMenu)
-        menu.items.add(runConfMenu)
-        menu.items.add(uploadFile)
-
-
         return menu
     }
 

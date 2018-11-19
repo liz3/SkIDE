@@ -519,13 +519,13 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         controller.browserTabPane.tabs.addAll(filesTab.first, structureTab.first)
         controller.browserTabPane.id = "sideTabArea"
         controller.activeSideLabel.text = "Files"
-        controller.browserTabPane.selectionModel.selectedItemProperty().addListener { observableValue, tab, newTab ->
-            if (newTab == filesTab.first) {
+        controller.browserTabPane.selectionModel.selectedItemProperty().addListener { _, _, newTab ->
+            if (newTab == filesTab.first)
                 controller.activeSideLabel.text = "Files"
-            } else {
+             else
                 controller.activeSideLabel.text = "Structure"
 
-            }
+
         }
 
     }
@@ -551,30 +551,30 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
         editMenu.items.add(simpleMenuItem("Find") {
             openProjectGuiManager.openFiles.values.forEach {
-                if (it.tab === openProjectGuiManager.activeTab) {
+                if (it.tab === openProjectGuiManager.activeTab)
+                    it.area.triggerAction("actions.find")
 
-                }
             }
         })
         editMenu.items.add(simpleMenuItem("Find/Replace") {
             openProjectGuiManager.openFiles.values.forEach {
-                if (it.tab === openProjectGuiManager.activeTab) {
+                if (it.tab === openProjectGuiManager.activeTab)
+                    it.area.triggerAction("editor.action.startFindReplaceAction")
 
-                }
             }
         })
         editMenu.items.add(simpleMenuItem("Undo") {
             openProjectGuiManager.openFiles.values.forEach {
-                if (it.tab === openProjectGuiManager.activeTab) {
+                if (it.tab === openProjectGuiManager.activeTab)
+                    it.area.triggerAction("undo")
 
-                }
             }
         })
         editMenu.items.add(simpleMenuItem("Redo") {
             openProjectGuiManager.openFiles.values.forEach {
-                if (it.tab === openProjectGuiManager.activeTab) {
+                if (it.tab === openProjectGuiManager.activeTab)
+                    it.area.triggerAction("redo")
 
-                }
             }
         })
 
@@ -643,7 +643,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             val item = Menu(compOpt.key)
             openProjectGuiManager.openProject.project.fileManager.hosts.forEach {
                 val depItem = MenuItem(it.name)
-                depItem.setOnAction { ev ->
+                depItem.setOnAction { _ ->
                     openProjectGuiManager.openProject.deployer.depploy(compOpt.value, it)
                 }
                 item.items.add(depItem)

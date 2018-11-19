@@ -116,9 +116,7 @@ class ConfigManager(val coreManager: CoreManager) {
     }
 
     private fun writeMapToFile(file: File, map: HashMap<Long, PointerHolder>): Boolean {
-
         val arr = JSONArray()
-
         for ((id, value) in map) {
             val obj = JSONObject()
             obj.put("id", id)
@@ -182,7 +180,7 @@ class ConfigManager(val coreManager: CoreManager) {
 
     fun alterServer(id: Long, holder: PointerHolder): Boolean {
         if (!servers.containsKey(id)) return false
-        servers.put(id, holder)
+        servers[id] = holder
 
         return writeServersFile()
     }
@@ -190,7 +188,6 @@ class ConfigManager(val coreManager: CoreManager) {
     private fun readConfig(): Boolean {
 
         val readResult = readFile(configFile)
-
         if (readResult.first == FileReturnResult.SUCCESS) {
             val obj = JSONObject(readResult.second)
             lastOpened = obj.getInt("last_open")
@@ -206,11 +203,9 @@ class ConfigManager(val coreManager: CoreManager) {
                 writeDefaultSettings()
                 return readConfig()
             }
-
             settingsObj.keySet().forEach {
                 settings[it] = settingsObj.get(it)
             }
-
         }
         configLoaded = true
         if (get("theme") == "dark") set("theme", "Dark")
@@ -220,7 +215,6 @@ class ConfigManager(val coreManager: CoreManager) {
     private fun createFiles(): Boolean {
 
         val brackets = "[]".toByteArray()
-
         val objForServer = JSONObject()
         objForServer.put("servers", JSONArray())
         objForServer.put("apis", JSONArray())
@@ -239,14 +233,11 @@ class ConfigManager(val coreManager: CoreManager) {
         return true
     }
 
-    fun checkCssFiles() {
+    private fun checkCssFiles() {
 
         val folder = File(rootFolder, "css")
-        if (!folder.exists()) {
-            folder.mkdir()
+        if (!folder.exists()) folder.mkdir()
 
-
-        }
         this.javaClass.getResourceAsStream("/css/Reset.css").copyTo(FileOutputStream(File(folder, "Reset.css")))
         this.javaClass.getResourceAsStream("/css/ThemeDark.css").copyTo(FileOutputStream(File(folder, "ThemeDark.css")))
     }
@@ -263,13 +254,12 @@ class ConfigManager(val coreManager: CoreManager) {
     fun get(key: String): Any? {
         return {
             if (!settings.containsKey(key)) set(key, "")
-
             settings[key]
         }.invoke()
     }
 
     fun set(key: String, value: Any) {
-        settings.put(key, value)
+        settings[key] = value
         writeFile(getConfigObject().toString().toByteArray(), configFile, false, false)
     }
 
@@ -293,7 +283,6 @@ class ConfigManager(val coreManager: CoreManager) {
             settArr.put(key, value)
         }
         obj.put("settings", settArr)
-
         return obj
     }
 }

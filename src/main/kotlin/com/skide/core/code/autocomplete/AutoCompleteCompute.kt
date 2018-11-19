@@ -60,8 +60,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         }
         val varsToAdd = HashMap<String, AutoCompleteItem>()
         if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
-            for ((path, nodes) in manager.crossNodes) {
-                nodes.forEach {
+            for ((path, internalNodes) in manager.crossNodes) {
+                internalNodes.forEach { it ->
                     if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
                         val name = it.fields["name"] as String
 

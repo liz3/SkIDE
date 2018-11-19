@@ -40,7 +40,7 @@ object GUIManager {
                 pane.center = webView
                 val stage = Stage()
                 stage.scene = Scene(pane, 800.0, 600.0)
-                webView.engine.loadWorker.stateProperty().addListener { observable, oldValue, newValue ->
+                webView.engine.loadWorker.stateProperty().addListener { _, _, newValue ->
 
                     if(newValue == State.SUCCEEDED) {
                         println("Fired")

@@ -47,9 +47,7 @@ class ReplaceSequence(val manager: CodeManager) {
         parse(lineNumber, lineContent)
     }
 
-
     private fun parse(lineNumber:Int, lineContent:String) {
-
         list.clear()
         lineIndex = lineNumber
         originalLength = lineContent.length
@@ -59,15 +57,11 @@ class ReplaceSequence(val manager: CodeManager) {
         while (matcher.find()) {
             val start = matcher.start()
             val end = matcher.end()
-
-
-            if (matcher.group("VALUE") != null) {
+            if (matcher.group("VALUE") != null)
                 list.add(ReplaceSeuenceItem(start, end, ReplaceSequenceType.VALUE))
-            } else {
+            else
                 list.add(ReplaceSeuenceItem(start, end, ReplaceSequenceType.VALUE))
-            }
         }
-
         fire()
     }
 
@@ -82,7 +76,6 @@ class ReplaceSequence(val manager: CodeManager) {
         }
         val currentItem = list[atIndex]
         val nowLength = area.getLineContent(lineIndex).length
-
         if (currentItem != null) {
             area.setSelection(lineIndex, currentItem.absoluteStart + (nowLength - originalLength) + 1, lineIndex,  currentItem.absoluteEnd + (nowLength - originalLength) + 1)
         } else {
@@ -99,7 +92,6 @@ class ReplaceSequence(val manager: CodeManager) {
         originalLength = 0
         lineIndex = 0
         area.deactivateCommand("sequence_replacer")
-
     }
 
 }

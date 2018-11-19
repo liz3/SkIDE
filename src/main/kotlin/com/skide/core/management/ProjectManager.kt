@@ -31,8 +31,6 @@ class ProjectManager(val coreManager: CoreManager) {
         coreManager.configManager.addProject(pointHolder)
 
         if (!createProjectFiles(name, path, skriptVersion, id)) {
-
-
             return
         }
         if (open)

@@ -14,7 +14,7 @@ class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICon
     fun initDeployModule() {
 
 
-        ctrl.deployList.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        ctrl.deployList.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if(newValue == null) return@addListener
             ctrl.deployHostTextField.text = newValue.host
             ctrl.deployUsernameTextField.text = newValue.username
@@ -26,21 +26,21 @@ class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICon
                 ctrl.deployPassphraseLabel.text = newValue.privateKeyPath
             }
         }
-        ctrl.deployHostTextField.textProperty().addListener { observable, oldValue, newValue ->
+        ctrl.deployHostTextField.textProperty().addListener { _, _, newValue ->
             if (current() == null) return@addListener
             current().host = newValue
         }
-        ctrl.deployMethodComboBox.selectionModel.selectedItemProperty().addListener { observable, oldValue, newValue ->
+        ctrl.deployMethodComboBox.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if (current() == null) return@addListener
             current().type = RemoteHostType.valueOf(newValue)
         }
 
-        ctrl.deployFolderPathTextField.textProperty().addListener { observable, oldValue, newValue ->
+        ctrl.deployFolderPathTextField.textProperty().addListener { _, _, newValue ->
             if (current() == null) return@addListener
 
             current().folderPath = newValue
         }
-        ctrl.deployUsernameTextField.textProperty().addListener { observable, oldValue, newValue ->
+        ctrl.deployUsernameTextField.textProperty().addListener { _, _, newValue ->
             if (current() == null) return@addListener
 
             current().username = newValue
@@ -59,7 +59,7 @@ class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICon
 
             }
         }
-        ctrl.deployPortTextField.textProperty().addListener { observable, oldValue, newValue ->
+        ctrl.deployPortTextField.textProperty().addListener { _, _, newValue ->
             if (current() == null) return@addListener
 
             try {
@@ -68,7 +68,7 @@ class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICon
 
             }
         }
-        ctrl.deployPasswordField.textProperty().addListener { observable, oldValue, newValue ->
+        ctrl.deployPasswordField.textProperty().addListener { _, _, newValue ->
             if (current() == null) return@addListener
 
             if (newValue == null || newValue.isEmpty()) {

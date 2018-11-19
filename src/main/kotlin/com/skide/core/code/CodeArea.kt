@@ -1,7 +1,10 @@
+@file:Suppress("unused")
+
 package com.skide.core.code
 
 import com.skide.CoreManager
 import com.skide.gui.ListViewPopUp
+import com.skide.gui.WebViewDebugger
 import com.skide.include.Node
 import com.skide.include.OpenFileHolder
 import com.skide.utils.EditorUtils
@@ -27,7 +30,6 @@ class CallbackHook(private val rdy: () -> Unit) {
 }
 
 class EventHandler(val area: CodeArea) {
-
     fun eventNotify(name: String, ev: Any) {
 
         if(name == "onDidChangeCursorPosition") {
@@ -40,10 +42,12 @@ class EventHandler(val area: CodeArea) {
         }
         if(name == "keydown") {
             val eventArgs = ev as JSObject
-            if((eventArgs.getMember("code") as Int) == 9) {
+            val x = eventArgs.getMember("keyCode")
+            if((x as Int) == 9) {
                 if(area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
             }
+
         }
     }
 
@@ -117,6 +121,8 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     val editorActions = HashMap<String, EditorActionBinder>()
     val editorCommands = HashMap<String, EditorCommandBinder>()
     val eventHandler = EventHandler(this)
+    lateinit var debugger: WebViewDebugger
+    var findWidgetVisible = false
 
     fun getArray() = engine.executeScript("getArr();") as JSObject
     fun getObject() = engine.executeScript("getObj();") as JSObject
@@ -158,6 +164,8 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                         selection = engine.executeScript("selection") as JSObject
                         prepareEditorActions()
                         rdy(this)
+                        debugger = WebViewDebugger(this)
+                        debugger.start()
                     }
                     win.setMember("skide", eventHandler)
                     win.setMember("cbh", cbHook)
@@ -273,7 +281,9 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         for ((key, value) in fields) obj.setMember(key, value)
         return obj
     }
-
+    fun triggerAction(id:String) {
+        editor.call("trigger", "_", id)
+    }
     fun addAction(id: String, label: String, cb: () -> Unit) {
         if (editorActions.containsKey(id)) return
         val action = EditorActionBinder(id, cb)
