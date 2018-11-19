@@ -15,9 +15,11 @@ import javafx.scene.layout.StackPane
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import javafx.stage.Stage
-import javafx.event.EventHandler;
+import javafx.event.EventHandler
 import javafx.scene.control.Label
-import javafx.scene.web.*;
+import javafx.scene.input.KeyEvent
+import javafx.scene.web.*
+
 
 
 class CallbackHook(private val rdy: () -> Unit) {
@@ -36,7 +38,11 @@ class EventHandler(val area: CodeArea) {
             area.line = area.getCurrentLine()
 
         }
+        if(name == "keydown") {
+            val eventArgs = ev as JSObject
 
+            println("Code: ${eventArgs.getMember("code")} : ${eventArgs.getMember("keyCode")}")
+        }
     }
 
     fun cmdCall(key: String) {

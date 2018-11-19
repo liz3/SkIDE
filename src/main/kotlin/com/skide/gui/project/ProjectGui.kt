@@ -434,7 +434,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     private fun setupNewTabForDisplay(holder: OpenFileHolder) {
 
         Platform.runLater {
-            //       holder.area.style = "-fx-font-family: \"${coreManager.configManager.get("font")}\" !important; -fx-font-size: ${coreManager.configManager.get("font_size")}px;"
             holder.tab.isClosable = true
             holder.borderPane.bottom = holder.currentStackBox
             holder.borderPane.center = holder.area.view
@@ -730,17 +729,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             if (controller.editorMainTabPane.selectionModel.selectedItem != null) {
 
                 val tab = controller.editorMainTabPane.selectionModel.selectedItem
-
                 openProjectGuiManager.openFiles.values
                         .filter { it.tab == tab }
                         .forEach {
                             if (it.name.endsWith(".sk")) updateStructureTab(it)
-
-                            if (!it.name.endsWith(".sk")) {
-                                GUIManager.discord.update("Editing ${it.name}", "Coding")
-                            } else {
-                                GUIManager.discord.update("Editing script ${it.name}", "Coding")
-                            }
                         }
             } else {
                 controller.browserTabPane.selectionModel.select(0)

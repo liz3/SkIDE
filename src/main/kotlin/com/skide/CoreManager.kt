@@ -111,7 +111,6 @@ class CoreManager {
                             Prompts.configManager = configManager
                             Platform.runLater {
                                 stage.close()
-                                GUIManager.discord.update("In the main menu", "Idle")
                                 val window = guiManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false, Stage())
                                 stage.isResizable = false
                                 (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)

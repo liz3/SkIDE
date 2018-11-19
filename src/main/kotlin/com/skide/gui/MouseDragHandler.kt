@@ -1,14 +1,9 @@
 package com.skide.gui
 
-import com.skide.CoreManager
 import com.skide.gui.project.OpenProjectGuiManager
-import com.skide.gui.project.ProjectGuiEventListeners
 import javafx.scene.control.TabPane
-import jdk.nashorn.internal.objects.NativeRegExp.source
-import jnr.ffi.util.BufferUtil.putString
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
-import javafx.scene.input.Dragboard
 
 
 class MouseDragHandler(val pane: TabPane, val coreManager: OpenProjectGuiManager) {

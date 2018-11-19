@@ -4,7 +4,6 @@ import com.skide.Info
 import com.skide.core.management.ConfigManager
 import com.skide.gui.controllers.AboutController
 import com.skide.include.ActiveWindow
-import com.skide.utils.Discord
 import com.skide.utils.setIcon
 import javafx.application.Application
 import javafx.application.Platform
@@ -12,13 +11,11 @@ import javafx.concurrent.Worker.State
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
-import javafx.scene.control.Alert
 import javafx.scene.image.Image
 import javafx.scene.layout.BorderPane
 import javafx.scene.web.WebView
 import javafx.stage.Stage
 import javafx.stage.StageStyle
-import netscape.javascript.JSObject
 import java.awt.Desktop
 import java.net.URI
 import java.util.*
@@ -30,7 +27,6 @@ object GUIManager {
 
     val closingHooks = Vector<() -> Unit>()
 
-    val discord = Discord()
 
     val activeGuis: HashMap<Int, ActiveWindow> = HashMap()
     var idCounter = 0
