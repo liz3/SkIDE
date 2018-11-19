@@ -22,9 +22,6 @@ function startEditor(options) {
     editor.onKeyDown(function (ev) {
         getHook().eventNotify("keydown", ev);
     });
-    editor.addCommand(9, function() {
-        getHook().escapePressed()
-    });
     editor.onDidChangeCursorPosition(function (ev) {
         if (ev == null) {
             getHook().eventNotify("onDidChangeCursorPosition", {})

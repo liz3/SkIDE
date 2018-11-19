@@ -40,8 +40,10 @@ class EventHandler(val area: CodeArea) {
         }
         if(name == "keydown") {
             val eventArgs = ev as JSObject
-
-            println("Code: ${eventArgs.getMember("code")} : ${eventArgs.getMember("keyCode")}")
+            if((eventArgs.getMember("code") as Int) == 9) {
+                if(area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
+                    area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
+            }
         }
     }
 
@@ -49,11 +51,6 @@ class EventHandler(val area: CodeArea) {
         if (area.editorCommands.containsKey(key)) {
             area.editorCommands[key]!!.cb()
         }
-    }
-
-    fun escapePressed() {
-        if(area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
-            area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
     }
     fun gotoCall(model: Any, position: Any, token: Any): Any {
         return area.createObjectFromMap(hashMapOf(
