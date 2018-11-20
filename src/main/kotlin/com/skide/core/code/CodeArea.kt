@@ -200,7 +200,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             val map = HashMap<String, () -> Unit>()
             for ((name, opt) in openProject.project.fileManager.compileOptions) {
                 map[name] = {
-                    openProject.guiHandler.openFiles.forEach { it.value.saveCode() }
+                    openProject.guiHandler.openFiles.forEach { it.value.manager.saveCode() }
                     openProject.compiler.compile(openProject.project, opt,
                             openProject.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput())
                 }
@@ -233,7 +233,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     val map2 = HashMap<String, () -> Unit>()
                     coreManager.serverManager.servers.forEach {
                         map2[it.value.configuration.name] = {
-                            openFileHolder.openProject.guiHandler.openFiles.forEach { code -> code.value.saveCode() }
+                            openFileHolder.openProject.guiHandler.openFiles.forEach { code -> code.value.manager.saveCode() }
                             openFileHolder.openProject.run(it.value, opt)
                         }
                     }

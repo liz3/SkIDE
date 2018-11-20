@@ -62,7 +62,7 @@ object Menus {
         val menu = ContextMenu()
         val newWindowItem = MenuItem("Open in new Window")
         newWindowItem.setOnAction {
-            project.toggleExclude()
+            project.manager.toggleExclude()
 
         }
         val splitSide = MenuItem("Split vertically")

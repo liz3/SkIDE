@@ -264,7 +264,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     fun closeHook() {
         openProject.project.fileManager.lastOpen.clear()
         openFiles.values.forEach {
-            it.saveCode()
+            it.manager.saveCode()
             openProject.project.fileManager.lastOpen.addElement(it.f.name)
 
         }
@@ -334,8 +334,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
 
     fun setup() {
-
-
         replaceTemplateElements()
         registerBrowserEvents()
         registerEditorEvents()
@@ -343,7 +341,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         updateProjectFilesTreeView()
         mouseDragHandler.setup()
         guiReady()
-
         openProjectGuiManager.openProject.project.fileManager.lastOpen.forEach {
             openFile(openProjectGuiManager.openProject.project.fileManager.projectFiles[it]!!)
         }
@@ -353,17 +350,12 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     fun openFile(f: File, isExternal: Boolean = false) {
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
-
             for ((file, holder) in openProjectGuiManager.openFiles) {
-
                 if (file === f) {
-
                     holder.tabPane.selectionModel.select(holder.tab)
                     break
-
                 }
             }
-
             return
         }
         CodeArea(coreManager) {
@@ -380,11 +372,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     fun openFile(f: File, tabPane: TabPane, isExternal: Boolean = false) {
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
-
             for ((file, holder) in openProjectGuiManager.openFiles) {
-
                 if (file === f) {
-
                     holder.tabPane.selectionModel.select(holder.tab)
                     break
 
@@ -458,7 +447,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     fun registerEventsForNewFile(holder: OpenFileHolder) {
 
         holder.tab.setOnCloseRequest {
-            holder.saveCode()
+            holder.manager.saveCode()
             openProjectGuiManager.openFiles.remove(holder.f)
             System.gc()
             if (openProjectGuiManager.openFiles.size == 0) {
@@ -522,7 +511,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         controller.browserTabPane.selectionModel.selectedItemProperty().addListener { _, _, newTab ->
             if (newTab == filesTab.first)
                 controller.activeSideLabel.text = "Files"
-             else
+            else
                 controller.activeSideLabel.text = "Structure"
 
 
@@ -617,7 +606,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 val item = MenuItem(it.key)
                 item.setOnAction { _ ->
                     openProjectGuiManager.openFiles.forEach { f ->
-                        f.value.saveCode()
+                        f.value.manager.saveCode()
                     }
                     openProjectGuiManager.openProject.compiler.compile(openProjectGuiManager.openProject.project, it.value, openProjectGuiManager.lowerTabPaneEventManager.setupBuildLogTabForInput())
                 }

@@ -10,7 +10,7 @@ class AutoSaver(coreManager: CoreManager) {
               Thread.sleep(25000)
               coreManager.projectManager.openProjects.forEach {
                   it.guiHandler.openFiles.forEach { f ->
-                      f.value.saveCode()
+                      f.value.manager.saveCode()
                   }
               }
           }
