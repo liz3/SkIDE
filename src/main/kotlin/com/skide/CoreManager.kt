@@ -37,13 +37,15 @@ class CoreManager {
 
     private var debugLevel = DebugLevel.INFORMATION
 
-    fun bootstrap(args: Array<String>) {
+    fun bootstrap(args: Array<String>, classLoader: ClassLoader?) {
 
+        if (classLoader != null) Info.classLoader = classLoader
         debugger = Debugger()
 
         val me = this
         guiManager.bootstrapCallback = { stage ->
             val loader = FXMLLoader()
+            if(Info.classLoader != null) loader.classLoader = Info.classLoader
             val parent = loader.load<Pane>(javaClass.getResourceAsStream("/fxml/LoadingGui.fxml"))
             parent.background = Background.EMPTY
             val controller = loader.getController<SplashGuiController>()

@@ -1,8 +1,0 @@
-[Desktop Entry]
-Comment=Integrated Development Environment for Skript
-Exec=desktop-launch $SNAP/bin/Sk-IDE
-GenericName=Integrated Development Environment for Skript
-Name=Sk-IDE
-NoDisplay=false
-StartupNotify=true
-Type=Application

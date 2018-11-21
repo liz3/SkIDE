@@ -23,6 +23,7 @@ import java.util.*
 
 object GUIManager {
 
+
     lateinit var settings: ConfigManager
 
     val closingHooks = Vector<() -> Unit>()
@@ -65,6 +66,7 @@ object GUIManager {
         idCounter++
         stage.title = name
         val loader = FXMLLoader()
+        if(Info.classLoader != null) loader.classLoader = Info.classLoader
         val rootNode: Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
         val controller = loader.getController<Any>()
         stage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
@@ -81,6 +83,7 @@ object GUIManager {
 
     fun getScene(fxFilePath: String): Pair<Parent, Any> {
         val loader = FXMLLoader()
+        if(Info.classLoader != null) loader.classLoader = Info.classLoader
         val rootNode: Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
         val controller = loader.getController<Any>()
         return Pair(rootNode, controller)

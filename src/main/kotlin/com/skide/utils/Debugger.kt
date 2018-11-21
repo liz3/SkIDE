@@ -6,5 +6,4 @@ enum class DebugLevel(val lvl: Int) {
     WARNINGS(1),
     INFORMATION(2),
     VERBOSE(3)
-
 }
