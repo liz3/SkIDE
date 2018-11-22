@@ -16,6 +16,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     val area = manager.area
     val addonSupported = project.openProject.addons
+    val keyWordsGen = getKeyWords()
 
     fun createCommand() {
 
@@ -164,9 +165,19 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             addSuggestionToObject(it, array, count)
             count++
         }
+        keyWordsGen.forEach {
+            addSuggestionToObject(it, array, count)
+            count++
+        }
 
     }
-
+    private fun getKeyWords(): Vector<AutoCompleteItem> {
+        val vector = Vector<AutoCompleteItem>()
+        arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "else", "else if", "trigger", "on", "while", "is").forEach {
+            vector.add(AutoCompleteItem(area, it, CompletionType.KEYWORD, "$it ", "Generic Keyword"))
+        }
+        return vector
+    }
     fun showGlobalAutoComplete(array: JSObject) {
 
         var count = 0

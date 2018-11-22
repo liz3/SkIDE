@@ -8,6 +8,8 @@ import com.skide.gui.WebViewDebugger
 import com.skide.include.Node
 import com.skide.include.OpenFileHolder
 import com.skide.utils.EditorUtils
+import com.skide.utils.OperatingSystemType
+import com.skide.utils.getOS
 import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.scene.web.WebEngine
@@ -46,6 +48,11 @@ class EventHandler(val area: CodeArea) {
             if((x as Int) == 9) {
                 if(area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
+            }
+            if(getOS() == OperatingSystemType.MAC_OS) {
+                //TODO needs further investigation
+                if(x == 55 && ev.getMember("metaKey") as Boolean) area.triggerAction("undo")
+                if(x == 56 && ev.getMember("metaKey") as Boolean) area.triggerAction("redo")
             }
 
         }
