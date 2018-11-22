@@ -18,8 +18,14 @@ class SkriptParser {
 
             val tabCount = getTabCount(line)
             if (tabCount == 0) {
-                if(line == "") {
-                    nodes.addElement(Node(null, "", 0, count))
+                if (line.isBlank()) {
+                    if (currentLevel > 0) {
+                        val node = Node(lastActive.parent, line, currentLevel, count)
+                        lastActive.parent!!.childNodes.addElement(node)
+                        lastActive = node
+                    } else {
+                        nodes.addElement(Node(null, "", 0, count))
+                    }
                     continue
                 }
                 lastActive = Node(null, line, 0, count)

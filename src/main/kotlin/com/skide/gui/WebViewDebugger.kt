@@ -129,6 +129,10 @@ class WebViewDebugger(val area: CodeArea) {
             if (it.code == KeyCode.ENTER) {
                 if (!it.isShiftDown) {
                     val text = inputBox.text
+                    if(text == "//clear") {
+                        outputArea.clear()
+                        return@setOnKeyPressed
+                    }
                     Platform.runLater {
                         try {
                             val result = engine.executeScript(text)

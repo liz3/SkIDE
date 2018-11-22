@@ -57,11 +57,21 @@ class EventHandler(val area: CodeArea) {
         }
     }
     fun gotoCall(model: Any, position: Any, token: Any): Any {
-        return area.createObjectFromMap(hashMapOf(
-                Pair("startLineNumber", 75),
-                Pair("endLineNumber", 75),
-                Pair("startColumn", 5),
-                Pair("endColumn", 38)))
+        val pos = position as JSObject
+        val lineNumber = pos.getMember("lineNumber") as Int
+        val column = pos.getMember("column") as Int
+
+        val result = area.openFileHolder.codeManager.definitonFinder.search(lineNumber, column, area.getWordAtPosition(lineNumber, column))
+
+        return if(result.success) {
+            area.createObjectFromMap(hashMapOf(
+                    Pair("startLineNumber", result.line),
+                    Pair("endLineNumber", result.line),
+                    Pair("startColumn", result.column),
+                    Pair("endColumn", result.column)))
+        } else {
+            area.getObject()
+        }
     }
     fun autoCompleteRequest(doc: Any, pos: Any, token: Any, context: Any): JSObject {
         val array = area.getArray()

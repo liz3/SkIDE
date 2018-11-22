@@ -40,7 +40,6 @@ function startEditor(options) {
         }
     });
     editor.onKeyDown(function (ev) {
-        console.log(ev);
         getHook().eventNotify("keydown", ev);
     });
     editor.onDidChangeCursorPosition(function (ev) {
@@ -52,7 +51,6 @@ function startEditor(options) {
         }
     });
     editor.onDidChangeModelContent(function (ev) {
-        console.log(ev);
         if (ev == null) {
             getHook().eventNotify("onDidChangeModelContent", {})
         } else {

@@ -4,6 +4,7 @@ import com.skide.include.MethodParameter
 import com.skide.include.Node
 import com.skide.include.NodeType
 import java.util.*
+import java.util.regex.Pattern
 
 class NodeBuilder(val node: Node) {
 
@@ -40,6 +41,11 @@ class NodeBuilder(val node: Node) {
         } else if (content.toLowerCase().startsWith("options:")) {
             theType = NodeType.OPTIONS
         }
+        val regex = Pattern.compile("\\S+\\(.*\\)")
+        if(regex.matcher(content).matches()) {
+            theType = NodeType.FUNCTION_CALL
+            fields["name"] = content.split("(").first()
+        }
         if (content.toLowerCase().startsWith("function ")) {
             //parse method stuff
             parseMethodParameters()
@@ -56,6 +62,7 @@ class NodeBuilder(val node: Node) {
             fields.put("name", content.replace(":", "").replace("on ", ""))
             theType = NodeType.EVENT
         }
+
         if (content.toLowerCase().startsWith("if ")) {
             theType = NodeType.IF_STATEMENT
         }

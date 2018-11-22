@@ -29,6 +29,7 @@ class CodeManager {
     lateinit var crossNodes: HashMap<String, Vector<Node>>
     lateinit var findHandler: FindHandler
     lateinit var replaceHandler: ReplaceHandler
+    lateinit var definitonFinder: DefinitionsFinder
     lateinit var sequenceReplaceHandler: ReplaceSequence
     lateinit var tooltipHandler: TooltipHandler
     lateinit var hBox: BreadCrumbBar<Node>
@@ -48,6 +49,7 @@ class CodeManager {
         findHandler = FindHandler(this, project)
         replaceHandler = ReplaceHandler(this, project)
         tooltipHandler = TooltipHandler(this, project)
+        definitonFinder = DefinitionsFinder(this)
         if (project.coreManager.configManager.get("highlighting") == "true") {
             highlighter = Highlighting(this)
 
@@ -118,7 +120,7 @@ class CodeManager {
             val length = area.getLineContent(lineSearched).length
             area.editor.call("revealLineInCenter", lineSearched)
             area.editor.call("setSelection", area.createObjectFromMap(hashMapOf(Pair("startLineNumber", lineSearched),
-                    Pair("endLineNumber", lineSearched), Pair("startColumn", 0), Pair("endColumn", length))))
+                    Pair("endLineNumber", lineSearched), Pair("startColumn", 0), Pair("endColumn", length + 1))))
         }
     }
 
@@ -169,6 +171,9 @@ class CodeManager {
             }
             if (node.nodeType == NodeType.EVENT) {
                 name += ": " + node.fields["name"]
+            }
+            if(node.nodeType == NodeType.FUNCTION_CALL) {
+                name += ": ${node.fields["name"]}"
             }
             if (node.nodeType == NodeType.FUNCTION) {
                 name += ": " + node.fields["name"] + " :" + node.fields["return"]

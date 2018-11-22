@@ -19,7 +19,8 @@ enum class NodeType {
     FUNCTION,
     UNDEFINED,
     INVALID,
-    CLASS
+    CLASS,
+    FUNCTION_CALL
 }
 
 class MethodParameter(val name: String, val type: String, val value: String)
@@ -29,4 +30,6 @@ class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val lin
     val nodeType = builder.getType()
     override fun toString() = builder.content
     val fields = builder.fields
+
+    fun getContent() = builder.content
 }

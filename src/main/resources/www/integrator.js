@@ -149,6 +149,7 @@ function registerSkript() {
     });
     monaco.languages.registerDefinitionProvider('skript', {
         provideDefinition: function (model, position, token) {
+            console.log(position, token)
             var result = skide.gotoCall(model, position, token);
             return {
                /*
