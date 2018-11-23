@@ -67,18 +67,22 @@ object Menus {
         }
         val splitSide = MenuItem("Split vertically")
         splitSide.setOnAction {
-            if(project.tab.tabPane != null && project.tab.tabPane.tabs.size > 1) {
-                project.openProject.guiHandler.switchMode(EditorMode.SIDE_SPLIT)
-                project.openProject.guiHandler.addTabPane(project.tab)
+            if (project.tab.tabPane != null && project.tab.tabPane.tabs.size > 1) {
+                try {
+                    project.openProject.guiHandler.switchMode(EditorMode.SIDE_SPLIT)
+                    project.openProject.guiHandler.addTabPane(project.tab)
+                }catch (e:Exception) {
+                    e.printStackTrace()
+                }
             }
 
         }
         val splitDown = MenuItem("Split Horizontally")
         splitDown.setOnAction {
-          if(project.tab.tabPane != null && project.tab.tabPane.tabs.size > 1) {
-              project.openProject.guiHandler.switchMode(EditorMode.DOWN_SPLIT)
-              project.openProject.guiHandler.addTabPane(project.tab)
-          }
+            if (project.tab.tabPane != null && project.tab.tabPane.tabs.size > 1) {
+                project.openProject.guiHandler.switchMode(EditorMode.DOWN_SPLIT)
+                project.openProject.guiHandler.addTabPane(project.tab)
+            }
         }
 
 

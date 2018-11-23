@@ -149,17 +149,8 @@ function registerSkript() {
     });
     monaco.languages.registerDefinitionProvider('skript', {
         provideDefinition: function (model, position, token) {
-            console.log(position, token)
-            var result = skide.gotoCall(model, position, token);
-            return {
-               /*
-                range: {
-                    startLineNumber: 70, endLineNumber: 70, startColumn: 5, endColumn: 38
-                },
-                */
-                uri: model.uri,
-                range: result
-            }
+            var k = Object.keys(token)
+            return skide.gotoCall(model, position, (k[0] == "isCancellationRequested" && k[1] == "onCancellationRequested"));
         }
     });
 }

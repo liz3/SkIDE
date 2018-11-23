@@ -10,7 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="552.0" prefWidth="826.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.GeneralSettingsGUIController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="552.0" prefWidth="826.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.GeneralSettingsGUIController">
    <children>
       <TabPane prefHeight="505.0" prefWidth="826.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
@@ -27,25 +27,10 @@
                         <CheckBox fx:id="settingsAutoCompleteCheck" layoutX="14.0" layoutY="64.0" mnemonicParsing="false" text="Enable auto-complete" />
                         <CheckBox fx:id="settingsHighlightingCheck" layoutX="13.0" layoutY="89.0" mnemonicParsing="false" text="Enable highlighting" />
                         <Button fx:id="settingsCssFileBtn" disable="true" layoutX="14.0" layoutY="437.0" mnemonicParsing="false" text="Open Highlighting File " />
-                        <Label layoutX="14.0" layoutY="147.0" text="Shortcut for (" />
-                        <TextField fx:id="keyParenField" layoutX="15.0" layoutY="164.0" />
-                        <Label layoutX="14.0" layoutY="189.0" text="Shortcut for [" />
-                        <TextField fx:id="keyBracketField" layoutX="15.0" layoutY="206.0" />
-                        <Label layoutX="14.0" layoutY="231.0" text="Shortcut for {" />
-                        <TextField fx:id="keyCurlyBracket" layoutX="15.0" layoutY="248.0" />
-                        <Label layoutX="14.0" layoutY="273.0" text="Shortcut for &quot;" />
-                        <TextField fx:id="keyQuoteField" layoutX="15.0" layoutY="290.0" />
                         <CheckBox fx:id="crossFileAutoComplete" layoutX="171.0" layoutY="64.0" mnemonicParsing="false" text="Enable cross-file auto-complete" />
-                        <Label layoutX="14.0" layoutY="325.0" text="Shortcut for auto-complete" />
-                        <TextField fx:id="autoCompleteCutField" layoutX="15.0" layoutY="342.0" />
-                        <Label layoutX="14.0" layoutY="367.0" text="Shortcut for fixes" />
-                        <TextField fx:id="fixesCutField" layoutX="15.0" layoutY="384.0" />
-                        <CheckBox fx:id="settingsInsightsCheck" layoutX="652.0" layoutY="14.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="160.0" text="Enable Insights" />
-                        <TextField fx:id="settingsInsightsPortField" layoutX="652.0" layoutY="52.0" />
                         <CheckBox fx:id="metaDataGenerateCheck" layoutX="171.0" layoutY="112.0" mnemonicParsing="false" text="Info Generate on new File" />
                         <CheckBox fx:id="settingsUpdateDataCheck" layoutX="171.0" layoutY="89.0" mnemonicParsing="false" text="Update data on restart" />
-                        <Label layoutX="652.0" layoutY="35.0" text="Port:" />
-                        <CheckBox fx:id="displayAdCheckBox" layoutX="13.0" layoutY="112.0" mnemonicParsing="false" text="Display Ad on startup" />
+                        <CheckBox fx:id="webViewDebuggerCheck" layoutX="13.0" layoutY="112.0" mnemonicParsing="false" text="Enable Editor Debugger" />
                      </children>
                   </Pane>
                </content></Tab>

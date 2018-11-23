@@ -88,44 +88,21 @@ class GeneralSettingsGUIController {
     lateinit var settingsAutoCompleteCheck: CheckBox
 
     @FXML
+    lateinit var webViewDebuggerCheck: CheckBox
+
+    @FXML
     lateinit var settingsHighlightingCheck: CheckBox
 
     @FXML
     lateinit var settingsCssFileBtn: Button
-
-    @FXML
-    lateinit var keyParenField: TextField
-
-    @FXML
-    lateinit var keyBracketField: TextField
-
-    @FXML
-    lateinit var keyCurlyBracket: TextField
-
-    @FXML
-    lateinit var keyQuoteField: TextField
-
     @FXML
     lateinit var crossFileAutoComplete: CheckBox
 
-    @FXML
-    lateinit var autoCompleteCutField: TextField
 
     @FXML
-    lateinit var fixesCutField: TextField
+    lateinit var metaDataGenerateCheck: CheckBox
 
     @FXML
-    lateinit var settingsInsightsCheck:CheckBox
+    lateinit var settingsUpdateDataCheck: CheckBox
 
-    @FXML
-    lateinit var metaDataGenerateCheck:CheckBox
-
-    @FXML
-    lateinit var settingsInsightsPortField:TextField
-
-    @FXML
-    lateinit var settingsUpdateDataCheck:CheckBox
-
-    @FXML
-    lateinit var displayAdCheckBox:CheckBox
 }

@@ -39,10 +39,8 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("font", ctrl.settingsFontTextField.text)
         coreManager.configManager.set("font_size", ctrl.settingsFontSizeTextField.text)
         coreManager.configManager.set("generate_meta_data", "${ctrl.metaDataGenerateCheck.isSelected}")
-        coreManager.configManager.set("enable_inspections", "${ctrl.settingsInsightsCheck.isSelected}")
-        coreManager.configManager.set("inspections_port", ctrl.settingsInsightsPortField.text)
         coreManager.configManager.set("meta_update", "${ctrl.settingsUpdateDataCheck.isSelected}")
-        coreManager.configManager.set("display_add", "${ctrl.displayAdCheckBox.isSelected}")
+        coreManager.configManager.set("webview_debug", "${ctrl.webViewDebuggerCheck.isSelected}")
 
         if(coreManager.configManager.get("jre_home") == "" && getOS() == OperatingSystemType.MAC_OS) {
             Platform.runLater {
@@ -72,38 +70,6 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
     }
 
     fun init() {
-
-
-        ctrl.keyBracketField.text = coreManager.configManager.get("bracket_cut").toString()
-        ctrl.keyBracketField.setOnKeyPressed {
-            setShortcut(it, ctrl.keyBracketField, "bracket_cut")
-        }
-        ctrl.keyCurlyBracket.text = coreManager.configManager.get("curly_cut").toString()
-        ctrl.keyCurlyBracket.setOnKeyPressed {
-            setShortcut(it, ctrl.keyCurlyBracket, "curly_cut")
-        }
-
-        ctrl.keyParenField.text = coreManager.configManager.get("paren_cut").toString()
-        ctrl.keyParenField.setOnKeyPressed {
-            setShortcut(it, ctrl.keyParenField, "paren_cut")
-        }
-
-        ctrl.keyQuoteField.text = coreManager.configManager.get("quote_cut").toString()
-        ctrl.keyQuoteField.setOnKeyPressed {
-            setShortcut(it, ctrl.keyQuoteField, "quote_cut")
-        }
-
-        ctrl.autoCompleteCutField.text = coreManager.configManager.get("ac_cut").toString()
-        ctrl.autoCompleteCutField.setOnKeyPressed {
-            setShortcut(it, ctrl.autoCompleteCutField, "ac_cut")
-        }
-
-        ctrl.fixesCutField.text = coreManager.configManager.get("fx_cut").toString()
-        ctrl.fixesCutField.setOnKeyPressed {
-            setShortcut(it, ctrl.fixesCutField, "fx_cut")
-        }
-
-
 
         ctrl.okBtn.setOnAction {
             deleted.forEach {
@@ -235,11 +201,8 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.settingsFontTextField.text = coreManager.configManager.get("font").toString()
         ctrl.settingsFontSizeTextField.text = coreManager.configManager.get("font_size").toString()
         ctrl.metaDataGenerateCheck.isSelected = coreManager.configManager.get("generate_meta_data") == "true"
-        ctrl.settingsInsightsCheck.isSelected = coreManager.configManager.get("enable_inspections") == "true"
         ctrl.settingsUpdateDataCheck.isSelected = coreManager.configManager.get("meta_update") == "true"
-        ctrl.displayAdCheckBox.isSelected = coreManager.configManager.get("display_add") == "true"
-
-        ctrl.settingsInsightsPortField.text = ( coreManager.configManager.get("inspections_port") as String)
+        ctrl.webViewDebuggerCheck.isSelected = coreManager.configManager.get("webview_debug") == "true"
     }
 
     private fun setNewValues() {

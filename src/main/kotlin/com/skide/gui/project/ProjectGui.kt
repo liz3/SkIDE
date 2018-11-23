@@ -99,6 +99,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                     it.setPrefSize(panesHeight, box.height)
                 }
             }
+
             AnchorPane.setTopAnchor(box, 0.0)
             AnchorPane.setRightAnchor(box, 0.0)
             AnchorPane.setBottomAnchor(box, 0.0)
@@ -107,17 +108,21 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             val root = openProject.eventManager.controller.mainCenterAnchorPane
             val basePane = TabPane()
             MouseDragHandler(basePane, this).setup()
-
-            basePane.tabs.addAll(mainTabPane.tabs)
+            val vtabs = Vector<Tab>()
+            mainTabPane.tabs.forEach {
+                vtabs.add(it)
+            }
             mainTabPane.tabs.clear()
-            box.children.add(basePane)
             root.children.clear()
             root.children.add(box)
+            box.children.add(basePane)
 
             otherTabPanes.addElement(basePane)
             this.mode = EditorMode.SIDE_SPLIT
             paneHolderNode = box
-            if (basePane.tabs.size != 0) basePane.selectionModel.select(0)
+            vtabs.forEach {
+                basePane.tabs.add(it)
+            }
         }
         if (mode == EditorMode.DOWN_SPLIT) {
             otherTabPanes.clear()
@@ -139,7 +144,10 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             val root = openProject.eventManager.controller.mainCenterAnchorPane
             val basePane = TabPane()
             MouseDragHandler(basePane, this).setup()
-            basePane.tabs.addAll(mainTabPane.tabs)
+            val vtabs = Vector<Tab>()
+            mainTabPane.tabs.forEach {
+                vtabs.add(it)
+            }
             mainTabPane.tabs.clear()
             box.children.add(basePane)
             root.children.clear()
@@ -147,9 +155,9 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             otherTabPanes.addElement(basePane)
             this.mode = EditorMode.DOWN_SPLIT
             paneHolderNode = box
-            if (basePane.tabs.size != 0) basePane.selectionModel.select(0)
-
-
+            vtabs.forEach {
+                basePane.tabs.add(it)
+            }
         }
     }
 
@@ -165,47 +173,46 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
         MouseDragHandler(tabPane, this).setup()
         if (mode == EditorMode.SIDE_SPLIT) {
 
-            Platform.runLater {
-                tabPane.tabs.add(tab)
-                val box = this.paneHolderNode as HBox
-                otherTabPanes.addElement(tabPane)
-                box.children.add(tabPane)
-                tabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
-                    if (tabPane.tabs.size == 0) {
-                        box.children.remove(tabPane)
-                        otherTabPanes.remove(tabPane)
-                        val total = box.width
-                        val panesHeight = total / otherTabPanes.size
-                        box.children.forEach {
-                            it as TabPane
-                            it.setPrefSize(panesHeight, box.height)
-                        }
-                    }
-                    if (otherTabPanes.size == 1) {
-                        val mainTabPane = openProject.eventManager.controller.editorMainTabPane
-                        val root = openProject.eventManager.controller.mainCenterAnchorPane
-                        otherTabPanes.forEach {
-                            mainTabPane.tabs.addAll(it.tabs)
-                        }
-                        otherTabPanes.clear()
-                        root.children.clear()
-                        root.children.add(mainTabPane)
-                        AnchorPane.setTopAnchor(mainTabPane, 0.0)
-                        AnchorPane.setRightAnchor(mainTabPane, 0.0)
-                        AnchorPane.setBottomAnchor(mainTabPane, 0.0)
-                        AnchorPane.setLeftAnchor(mainTabPane, 0.0)
+            tabPane.tabs.add(tab)
+            val box = this.paneHolderNode as HBox
+            otherTabPanes.addElement(tabPane)
+            box.children.add(tabPane)
+            tabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
-                        this.mode = EditorMode.NORMAL
+                if (tabPane.tabs.size == 0) {
+                    box.children.remove(tabPane)
+                    otherTabPanes.remove(tabPane)
+                    val total = box.width
+                    val panesHeight = total / otherTabPanes.size
+                    box.children.forEach {
+                        it as TabPane
+                        it.setPrefSize(panesHeight, box.height)
                     }
                 }
-                val total = box.width
-                val panesHeight = total / otherTabPanes.size
-                box.children.forEach {
-                    it as TabPane
+                if (otherTabPanes.size == 1) {
+                    val mainTabPane = openProject.eventManager.controller.editorMainTabPane
+                    val root = openProject.eventManager.controller.mainCenterAnchorPane
+                    otherTabPanes.forEach {
+                        mainTabPane.tabs.addAll(it.tabs)
+                    }
+                    otherTabPanes.clear()
+                    root.children.clear()
+                    root.children.add(mainTabPane)
+                    AnchorPane.setTopAnchor(mainTabPane, 0.0)
+                    AnchorPane.setRightAnchor(mainTabPane, 0.0)
+                    AnchorPane.setBottomAnchor(mainTabPane, 0.0)
+                    AnchorPane.setLeftAnchor(mainTabPane, 0.0)
 
-                    it.setPrefSize(panesHeight, box.height)
+                    this.mode = EditorMode.NORMAL
                 }
+            }
+            val total = box.width
+            val panesHeight = total / otherTabPanes.size
+            box.children.forEach {
+                it as TabPane
+
+                it.setPrefSize(panesHeight, box.height)
             }
 
         }
@@ -347,7 +354,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     }
 
 
-    fun openFile(f: File, isExternal: Boolean = false) {
+    fun openFile(f: File, isExternal: Boolean = false, cb:(OpenFileHolder) -> Unit = {}) {
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
             for ((file, holder) in openProjectGuiManager.openFiles) {
@@ -365,6 +372,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             it.openFileHolder = holder
             openProjectGuiManager.openFiles[f] = holder
             setupNewTabForDisplay(holder)
+
+            cb(holder)
         }
 
     }

@@ -3,28 +3,25 @@
 package com.skide.core.code
 
 import com.skide.CoreManager
+import com.skide.gui.DebugLevel
 import com.skide.gui.ListViewPopUp
 import com.skide.gui.WebViewDebugger
-import com.skide.include.Node
 import com.skide.include.OpenFileHolder
-import com.skide.utils.EditorUtils
 import com.skide.utils.OperatingSystemType
 import com.skide.utils.getOS
 import javafx.application.Platform
 import javafx.concurrent.Worker
-import javafx.scene.web.WebEngine
-import javafx.scene.web.WebView
-import netscape.javascript.JSObject
-import javafx.scene.Scene
-import javafx.scene.layout.StackPane
-import javafx.stage.Modality
-import javafx.stage.StageStyle
-import javafx.stage.Stage
 import javafx.event.EventHandler
+import javafx.scene.Scene
 import javafx.scene.control.Label
-import javafx.scene.input.KeyEvent
-import javafx.scene.web.*
-
+import javafx.scene.layout.StackPane
+import javafx.scene.web.WebEngine
+import javafx.scene.web.WebEvent
+import javafx.scene.web.WebView
+import javafx.stage.Modality
+import javafx.stage.Stage
+import javafx.stage.StageStyle
+import netscape.javascript.JSObject
 
 
 class CallbackHook(private val rdy: () -> Unit) {
@@ -34,25 +31,25 @@ class CallbackHook(private val rdy: () -> Unit) {
 class EventHandler(val area: CodeArea) {
     fun eventNotify(name: String, ev: Any) {
 
-        if(name == "onDidChangeCursorPosition") {
-            if(area.line != area.getCurrentLine()) {
-                if(area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
+        if (name == "onDidChangeCursorPosition") {
+            if (area.line != area.getCurrentLine()) {
+                if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
             }
             area.line = area.getCurrentLine()
 
         }
-        if(name == "keydown") {
+        if (name == "keydown") {
             val eventArgs = ev as JSObject
             val x = eventArgs.getMember("keyCode")
-            if((x as Int) == 9) {
-                if(area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
+            if ((x as Int) == 9) {
+                if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
             }
-            if(getOS() == OperatingSystemType.MAC_OS) {
+            if (getOS() == OperatingSystemType.MAC_OS) {
                 //TODO needs further investigation
-                if(x == 55 && ev.getMember("metaKey") as Boolean) area.triggerAction("undo")
-                if(x == 56 && ev.getMember("metaKey") as Boolean) area.triggerAction("redo")
+                if (x == 55 && ev.getMember("metaKey") as Boolean) area.triggerAction("undo")
+                if (x == 56 && ev.getMember("metaKey") as Boolean) area.triggerAction("redo")
             }
 
         }
@@ -63,26 +60,51 @@ class EventHandler(val area: CodeArea) {
             area.editorCommands[key]!!.cb()
         }
     }
+
     fun gotoCall(model: Any, position: Any, token: Any): Any {
         val pos = position as JSObject
         val lineNumber = pos.getMember("lineNumber") as Int
         val column = pos.getMember("column") as Int
 
         val result = area.openFileHolder.codeManager.definitonFinder.search(lineNumber, column, area.getWordAtPosition(lineNumber, column))
+        val obj = area.getObject()
+        if (!result.success) return obj
 
-        return if(result.success) {
-            area.createObjectFromMap(hashMapOf(
-                    Pair("startLineNumber", result.line),
-                    Pair("endLineNumber", result.line),
-                    Pair("startColumn", result.column),
-                    Pair("endColumn", result.column)))
-        } else {
-            area.getObject()
+        if (result.fName != "") {
+            area.openFileHolder.openProject.project.fileManager.projectFiles.values.forEach { f ->
+                if (f.name.endsWith(".sk") && f.name == result.fName && token as Boolean) {
+                    if (area.openFileHolder.openProject.guiHandler.openFiles.containsKey(f)) {
+                        val entry = area.openFileHolder.openProject.guiHandler.openFiles[f]
+                        if (entry != null) {
+                            entry.tabPane.selectionModel.select(entry.tab)
+                            entry.area.moveLineToCenter(result.line)
+                            entry.area.setSelection(result.line, 1, result.line, entry.area.getColumnLineAmount(result.line))
+                        }
+                    } else {
+                        area.openFileHolder.openProject.eventManager.openFile(f, false) {
+                            Platform.runLater {
+                                it.area.moveLineToCenter(result.line)
+                                it.area.setSelection(result.line, 1, result.line, it.area.getColumnLineAmount(result.line))
+
+                            }
+                        }
+                    }
+                }
+            }
+            return obj
         }
+        obj.setMember("range", area.createObjectFromMap(hashMapOf(
+                Pair("startLineNumber", result.line),
+                Pair("endLineNumber", result.line),
+                Pair("startColumn", result.column),
+                Pair("endColumn", result.column))))
+        obj.setMember("uri", (model as JSObject).getMember("uri"))
+        return obj
     }
+
     fun autoCompleteRequest(doc: Any, pos: Any, token: Any, context: Any): JSObject {
         val array = area.getArray()
-        if(area.coreManager.configManager.get("auto_complete") == "true") {
+        if (area.coreManager.configManager.get("auto_complete") == "true") {
             if (area.getCurrentColumn() <= 1) {
                 area.openFileHolder.codeManager.autoComplete.showGlobalAutoComplete(array)
             } else {
@@ -182,13 +204,13 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                         prepareEditorActions()
                         rdy(this)
                         debugger = WebViewDebugger(this)
-                        debugger.start()
+                        if (coreManager.configManager.get("webview_debug") == "true") debugger.start()
                     }
                     win.setMember("skide", eventHandler)
                     win.setMember("cbh", cbHook)
-                  Platform.runLater {
-                      engine.executeScript("cbhReady();")
-                  }
+                    Platform.runLater {
+                        engine.executeScript("cbhReady();")
+                    }
                 }
             }
             engine.load(this.javaClass.getResource("/www/index.html").toString())
@@ -298,9 +320,11 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         for ((key, value) in fields) obj.setMember(key, value)
         return obj
     }
-    fun triggerAction(id:String) {
+
+    fun triggerAction(id: String) {
         editor.call("trigger", "_", id)
     }
+
     fun addAction(id: String, label: String, cb: () -> Unit) {
         if (editorActions.containsKey(id)) return
         val action = EditorActionBinder(id, cb)

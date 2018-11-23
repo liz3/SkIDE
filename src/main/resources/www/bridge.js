@@ -40,7 +40,6 @@ function startEditor(options) {
         }
     });
     editor.onKeyDown(function (ev) {
-        console.log(ev)
         getHook().eventNotify("keydown", ev);
     });
     editor.onDidChangeCursorPosition(function (ev) {
