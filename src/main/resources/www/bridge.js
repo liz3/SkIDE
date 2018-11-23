@@ -28,7 +28,6 @@ function getDefaultOptions() {
         mouseWheelScrollSensitivity: 0.1
     };
 }
-
 function startEditor(options) {
     editor = monaco.editor.create(document.getElementById('root'), options);
     editor.onDidChangeModel(function (ev) {

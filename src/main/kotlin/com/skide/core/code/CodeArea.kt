@@ -198,7 +198,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     val cbHook = CallbackHook {
                         val settings = engine.executeScript("getDefaultOptions();") as JSObject
                         settings.setMember("fontSize", coreManager.configManager.get("font_size"))
-                        settings.setMember("theme", "vs-dark")
+                       if(coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
                         startEditor(settings)
                         selection = engine.executeScript("selection") as JSObject
                         prepareEditorActions()

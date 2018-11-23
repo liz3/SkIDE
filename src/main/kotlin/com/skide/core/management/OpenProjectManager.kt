@@ -37,6 +37,8 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
         } else {
 
             externStage = Stage()
+            externStage.maxWidth = 2400.0
+            externStage.maxHeight = 2400.0
             val tabPane = TabPane()
             tabPane.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
 

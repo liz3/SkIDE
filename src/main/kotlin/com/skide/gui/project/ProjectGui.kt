@@ -48,10 +48,11 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
     fun startGui(): ProjectGuiEventListeners {
 
-
         val controller = window.controller as ProjectGUIController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
         eventManager.guiReady = {
+            window.stage.maxWidth = 2400.0
+            window.stage.maxHeight = 2400.0
             window.stage.show()
         }
         window.closeListener = {
