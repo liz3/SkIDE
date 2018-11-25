@@ -14,6 +14,10 @@ import javafx.concurrent.Worker
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.control.Label
+import javafx.scene.control.TextField
+import javafx.scene.input.Clipboard
+import javafx.scene.input.ClipboardContent
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.web.WebEngine
 import javafx.scene.web.WebEvent
@@ -46,6 +50,10 @@ class EventHandler(val area: CodeArea) {
                 if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
             }
+            if (x == 33 && ev.getMember("ctrlKey") as Boolean) {
+
+            }
+
             if (getOS() == OperatingSystemType.MAC_OS) {
                 //TODO needs further investigation
                 if (x == 55 && ev.getMember("metaKey") as Boolean) area.triggerAction("undo")
@@ -177,6 +185,17 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             view = WebView()
             engine = view.engine
 
+            view.setOnKeyReleased { ev ->
+
+                if(ev.code == KeyCode.C && ev.isControlDown) {
+
+                    val sel = getSelection()
+                    val cb = Clipboard.getSystemClipboard()
+                    val content = ClipboardContent()
+                    content.putString(getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn))
+                    cb.setContent(content)
+                }
+            }
             engine.onAlert = EventHandler<WebEvent<String>> { event ->
                 val popup = Stage()
                 popup.initStyle(StageStyle.UTILITY)
