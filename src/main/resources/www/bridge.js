@@ -29,6 +29,11 @@ function getDefaultOptions() {
     };
 }
 function startEditor(options) {
+  /*
+    document.execCommand = function (commandId) {
+        console.log(commandId);
+    }
+   */
     editor = monaco.editor.create(document.getElementById('root'), options);
     editor.onDidChangeModel(function (ev) {
         if (ev == null) {

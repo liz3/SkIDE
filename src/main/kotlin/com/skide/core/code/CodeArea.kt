@@ -47,14 +47,6 @@ class EventHandler(val area: CodeArea) {
         if (name == "keydown") {
             val eventArgs = ev as JSObject
             val x = eventArgs.getMember("keyCode")
-            if ((x as Int) == 9) {
-                if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
-                    area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
-            }
-            if (x == 33 && ev.getMember("ctrlKey") as Boolean) {
-
-            }
-
             if (getOS() == OperatingSystemType.MAC_OS) {
                 //TODO needs further investigation
                 if (x == 55 && ev.getMember("metaKey") as Boolean) area.triggerAction("undo")
@@ -186,16 +178,26 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             view = WebView()
             engine = view.engine
 
-            view.setOnKeyReleased { ev ->
+           /*
+            view.setOnKeyPressed { ev ->
+
+              if(ev.code == KeyCode.ESCAPE) {
+                  if (openFileHolder.codeManager.sequenceReplaceHandler.computing)
+                      openFileHolder.codeManager.sequenceReplaceHandler.cancel()
+              }
                 if(ev.code == KeyCode.C && verifyKeyCombo(ev)) {
 
-                    val sel = getSelection()
-                    val cb = Clipboard.getSystemClipboard()
-                    val content = ClipboardContent()
-                    content.putString(getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn))
-                    cb.setContent(content)
+                  Platform.runLater {
+                      val sel = getSelection()
+                      val cb = Clipboard.getSystemClipboard()
+                      val content = ClipboardContent()
+                      content.putString(getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn))
+                      cb.setContent(content)
+                      println("Copying")
+                  }
                 }
             }
+            */
             engine.onAlert = EventHandler<WebEvent<String>> { event ->
                 val popup = Stage()
                 popup.initStyle(StageStyle.UTILITY)
