@@ -350,7 +350,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         mouseDragHandler.setup()
         guiReady()
         openProjectGuiManager.openProject.project.fileManager.lastOpen.forEach {
-            openFile(openProjectGuiManager.openProject.project.fileManager.projectFiles[it]!!)
+            Platform.runLater {
+                openFile(openProjectGuiManager.openProject.project.fileManager.projectFiles[it]!!)
+
+            }
         }
     }
 

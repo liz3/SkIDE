@@ -4,6 +4,7 @@ import com.skide.gui.GUIManager
 import javafx.scene.control.Button
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.input.KeyEvent
 import java.awt.im.InputContext
 import java.io.File
 import java.io.FileInputStream
@@ -52,7 +53,16 @@ fun unzip(zipFile: String, outputFolder: String) {
     }
 
 }
+fun verifyKeyCombo(ev:KeyEvent): Boolean {
 
+    val os = getOS()
+    return when (os) {
+        OperatingSystemType.WINDOWS, OperatingSystemType.LINUX -> ev.isControlDown
+        OperatingSystemType.MAC_OS -> ev.isMetaDown && ev.isShortcutDown
+        else -> false
+    }
+
+}
 fun adjustVersion(value: String): String {
 
     var str = value.replace("-dev", ".")

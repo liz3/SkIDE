@@ -9,6 +9,7 @@ import com.skide.gui.WebViewDebugger
 import com.skide.include.OpenFileHolder
 import com.skide.utils.OperatingSystemType
 import com.skide.utils.getOS
+import com.skide.utils.verifyKeyCombo
 import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.event.EventHandler
@@ -186,8 +187,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             engine = view.engine
 
             view.setOnKeyReleased { ev ->
-
-                if(ev.code == KeyCode.C && ev.isControlDown) {
+                if(ev.code == KeyCode.C && verifyKeyCombo(ev)) {
 
                     val sel = getSelection()
                     val cb = Clipboard.getSystemClipboard()
@@ -227,9 +227,12 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     }
                     win.setMember("skide", eventHandler)
                     win.setMember("cbh", cbHook)
-                    Platform.runLater {
-                        engine.executeScript("cbhReady();")
-                    }
+                    Thread{
+                        Thread.sleep(260)
+                        Platform.runLater {
+                            engine.executeScript("cbhReady();")
+                        }
+                    }.start()
                 }
             }
             engine.load(this.javaClass.getResource("/www/index.html").toString())
