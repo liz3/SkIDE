@@ -187,13 +187,14 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         array.setSlot(count, AutoCompleteItem(area, "Command", CompletionType.CONSTRUCTOR, "", "Generates a Command", "This will open a Window to create a ", commandId = "create_command").createObject(area.getObject()))
         count++
 
+        val hasOn = area.getLineContent(area.getCurrentLine()).startsWith("on")
         area.openFileHolder.openProject.addons.values.forEach {
             it.forEach { ev ->
                 if (ev.type == DocType.EVENT) {
                     array.setSlot(count, AutoCompleteItem(area, "EVENT: ${ev.name} (${ev.addon.name})", CompletionType.METHOD, {
                         var text = ev.pattern
                         if (text.isEmpty()) text = ev.name
-                        text = text.replace("[on]", "on").replace("\n", "")
+                        text = text.replace("[on]", if(hasOn) "" else "on").replace("\n", "")
 
                         "on $text"
                     }.invoke(), commandId = "general_auto_complete_finish").createObject(area.getObject()))
