@@ -8,6 +8,7 @@ import com.skide.gui.ListViewPopUp
 import com.skide.gui.WebViewDebugger
 import com.skide.include.OpenFileHolder
 import com.skide.utils.OperatingSystemType
+import com.skide.utils.getLocale
 import com.skide.utils.getOS
 import com.skide.utils.verifyKeyCombo
 import javafx.application.Platform
@@ -18,6 +19,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
+import javafx.scene.input.DataFormat
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.web.WebEngine
@@ -34,6 +36,21 @@ class CallbackHook(private val rdy: () -> Unit) {
 }
 
 class EventHandler(val area: CodeArea) {
+
+    fun copy() {
+        Platform.runLater {
+            area.copySelectionToClipboard()
+        }
+    }
+
+    fun cut() {
+        Platform.runLater {
+            val selection = area.getSelection()
+            area.copySelectionToClipboard()
+            area.replaceContentInRange(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn, "")
+        }
+    }
+
     fun eventNotify(name: String, ev: Any) {
 
         if (name == "onDidChangeCursorPosition") {
@@ -42,16 +59,6 @@ class EventHandler(val area: CodeArea) {
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
             }
             area.line = area.getCurrentLine()
-
-        }
-        if (name == "keydown") {
-            val eventArgs = ev as JSObject
-            val x = eventArgs.getMember("keyCode")
-            if (getOS() == OperatingSystemType.MAC_OS) {
-                //TODO needs further investigation
-                if (x == 55 && ev.getMember("metaKey") as Boolean) area.triggerAction("undo")
-                if (x == 56 && ev.getMember("metaKey") as Boolean) area.triggerAction("redo")
-            }
 
         }
     }
@@ -171,6 +178,29 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         editor = getWindow().call("startEditor", options) as JSObject
     }
 
+    fun copySelectionToClipboard() {
+
+        val sel = getSelection()
+        val cb = Clipboard.getSystemClipboard()
+        val content = ClipboardContent()
+        val str = getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn)
+        if(str.isEmpty()) return
+        content.putString(str)
+        cb.setContent(content)
+    }
+    fun pasteSelectionFromClipboard() {
+
+        val selection = getSelection()
+        val cb = Clipboard.getSystemClipboard()
+        if(cb.hasContent(DataFormat.PLAIN_TEXT)) {
+            val text = cb.string
+
+
+            replaceContentInRange(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn, text)
+
+        }
+    }
+
     init {
         Platform.runLater {
             view = WebView()
@@ -183,17 +213,35 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     if (openFileHolder.codeManager.sequenceReplaceHandler.computing)
                         openFileHolder.codeManager.sequenceReplaceHandler.cancel()
                 }
-                if (ev.code == KeyCode.C && verifyKeyCombo(ev)) {
 
+                if (getOS() == OperatingSystemType.MAC_OS) {
+
+                    if (getLocale() == "de_DE") {
+                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
+                            triggerAction("undo")
+                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
+                            triggerAction("redo")
+                    } else {
+                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
+                            triggerAction("undo")
+                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
+                            triggerAction("redo")
+                    }
+
+                }
+                if (ev.code == KeyCode.C && verifyKeyCombo(ev)) {
                     Platform.runLater {
-                        val sel = getSelection()
-                        val cb = Clipboard.getSystemClipboard()
-                        val content = ClipboardContent()
-                        content.putString(getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn))
-                        cb.setContent(content)
-                        println("Copying")
+                        copySelectionToClipboard()
                     }
                 }
+                if (ev.code == KeyCode.X && verifyKeyCombo(ev)) {
+                    Platform.runLater {
+                        val selection = getSelection()
+                        copySelectionToClipboard()
+                        replaceContentInRange(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn, "")
+                    }
+                }
+
             }
 
             engine.onAlert = EventHandler<WebEvent<String>> { event ->
@@ -286,6 +334,11 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             }
             ListViewPopUp("Upload this file", map)
         }
+        /*
+          addActionCopyPaste("editor.action.clipboardCutAction", "Copy") {
+              println("Copy action called")
+          }
+         */
         addAction("runc", "Run Configuration") {
             val map = HashMap<String, () -> Unit>()
 
@@ -351,6 +404,13 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         if (editorActions.containsKey(id)) return
         val action = EditorActionBinder(id, cb)
         action.instance = getWindow().call("addAction", id, label)
+        editorActions[id] = action
+    }
+
+    fun addActionCopyPaste(id: String, label: String, cb: () -> Unit) {
+        if (editorActions.containsKey(id)) return
+        val action = EditorActionBinder(id, cb)
+        action.instance = getWindow().call("addActionCopyPaste", id, label)
         editorActions[id] = action
     }
 
