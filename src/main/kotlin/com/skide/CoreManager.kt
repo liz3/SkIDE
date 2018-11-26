@@ -39,6 +39,7 @@ class CoreManager {
 
     fun bootstrap(args: Array<String>, classLoader: ClassLoader?) {
 
+        println(getLocale())
         if (classLoader != null) Info.classLoader = classLoader
         debugger = Debugger()
 
@@ -90,7 +91,6 @@ class CoreManager {
                         val configLoadResult = configManager.load()
                         if (configLoadResult == ConfigLoadResult.ERROR) return null
                         GUIManager.settings = configManager
-                        GUIManager.displayAdd()
                         updateProgress(25.0, 100.0)
                         updateMessage("Checking skUnity access...")
                         skUnity.load()

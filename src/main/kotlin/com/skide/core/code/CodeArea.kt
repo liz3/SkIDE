@@ -8,6 +8,7 @@ import com.skide.gui.ListViewPopUp
 import com.skide.gui.WebViewDebugger
 import com.skide.include.OpenFileHolder
 import com.skide.utils.OperatingSystemType
+import com.skide.utils.getLocale
 import com.skide.utils.getOS
 import com.skide.utils.verifyKeyCombo
 import javafx.application.Platform
@@ -18,6 +19,7 @@ import javafx.scene.control.Label
 import javafx.scene.control.TextField
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
+import javafx.scene.input.DataFormat
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.StackPane
 import javafx.scene.web.WebEngine
@@ -33,7 +35,22 @@ class CallbackHook(private val rdy: () -> Unit) {
     fun call() = rdy()
 }
 
-class EventHandler(val area: CodeArea) {
+class EventHandler(private val area: CodeArea) {
+
+    fun copy() {
+        Platform.runLater {
+            area.copySelectionToClipboard()
+        }
+    }
+
+    fun cut() {
+        Platform.runLater {
+            val selection = area.getSelection()
+            area.copySelectionToClipboard()
+            area.replaceContentInRange(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn, "")
+        }
+    }
+
     fun eventNotify(name: String, ev: Any) {
 
         if (name == "onDidChangeCursorPosition") {
@@ -42,16 +59,6 @@ class EventHandler(val area: CodeArea) {
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
             }
             area.line = area.getCurrentLine()
-
-        }
-        if (name == "keydown") {
-            val eventArgs = ev as JSObject
-            val x = eventArgs.getMember("keyCode")
-            if (getOS() == OperatingSystemType.MAC_OS) {
-                //TODO needs further investigation
-                if (x == 55 && ev.getMember("metaKey") as Boolean) area.triggerAction("undo")
-                if (x == 56 && ev.getMember("metaKey") as Boolean) area.triggerAction("redo")
-            }
 
         }
     }
@@ -106,7 +113,8 @@ class EventHandler(val area: CodeArea) {
     fun autoCompleteRequest(doc: Any, pos: Any, token: Any, context: Any): JSObject {
         val array = area.getArray()
         if (area.coreManager.configManager.get("auto_complete") == "true") {
-            if (area.getCurrentColumn() <= 1) {
+
+            if (area.getCurrentColumn() <= 3) {
                 area.openFileHolder.codeManager.autoComplete.showGlobalAutoComplete(array)
             } else {
                 area.openFileHolder.codeManager.autoComplete.showLocalAutoComplete(array)
@@ -132,12 +140,10 @@ class EventHandler(val area: CodeArea) {
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
     }
 
-
     fun commandFire(id: String): JSObject {
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
         return area.getObject()
     }
-
 }
 
 class EditorActionBinder(val id: String, val cb: () -> Unit) {
@@ -173,31 +179,72 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         editor = getWindow().call("startEditor", options) as JSObject
     }
 
+    fun copySelectionToClipboard() {
+
+        val sel = getSelection()
+        val cb = Clipboard.getSystemClipboard()
+        val content = ClipboardContent()
+        val str = getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn)
+        if(str.isEmpty()) return
+        content.putString(str)
+        cb.setContent(content)
+    }
+    fun pasteSelectionFromClipboard() {
+
+        val selection = getSelection()
+        val cb = Clipboard.getSystemClipboard()
+        if(cb.hasContent(DataFormat.PLAIN_TEXT)) {
+            val text = cb.string
+
+
+            replaceContentInRange(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn, text)
+
+        }
+    }
+
     init {
         Platform.runLater {
             view = WebView()
             engine = view.engine
 
-           /*
+
             view.setOnKeyPressed { ev ->
 
-              if(ev.code == KeyCode.ESCAPE) {
-                  if (openFileHolder.codeManager.sequenceReplaceHandler.computing)
-                      openFileHolder.codeManager.sequenceReplaceHandler.cancel()
-              }
-                if(ev.code == KeyCode.C && verifyKeyCombo(ev)) {
-
-                  Platform.runLater {
-                      val sel = getSelection()
-                      val cb = Clipboard.getSystemClipboard()
-                      val content = ClipboardContent()
-                      content.putString(getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn))
-                      cb.setContent(content)
-                      println("Copying")
-                  }
+                if (ev.code == KeyCode.ESCAPE) {
+                    if (openFileHolder.codeManager.sequenceReplaceHandler.computing)
+                        openFileHolder.codeManager.sequenceReplaceHandler.cancel()
                 }
+
+                if (getOS() == OperatingSystemType.MAC_OS) {
+
+                    if (getLocale() == "de_DE") {
+                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
+                            triggerAction("undo")
+                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
+                            triggerAction("redo")
+                    } else {
+                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
+                            triggerAction("undo")
+                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
+                            triggerAction("redo")
+                    }
+
+                }
+                if (ev.code == KeyCode.C && verifyKeyCombo(ev)) {
+                    Platform.runLater {
+                        copySelectionToClipboard()
+                    }
+                }
+                if (ev.code == KeyCode.X && verifyKeyCombo(ev)) {
+                    Platform.runLater {
+                        val selection = getSelection()
+                        copySelectionToClipboard()
+                        replaceContentInRange(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn, "")
+                    }
+                }
+
             }
-            */
+
             engine.onAlert = EventHandler<WebEvent<String>> { event ->
                 val popup = Stage()
                 popup.initStyle(StageStyle.UTILITY)
@@ -219,7 +266,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     val cbHook = CallbackHook {
                         val settings = engine.executeScript("getDefaultOptions();") as JSObject
                         settings.setMember("fontSize", coreManager.configManager.get("font_size"))
-                       if(coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
+                        if (coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
                         startEditor(settings)
                         selection = engine.executeScript("selection") as JSObject
                         prepareEditorActions()
@@ -229,7 +276,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     }
                     win.setMember("skide", eventHandler)
                     win.setMember("cbh", cbHook)
-                    Thread{
+                    Thread {
                         Thread.sleep(260)
                         Platform.runLater {
                             engine.executeScript("cbhReady();")
@@ -288,6 +335,11 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             }
             ListViewPopUp("Upload this file", map)
         }
+        /*
+          addActionCopyPaste("editor.action.clipboardCutAction", "Copy") {
+              println("Copy action called")
+          }
+         */
         addAction("runc", "Run Configuration") {
             val map = HashMap<String, () -> Unit>()
 
@@ -353,6 +405,13 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         if (editorActions.containsKey(id)) return
         val action = EditorActionBinder(id, cb)
         action.instance = getWindow().call("addAction", id, label)
+        editorActions[id] = action
+    }
+
+    fun addActionCopyPaste(id: String, label: String, cb: () -> Unit) {
+        if (editorActions.containsKey(id)) return
+        val action = EditorActionBinder(id, cb)
+        action.instance = getWindow().call("addActionCopyPaste", id, label)
         editorActions[id] = action
     }
 

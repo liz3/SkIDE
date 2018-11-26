@@ -78,7 +78,6 @@ class ProjectManager(val coreManager: CoreManager) {
             return Pair(ProjectConfigurationLoadResult.SUCCESS, project)
 
         }
-
         return Pair(ProjectConfigurationLoadResult.ERROR, null)
     }
 

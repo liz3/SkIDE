@@ -25,16 +25,18 @@ function getDefaultOptions() {
     return {
         language: 'skript',
         automaticLayout: true,
-        mouseWheelScrollSensitivity: 0.1
+        mouseWheelScrollSensitivity: 0.1,
+        copyWithSyntaxHighlighting: false
     };
 }
 function startEditor(options) {
-  /*
-    document.execCommand = function (commandId) {
-        console.log(commandId);
-    }
-   */
     editor = monaco.editor.create(document.getElementById('root'), options);
+    editor.getAction("editor.action.clipboardCopyAction").run = function() {
+        getHook().copy();
+    };
+    editor.getAction("editor.action.clipboardCutAction").run = function() {
+        getHook().cut();
+    };
     editor.onDidChangeModel(function (ev) {
         if (ev == null) {
             getHook().eventNotify("onDidChangeModel", {})
@@ -42,9 +44,6 @@ function startEditor(options) {
             getHook().eventNotify("onDidChangeModel", ev)
 
         }
-    });
-    editor.onKeyDown(function (ev) {
-        getHook().eventNotify("keydown", ev);
     });
     editor.onDidChangeCursorPosition(function (ev) {
         if (ev == null) {
@@ -69,7 +68,6 @@ function startEditor(options) {
 }
 
 function addCommand(id) {
-
     editor._commandService.addCommand({
         id: id,
         handler: function () {
@@ -92,12 +90,7 @@ function addAction(id, label) {
     return editor.addAction({
         id: id,
         label: label,
-        keybindings: [
-            /*
-               monaco.KeyMod.CtrlCmd | monaco.KeyCode.F10,
-               monaco.KeyMod.chord(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K, monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_M)
-             */
-        ],
+        keybindings: [],
         precondition: null,
         keybindingContext: null,
         contextMenuGroupId: 'menu',
