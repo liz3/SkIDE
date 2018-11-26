@@ -1,28 +1,27 @@
-
 .context-menu {
      -fx-padding: 0;
      -fx-font-size: 12px;
  }
 
 .menu-item {
-    -fx-padding: 0;
+    -fx-padding: 5px;
 }
-.tab-pane
-{
+
+.tab-pane {
     -fx-tab-min-width:90px;
 }
-.tab-pane .tab
-{
-    -fx-background-color:  derive(-fx-base, -10%);
 
+.tab-pane .tab {
+    -fx-background-color:  derive(-fx-base, -10%);
 }
-.tab-pane .tab:selected
-{
+
+.tab-pane .tab:selected {
     -fx-background-color:  derive(-fx-base, -10%);
     -fx-focus-color: transparent;
     -fx-border-width: 0 0 1px 0;
     -fx-border-color: #5c9dff;
 }
+
 .tab .tab-label {
     -fx-border-style: none;
     -fx-focus-color: transparent;
@@ -31,11 +30,13 @@
 .menu-entry {
     -fx-background-color:  derive(-fx-base, +15%);
 }
+
 .tab:selected .tab-label {
     -fx-border-style: none;
     -fx-focus-color: transparent;
 }
-#sideTabArea .tab:selected{
+
+#sideTabArea .tab:selected {
     -fx-focus-color: transparent;
     -fx-border-width: 0 0 0px 0;
     -fx-background-color:  derive(-fx-background, +10%);
