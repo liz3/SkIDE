@@ -1,13 +1,18 @@
 package com.skide.gui
 
 import com.skide.core.code.CodeArea
+import com.skide.utils.readFile
 import javafx.application.Platform
 import javafx.scene.Scene
+import javafx.scene.control.Button
 import javafx.scene.control.TextArea
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.VBox
+import javafx.stage.FileChooser
 import javafx.stage.Stage
 import netscape.javascript.JSObject
+import java.io.File
 import java.lang.Exception
 import java.util.*
 
@@ -25,10 +30,11 @@ class ConsoleProxy(val debugger: WebViewDebugger) {
         debugger.serializeAndPrint(param)
 
     }
-    fun prePrint(x:Int) {
-        if(x == 0)  debugger.prePrint(DebugLevel.LOG)
-        if(x == 1)  debugger.prePrint(DebugLevel.WARN)
-        if(x == 2)  debugger.prePrint(DebugLevel.ERROR)
+
+    fun prePrint(x: Int) {
+        if (x == 0) debugger.prePrint(DebugLevel.LOG)
+        if (x == 1) debugger.prePrint(DebugLevel.WARN)
+        if (x == 2) debugger.prePrint(DebugLevel.ERROR)
     }
 }
 
@@ -106,9 +112,48 @@ class WebViewDebugger(val area: CodeArea) {
         }
     }
 
-    fun prePrint(level:DebugLevel) {
+    private fun getFile(name: String): File? {
+
+        val fileChooserWindow = Stage()
+        val dirChooser = FileChooser()
+        dirChooser.title = name
+        return dirChooser.showOpenDialog(fileChooserWindow)
+    }
+
+    fun getBox(): VBox {
+
+        val b = VBox()
+
+        val loadFile = Button("Load File")
+        val clearBtn = Button("Clear output")
+        clearBtn.setOnAction {
+            outputArea.clear()
+        }
+        loadFile.setOnAction {
+            val f = getFile("Choose Skript to load")
+
+            if (f != null) {
+                val text = readFile(f).second
+                Platform.runLater {
+                    try {
+                        val result = engine.executeScript(text)
+                        prePrint(DebugLevel.EXEC)
+                        serializeAndPrint(result)
+                    } catch (e: Exception) {
+                        prePrint(DebugLevel.EXEC)
+                        serializeAndPrint("ERROR WHILE EXECUTING: $text\n${e.message}")
+                    }
+                }
+            }
+        }
+        b.children.addAll(clearBtn, loadFile)
+        return b
+    }
+
+    fun prePrint(level: DebugLevel) {
         outputArea.appendText("[$level] ")
     }
+
     private fun setupStage() {
 
         inputBox = TextArea()
@@ -118,8 +163,10 @@ class WebViewDebugger(val area: CodeArea) {
         inputBox.prefHeight = 40.0
 
         val pane = BorderPane()
+        pane.top = getBox()
         pane.center = outputArea
         pane.bottom = inputBox
+
 
         val stage = Stage()
         stage.title = "Debugger"
@@ -129,10 +176,6 @@ class WebViewDebugger(val area: CodeArea) {
             if (it.code == KeyCode.ENTER) {
                 if (!it.isShiftDown) {
                     val text = inputBox.text
-                    if(text == "//clear") {
-                        outputArea.clear()
-                        return@setOnKeyPressed
-                    }
                     Platform.runLater {
                         try {
                             val result = engine.executeScript(text)

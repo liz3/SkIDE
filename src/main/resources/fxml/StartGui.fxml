@@ -7,16 +7,16 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="450.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.StartGUIController">
+<AnchorPane prefHeight="450.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.StartGUIController">
    <children>
-      <Pane layoutX="234.0" prefHeight="450.0" prefWidth="410.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <Pane layoutX="234.0" prefHeight="450.0" prefWidth="650.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <ListView fx:id="projectsList" prefHeight="450.0" prefWidth="235.0" />
+            <ImageView fx:id="iconImage" fitHeight="150.0" fitWidth="148.0" layoutX="367.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true" />
             <Label fx:id="createNewProject" layoutX="384.0" layoutY="205.0" text="Create new Project">
                <font>
                   <Font size="14.0" />
                </font></Label>
-            <ImageView fx:id="iconImage" fitHeight="150.0" fitWidth="148.0" layoutX="367.0" layoutY="31.0" pickOnBounds="true" preserveRatio="true" />
             <Label fx:id="importProject" layoutX="421.0" layoutY="225.0" text="Import">
                <font>
                   <Font size="14.0" />

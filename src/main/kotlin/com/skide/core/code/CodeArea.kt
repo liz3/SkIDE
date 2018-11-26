@@ -132,12 +132,10 @@ class EventHandler(val area: CodeArea) {
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
     }
 
-
     fun commandFire(id: String): JSObject {
         if (area.editorActions.containsKey(id)) area.editorActions[id]!!.cb()
         return area.getObject()
     }
-
 }
 
 class EditorActionBinder(val id: String, val cb: () -> Unit) {
@@ -178,26 +176,26 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
             view = WebView()
             engine = view.engine
 
-           /*
+
             view.setOnKeyPressed { ev ->
 
-              if(ev.code == KeyCode.ESCAPE) {
-                  if (openFileHolder.codeManager.sequenceReplaceHandler.computing)
-                      openFileHolder.codeManager.sequenceReplaceHandler.cancel()
-              }
-                if(ev.code == KeyCode.C && verifyKeyCombo(ev)) {
+                if (ev.code == KeyCode.ESCAPE) {
+                    if (openFileHolder.codeManager.sequenceReplaceHandler.computing)
+                        openFileHolder.codeManager.sequenceReplaceHandler.cancel()
+                }
+                if (ev.code == KeyCode.C && verifyKeyCombo(ev)) {
 
-                  Platform.runLater {
-                      val sel = getSelection()
-                      val cb = Clipboard.getSystemClipboard()
-                      val content = ClipboardContent()
-                      content.putString(getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn))
-                      cb.setContent(content)
-                      println("Copying")
-                  }
+                    Platform.runLater {
+                        val sel = getSelection()
+                        val cb = Clipboard.getSystemClipboard()
+                        val content = ClipboardContent()
+                        content.putString(getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn))
+                        cb.setContent(content)
+                        println("Copying")
+                    }
                 }
             }
-            */
+
             engine.onAlert = EventHandler<WebEvent<String>> { event ->
                 val popup = Stage()
                 popup.initStyle(StageStyle.UTILITY)
@@ -219,7 +217,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     val cbHook = CallbackHook {
                         val settings = engine.executeScript("getDefaultOptions();") as JSObject
                         settings.setMember("fontSize", coreManager.configManager.get("font_size"))
-                       if(coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
+                        if (coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
                         startEditor(settings)
                         selection = engine.executeScript("selection") as JSObject
                         prepareEditorActions()
@@ -229,7 +227,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     }
                     win.setMember("skide", eventHandler)
                     win.setMember("cbh", cbHook)
-                    Thread{
+                    Thread {
                         Thread.sleep(260)
                         Platform.runLater {
                             engine.executeScript("cbhReady();")
