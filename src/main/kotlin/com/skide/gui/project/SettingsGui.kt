@@ -79,7 +79,7 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
 
                     val item = currItem()
                     ctrl.plNameLabel.text = "Name: ${item.name}"
-                    ctrl.plAuthorLabel.text = "Author ${item.author}"
+                    ctrl.plAuthorLabel.text = "Author: ${item.author}"
                     ctrl.enableSupportCheckBox.isSelected = {
                         var endVal = false
                         var found = false

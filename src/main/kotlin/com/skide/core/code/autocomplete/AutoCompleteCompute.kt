@@ -196,7 +196,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         if (text.isEmpty()) text = ev.name
                         text = text.replace("[on]", if(hasOn) "" else "on").replace("\n", "")
 
-                        "on $text"
+                        text
                     }.invoke(), commandId = "general_auto_complete_finish").createObject(area.getObject()))
 
                     count++

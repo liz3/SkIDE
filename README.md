@@ -20,14 +20,16 @@ This will output the jar file to `build/libs`
 # Libraries, Frameworks and APIs in use
  - [Kotlin Language](http://kotlinlang.org/) - Programming language in use.
  - [JavaFX](http://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html) - GUI framework in use
+ - [ControlsFX](http://fxexperience.com/controlsfx/) - JavaFX addon for advanced components 
  - [Monaco](https://microsoft.github.io/monaco-editor/) - browser based code editor
  - [TerminalFX](https://github.com/javaterminal/TerminalFX) - JavaFX terminal-view library
- - [skUnity](http://skunity.com/) - Integration with skunity.com
- - [SkriptTools](https://skripttools.net/) - Advanced Skript tools
+ - [SkriptHub](http://skripthub.com/) - Provider for auto-complete data
+ - [skUnity](http://skunity.com/) - Integration with forums.skunity.com
+ - [SkriptTools](https://skripttools.net/) - Information to Skript binary meta data
  - [Gradle](https://gradle.org/) - Build system
- - [JavaFX Gradle Plugin](https://github.com/FibreFoX/javafx-gradle-plugin) - JavaFX plugin for build system
  - [JSON](https://www.json.org/json-en.html) - JSON implementation for Java
- - [Discord RPC](https://github.com/PSNRigner/discord-rpc-java) - Discord integration for Java
+ - [Jsch](http://www.jcraft.com/jsch/) - SSH implementation for Java
+ - [Apache Commons Net](https://commons.apache.org/proper/commons-net/) - Used for FTP implementation
 
 # License
 This project is licensed under the GNU General Public License v2.0. You can find more information about it in the [LICENSE](LICENSE) file.
