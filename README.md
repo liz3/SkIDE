@@ -1,7 +1,5 @@
 Sk-IDE
 ------
-[![Join the Discord](https://discordapp.com/api/guilds/324602899839844352/widget.png?style=shield)](https://discord.io/sk-ide)
-
 Sk-IDE is an integrated development environment (IDE) for the Skript language. Skript is a plugin for Minecraft multiplayer servers that allows easy scripting of server modifications. 
 This IDE provides a way to easily write Skripts, by providing auto-completion, syntax-highlighting and many more things.
 
