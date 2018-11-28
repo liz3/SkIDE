@@ -32,15 +32,20 @@ object GUIManager {
     val activeGuis: HashMap<Int, ActiveWindow> = HashMap()
     var idCounter = 0
 
-    fun getWindow(fxFilePath: String, name: String, show: Boolean, stage: Stage = Stage()): ActiveWindow {
+    fun getWindow(fxFilePath: String, name: String, show: Boolean, stage: Stage = Stage(), w: Double = -1.0, h: Double = -1.0): ActiveWindow {
         idCounter++
         stage.title = name
         val loader = FXMLLoader()
-        if(Info.classLoader != null) loader.classLoader = Info.classLoader
+        if (Info.classLoader != null) loader.classLoader = Info.classLoader
         val rootNode: Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
         val controller = loader.getController<Any>()
         stage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
-        val scene = Scene(rootNode)
+        val scene = if (w != -1.0)
+            Scene(rootNode, w, h)
+        else
+            Scene(rootNode)
+
+
         scene.stylesheets.add(settings.getCssPath("Reset.css"))
         if (settings.get("theme") == "Dark") scene.stylesheets.add(settings.getCssPath("ThemeDark.css"))
         stage.scene = scene
@@ -53,13 +58,13 @@ object GUIManager {
 
     fun getScene(fxFilePath: String): Pair<Parent, Any> {
         val loader = FXMLLoader()
-        if(Info.classLoader != null) loader.classLoader = Info.classLoader
+        if (Info.classLoader != null) loader.classLoader = Info.classLoader
         val rootNode: Parent = loader.load<Parent>(javaClass.getResourceAsStream("/$fxFilePath"))
         val controller = loader.getController<Any>()
         return Pair(rootNode, controller)
     }
 
-    var bootstrapCallback: (Stage) -> Unit = { _ ->}
+    var bootstrapCallback: (Stage) -> Unit = { _ -> }
 
     fun showAbout() {
 
@@ -67,9 +72,9 @@ object GUIManager {
         win.stage.isResizable = false
         val controller = win.controller as AboutController
 
-        controller.discordBtn.setIcon("discord" ,35.0, 35.0)
-        controller.gitlabBtn.setIcon("gitlab",35.0, 35.0, false)
-        controller.donateBtn.setIcon("donate",35.0, 35.0)
+        controller.discordBtn.setIcon("discord", 35.0, 35.0)
+        controller.gitlabBtn.setIcon("gitlab", 35.0, 35.0, false)
+        controller.donateBtn.setIcon("donate", 35.0, 35.0)
         controller.imageView.image = Image(javaClass.getResource("/images/icon.png").toExternalForm())
         controller.versionLabel.text = Info.version
         controller.okBtn.setOnAction {
@@ -81,6 +86,7 @@ object GUIManager {
         controller.infoTextLabel.text = "Developed and maintained by Liz3 aka 21 Xayah\nContributors: NickAc, 4rno, BaeFell, NanoDankster, Nicofisi, Scrumplex"
         win.stage.show()
     }
+
     fun closeGui(id: Int) {
         val window = activeGuis[id]
 

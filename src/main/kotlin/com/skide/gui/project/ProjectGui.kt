@@ -37,7 +37,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     var mode = EditorMode.NORMAL
     val openFiles = HashMap<File, OpenFileHolder>()
     val settings = SettingsGui(coreManager, this)
-    val window = GUIManager.getWindow("fxml/ProjectGui.fxml", openProject.project.name, false)
+    val window = GUIManager.getWindow("fxml/ProjectGui.fxml", openProject.project.name, false, w = 1920.0, h = 1080.0)
     lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
     val otherTabPanes = Vector<TabPane>()
     var paneHolderNode: Node = HBox()
@@ -372,8 +372,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         CodeArea(coreManager) {
 
             val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
-
             it.openFileHolder = holder
+            it.codeManager = holder.codeManager
             openProjectGuiManager.openFiles[f] = holder
             setupNewTabForDisplay(holder)
 
@@ -399,6 +399,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         CodeArea(coreManager) {
             val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), tabPane, BorderPane(), it, coreManager, isExternal = isExternal)
             it.openFileHolder = holder
+            it.codeManager = holder.codeManager
             openProjectGuiManager.openFiles.put(f, holder)
             setupNewTabForDisplay(holder)
         }

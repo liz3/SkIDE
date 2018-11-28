@@ -54,13 +54,18 @@ class EventHandler(private val area: CodeArea) {
     fun eventNotify(name: String, ev: Any) {
 
         if (name == "onDidChangeCursorPosition") {
-            if (area.line != area.getCurrentLine()) {
-                if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing)
+            val currentLine = area.getCurrentLine()
+            if (area.line != currentLine) {
+                if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing || area.getLineContent(currentLine).isBlank())
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
+
+                area.codeManager.parseResult = area.codeManager.parseStructure()
+                println("Reloaded Structure")
             }
-            area.line = area.getCurrentLine()
+            area.line = currentLine
 
         }
+
     }
 
     fun cmdCall(key: String) {
@@ -164,6 +169,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
     lateinit var editor: JSObject
     lateinit var selection: JSObject
     lateinit var openFileHolder: OpenFileHolder
+    lateinit var codeManager: CodeManager
     val editorActions = HashMap<String, EditorActionBinder>()
     val editorCommands = HashMap<String, EditorCommandBinder>()
     val eventHandler = EventHandler(this)
@@ -185,15 +191,16 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         val cb = Clipboard.getSystemClipboard()
         val content = ClipboardContent()
         val str = getContentRange(sel.startLineNumber, sel.endLineNumber, sel.startColumn, sel.endColumn)
-        if(str.isEmpty()) return
+        if (str.isEmpty()) return
         content.putString(str)
         cb.setContent(content)
     }
+
     fun pasteSelectionFromClipboard() {
 
         val selection = getSelection()
         val cb = Clipboard.getSystemClipboard()
-        if(cb.hasContent(DataFormat.PLAIN_TEXT)) {
+        if (cb.hasContent(DataFormat.PLAIN_TEXT)) {
             val text = cb.string
 
 
