@@ -60,7 +60,6 @@ class EventHandler(private val area: CodeArea) {
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
 
                 area.codeManager.parseResult = area.codeManager.parseStructure()
-                println("Reloaded Structure")
             }
             area.line = currentLine
 

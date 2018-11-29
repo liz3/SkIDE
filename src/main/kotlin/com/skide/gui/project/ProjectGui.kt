@@ -51,8 +51,8 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
         val controller = window.controller as ProjectGUIController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
         eventManager.guiReady = {
-            window.stage.maxWidth = 2400.0
-            window.stage.maxHeight = 2400.0
+            // window.stage.maxWidth = 2400.0
+            // window.stage.maxHeight = 2400.0
             window.stage.show()
         }
         window.closeListener = {
@@ -358,7 +358,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     }
 
 
-    fun openFile(f: File, isExternal: Boolean = false, cb:(OpenFileHolder) -> Unit = {}) {
+    fun openFile(f: File, isExternal: Boolean = false, cb: (OpenFileHolder) -> Unit = {}) {
 
         if (openProjectGuiManager.openFiles.containsKey(f)) {
             for ((file, holder) in openProjectGuiManager.openFiles) {
@@ -635,7 +635,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         generalSettings.setOnAction {
 
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
-
+            window.stage.isResizable = false
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, coreManager, window).init()
 
             window.stage.show()

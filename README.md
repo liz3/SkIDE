@@ -23,7 +23,7 @@ This will output the jar file to `build/libs`
  - [ControlsFX](http://fxexperience.com/controlsfx/) - JavaFX addon for advanced components 
  - [Monaco](https://microsoft.github.io/monaco-editor/) - browser based code editor
  - [TerminalFX](https://github.com/javaterminal/TerminalFX) - JavaFX terminal-view library
- - [SkriptHub](http://skripthub.com/) - Provider for auto-complete data
+ - [Skript Hub](http://skripthub.net/) - Provider for auto-complete data
  - [skUnity](http://skunity.com/) - Integration with forums.skunity.com
  - [SkriptTools](https://skripttools.net/) - Information to Skript binary meta data
  - [Gradle](https://gradle.org/) - Build system

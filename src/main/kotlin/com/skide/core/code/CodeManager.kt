@@ -68,6 +68,18 @@ class CodeManager {
 
         area.text = content
 
+        area.view.focusedProperty().addListener { _, _, newValue ->
+
+            if(!newValue) {
+                project.manager.saveCode()
+                project.openProject.runConfs.forEach {
+                    if (it.value.runner === project) {
+                        it.value.srv.setSkriptFile(project.name, area.text)
+                    }
+                }
+            }
+        }
+
         parseStructure()
 
     }
