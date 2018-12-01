@@ -147,9 +147,13 @@ function registerSkript() {
             return {suggestions: skide.autoCompleteRequest(model, position, token, context)};
         }
     });
+
+    monaco.languages.registerLinkProvider("skript", {
+    });
+
     monaco.languages.registerDefinitionProvider('skript', {
         provideDefinition: function (model, position, token) {
-            var k = Object.keys(token)
+            var k = Object.keys(token);
             return skide.gotoCall(model, position, (k[0] == "isCancellationRequested" && k[1] == "onCancellationRequested"));
         }
     });

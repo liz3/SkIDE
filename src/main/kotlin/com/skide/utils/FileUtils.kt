@@ -49,7 +49,8 @@ fun readFile(file: File): Pair<FileReturnResult, String> {
 
 fun writeFile(data: ByteArray, file: File, append: Boolean = false, createIfNotExists: Boolean = false): Pair<FileReturnResult, String> {
 
-    if (!createIfNotExists && !file.exists()) return Pair(FileReturnResult.NOT_FOUND, "")
+    if (!createIfNotExists && !file.exists())
+        return Pair(FileReturnResult.NOT_FOUND, "")
 
     if (createIfNotExists && !file.exists()) {
         val created = file.createNewFile()

@@ -33,6 +33,7 @@ class CodeManager {
     lateinit var sequenceReplaceHandler: ReplaceSequence
     lateinit var tooltipHandler: TooltipHandler
     lateinit var hBox: BreadCrumbBar<Node>
+    var gotoActivated = false
 
 
     private val parser = SkriptParser()
@@ -127,12 +128,16 @@ class CodeManager {
 
     fun gotoItem(item: TreeItem<String>) {
         if (item == rootStructureItem) return
+        gotoActivated = true
         val lineSearched = item.value.split(" ")[0].toInt()
         Platform.runLater {
             val length = area.getLineContent(lineSearched).length
             area.editor.call("revealLineInCenter", lineSearched)
             area.editor.call("setSelection", area.createObjectFromMap(hashMapOf(Pair("startLineNumber", lineSearched),
                     Pair("endLineNumber", lineSearched), Pair("startColumn", 0), Pair("endColumn", length + 1))))
+            Platform.runLater {
+                gotoActivated = false
+            }
         }
     }
 

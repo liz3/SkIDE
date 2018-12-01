@@ -30,7 +30,7 @@ class ActiveWindow(val stage: Stage, val scene: Scene, val loader: FXMLLoader, v
     }
 }
 
-class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String, val tab: Tab, val tabPane: TabPane, var borderPane: BorderPane, val area: CodeArea, val coreManager: CoreManager, val codeManager: CodeManager = CodeManager(), val isExternal: Boolean = false) {
+class OpenFileHolder(val openProject: OpenProject, val f: File, val name: String, val tab: Tab, var tabPane: TabPane, var borderPane: BorderPane, val area: CodeArea, val coreManager: CoreManager, val codeManager: CodeManager = CodeManager(), val isExternal: Boolean = false) {
 
     val currentStackBox = BreadCrumbBar<Node>()
     val manager = OpenProjectManager(this)

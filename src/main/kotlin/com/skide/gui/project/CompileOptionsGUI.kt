@@ -34,7 +34,7 @@ class CompileOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICo
         }
         ctrl.compileNewConfBtn.setOnAction {
             val name = ctrl.compileNewOptionsNameField.text
-            if (allOptions.containsKey(name)) return@setOnAction
+            if (allOptions.containsKey(name) || name.isEmpty() || name.isBlank()) return@setOnAction
 
 
             val option = CompileOption(name, project.project.folder, CompileOptionType.CONCATENATE, true, true, false, 0)

@@ -36,8 +36,8 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         project.fileManager.addons.forEach {
             val addonName = it.key
             val version = Version(adjustVersion(it.value))
+            coreManager.resourceManager.loadAddon(addonName)
             addons[addonName] = Vector()
-
             coreManager.resourceManager.addons[addonName]!!.versions.forEach { currAddonVersion ->
                 val addonVersion = Version(adjustVersion(currAddonVersion.key))
                 val result = version.compareTo(addonVersion)

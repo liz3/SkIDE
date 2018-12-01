@@ -11,7 +11,7 @@ enum class DocType {
     TYPE
 }
 
-class Addon(val id: Long, val name: String, val author: String, val versions: HashMap<String, Vector<AddonItem>> = HashMap()) {
+class Addon(val id: Long, val name: String, val author: String, val versions: HashMap<String, Vector<AddonItem>> = HashMap(), var loaded:Boolean = false) {
     override fun toString() = name
 }
 

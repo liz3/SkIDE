@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.Pane?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectSettingsGUIController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectSettingsGUIController">
    <center>
       <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -61,9 +61,9 @@
                         <ComboBox fx:id="compileMethodComboBox" layoutX="220.0" layoutY="130.0" prefHeight="25.0" prefWidth="238.0" />
                         <CheckBox fx:id="removeCommentsCheck" layoutX="216.0" layoutY="172.0" mnemonicParsing="false" text="Remove Comments" />
                         <CheckBox fx:id="removeEmptyLinesCheck" layoutX="216.0" layoutY="189.0" mnemonicParsing="false" text="Remove Empty Line" />
-                        <CheckBox fx:id="compileObfuscateCheck" layoutX="216.0" layoutY="218.0" mnemonicParsing="false" text="Obfuscate" />
+                        <CheckBox fx:id="compileObfuscateCheck" disable="true" layoutX="216.0" layoutY="218.0" mnemonicParsing="false" text="Obfuscate" />
                         <Button fx:id="compileOutPutBtn" layoutX="471.0" layoutY="82.0" mnemonicParsing="false" text="..." />
-                        <ComboBox fx:id="obsfsucateLevelComboBox" layoutX="297.0" layoutY="214.0" prefWidth="150.0" />
+                        <ComboBox fx:id="obsfsucateLevelComboBox" disable="true" layoutX="297.0" layoutY="214.0" prefWidth="150.0" />
                         <ListView fx:id="compileIncludedFileList" layoutX="471.0" layoutY="254.0" prefHeight="200.0" prefWidth="200.0" />
                         <Label layoutX="471.0" layoutY="235.0" text="Included files" />
                         <ListView fx:id="compileExcludedFileList" layoutX="686.0" layoutY="254.0" prefHeight="200.0" prefWidth="200.0" />

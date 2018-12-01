@@ -7,10 +7,7 @@ import com.skide.gui.DebugLevel
 import com.skide.gui.ListViewPopUp
 import com.skide.gui.WebViewDebugger
 import com.skide.include.OpenFileHolder
-import com.skide.utils.OperatingSystemType
-import com.skide.utils.getLocale
-import com.skide.utils.getOS
-import com.skide.utils.verifyKeyCombo
+import com.skide.utils.*
 import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.event.EventHandler
@@ -29,6 +26,7 @@ import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import netscape.javascript.JSObject
+import java.io.File
 
 
 class CallbackHook(private val rdy: () -> Unit) {
@@ -52,19 +50,16 @@ class EventHandler(private val area: CodeArea) {
     }
 
     fun eventNotify(name: String, ev: Any) {
-
         if (name == "onDidChangeCursorPosition") {
             val currentLine = area.getCurrentLine()
             if (area.line != currentLine) {
                 if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing || area.getLineContent(currentLine).isBlank())
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
 
-                area.codeManager.parseResult = area.codeManager.parseStructure()
+               if(!area.codeManager.gotoActivated) area.codeManager.parseResult = area.codeManager.parseStructure()
             }
             area.line = currentLine
-
         }
-
     }
 
     fun cmdCall(key: String) {
@@ -160,7 +155,7 @@ class EditorCommandBinder(val id: String, val cb: () -> Unit) {
     fun deactivate() = instance.call("set", false)
 }
 
-class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
+class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea) -> Unit) {
 
     var line = 1
     lateinit var view: WebView
@@ -212,8 +207,6 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
         Platform.runLater {
             view = WebView()
             engine = view.engine
-
-
             view.setOnKeyPressed { ev ->
 
                 if (ev.code == KeyCode.ESCAPE) {
@@ -272,6 +265,7 @@ class CodeArea(val coreManager: CoreManager, val rdy: (CodeArea) -> Unit) {
                     val cbHook = CallbackHook {
                         val settings = engine.executeScript("getDefaultOptions();") as JSObject
                         settings.setMember("fontSize", coreManager.configManager.get("font_size"))
+                        settings.setMember("language", extensionToLang(file.name.split(".").last()))
                         if (coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
                         startEditor(settings)
                         selection = engine.executeScript("selection") as JSObject

@@ -42,7 +42,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("meta_update", "${ctrl.settingsUpdateDataCheck.isSelected}")
         coreManager.configManager.set("webview_debug", "${ctrl.webViewDebuggerCheck.isSelected}")
 
-        if(coreManager.configManager.get("jre_home") == "" && getOS() == OperatingSystemType.MAC_OS) {
+        if (coreManager.configManager.get("jre_home") == "" && getOS() == OperatingSystemType.MAC_OS) {
             Platform.runLater {
                 val maybe = String(Runtime.getRuntime().exec("echo \$JAVA_HOME").inputStream.readBytes())
 
@@ -179,7 +179,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         }
         ctrl.serverNewServerCreateBtn.setOnAction {
             val name = ctrl.serverNewServerNameTextField.text
-            if (serverManager.servers.containsKey(name)) return@setOnAction
+            if (serverManager.servers.containsKey(name) || name.isEmpty() || name.isBlank()) return@setOnAction
             newServerAdded = true
             val server = Server(ServerConfiguration(name, "", File(""), File(""), ""), File(""), false, System.currentTimeMillis())
             ctrl.serverServerList.items.add(server)

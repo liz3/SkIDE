@@ -241,10 +241,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                         val mainTabPane = openProject.eventManager.controller.editorMainTabPane
                         val root = openProject.eventManager.controller.mainCenterAnchorPane
                         otherTabPanes.forEach {
-
                             mainTabPane.tabs.addAll(it.tabs)
-
-
                         }
                         otherTabPanes.clear()
                         root.children.clear()
@@ -261,7 +258,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                 val panesHeight = total / otherTabPanes.size
                 box.children.forEach {
                     it as TabPane
-
                     it.setPrefSize(box.width, panesHeight)
                 }
             }
@@ -369,7 +365,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             }
             return
         }
-        CodeArea(coreManager) {
+        CodeArea(coreManager, f) {
 
             val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
             it.openFileHolder = holder
@@ -396,11 +392,11 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             return
         }
 
-        CodeArea(coreManager) {
+        CodeArea(coreManager ,f ) {
             val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), tabPane, BorderPane(), it, coreManager, isExternal = isExternal)
             it.openFileHolder = holder
             it.codeManager = holder.codeManager
-            openProjectGuiManager.openFiles.put(f, holder)
+            openProjectGuiManager.openFiles[f] = holder
             setupNewTabForDisplay(holder)
         }
 

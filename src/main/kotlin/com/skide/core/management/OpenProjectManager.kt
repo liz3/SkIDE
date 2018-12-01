@@ -37,18 +37,17 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
         } else {
 
             externStage = Stage()
-            externStage.maxWidth = 2400.0
-            externStage.maxHeight = 2400.0
             val tabPane = TabPane()
             tabPane.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
 
-                if(newValue == null) {
+                if (newValue == null) {
                     isExluded = false
                     externStage.close()
                 }
             }
             MouseDragHandler(tabPane, openProject.openProject.guiHandler).setup()
-            openProject.tabPane.tabs.remove(openProject.tab)
+            val oldPane = openProject.tab.tabPane
+            oldPane.tabs.remove(openProject.tab)
             tabPane.tabs.add(openProject.tab)
             externStage.title = openProject.name
             externStage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
@@ -64,11 +63,12 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
             isExluded = true
         }
     }
+
     fun saveCode() {
         Thread {
             Platform.runLater {
                 writeFile(openProject.area.text.toByteArray(), openProject.f)
-                if(openProject.tab.text.endsWith("*"))
+                if (openProject.tab.text.endsWith("*"))
                     openProject.tab.text = openProject.tab.text.substring(0, openProject.tab.text.length - 1)
             }
         }.start()

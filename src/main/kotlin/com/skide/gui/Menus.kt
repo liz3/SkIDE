@@ -94,9 +94,15 @@ object Menus {
 
         val menu = ContextMenu()
 
+        val open = MenuItem("Open")
         val renameItem = MenuItem("Rename")
         val deleteItem = MenuItem("Delete")
 
+        open.setOnAction {
+           Thread{
+               project.eventManager.openFile(holder)
+           }.start()
+        }
         renameItem.setOnAction {
 
             val name = Prompts.textPrompt("Rename File", "Enter the new File name Here")
@@ -115,7 +121,7 @@ object Menus {
 
         }
 
-        menu.items.addAll(renameItem, deleteItem)
+        menu.items.addAll(open, renameItem, deleteItem)
 
 
 

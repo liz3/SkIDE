@@ -23,7 +23,6 @@ var selection = null;
 
 function getDefaultOptions() {
     return {
-        language: 'skript',
         automaticLayout: true,
         mouseWheelScrollSensitivity: 0.1,
         copyWithSyntaxHighlighting: false
@@ -34,6 +33,7 @@ function startEditor(options) {
     editor.getAction("editor.action.clipboardCopyAction").run = function() {
         getHook().copy();
     };
+
     editor.getAction("editor.action.clipboardCutAction").run = function() {
         getHook().cut();
     };

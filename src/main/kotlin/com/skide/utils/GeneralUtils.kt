@@ -63,6 +63,16 @@ fun verifyKeyCombo(ev:KeyEvent): Boolean {
     }
 
 }
+
+fun extensionToLang(ex:String) : String {
+    return when(ex) {
+        "sk" -> "skript"
+        "js" -> "javascript"
+        "yaml", "yml", "properties" ->  "yaml"
+        "java" -> "java"
+        else -> "skript"
+    }
+}
 fun adjustVersion(value: String): String {
 
     var str = value.replace("-dev", ".")

@@ -43,12 +43,51 @@ class ResourceManager(val coreManager: CoreManager) {
         }
     }
 
+    fun loadAddon(name: String) {
+        if (addons[name] != null && addons[name]!!.loaded) {
+            return
+        }
+        val obj = JSONArray(readFile(skHubFile.absolutePath).second)
+        for (entry in obj) {
+            entry as JSONObject
+            val addonObj = entry.getJSONObject("addon")
+            if (addonObj.getString("name") != name) continue
+            val addon = getAddon(addonObj.getString("name"))
+            val list = addon.versions["0.0.0"]!!
+            val title = entry.getString("title")
+            val type = when (entry.getString("syntax_type")) {
+                "event" -> DocType.EVENT
+                "condition" -> DocType.CONDITION
+                "effect" -> DocType.EFFECTS
+                "expression" -> DocType.EXPRESSION
+                "type" -> DocType.TYPE
+                else -> DocType.TYPE
+            }
+            val description = entry.getString("description")
+            val pattern = entry.getString("syntax_pattern").split("\n").first()
+            val returnType =
+                    if (entry.has("return_type") && !entry.isNull("return_type"))
+                        entry.getString("return_type")
+                    else ""
+            val eventValues =
+                    if (entry.has("event_values") && !entry.isNull("event_values"))
+                        entry.getString("event_values")
+                    else ""
+            val item = AddonItem(entry.getInt("id"), title, type, addon, pattern, description, eventValues, returnType)
+
+            for (req in entry.getJSONArray("required_plugins")) {
+                req as JSONObject
+                item.plugins.add(req.getString("name"))
+            }
+            if (addonObj.getString("name") == "Skript") skriptDocList.addElement(item)
+            list.add(item)
+        }
+        addons[name]?.loaded = true
+    }
+
     fun loadResources(callback: (Int, Int, String) -> Unit) {
-
         val total = 5
-
         callback(total, 1, "https://liz3.net/sk/depot/")
-
         if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
         if (!skHubFile.exists() || coreManager.configManager.get("meta_update") == "true") {
             try {
@@ -67,46 +106,8 @@ class ResourceManager(val coreManager: CoreManager) {
         callback(total, 6, "Reading script versions")
         parseSkriptVersions()
         readAddons()
-
-        val obj = JSONArray(readFile(skHubFile.absolutePath).second)
         callback(total, 8, "Parsing Addons...")
-        for (entry in obj) {
-            entry as JSONObject
-            val addonObj = entry.getJSONObject("addon")
-            val addon = getAddon(addonObj.getString("name"))
-            val list = addon.versions["0.0.0"]!!
-            val title = entry.getString("title")
-            val type = when (entry.getString("syntax_type")) {
-                "event" -> DocType.EVENT
-                "condition" -> DocType.CONDITION
-                "effect" -> DocType.EFFECTS
-                "expression" -> DocType.EXPRESSION
-                "type" -> DocType.TYPE
-                else -> DocType.TYPE
-            }
-
-            val description = entry.getString("description")
-            val pattern = entry.getString("syntax_pattern").split("\n").first()
-            val returnType =
-                    if (entry.has("return_type") && !entry.isNull("return_type"))
-                        entry.getString("return_type")
-                    else ""
-            val eventValues =
-                    if (entry.has("event_values") && !entry.isNull("event_values"))
-                        entry.getString("event_values")
-                    else ""
-            val item = AddonItem(entry.getInt("id"), title, type, addon, pattern, description, eventValues, returnType)
-
-            for (req in entry.getJSONArray("required_plugins")) {
-                req as JSONObject
-                item.plugins.add(req.getString("name"))
-            }
-
-            if (addonObj.getString("name") == "Skript") skriptDocList.addElement(item)
-
-            list.add(item)
-        }
-
+        loadAddon("Skript")
     }
 
     private fun getAddon(name: String): Addon {
