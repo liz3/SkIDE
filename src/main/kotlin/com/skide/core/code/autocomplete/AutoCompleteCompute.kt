@@ -3,10 +3,7 @@ package com.skide.core.code.autocomplete
 import com.skide.core.code.CodeManager
 import com.skide.gui.GUIManager
 import com.skide.gui.controllers.GenerateCommandController
-import com.skide.include.DocType
-import com.skide.include.MethodParameter
-import com.skide.include.NodeType
-import com.skide.include.OpenFileHolder
+import com.skide.include.*
 import com.skide.utils.EditorUtils
 import netscape.javascript.JSObject
 import java.util.*
@@ -33,10 +30,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
     fun showLocalAutoComplete(array: JSObject) {
-
-        if(manager.sequenceReplaceHandler.computing) return
+        if (manager.sequenceReplaceHandler.computing) return
         val nodes = area.openFileHolder.codeManager.parseStructure()
-
         val currentLine = area.getCurrentLine()
         val currentColumn = area.getCurrentColumn()
         val lineContent = area.getLineContent(currentLine)
@@ -59,7 +54,11 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
             return
         }
+
+
         val varsToAdd = HashMap<String, AutoCompleteItem>()
+
+        //Croos file Auto-complete
         if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
             for ((path, internalNodes) in manager.crossNodes) {
                 internalNodes.forEach { it ->
@@ -95,6 +94,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 }
             }
         }
+
+        //Check parent
         if (parent.nodeType == NodeType.FUNCTION && parent.fields.contains("ready")) {
             val params = parent.fields["params"] as Vector<*>
 
@@ -103,12 +104,13 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
                 val insert = "{_" + it.name + "}"
 
-                if(!varsToAdd.containsKey(insert)) {
+                if (!varsToAdd.containsKey(insert)) {
                     varsToAdd[insert] = AutoCompleteItem(area, it.name + " :" + it.type + " (local)", CompletionType.VARIABLE, insert)
                 }
             }
-
         }
+
+        //Loop through this files variable nodes
         vars.forEach {
             if (it.nodeType == NodeType.SET_VAR && !it.fields.containsKey("invalid")) {
                 if (it.fields.contains("from_option")) {
@@ -125,18 +127,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     if (!varsToAdd.containsKey(insert))
                         varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert, "local variable")
                 }
-
-
             }
         }
-        varsToAdd.values.forEach {
-            addSuggestionToObject(it, array, count)
-            count++
-        }
-        keyWordsGen.forEach {
-            addSuggestionToObject(it, array, count)
-            count++
-        }
+        //ADd functions
         nodes.forEach {
             if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
                 val name = it.fields["name"] as String
@@ -160,18 +153,35 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             }
         }
 
+
+        //add generic keywords
+        keyWordsGen.forEach {
+            addSuggestionToObject(it, array, count)
+            count++
+        }
+        if(parent.nodeType == NodeType.EVENT ||parent.nodeType == NodeType.COMMAND) {
+            addSuggestionToObject(AutoCompleteItem(area, "player", CompletionType.KEYWORD, "player", "event based type"), array, count)
+            count++
+        }
+        //Add all nodes in one move
+        varsToAdd.values.forEach {
+            addSuggestionToObject(it, array, count)
+            count++
+        }
         addonSupported.values.forEach { addon ->
             addon.forEach { item ->
-                val name = "${item.name}:${item.type} - ${item.addon.name}"
-                var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
-                if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder:"
-
-                addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, adder, commandId = "general_auto_complete_finish"), array, count)
-                count++
+                if(item.type != DocType.EVENT) {
+                    val name = "${item.name}:${item.type} - ${item.addon.name}"
+                    var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
+                    if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder:"
+                    addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, adder, commandId = "general_auto_complete_finish"), array, count)
+                    count++
+                }
             }
         }
 
     }
+
     private fun getKeyWords(): Vector<AutoCompleteItem> {
         val vector = Vector<AutoCompleteItem>()
         arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "else", "else if", "trigger", "on", "while", "is").forEach {
@@ -179,6 +189,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         }
         return vector
     }
+
     fun showGlobalAutoComplete(array: JSObject) {
 
         var count = 0
@@ -195,7 +206,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                     array.setSlot(count, AutoCompleteItem(area, "EVENT: ${ev.name} (${ev.addon.name})", CompletionType.METHOD, {
                         var text = ev.pattern
                         if (text.isEmpty()) text = ev.name
-                        text = text.replace("[on]", if(hasOn) "" else "on").replace("\n", "")
+                        text = text.replace("[on]", if (hasOn) "" else "on").replace("\n", "")
 
                         text
                     }.invoke(), commandId = "general_auto_complete_finish").createObject(area.getObject()))
