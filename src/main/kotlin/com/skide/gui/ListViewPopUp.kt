@@ -29,6 +29,12 @@ class ListViewPopUp(val info: String, val items: HashMap<String, () -> Unit>, do
             stage.scene = Scene(scene.first)
             stage.sizeToScene()
 
+            controller.okBtn.isDisable = true
+            controller.list.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+
+                controller.okBtn.isDisable = newValue == null
+
+            }
             controller.infoLabel.text = info
 
             for ((key, cb) in items)

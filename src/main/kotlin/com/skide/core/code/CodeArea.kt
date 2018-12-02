@@ -305,7 +305,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
                 addSkUnityReportAction()
             }
         }
-        addAction("compile", "Export/Compile") {
+        addAction("compile", "Export/Minify") {
             val openProject = openFileHolder.openProject
             val map = HashMap<String, () -> Unit>()
             for ((name, opt) in openProject.project.fileManager.compileOptions) {
@@ -315,7 +315,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
                             openProject.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput())
                 }
             }
-            ListViewPopUp("Compile/Export", map)
+            ListViewPopUp("Compile/Minify", map)
         }
         addAction("run", "Run this File") {
             val map = HashMap<String, () -> Unit>()

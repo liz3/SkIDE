@@ -114,20 +114,28 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (it.fields.contains("from_option")) {
                     val insertText = "{{@" + it.fields["name"] + "}::PATH}"
                     if (!varsToAdd.containsKey(insertText))
-                        varsToAdd[insertText] = AutoCompleteItem(area, (it.fields["name"] as String) + " [from option]", CompletionType.VARIABLE, insertText)
+                        varsToAdd[insertText] = AutoCompleteItem(area, (it.fields["name"] as String) + " [from option]", CompletionType.VARIABLE, insertText, "variable from options")
                 } else if (it.fields["visibility"] == "global") {
                     val insert = "{" + it.fields["name"] + "}"
                     if (!varsToAdd.containsKey(insert))
-                        varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert)
+                        varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert, "global variable")
 
                 } else if (EditorUtils.getRootOf(it) == parent) {
                     val insert = "{_" + it.fields["name"] + "}"
                     if (!varsToAdd.containsKey(insert))
-                        varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert)
+                        varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert, "local variable")
                 }
 
 
             }
+        }
+        varsToAdd.values.forEach {
+            addSuggestionToObject(it, array, count)
+            count++
+        }
+        keyWordsGen.forEach {
+            addSuggestionToObject(it, array, count)
+            count++
         }
         nodes.forEach {
             if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
@@ -151,6 +159,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 count++
             }
         }
+
         addonSupported.values.forEach { addon ->
             addon.forEach { item ->
                 val name = "${item.name}:${item.type} - ${item.addon.name}"
@@ -160,14 +169,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, adder, commandId = "general_auto_complete_finish"), array, count)
                 count++
             }
-        }
-        varsToAdd.values.forEach {
-            addSuggestionToObject(it, array, count)
-            count++
-        }
-        keyWordsGen.forEach {
-            addSuggestionToObject(it, array, count)
-            count++
         }
 
     }

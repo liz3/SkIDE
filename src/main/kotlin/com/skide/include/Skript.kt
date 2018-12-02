@@ -3,7 +3,7 @@ import com.skide.core.skript.NodeBuilder
 import java.util.*
 
 enum class NodeType {
-    EXECUTION,
+    STATEMENT,
     IF_STATEMENT,
     ELSE_STATEMENT,
     COMMAND,

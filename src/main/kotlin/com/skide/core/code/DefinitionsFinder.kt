@@ -33,7 +33,7 @@ class DefinitionsFinder(val manager: CodeManager) {
             }
 
             }
-        if (line.nodeType == NodeType.IF_STATEMENT || line.nodeType == NodeType.EXECUTION || line.nodeType == NodeType.LOOP || line.nodeType == NodeType.SET_VAR || line.nodeType == NodeType.IF_STATEMENT) {
+        if (line.nodeType == NodeType.IF_STATEMENT || line.nodeType == NodeType.STATEMENT || line.nodeType == NodeType.LOOP || line.nodeType == NodeType.SET_VAR || line.nodeType == NodeType.IF_STATEMENT) {
             val raw = line.raw
 
             if (raw.indexOf(word) > 1) {

@@ -147,7 +147,7 @@ class NodeBuilder(val node: Node) {
             }
             theType = NodeType.SET_VAR
         }
-        if (theType == NodeType.UNDEFINED && content != "") theType = NodeType.EXECUTION
+        if (theType == NodeType.UNDEFINED && content != "") theType = NodeType.STATEMENT
 
         return theType
     }

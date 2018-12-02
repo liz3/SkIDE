@@ -44,7 +44,7 @@ class ImportProjectGUIController {
         openAfterCreation.isDisable = true
         createButton.isDisable = true
         rootProjectFolder = manager.configManager.defaultProjectPath.absolutePath
-        skriptVersionComboBox.items.add("2.2 bensku-dev33")
+        skriptVersionComboBox.items.add("Latest")
         skriptVersionComboBox.selectionModel.select(0)
 
         projectNameField.setOnKeyReleased { _ ->

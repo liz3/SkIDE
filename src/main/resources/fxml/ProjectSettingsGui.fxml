@@ -47,18 +47,18 @@
                   </AnchorPane>
             </content>
           </Tab>
-            <Tab text="Compile Options">
+            <Tab text="Minifier">
                <content>
                   <Pane prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <Label layoutX="14.0" layoutY="14.0" text="Compile Options" />
+                        <Label layoutX="14.0" layoutY="14.0" text="Minify Options" />
                         <Label layoutX="220.0" layoutY="65.0" text="Output Directory:" />
                         <TextField fx:id="compileOutPutPathField" layoutX="220.0" layoutY="82.0" prefHeight="25.0" prefWidth="241.0" />
                         <ListView fx:id="compileConfListView" layoutX="14.0" layoutY="65.0" prefHeight="200.0" prefWidth="200.0" />
                         <Label layoutX="14.0" layoutY="44.0" text="Configuration" />
                         <Button fx:id="compileDelConfBtn" layoutX="14.0" layoutY="271.0" mnemonicParsing="false" text="Delete" />
                         <Button fx:id="compileNewConfBtn" layoutX="277.0" layoutY="10.0" mnemonicParsing="false" text="New" />
-                        <Label layoutX="220.0" layoutY="113.0" text="Compile Method" />
+                        <Label layoutX="220.0" layoutY="113.0" text="Method" />
                         <ComboBox fx:id="compileMethodComboBox" layoutX="220.0" layoutY="130.0" prefHeight="25.0" prefWidth="238.0" />
                         <CheckBox fx:id="removeCommentsCheck" layoutX="216.0" layoutY="165.0" mnemonicParsing="false" text="Remove Comments" />
                         <CheckBox fx:id="removeEmptyLinesCheck" layoutX="216.0" layoutY="189.0" mnemonicParsing="false" text="Remove Empty Line" />
