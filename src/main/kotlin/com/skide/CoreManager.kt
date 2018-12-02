@@ -82,6 +82,7 @@ class CoreManager {
 
 
                         debugger.syserr.core = me
+
                         sockServer.start()
 
                         updateProgress(5.0, 100.0)

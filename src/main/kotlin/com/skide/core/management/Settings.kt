@@ -36,12 +36,12 @@ class ConfigManager(val coreManager: CoreManager) {
         }
 
     val rootFolder = File(System.getProperty("user.home"), ".sk-ide-config")
-    var defaultProjectPath = File(System.getProperty("user.home"), "Sk-IDE-Projects")
+    var defaultProjectPath = File(System.getProperty("user.home"), "SkIDE-Projects")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
-    private var defaultServerPath = File(System.getProperty("user.home"), "Sk-IDE-Server")
+    private var defaultServerPath = File(System.getProperty("user.home"), "SkIDE-Server")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
