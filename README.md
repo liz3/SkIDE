@@ -25,6 +25,7 @@ This will output the jar file to `build/libs`
  - [skUnity](http://skunity.com/) - Integration with forums.skunity.com
  - [SkriptTools](https://skripttools.net/) - Information to Skript binary meta data
  - [Gradle](https://gradle.org/) - Build system
+ - [Google Analytics](https://analytics.google.com/analytics/web/#/) - Used for weak information collecting
  - [JSON](https://www.json.org/json-en.html) - JSON implementation for Java
  - [Jsch](http://www.jcraft.com/jsch/) - SSH implementation for Java
  - [Apache Commons Net](https://commons.apache.org/proper/commons-net/) - Used for FTP implementation

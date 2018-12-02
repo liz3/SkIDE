@@ -13,6 +13,7 @@ import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
+import javafx.scene.control.Alert
 import javafx.scene.image.Image
 import javafx.scene.layout.Background
 import javafx.scene.layout.Pane
@@ -31,6 +32,7 @@ class CoreManager {
     lateinit var insightClient: SkriptInsightClient
     lateinit var insightsManager: InsightsManager
     lateinit var resourceManager: ResourceManager
+    lateinit var googleAnalytics: GoogleAnalytics
     lateinit var saver: AutoSaver
     lateinit var sockServer: SocketManager
     lateinit var skUnity: SkUnity
@@ -46,7 +48,7 @@ class CoreManager {
         val me = this
         guiManager.bootstrapCallback = { stage ->
             val loader = FXMLLoader()
-            if(Info.classLoader != null) loader.classLoader = Info.classLoader
+            if (Info.classLoader != null) loader.classLoader = Info.classLoader
             val parent = loader.load<Pane>(javaClass.getResourceAsStream("/fxml/LoadingGui.fxml"))
             parent.background = Background.EMPTY
             val controller = loader.getController<SplashGuiController>()
@@ -112,6 +114,15 @@ class CoreManager {
                             Prompts.theme = (configManager.get("theme") as String)
                             Prompts.configManager = configManager
                             Platform.runLater {
+                                googleAnalytics = GoogleAnalytics(me)
+                                if (configManager.get("analytics") == "") {
+                                    Prompts.infoCheck("Analytics", "Analytics Information", "Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). \nI do this only for statistics. If you still don´t want it, disable it the Settings!", Alert.AlertType.INFORMATION)
+                                    configManager.set("analytics", "true")
+                                } else {
+                                    if (configManager.get("analytics") == "true") {
+                                        googleAnalytics.start()
+                                    }
+                                }
                                 stage.close()
                                 val window = guiManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false, Stage())
                                 stage.isResizable = false

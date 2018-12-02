@@ -38,10 +38,11 @@
                         <Label layoutX="14.0" layoutY="14.0" text="Addons" />
                         <Button fx:id="plUpdateBtn" layoutX="210.0" layoutY="265.0" mnemonicParsing="false" text="Update" />
                         <Label fx:id="plNameLabel" layoutX="278.0" layoutY="43.0" prefHeight="17.0" prefWidth="347.0" text="Name" />
-                        <Label fx:id="plDescriptionLabel" alignment="TOP_LEFT" layoutX="278.0" layoutY="87.0" prefHeight="126.0" prefWidth="383.0" text="Label" />
+                        <Label fx:id="plDescriptionLabel" alignment="TOP_LEFT" layoutX="278.0" layoutY="87.0" prefHeight="40.0" prefWidth="383.0" text="Label" />
                         <Label fx:id="plAuthorLabel" layoutX="278.0" layoutY="60.0" prefHeight="17.0" prefWidth="361.0" text="Author" />
-                        <ComboBox fx:id="plVersionsComboBox" layoutX="395.0" layoutY="222.0" prefWidth="150.0" />
-                        <CheckBox fx:id="enableSupportCheckBox" layoutX="278.0" layoutY="226.0" mnemonicParsing="false" text="Enable Support" />
+                        <ComboBox fx:id="plVersionsComboBox" layoutX="278.0" layoutY="151.0" prefWidth="150.0" />
+                        <CheckBox fx:id="enableSupportCheckBox" layoutX="278.0" layoutY="183.0" mnemonicParsing="false" text="Enable Support" />
+                        <Label layoutX="278.0" layoutY="133.0" text="Select Version" />
                      </children>
                   </AnchorPane>
             </content>
@@ -56,10 +57,10 @@
                         <ListView fx:id="compileConfListView" layoutX="14.0" layoutY="65.0" prefHeight="200.0" prefWidth="200.0" />
                         <Label layoutX="14.0" layoutY="44.0" text="Configuration" />
                         <Button fx:id="compileDelConfBtn" layoutX="14.0" layoutY="271.0" mnemonicParsing="false" text="Delete" />
-                        <Button fx:id="compileNewConfBtn" layoutX="271.0" layoutY="10.0" mnemonicParsing="false" text="New" />
+                        <Button fx:id="compileNewConfBtn" layoutX="277.0" layoutY="10.0" mnemonicParsing="false" text="New" />
                         <Label layoutX="220.0" layoutY="113.0" text="Compile Method" />
                         <ComboBox fx:id="compileMethodComboBox" layoutX="220.0" layoutY="130.0" prefHeight="25.0" prefWidth="238.0" />
-                        <CheckBox fx:id="removeCommentsCheck" layoutX="216.0" layoutY="172.0" mnemonicParsing="false" text="Remove Comments" />
+                        <CheckBox fx:id="removeCommentsCheck" layoutX="216.0" layoutY="165.0" mnemonicParsing="false" text="Remove Comments" />
                         <CheckBox fx:id="removeEmptyLinesCheck" layoutX="216.0" layoutY="189.0" mnemonicParsing="false" text="Remove Empty Line" />
                         <CheckBox fx:id="compileObfuscateCheck" disable="true" layoutX="216.0" layoutY="218.0" mnemonicParsing="false" text="Obfuscate" />
                         <Button fx:id="compileOutPutBtn" layoutX="471.0" layoutY="82.0" mnemonicParsing="false" text="..." />
@@ -81,7 +82,7 @@
                         <ListView fx:id="deployList" layoutX="14.0" layoutY="35.0" prefHeight="200.0" prefWidth="200.0" />
                         <TextField fx:id="deployNewTextField" layoutX="261.0" layoutY="10.0" prefHeight="25.0" prefWidth="222.0" />
                         <Label layoutX="223.0" layoutY="14.0" text="Name" />
-                        <Button fx:id="deployNewButton" layoutX="487.0" layoutY="10.0" mnemonicParsing="false" text="New" />
+                        <Button fx:id="deployNewButton" layoutX="497.0" layoutY="10.0" mnemonicParsing="false" text="New" />
                         <TextField fx:id="deployHostTextField" layoutX="226.0" layoutY="108.0" prefHeight="25.0" prefWidth="222.0" />
                         <Label layoutX="226.0" layoutY="91.0" text="Host" />
                         <TextField fx:id="deployPortTextField" layoutX="454.0" layoutY="108.0" prefHeight="25.0" prefWidth="53.0" />
@@ -109,9 +110,9 @@
    <bottom>
       <Pane prefHeight="37.0" prefWidth="907.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="applyBtn" layoutX="745.0" layoutY="6.0" mnemonicParsing="false" text="Apply" />
+            <Button fx:id="applyBtn" layoutX="733.0" layoutY="6.0" mnemonicParsing="false" text="Apply" />
             <Button fx:id="okBtn" layoutX="861.0" layoutY="6.0" mnemonicParsing="false" text="Ok" />
-            <Button fx:id="cancelBtn" layoutX="802.0" layoutY="6.0" mnemonicParsing="false" text="Cancel" />
+            <Button fx:id="cancelBtn" layoutX="794.0" layoutY="6.0" mnemonicParsing="false" text="Cancel" />
          </children>
       </Pane>
    </bottom>

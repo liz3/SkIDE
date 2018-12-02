@@ -4,6 +4,7 @@ import com.skide.core.management.ConfigManager
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TextInputDialog
+import javafx.scene.layout.Region
 
 
 object Prompts {
@@ -60,6 +61,8 @@ object Prompts {
             val dialogPane = alert.dialogPane
             dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))
         }
+
+        alert.dialogPane.minHeight = Region.USE_PREF_SIZE
 
         val result = alert.showAndWait() ?: return false
         return result.get() == ButtonType.OK

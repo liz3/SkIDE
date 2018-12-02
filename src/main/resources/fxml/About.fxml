@@ -6,10 +6,10 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="291.0" prefWidth="745.0" xmlns="http://javafx.com/javafx/8.0.162-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.AboutController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="291.0" prefWidth="745.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.AboutController">
    <children>
       <ImageView fx:id="imageView" fitHeight="194.0" fitWidth="184.0" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true" />
-      <Label layoutX="205.0" layoutY="14.0" text="SkIde">
+      <Label layoutX="205.0" layoutY="14.0" text="Sk IDE">
          <font>
             <Font size="37.0" />
          </font>

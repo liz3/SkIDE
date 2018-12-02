@@ -119,10 +119,7 @@ class SystemErr : PrintStream(System.err) {
                                 theError += "   Name: ${it.value.name}\n"
                                 theError += "   Path: ${it.value.path}\n"
                             }
-
-
                         } else {
-
                             theError = "OS: ${System.getProperty("os.name")} ${System.getProperty("os.arch")}\nJava: ${System.getProperty("java.runtime.version")}\nSK-IDE version: ${Info.version}\nTime: ${sdf.format(cal.time)}\n$trace"
                         }
                         ctrl.contentArea.text = theError
@@ -130,7 +127,7 @@ class SystemErr : PrintStream(System.err) {
                     ctrl.contentArea.text = theError
 
                     ctrl.discordLink.setOnAction {
-                        Desktop.getDesktop().browse(URI("https://discord.gg/Ud2WdVU"))
+                        Desktop.getDesktop().browse(URI("https://discordapp.com/invite/V4qFVnh"))
                     }
                     ctrl.githubLink.setOnAction {
                         Desktop.getDesktop().browse(URI("https://gitlab.com/sk-ide/SkIDE/issues"))

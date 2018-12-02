@@ -41,6 +41,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("generate_meta_data", "${ctrl.metaDataGenerateCheck.isSelected}")
         coreManager.configManager.set("meta_update", "${ctrl.settingsUpdateDataCheck.isSelected}")
         coreManager.configManager.set("webview_debug", "${ctrl.webViewDebuggerCheck.isSelected}")
+        coreManager.configManager.set("analytics", "${ctrl.analyiticsCheck.isSelected}")
 
         if (coreManager.configManager.get("jre_home") == "" && getOS() == OperatingSystemType.MAC_OS) {
             Platform.runLater {
@@ -203,6 +204,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.metaDataGenerateCheck.isSelected = coreManager.configManager.get("generate_meta_data") == "true"
         ctrl.settingsUpdateDataCheck.isSelected = coreManager.configManager.get("meta_update") == "true"
         ctrl.webViewDebuggerCheck.isSelected = coreManager.configManager.get("webview_debug") == "true"
+        ctrl.analyiticsCheck.isSelected = coreManager.configManager.get("analytics") == "true"
     }
 
     private fun setNewValues() {

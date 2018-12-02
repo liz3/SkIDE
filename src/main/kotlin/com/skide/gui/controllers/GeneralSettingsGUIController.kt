@@ -97,12 +97,11 @@ class GeneralSettingsGUIController {
     lateinit var settingsCssFileBtn: Button
     @FXML
     lateinit var crossFileAutoComplete: CheckBox
-
-
     @FXML
     lateinit var metaDataGenerateCheck: CheckBox
-
     @FXML
     lateinit var settingsUpdateDataCheck: CheckBox
+    @FXML
+    lateinit var analyiticsCheck: CheckBox
 
 }

@@ -22,15 +22,16 @@
                         <ComboBox fx:id="settingsTheneComboBox" layoutX="14.0" layoutY="31.0" prefWidth="150.0" />
                         <Label layoutX="172.0" layoutY="14.0" text="Font" />
                         <TextField fx:id="settingsFontTextField" layoutX="172.0" layoutY="31.0" />
-                        <Label layoutX="328.0" layoutY="14.0" text="Size" />
-                        <TextField fx:id="settingsFontSizeTextField" layoutX="328.0" layoutY="31.0" prefHeight="25.0" prefWidth="31.0" />
+                        <Label layoutX="346.0" layoutY="14.0" text="Size" />
+                        <TextField fx:id="settingsFontSizeTextField" layoutX="346.0" layoutY="31.0" prefHeight="25.0" prefWidth="31.0" />
                         <CheckBox fx:id="settingsAutoCompleteCheck" layoutX="14.0" layoutY="64.0" mnemonicParsing="false" text="Enable auto-complete" />
                         <CheckBox fx:id="settingsHighlightingCheck" layoutX="13.0" layoutY="89.0" mnemonicParsing="false" text="Enable highlighting" />
-                        <Button fx:id="settingsCssFileBtn" disable="true" layoutX="14.0" layoutY="437.0" mnemonicParsing="false" text="Open Highlighting File " />
-                        <CheckBox fx:id="crossFileAutoComplete" layoutX="171.0" layoutY="64.0" mnemonicParsing="false" text="Enable cross-file auto-complete" />
-                        <CheckBox fx:id="metaDataGenerateCheck" layoutX="171.0" layoutY="112.0" mnemonicParsing="false" text="Info Generate on new File" />
-                        <CheckBox fx:id="settingsUpdateDataCheck" layoutX="171.0" layoutY="89.0" mnemonicParsing="false" text="Update data on restart" />
+                        <Button fx:id="settingsCssFileBtn" disable="true" layoutX="14.0" layoutY="172.0" mnemonicParsing="false" text="Open Highlighting File " />
+                        <CheckBox fx:id="crossFileAutoComplete" layoutX="187.0" layoutY="64.0" mnemonicParsing="false" text="Enable cross-file auto-complete" />
+                        <CheckBox fx:id="metaDataGenerateCheck" layoutX="187.0" layoutY="112.0" mnemonicParsing="false" text="Info Generate on new File" />
+                        <CheckBox fx:id="settingsUpdateDataCheck" layoutX="187.0" layoutY="89.0" mnemonicParsing="false" text="Update data on restart" />
                         <CheckBox fx:id="webViewDebuggerCheck" layoutX="13.0" layoutY="112.0" mnemonicParsing="false" text="Enable Editor Debugger" />
+                        <CheckBox fx:id="analyiticsCheck" layoutX="13.0" layoutY="138.0" mnemonicParsing="false" text="Send Metrics via Google Analytics" />
                      </children>
                   </Pane>
                </content></Tab>
@@ -58,9 +59,9 @@
                         <ComboBox fx:id="serverAddAddonFromPresetComboBox" disable="true" layoutX="221.0" layoutY="364.0" prefHeight="25.0" prefWidth="383.0" />
                         <Button fx:id="serverAddAddonFromPresetBtn" disable="true" layoutX="566.0" layoutY="396.0" mnemonicParsing="false" text="Add" />
                         <Label layoutX="221.0" layoutY="347.0" text="Add from presets" />
-                        <Button fx:id="serverAddAddonFromFileBtn" layoutX="566.0" layoutY="322.0" mnemonicParsing="false" text="Add" />
-                        <Button fx:id="serverServerDeleteBtn" layoutX="163.0" layoutY="201.0" mnemonicParsing="false" text="Delete" />
-                        <Button fx:id="serverAddonDeleteBtn" layoutX="163.0" layoutY="445.0" mnemonicParsing="false" text="Delete" />
+                        <Button fx:id="serverAddAddonFromFileBtn" layoutX="545.0" layoutY="322.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Add" />
+                        <Button fx:id="serverServerDeleteBtn" layoutX="11.0" layoutY="213.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="202.0" text="Delete Server" />
+                        <Button fx:id="serverAddonDeleteBtn" layoutX="15.0" layoutY="449.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="199.0" text="Remove Addon" />
                         <TextField fx:id="serverAddAddonFromFileTextField" layoutX="222.0" layoutY="293.0" prefHeight="25.0" prefWidth="382.0" />
                         <Label layoutX="413.0" layoutY="14.0" text="Start arguments" />
                         <TextField fx:id="serverStartAgsTextField" layoutX="413.0" layoutY="34.0" prefHeight="25.0" prefWidth="217.0" />
@@ -70,8 +71,8 @@
             </Tab>
         </tabs>
       </TabPane>
-      <Button fx:id="okBtn" layoutX="787.0" layoutY="513.0" mnemonicParsing="false" text="Ok" />
-      <Button fx:id="cancelBtn" layoutX="729.0" layoutY="513.0" mnemonicParsing="false" text="Cancel" />
-      <Button fx:id="applyBtn" layoutX="671.0" layoutY="513.0" mnemonicParsing="false" text="Apply" />
+      <Button fx:id="okBtn" layoutX="769.0" layoutY="513.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="42.0" text="Ok" />
+      <Button fx:id="cancelBtn" layoutX="14.0" layoutY="513.0" mnemonicParsing="false" text="Cancel" />
+      <Button fx:id="applyBtn" layoutX="691.0" layoutY="513.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Apply" />
    </children>
 </Pane>

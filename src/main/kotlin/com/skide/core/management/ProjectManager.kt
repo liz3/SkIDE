@@ -60,6 +60,14 @@ class ProjectManager(val coreManager: CoreManager) {
 
         if (projectConfig.first == ProjectConfigurationLoadResult.SUCCESS && projectConfig.second != null) {
 
+            if(coreManager.googleAnalytics.enabled) {
+                coreManager.googleAnalytics.ga.pageView()
+                        .documentTitle("Sk-IDE Project")
+                        .documentPath("/project")
+                        .customDimension(1, "Product")
+                        .customDimension(1, "Version")
+                        .send()
+            }
             openProjects.addElement(OpenProject(projectConfig.second!!, coreManager))
         }
     }
