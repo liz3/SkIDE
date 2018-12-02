@@ -37,7 +37,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     var mode = EditorMode.NORMAL
     val openFiles = HashMap<File, OpenFileHolder>()
     val settings = SettingsGui(coreManager, this)
-    val window = GUIManager.getWindow("fxml/ProjectGui.fxml", openProject.project.name, false, w = 1920.0, h = 1080.0)
+    val window = GUIManager.getWindow("fxml/ProjectGui.fxml", openProject.project.name, false, w = 1280.0, h = 720.0)
     lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
     val otherTabPanes = Vector<TabPane>()
     var paneHolderNode: Node = HBox()
