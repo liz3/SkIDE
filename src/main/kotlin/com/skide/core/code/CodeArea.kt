@@ -269,8 +269,8 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
                         if (coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
                         startEditor(settings)
                         selection = engine.executeScript("selection") as JSObject
-                        prepareEditorActions()
                         rdy(this)
+                        prepareEditorActions()
                         debugger = WebViewDebugger(this)
                         if (coreManager.configManager.get("webview_debug") == "true") debugger.start()
                     }
@@ -340,23 +340,28 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
               println("Copy action called")
           }
          */
-        addAction("runc", "Run Configuration") {
-            val map = HashMap<String, () -> Unit>()
 
-            for ((name, opt) in openFileHolder.openProject.project.fileManager.compileOptions) {
-                map[name] = {
-                    val map2 = HashMap<String, () -> Unit>()
-                    coreManager.serverManager.servers.forEach {
-                        map2[it.value.configuration.name] = {
-                            openFileHolder.openProject.guiHandler.openFiles.forEach { code -> code.value.manager.saveCode() }
-                            openFileHolder.openProject.run(it.value, opt)
+
+        if(!openFileHolder.isExternal) {
+            addAction("runc", "Run Configuration") {
+                val map = HashMap<String, () -> Unit>()
+
+                for ((name, opt) in openFileHolder.openProject.project.fileManager.compileOptions) {
+                    map[name] = {
+                        val map2 = HashMap<String, () -> Unit>()
+                        coreManager.serverManager.servers.forEach {
+                            map2[it.value.configuration.name] = {
+                                openFileHolder.openProject.guiHandler.openFiles.forEach { code -> code.value.manager.saveCode() }
+                                openFileHolder.openProject.run(it.value, opt)
+                            }
                         }
+                        ListViewPopUp(name, map2)
                     }
-                    ListViewPopUp(name, map2)
                 }
+                ListViewPopUp("Run Configuration", map)
             }
-            ListViewPopUp("Run Configuration", map)
         }
+
 
         addAction("general_auto_complete_finish") {
             openFileHolder.codeManager.sequenceReplaceHandler.compute(getCurrentLine(), getLineContent(getCurrentLine()))

@@ -68,12 +68,12 @@ shadowJar {
     mergeServiceFiles()
     exclude 'META-INF/*.DSA'
     exclude 'META-INF/*.RSA'
-    archiveName = "SK-IDE.jar"
+    archiveName = "ide.jar"
 }
 
 
 jar {
-    archiveName = "ide.jar"
+    archiveName = "ide-core.jar"
     manifest {
         attributes 'Main-Class': mainClassName
         attributes 'Name': name

@@ -7,6 +7,7 @@ import com.skide.utils.writeFile
 import javafx.application.Platform
 import org.json.JSONObject
 import java.io.File
+import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
 import kotlin.math.ln
@@ -23,7 +24,7 @@ class SocketManager(val core: CoreManager) {
         while (true) {
             if (start == 45974) break
             try {
-                socket = ServerSocket(start)
+                socket = ServerSocket(start, 50, InetAddress.getByName("127.0.0.1"))
 
                 break
             } catch (e: Exception) {
@@ -116,7 +117,7 @@ fun handle(path: String) {
                 System.exit(0)
             }
         } catch (e: Exception) {
-
+            lockfile.delete()
         }
     }
 
