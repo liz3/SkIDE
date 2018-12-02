@@ -35,7 +35,7 @@ class ConfigManager(val coreManager: CoreManager) {
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
 
-    val rootFolder = File(System.getProperty("user.home"), ".Sk-IDE")
+    val rootFolder = File(System.getProperty("user.home"), ".sk-ide-config")
     var defaultProjectPath = File(System.getProperty("user.home"), "Sk-IDE-Projects")
         set(value) {
             field = value

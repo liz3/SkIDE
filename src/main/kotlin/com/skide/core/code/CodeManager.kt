@@ -7,7 +7,6 @@ import com.skide.core.skript.SkriptParser
 import com.skide.include.Node
 import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
-import com.skide.skriptinsight.model.InspectionResultElement
 import com.skide.utils.EditorUtils
 import com.skide.utils.readFile
 import javafx.application.Platform
@@ -37,7 +36,6 @@ class CodeManager {
 
 
     private val parser = SkriptParser()
-    var marked = ConcurrentHashMap<Int, InspectionResultElement>()
     val ignored = HashMap<Int, String>()
 
 

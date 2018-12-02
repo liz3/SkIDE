@@ -7,7 +7,6 @@ import com.skide.gui.JavaFXBootstrapper
 import com.skide.gui.Prompts
 import com.skide.gui.controllers.SplashGuiController
 import com.skide.gui.controllers.StartGUIController
-import com.skide.skriptinsight.client.SkriptInsightClient
 import com.skide.utils.*
 import javafx.application.Platform
 import javafx.concurrent.Task
@@ -29,8 +28,6 @@ class CoreManager {
     lateinit var configManager: ConfigManager
     lateinit var projectManager: ProjectManager
     lateinit var serverManager: ServerManager
-    lateinit var insightClient: SkriptInsightClient
-    lateinit var insightsManager: InsightsManager
     lateinit var resourceManager: ResourceManager
     lateinit var googleAnalytics: GoogleAnalytics
     lateinit var saver: AutoSaver
@@ -81,9 +78,8 @@ class CoreManager {
                         resourceManager = ResourceManager(me)
                         saver = AutoSaver(me)
                         skUnity = SkUnity(me)
-                        insightsManager = InsightsManager(me)
                         sockServer = SocketManager(me)
-                        insightClient = SkriptInsightClient(me)
+
 
                         debugger.syserr.core = me
                         sockServer.start()
@@ -108,30 +104,30 @@ class CoreManager {
                         }
                         updateProgress(75.0, 100.0)
                         updateMessage("Starting insights")
-                        insightsManager.setup {
-                            updateProgress(96.0, 100.0)
-                            updateMessage("Starting gui...")
-                            Prompts.theme = (configManager.get("theme") as String)
-                            Prompts.configManager = configManager
-                            Platform.runLater {
-                                googleAnalytics = GoogleAnalytics(me)
-                                if (configManager.get("analytics") == "") {
-                                    Prompts.infoCheck("Analytics", "Analytics Information", "Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). \nI do this only for statistics. If you still don´t want it, disable it the Settings!", Alert.AlertType.INFORMATION)
-                                    configManager.set("analytics", "true")
-                                } else {
-                                    if (configManager.get("analytics") == "true") {
-                                        googleAnalytics.start()
-                                    }
-                                }
-                                stage.close()
-                                val window = guiManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false, Stage())
-                                stage.isResizable = false
-                                (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
-                                window.stage.isResizable = false
-                                window.stage.show()
 
+                        updateProgress(96.0, 100.0)
+                        updateMessage("Starting gui...")
+                        Prompts.theme = (configManager.get("theme") as String)
+                        Prompts.configManager = configManager
+                        Platform.runLater {
+                            googleAnalytics = GoogleAnalytics(me)
+                            if (configManager.get("analytics") == "") {
+                                Prompts.infoCheck("Analytics", "Analytics Information", "Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). \nI do this only for statistics. If you still don´t want it, disable it in the Settings!", Alert.AlertType.INFORMATION)
+                                configManager.set("analytics", "true")
+                            } else {
+                                if (configManager.get("analytics") == "true") {
+                                    googleAnalytics.start()
+                                }
                             }
+                            stage.close()
+                            val window = guiManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false, Stage())
+                            stage.isResizable = false
+                            (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
+                            window.stage.isResizable = false
+                            window.stage.show()
+
                         }
+
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }
