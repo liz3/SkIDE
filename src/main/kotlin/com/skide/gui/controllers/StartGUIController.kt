@@ -77,7 +77,7 @@ class StartGUIController {
         aboutLabel.setOnMouseReleased {
             GUIManager.showAbout()
         }
-        versionLabel.text = "SK-IDE Ver. ${Info.version} Copyright 21Xayah.com - GPL v2 License"
+        versionLabel.text = "SK-IDE Version: ${Info.version} Copyright 21Xayah.com - GPL v2"
         settings.setOnMouseReleased {
 
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
