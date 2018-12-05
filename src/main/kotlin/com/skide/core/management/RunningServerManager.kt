@@ -82,7 +82,7 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
 
     fun setSkriptFile(name: String, content: String) {
         val file = File(File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), name)
-
+        if(!file.parentFile.exists()) return
         writeFile(content.toByteArray(), file, false, true)
 
         sendCommand("sk reload $name")
