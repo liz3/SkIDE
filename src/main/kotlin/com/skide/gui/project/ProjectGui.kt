@@ -17,11 +17,15 @@ import com.skide.include.OpenFileHolder
 import com.skide.utils.OperatingSystemType
 import com.skide.utils.getOS
 import com.skide.utils.setIcon
+import com.skide.utils.verifyKeyCombo
+import com.terminalfx.TerminalTab
 import javafx.application.Platform
 import javafx.scene.Node
+import javafx.scene.Parent
 import javafx.scene.control.*
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
@@ -61,6 +65,10 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
         eventManager.setup()
         lowerTabPaneEventManager = LowerTabPaneEventManager(controller, this, coreManager)
         lowerTabPaneEventManager.setup()
+
+
+
+        eventManager.filesTab.second.requestFocus()
 
         return eventManager
     }
@@ -294,7 +302,9 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
 class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGuiManager, val controller: ProjectGUIController, val coreManager: CoreManager) {
 
+    private var isPreviewActive = false
     var browserVisible = true
+    lateinit var previewPanel: Parent
     var guiReady = {}
     var contextMenuVisible: ContextMenu? = null
     val mouseDragHandler = MouseDragHandler(controller.editorMainTabPane, this.openProjectGuiManager)
@@ -337,6 +347,32 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     }.invoke()
 
 
+    fun setupPreview() {
+        if (isPreviewActive) return
+        isPreviewActive = true
+        controller.mainCenterAnchorPane.children.remove(controller.editorMainTabPane)
+        if (!this::previewPanel.isInitialized) {
+            previewPanel = GUIManager.getScene("fxml/PreviewPanel.fxml").first
+            mouseDragHandler.registerPreviewPane(previewPanel as VBox)
+        }
+
+        AnchorPane.setTopAnchor(previewPanel, 0.0)
+        AnchorPane.setRightAnchor(previewPanel, 0.0)
+        AnchorPane.setBottomAnchor(previewPanel, 0.0)
+        AnchorPane.setLeftAnchor(previewPanel, 0.0)
+        controller.mainCenterAnchorPane.children.add(previewPanel)
+    }
+
+    fun disablePreview() {
+        if (!isPreviewActive) return
+        isPreviewActive = false
+        if (this::previewPanel.isInitialized) {
+            controller.mainCenterAnchorPane.children.remove(previewPanel)
+            controller.mainCenterAnchorPane.children.add(controller.editorMainTabPane)
+        }
+
+    }
+
     fun setup() {
         replaceTemplateElements()
         registerBrowserEvents()
@@ -345,6 +381,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         updateProjectFilesTreeView()
         mouseDragHandler.setup()
         guiReady()
+        if (openProjectGuiManager.openProject.project.fileManager.lastOpen.size == 0) {
+            setupPreview()
+        }
         openProjectGuiManager.openProject.project.fileManager.lastOpen.forEach {
             Platform.runLater {
                 openFile(openProjectGuiManager.openProject.project.fileManager.projectFiles[it]!!)
@@ -355,7 +394,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
 
     fun openFile(f: File, isExternal: Boolean = false, cb: (OpenFileHolder) -> Unit = {}) {
-
         if (openProjectGuiManager.openFiles.containsKey(f)) {
             for ((file, holder) in openProjectGuiManager.openFiles) {
                 if (file === f) {
@@ -365,17 +403,21 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             }
             return
         }
-        CodeArea(coreManager, f) {
 
-            val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
-            it.openFileHolder = holder
-            it.codeManager = holder.codeManager
-            openProjectGuiManager.openFiles[f] = holder
-            setupNewTabForDisplay(holder)
+        Platform.runLater {
+            disablePreview()
+            CodeArea(coreManager, f) {
 
-            cb(holder)
+                val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
+                it.openFileHolder = holder
+                it.codeManager = holder.codeManager
+                openProjectGuiManager.openFiles[f] = holder
+                setupNewTabForDisplay(holder)
+
+                cb(holder)
+            }
+
         }
-
     }
 
     fun openFile(f: File, tabPane: TabPane, isExternal: Boolean = false) {
@@ -392,14 +434,17 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             return
         }
 
-        CodeArea(coreManager ,f ) {
-            val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), tabPane, BorderPane(), it, coreManager, isExternal = isExternal)
-            it.openFileHolder = holder
-            it.codeManager = holder.codeManager
-            openProjectGuiManager.openFiles[f] = holder
-            setupNewTabForDisplay(holder)
-        }
+        Platform.runLater {
+            disablePreview()
+            CodeArea(coreManager, f) {
+                val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), tabPane, BorderPane(), it, coreManager, isExternal = isExternal)
+                it.openFileHolder = holder
+                it.codeManager = holder.codeManager
+                openProjectGuiManager.openFiles[f] = holder
+                setupNewTabForDisplay(holder)
+            }
 
+        }
     }
 
     fun updateProjectFilesTreeView() {
@@ -463,6 +508,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             if (openProjectGuiManager.openFiles.size == 0) {
                 controller.browserTabPane.selectionModel.select(0)
                 structureTab.first.isDisable = true
+                setupPreview()
             }
         }
     }
@@ -679,6 +725,12 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private fun registerEditorEvents() {
 
+        openProjectGuiManager.window.scene.setOnKeyPressed {
+            if (verifyKeyCombo(it) && it.code == KeyCode.N) {
+                val name = Prompts.textPrompt("New File", "Enter File name Here")
+                if (name.isNotEmpty()) openProjectGuiManager.openProject.createNewFile(name)
+            }
+        }
         controller.browserUpperHBox.setOnScroll { ev ->
             if (browserVisible) {
                 val pane = controller.mainLeftBorderPane

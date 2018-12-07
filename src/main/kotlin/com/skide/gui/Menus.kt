@@ -35,9 +35,7 @@ object Menus {
         }
         val newDefaultFile = MenuItem("New File")
         newDefaultFile.setOnAction {
-
             val name = Prompts.textPrompt("New File", "Enter File name Here")
-
             if (name.isNotEmpty()) project.createNewFile(name)
 
         }

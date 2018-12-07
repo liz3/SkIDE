@@ -56,7 +56,7 @@ class EventHandler(private val area: CodeArea) {
                 if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing || area.getLineContent(currentLine).isBlank())
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
 
-               if(!area.codeManager.gotoActivated) area.codeManager.parseResult = area.codeManager.parseStructure()
+                if (!area.codeManager.gotoActivated) area.codeManager.parseResult = area.codeManager.parseStructure()
             }
             area.line = currentLine
         }
@@ -204,88 +204,88 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
     }
 
     init {
-        Platform.runLater {
-            view = WebView()
-            engine = view.engine
-            view.setOnKeyPressed { ev ->
 
-                if (ev.code == KeyCode.ESCAPE) {
-                    if (openFileHolder.codeManager.isSetup && openFileHolder.codeManager.sequenceReplaceHandler.computing)
-                        openFileHolder.codeManager.sequenceReplaceHandler.cancel()
-                }
+        view = WebView()
+        engine = view.engine
+        view.setOnKeyPressed { ev ->
 
-                if (getOS() == OperatingSystemType.MAC_OS) {
+            if (ev.code == KeyCode.ESCAPE) {
+                if (openFileHolder.codeManager.isSetup && openFileHolder.codeManager.sequenceReplaceHandler.computing)
+                    openFileHolder.codeManager.sequenceReplaceHandler.cancel()
+            }
 
-                    if (getLocale() == "de_DE") {
-                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
-                            triggerAction("undo")
-                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
-                            triggerAction("redo")
-                    } else {
-                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
-                            triggerAction("undo")
-                        if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
-                            triggerAction("redo")
-                    }
+            if (getOS() == OperatingSystemType.MAC_OS) {
 
-                }
-                if (ev.code == KeyCode.C && verifyKeyCombo(ev)) {
-                    Platform.runLater {
-                        copySelectionToClipboard()
-                    }
-                }
-                if (ev.code == KeyCode.X && verifyKeyCombo(ev)) {
-                    Platform.runLater {
-                        val selection = getSelection()
-                        copySelectionToClipboard()
-                        replaceContentInRange(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn, "")
-                    }
+                if (getLocale() == "de_DE") {
+                    if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
+                        triggerAction("undo")
+                    if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
+                        triggerAction("redo")
+                } else {
+                    if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
+                        triggerAction("undo")
+                    if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
+                        triggerAction("redo")
                 }
 
             }
-
-            engine.onAlert = EventHandler<WebEvent<String>> { event ->
-                val popup = Stage()
-                popup.initStyle(StageStyle.UTILITY)
-                popup.initModality(Modality.WINDOW_MODAL)
-
-                val content = StackPane()
-                content.children.setAll(
-                        Label(event.data)
-                )
-                content.setPrefSize(200.0, 100.0)
-                popup.scene = Scene(content)
-                popup.showAndWait()
-            }
-            view.engine.loadWorker.stateProperty().addListener { _, _, newValue ->
-                if (newValue === Worker.State.FAILED)
-                    println("Failed to load webpage")
-                if (newValue === Worker.State.SUCCEEDED) {
-                    val win = getWindow()
-                    val cbHook = CallbackHook {
-                        val settings = engine.executeScript("getDefaultOptions();") as JSObject
-                        settings.setMember("fontSize", coreManager.configManager.get("font_size"))
-                        settings.setMember("language", extensionToLang(file.name.split(".").last()))
-                        if (coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
-                        startEditor(settings)
-                        selection = engine.executeScript("selection") as JSObject
-                        rdy(this)
-                        prepareEditorActions()
-                        debugger = WebViewDebugger(this)
-                        if (coreManager.configManager.get("webview_debug") == "true") debugger.start()
-                    }
-                    win.setMember("skide", eventHandler)
-                    win.setMember("cbh", cbHook)
-                    Thread {
-                        Thread.sleep(260)
-                        Platform.runLater {
-                            engine.executeScript("cbhReady();")
-                        }
-                    }.start()
+            if (ev.code == KeyCode.C && verifyKeyCombo(ev)) {
+                Platform.runLater {
+                    copySelectionToClipboard()
                 }
             }
-            engine.load(this.javaClass.getResource("/www/index.html").toString())
+            if (ev.code == KeyCode.X && verifyKeyCombo(ev)) {
+                Platform.runLater {
+                    val selection = getSelection()
+                    copySelectionToClipboard()
+                    replaceContentInRange(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn, "")
+                }
+            }
+
         }
+
+        engine.onAlert = EventHandler<WebEvent<String>> { event ->
+            val popup = Stage()
+            popup.initStyle(StageStyle.UTILITY)
+            popup.initModality(Modality.WINDOW_MODAL)
+
+            val content = StackPane()
+            content.children.setAll(
+                    Label(event.data)
+            )
+            content.setPrefSize(200.0, 100.0)
+            popup.scene = Scene(content)
+            popup.showAndWait()
+        }
+        view.engine.loadWorker.stateProperty().addListener { _, _, newValue ->
+            if (newValue === Worker.State.FAILED)
+                println("Failed to load webpage")
+            if (newValue === Worker.State.SUCCEEDED) {
+                val win = getWindow()
+                val cbHook = CallbackHook {
+                    val settings = engine.executeScript("getDefaultOptions();") as JSObject
+                    settings.setMember("fontSize", coreManager.configManager.get("font_size"))
+                    settings.setMember("language", extensionToLang(file.name.split(".").last()))
+                    if (coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
+                    startEditor(settings)
+                    selection = engine.executeScript("selection") as JSObject
+                    rdy(this)
+                    prepareEditorActions()
+                    debugger = WebViewDebugger(this)
+                    if (coreManager.configManager.get("webview_debug") == "true") debugger.start()
+                }
+                win.setMember("skide", eventHandler)
+                win.setMember("cbh", cbHook)
+                Thread {
+                    Thread.sleep(260)
+                    Platform.runLater {
+                        engine.executeScript("cbhReady();")
+                    }
+                }.start()
+            }
+        }
+        engine.load(this.javaClass.getResource("/www/index.html").toString())
+
     }
 
     fun addSkUnityReportAction() {
@@ -342,7 +342,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
          */
 
 
-        if(!openFileHolder.isExternal) {
+        if (!openFileHolder.isExternal) {
             addAction("runc", "Run Configuration") {
                 val map = HashMap<String, () -> Unit>()
 

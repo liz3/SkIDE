@@ -99,7 +99,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
             terminalBuilder.terminalConfig.foregroundColor = "#dbe0dc"
         }
 
-        ctrl.lowerTabPaneToggleBtn.setIcon("download")
+        ctrl.lowerTabPaneToggleBtn.setIcon("upload")
         ctrl.lowerTabPaneToggleBtn.setOnAction {
             if (visible) {
                 ctrl.lowerTabPaneToggleBtn.setIcon("upload")
@@ -125,28 +125,11 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
         }
         ctrl.consoleRemBtn.setIcon("delete", false)
         ctrl.consoleRemBtn.setOnAction {
-            if (ctrl.consoleTabArea.tabs.size == 1) {
-                ctrl.consoleTabArea.tabs.clear()
-                val tab = terminalBuilder.newTerminal()
-                tab.text = "Console"
-                tab.isClosable = false
-                ctrl.consoleTabArea.tabs.add(tab)
-                ctrl.consoleTabArea.selectionModel.select(tab)
-            } else {
-                val curr = ctrl.consoleTabArea.selectionModel.selectedItem
-
-                ctrl.consoleTabArea.tabs.remove(curr)
-            }
+            val curr = ctrl.consoleTabArea.selectionModel.selectedItem
+            if(curr != null) ctrl.consoleTabArea.tabs.remove(curr)
         }
-
-        val tab = terminalBuilder.newTerminal()
-        tab.text = "Console"
-        tab.isClosable = false
-        ctrl.consoleTabArea.tabs.add(tab)
-
-
-        ctrl.consoleTabArea.selectionModel.select(tab)
-
-        tabPane.tabs[1]!!.isDisable = true
+        tabPane.tabs[1]?.isDisable = true
+        rootPane.prefHeight = 0.0
+        visible = false
     }
 }

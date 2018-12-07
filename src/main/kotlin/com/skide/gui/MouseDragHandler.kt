@@ -4,10 +4,33 @@ import com.skide.gui.project.OpenProjectGuiManager
 import javafx.scene.control.TabPane
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
+import javafx.scene.layout.BorderPane
+import javafx.scene.layout.VBox
 
 
 class MouseDragHandler(val pane: TabPane, val coreManager: OpenProjectGuiManager) {
 
+
+    fun registerPreviewPane(pPane: VBox) {
+
+        pPane.setOnDragOver {
+            if (it.dragboard.hasFiles()) {
+                it.acceptTransferModes(*TransferMode.COPY_OR_MOVE)
+            }
+
+            it.consume()
+        }
+        pPane.setOnDragDropped {
+
+            if (it.dragboard.hasFiles()) {
+                coreManager.openProject.eventManager.disablePreview()
+                it.dragboard.files.forEach {
+                    coreManager.openProject.eventManager.openFile(it, pane, true)
+                }
+            }
+
+        }
+    }
 
     fun setup() {
 
@@ -53,5 +76,4 @@ class MouseDragHandler(val pane: TabPane, val coreManager: OpenProjectGuiManager
 
         }
     }
-
 }
