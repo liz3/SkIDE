@@ -210,7 +210,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
             view.setOnKeyPressed { ev ->
 
                 if (ev.code == KeyCode.ESCAPE) {
-                    if (openFileHolder.codeManager.sequenceReplaceHandler.computing)
+                    if (openFileHolder.codeManager.isSetup && openFileHolder.codeManager.sequenceReplaceHandler.computing)
                         openFileHolder.codeManager.sequenceReplaceHandler.cancel()
                 }
 

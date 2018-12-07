@@ -68,9 +68,10 @@ fun extensionToLang(ex:String) : String {
     return when(ex) {
         "sk" -> "skript"
         "js" -> "javascript"
-        "yaml", "yml", "properties" ->  "yaml"
+        "json" -> "json"
+        "yaml", "yml" ->  "yaml"
         "java" -> "java"
-        else -> "skript"
+        else -> "text/plain"
     }
 }
 fun adjustVersion(value: String): String {

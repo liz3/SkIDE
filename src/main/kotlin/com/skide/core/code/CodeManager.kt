@@ -19,6 +19,7 @@ import kotlin.collections.HashMap
 
 class CodeManager {
 
+    var isSetup = false
     lateinit var rootStructureItem: TreeItem<String>
     lateinit var area: CodeArea
     lateinit var content: String
@@ -40,7 +41,6 @@ class CodeManager {
 
 
     fun setup(project: OpenFileHolder) {
-
 
         rootStructureItem = TreeItem(project.name)
         content = readFile(project.f).second
@@ -80,7 +80,7 @@ class CodeManager {
         }
 
         parseStructure()
-
+        isSetup = true
     }
 
     private fun loadCrossFileAutoComplete(project: OpenFileHolder) {
@@ -156,10 +156,8 @@ class CodeManager {
             }
 
             stack.reverse()
-
-            val root = TreeItem<Node>(Node(null, area.openFileHolder.name, 0, 1))
-            var item = root
-
+            var item = TreeItem<Node>(stack.first())
+            stack.removeAt(0)
             stack.forEach {
                 val next = TreeItem<Node>(it)
                 item.children.add(next)

@@ -21,6 +21,7 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
             val line = it.selectedCrumb.value.linenumber
             openProject.area.moveLineToCenter(line)
             openProject.area.setSelection(line, 1, line, openProject.area.getColumnLineAmount(line))
+
         }
     }
 

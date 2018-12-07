@@ -18,11 +18,6 @@ object Menus {
         val menu = ContextMenu()
 
         val openIcon = Image(javaClass.getResource("/images/icon.png").toExternalForm())
-        val yaml = Image(javaClass.getResource("/images/yaml.png").toExternalForm())
-
-        val yamlView = ImageView(yaml)
-        yamlView.fitWidth = 25.0
-        yamlView.fitHeight = 15.0
 
         val openView = ImageView(openIcon)
         openView.fitWidth = 15.0
@@ -38,17 +33,15 @@ object Menus {
             if (name.isNotEmpty()) project.createNewFile(name)
 
         }
-        val newYamlFile = MenuItem("New Yaml File")
-        newYamlFile.graphic = yamlView
-        newYamlFile.setOnAction {
+        val newDefaultFile = MenuItem("New File")
+        newDefaultFile.setOnAction {
 
-            var name = Prompts.textPrompt("New Yaml File", "Enter File name Here")
+            val name = Prompts.textPrompt("New File", "Enter File name Here")
 
-            if (!name.endsWith(".yml") && !name.endsWith(".yaml")) name += ".yml"
             if (name.isNotEmpty()) project.createNewFile(name)
 
         }
-        menu.items.addAll(newFileItem, newYamlFile)
+        menu.items.addAll(newFileItem, newDefaultFile)
 
 
 
@@ -71,7 +64,7 @@ object Menus {
                 try {
                     project.openProject.guiHandler.switchMode(EditorMode.SIDE_SPLIT)
                     project.openProject.guiHandler.addTabPane(project.tab)
-                }catch (e:Exception) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
             }
@@ -99,9 +92,9 @@ object Menus {
         val deleteItem = MenuItem("Delete")
 
         open.setOnAction {
-           Thread{
-               project.eventManager.openFile(holder)
-           }.start()
+            Thread {
+                project.eventManager.openFile(holder)
+            }.start()
         }
         renameItem.setOnAction {
 
