@@ -173,8 +173,8 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if(item.type != DocType.EVENT) {
                     val name = "${item.name}:${item.type} - ${item.addon.name}"
                     var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
-                    if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder:"
-                    addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, adder, commandId = "general_auto_complete_finish"), array, count)
+                    if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder"
+                    addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, "$adder:", commandId = "general_auto_complete_finish"), array, count)
                     count++
                 }
             }
@@ -208,7 +208,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         if (text.isEmpty()) text = ev.name
                         text = text.replace("[on]", if (hasOn) "" else "on").replace("\n", "")
 
-                        text
+                        "$text:"
                     }.invoke(), commandId = "general_auto_complete_finish").createObject(area.getObject()))
 
                     count++
