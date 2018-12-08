@@ -192,6 +192,9 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             val value = guiHandler.openFiles.remove(it)
             value?.tabPane?.tabs?.remove(value.tab)
         }
+        if(guiHandler.openFiles.size == 0) {
+            guiHandler.openProject.eventManager.setupPreview()
+        }
         project.fileManager.deleteFile(f.name)
         eventManager.updateProjectFilesTreeView()
         System.gc()
