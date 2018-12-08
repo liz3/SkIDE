@@ -30,7 +30,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
     fun showLocalAutoComplete(array: JSObject) {
-        if (manager.sequenceReplaceHandler.computing) return
         val nodes = area.openFileHolder.codeManager.parseStructure()
         val currentLine = area.getCurrentLine()
         val currentColumn = area.getCurrentColumn()
@@ -159,7 +158,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             addSuggestionToObject(it, array, count)
             count++
         }
-        if(parent.nodeType == NodeType.EVENT ||parent.nodeType == NodeType.COMMAND) {
+        if (parent.nodeType == NodeType.EVENT || parent.nodeType == NodeType.COMMAND) {
             addSuggestionToObject(AutoCompleteItem(area, "player", CompletionType.KEYWORD, "player", "event based type"), array, count)
             count++
         }
@@ -168,17 +167,19 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             addSuggestionToObject(it, array, count)
             count++
         }
-        addonSupported.values.forEach { addon ->
-            addon.forEach { item ->
-                if(item.type != DocType.EVENT) {
-                    val name = "${item.name}:${item.type} - ${item.addon.name}"
-                    var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
-                    if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder"
-                    addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, "$adder:", commandId = "general_auto_complete_finish"), array, count)
-                    count++
+        if (!manager.sequenceReplaceHandler.computing)
+            addonSupported.values.forEach { addon ->
+                addon.forEach { item ->
+                    if (item.type != DocType.EVENT) {
+                        val name = "${item.name}:${item.type} - ${item.addon.name}"
+                        var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
+                        if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder"
+                        if (item.type == DocType.CONDITION) adder += ":"
+                        addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, adder, commandId = "general_auto_complete_finish"), array, count)
+                        count++
+                    }
                 }
             }
-        }
 
     }
 
