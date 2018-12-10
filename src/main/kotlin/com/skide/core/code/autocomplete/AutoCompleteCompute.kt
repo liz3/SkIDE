@@ -175,7 +175,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
                         if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder"
                         if (item.type == DocType.CONDITION) adder += ":"
-                        addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, adder, commandId = "general_auto_complete_finish"), array, count)
+                        addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.SNIPPET, adder, commandId = "general_auto_complete_finish"), array, count)
                         count++
                     }
                 }

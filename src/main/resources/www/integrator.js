@@ -1,5 +1,20 @@
 function registerSkript() {
 
+    var darkFunc = "#9fceff"
+    monaco.editor.defineTheme('skript-light', {
+        base: 'vs',
+        inherit: true,
+        rules: [
+        ]
+    });
+    monaco.editor.defineTheme('skript-dark', {
+        base: 'vs-dark',
+        inherit: true,
+        rules: [
+            { token: 'function.call', foreground: darkFunc.substring(1) }
+        ]
+    });
+
     monaco.languages.register({
         id: 'skript'
     });
@@ -7,11 +22,11 @@ function registerSkript() {
 
 
         keywords: [
-            "set", "if", "stop", "loop", "return", "function", "options", "true", "false", "else", "else if", "trigger", "on", "while", "is"
+            "set", "if", "stop", "loop", "return", "function", "options", "true", "false", "else", "else if", "trigger", "on", "while", "is", "effect", "expression", "command", "delete"
         ],
 
         typeKeywords: [
-            'player', 'integer', 'string'
+            'player', 'integer', 'string', 'text'
         ],
 
         operators: [
@@ -30,6 +45,8 @@ function registerSkript() {
         // The main tokenizer for our languages
         tokenizer: {
             root: [
+                [/\s+[^\}\s]+(?=\(.*\))/, 'function.call'],  // to show class names nicely
+               // [/\.\S+(?=\(.*\))/, 'function.call'],  // to show class names nicely
                 // identifiers and keywords
                 [/[a-z_$][\w$]*/, {
                     cases: {
@@ -38,9 +55,9 @@ function registerSkript() {
                         '@default': 'identifier'
                     }
                 }],
-                [/[A-Z][\w\$]*/, 'type.identifier'],  // to show class names nicely
-
                 [/\{([^{}]|%\{|}%)+}/, 'type'],
+
+
                 // whitespace
                 {include: '@whitespace'},
 
@@ -157,4 +174,5 @@ function registerSkript() {
             return skide.gotoCall(model, position, (k[0] == "isCancellationRequested" && k[1] == "onCancellationRequested"));
         }
     });
+
 }

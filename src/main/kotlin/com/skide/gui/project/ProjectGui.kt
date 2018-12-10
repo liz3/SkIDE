@@ -314,24 +314,21 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         val iconView = ImageView(Image(javaClass.getResource("/images/files_main.png").toExternalForm()))
         tab.graphic = iconView
         val treeView = TreeView<String>()
-        //set the root item
-        treeView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
 
-
-            if (newValue == null) return@addListener
-            val selectedItem = newValue as TreeItem<String>
-
-            if (selectedItem != treeView.root) {
-
-                if (openProjectGuiManager.projectFiles.containsKey(selectedItem.value)) {
-
-                    Thread {
-                        openFile(openProjectGuiManager.projectFiles[selectedItem.value]!!)
-                    }.start()
+        treeView.setOnMouseClicked {
+            if(it.button == MouseButton.PRIMARY && it.clickCount == 2) {
+                val newValue = treeView.selectionModel.selectedItem
+                val selectedItem = newValue as TreeItem<String>
+                if (selectedItem != treeView.root) {
+                    if (openProjectGuiManager.projectFiles.containsKey(selectedItem.value)) {
+                        Thread {
+                            openFile(openProjectGuiManager.projectFiles[selectedItem.value]!!)
+                        }.start()
+                    }
                 }
             }
         }
-
+        //set the root item
         tab.content = treeView
         Pair(tab, treeView)
     }.invoke()

@@ -266,7 +266,10 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
                     val settings = engine.executeScript("getDefaultOptions();") as JSObject
                     settings.setMember("fontSize", coreManager.configManager.get("font_size"))
                     settings.setMember("language", extensionToLang(file.name.split(".").last()))
-                    if (coreManager.configManager.get("theme") == "Dark") settings.setMember("theme", "vs-dark")
+                    if (coreManager.configManager.get("theme") == "Dark")
+                        settings.setMember("theme", "skript-dark")
+                    else
+                        settings.setMember("theme", "skript-light")
                     startEditor(settings)
                     selection = engine.executeScript("selection") as JSObject
                     rdy(this)
