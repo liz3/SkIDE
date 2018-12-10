@@ -30,6 +30,7 @@ class CodeManager {
     lateinit var findHandler: FindHandler
     lateinit var replaceHandler: ReplaceHandler
     lateinit var definitonFinder: DefinitionsFinder
+    lateinit var referenceProvider: ReferenceProvider
     lateinit var sequenceReplaceHandler: ReplaceSequence
     lateinit var tooltipHandler: TooltipHandler
     lateinit var hBox: BreadCrumbBar<Node>
@@ -49,6 +50,7 @@ class CodeManager {
         replaceHandler = ReplaceHandler(this, project)
         tooltipHandler = TooltipHandler(this, project)
         definitonFinder = DefinitionsFinder(this)
+        referenceProvider = ReferenceProvider(this)
         if (project.coreManager.configManager.get("highlighting") == "true") {
             highlighter = Highlighting(this)
 

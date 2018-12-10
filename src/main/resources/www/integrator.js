@@ -167,7 +167,12 @@ function registerSkript() {
 
     monaco.languages.registerLinkProvider("skript", {
     });
-
+    monaco.languages.registerReferenceProvider("skript", {
+        provideReferences: function (model, position, context, token) {
+            console.log(model, position, context);
+            return skide.findReferences(model, position, context);
+        }
+    });
     monaco.languages.registerDefinitionProvider('skript', {
         provideDefinition: function (model, position, token) {
             var k = Object.keys(token);

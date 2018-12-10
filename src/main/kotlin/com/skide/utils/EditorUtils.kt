@@ -21,6 +21,7 @@ object EditorUtils {
 
         return null
     }
+
     private fun searchNode(line: Int, node: Node): Node? {
 
         if (node.linenumber == line) return node
@@ -31,6 +32,36 @@ object EditorUtils {
         }
 
         return null
+    }
+
+    fun flatList(nodes: Vector<Node>): Vector<Node> {
+        val list = Vector<Node>()
+
+        nodes.forEach {
+            list.add(it)
+            flatListLoader(it.childNodes, list)
+        }
+
+        return list
+    }
+
+    fun flatList(node: Node): Vector<Node> {
+        val list = Vector<Node>()
+
+        list.add(node)
+        node.childNodes.forEach {
+            list.add(it)
+            flatListLoader(it.childNodes, list)
+        }
+
+        return list
+    }
+
+    private fun flatListLoader(node: Vector<Node>, list: Vector<Node>) {
+        node.forEach {
+            list.add(it)
+            flatListLoader(it.childNodes, list)
+        }
     }
 
     fun filterByNodeType(type: NodeType, list: Vector<Node>): Vector<Node> {
@@ -61,11 +92,11 @@ object EditorUtils {
         return found
     }
 
-    private fun nodeByTypeIterator(type:NodeType, node:Node, list: Vector<Node>) {
-          node.childNodes.forEach {
+    private fun nodeByTypeIterator(type: NodeType, node: Node, list: Vector<Node>) {
+        node.childNodes.forEach {
             nodeByTypeIterator(type, it, list)
         }
-        if(node.nodeType == type && !list.contains(node)) list.addElement(node)
+        if (node.nodeType == type && !list.contains(node)) list.addElement(node)
 
     }
 
@@ -85,7 +116,6 @@ object EditorUtils {
         return found
     }
 }
-
 
 
 class StringSearchResult(val start: Int, val end: Int, val str: String)

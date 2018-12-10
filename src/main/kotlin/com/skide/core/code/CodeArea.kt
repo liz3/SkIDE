@@ -3,7 +3,6 @@
 package com.skide.core.code
 
 import com.skide.CoreManager
-import com.skide.gui.DebugLevel
 import com.skide.gui.ListViewPopUp
 import com.skide.gui.WebViewDebugger
 import com.skide.include.OpenFileHolder
@@ -13,7 +12,6 @@ import javafx.concurrent.Worker
 import javafx.event.EventHandler
 import javafx.scene.Scene
 import javafx.scene.control.Label
-import javafx.scene.control.TextField
 import javafx.scene.input.Clipboard
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.DataFormat
@@ -66,6 +64,16 @@ class EventHandler(private val area: CodeArea) {
         if (area.editorCommands.containsKey(key)) {
             area.editorCommands[key]!!.cb()
         }
+    }
+
+    fun findReferences(model: Any, position: Any, context: Any): Any {
+
+        val lineNumber = (position as JSObject).getMember("lineNumber") as Int
+        val column = (position as JSObject).getMember("column") as Int
+
+        val word = area.getWordAtPosition(lineNumber, column)
+
+        return area.codeManager.referenceProvider.findReference(model, lineNumber, word, area.getArray())
     }
 
     fun gotoCall(model: Any, position: Any, token: Any): Any {
