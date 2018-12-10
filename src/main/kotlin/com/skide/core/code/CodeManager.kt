@@ -2,7 +2,6 @@ package com.skide.core.code
 
 import com.skide.core.code.autocomplete.AutoCompleteCompute
 import com.skide.core.code.autocomplete.ReplaceSequence
-import com.skide.core.code.highlighting.Highlighting
 import com.skide.core.skript.SkriptParser
 import com.skide.include.Node
 import com.skide.include.NodeType
@@ -13,7 +12,6 @@ import javafx.application.Platform
 import javafx.scene.control.TreeItem
 import org.controlsfx.control.BreadCrumbBar
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.HashMap
 
 
@@ -24,11 +22,8 @@ class CodeManager {
     lateinit var area: CodeArea
     lateinit var content: String
     lateinit var autoComplete: AutoCompleteCompute
-    lateinit var highlighter: Highlighting
     lateinit var parseResult: Vector<Node>
     lateinit var crossNodes: HashMap<String, Vector<Node>>
-    lateinit var findHandler: FindHandler
-    lateinit var replaceHandler: ReplaceHandler
     lateinit var definitonFinder: DefinitionsFinder
     lateinit var referenceProvider: ReferenceProvider
     lateinit var sequenceReplaceHandler: ReplaceSequence
@@ -46,14 +41,11 @@ class CodeManager {
         rootStructureItem = TreeItem(project.name)
         content = readFile(project.f).second
         area = project.area
-        findHandler = FindHandler(this, project)
-        replaceHandler = ReplaceHandler(this, project)
+
         tooltipHandler = TooltipHandler(this, project)
         definitonFinder = DefinitionsFinder(this)
         referenceProvider = ReferenceProvider(this)
         if (project.coreManager.configManager.get("highlighting") == "true") {
-            highlighter = Highlighting(this)
-
         }
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox

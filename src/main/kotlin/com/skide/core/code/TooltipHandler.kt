@@ -6,7 +6,10 @@ import javafx.stage.Popup
 import java.time.Duration
 
 
-class TooltipHandler(val codeManager: CodeManager, val project: OpenFileHolder)
+class TooltipHandler(val codeManager: CodeManager, val project: OpenFileHolder) {
+
+
+}
 
 
 
