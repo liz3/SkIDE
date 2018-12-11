@@ -25,7 +25,8 @@ function getDefaultOptions() {
     return {
         automaticLayout: true,
         mouseWheelScrollSensitivity: 0.1,
-        copyWithSyntaxHighlighting: false
+        copyWithSyntaxHighlighting: false,
+        insertSpaces: false
     };
 }
 function startEditor(options) {
