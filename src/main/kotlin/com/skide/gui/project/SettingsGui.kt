@@ -56,6 +56,40 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
 
     var loaded = false
 
+    fun updateState() {
+        if (currItem() != null) {
+
+            val item = currItem()
+            ctrl.plNameLabel.text = "Name: ${item.name}"
+            ctrl.plAuthorLabel.text = "Author: ${item.author}"
+            ctrl.enableSupportCheckBox.isSelected = {
+                var endVal = false
+                var found = false
+                changes.forEach {
+                    if (it.first == currItem() && it.second != SettingsChangeType.ADDON_ALTER) {
+                        found = true
+                        endVal = it.second == SettingsChangeType.ADDON_ADD
+                    }
+                }
+                if (!found) {
+                    endVal = currentInstalled.containsKey(item.name)
+                }
+                endVal
+            }.invoke()
+            ctrl.plVersionsComboBox.items.clear()
+            item.versions.keys.forEach {
+                ctrl.plVersionsComboBox.items.add(it)
+            }
+            if (alterValues.containsKey(currItem())) {
+                ctrl.plVersionsComboBox.selectionModel.select(alterValues[currItem()])
+            }
+            if (currentInstalled.containsKey(item.name)) ctrl.plVersionsComboBox.selectionModel.select(currentInstalled[item.name])
+
+            if (ctrl.plVersionsComboBox.selectionModel.selectedItem == null) {
+                ctrl.enableSupportCheckBox.isDisable = true
+            }
+        }
+    }
     fun init() {
 
         ctrl.plListView.items.clear()
@@ -75,38 +109,7 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
             ctrl.skriptVersionComboBox.isDisable = true
             ctrl.plListView.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
-                if (currItem() != null) {
-
-                    val item = currItem()
-                    ctrl.plNameLabel.text = "Name: ${item.name}"
-                    ctrl.plAuthorLabel.text = "Author: ${item.author}"
-                    ctrl.enableSupportCheckBox.isSelected = {
-                        var endVal = false
-                        var found = false
-                        changes.forEach {
-                            if (it.first == currItem() && it.second != SettingsChangeType.ADDON_ALTER) {
-                                found = true
-                                endVal = it.second == SettingsChangeType.ADDON_ADD
-                            }
-                        }
-                        if (!found) {
-                            endVal = currentInstalled.containsKey(item.name)
-                        }
-                        endVal
-                    }.invoke()
-                    ctrl.plVersionsComboBox.items.clear()
-                    item.versions.keys.forEach {
-                        ctrl.plVersionsComboBox.items.add(it)
-                    }
-                    if (alterValues.containsKey(currItem())) {
-                        ctrl.plVersionsComboBox.selectionModel.select(alterValues[currItem()])
-                    }
-                    if (currentInstalled.containsKey(item.name)) ctrl.plVersionsComboBox.selectionModel.select(currentInstalled[item.name])
-
-                    if (ctrl.plVersionsComboBox.selectionModel.selectedItem == null) {
-                        ctrl.enableSupportCheckBox.isDisable = true
-                    }
-                }
+                updateState()
             }
             ctrl.enableSupportCheckBox.setOnAction {
                 val selected = ctrl.enableSupportCheckBox.isSelected
@@ -153,9 +156,11 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
             ctrl.okBtn.setOnAction {
                 performChanges()
                 gui.window.close()
+                gui.window.stage.close()
             }
             ctrl.cancelBtn.setOnAction {
                 gui.window.close()
+                gui.window.stage.close()
             }
         }
 
@@ -174,8 +179,10 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
                 if (currentInstalled.containsKey(it.first.name)) {
                     currentInstalled.remove(it.first.name)
                     val alterValue = alterValues[it.first]
+
                     currentInstalled[it.first.name] = alterValue!!
                     alterValues.remove(it.first)
+
                 }
             }
         }
@@ -190,6 +197,8 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
         gui.projGuiManager.openProject.updateAddons()
         co.applyCurr()
         dOpts.save()
+
+        updateState()
     }
 
     private fun currItem() = ctrl.plListView.selectionModel.selectedItem

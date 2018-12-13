@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
@@ -8,71 +9,169 @@
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="552.0" prefWidth="826.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.GeneralSettingsGUIController">
-   <children>
-      <TabPane prefHeight="505.0" prefWidth="826.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-          <Tab text="General Settings">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="778.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.GeneralSettingsGUIController">
+   <center>
+      <TabPane prefHeight="524.0" prefWidth="826.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+         <tabs>
+            <Tab text="General Settings">
                <content>
-                  <Pane prefHeight="200.0" prefWidth="200.0">
+                  <HBox>
                      <children>
-                        <Label layoutX="14.0" layoutY="14.0" text="Theme" />
-                        <ComboBox fx:id="settingsTheneComboBox" layoutX="14.0" layoutY="31.0" prefWidth="150.0" />
-                        <Label layoutX="172.0" layoutY="14.0" text="Font" />
-                        <TextField fx:id="settingsFontTextField" layoutX="172.0" layoutY="31.0" />
-                        <Label layoutX="346.0" layoutY="14.0" text="Size" />
-                        <TextField fx:id="settingsFontSizeTextField" layoutX="346.0" layoutY="31.0" prefHeight="25.0" prefWidth="31.0" />
-                        <CheckBox fx:id="settingsAutoCompleteCheck" layoutX="14.0" layoutY="64.0" mnemonicParsing="false" text="Enable auto-complete" />
-                        <CheckBox fx:id="settingsHighlightingCheck" layoutX="13.0" layoutY="89.0" mnemonicParsing="false" text="Enable highlighting" />
-                        <Button fx:id="settingsCssFileBtn" disable="true" layoutX="14.0" layoutY="172.0" mnemonicParsing="false" text="Open Highlighting File " />
-                        <CheckBox fx:id="crossFileAutoComplete" layoutX="187.0" layoutY="64.0" mnemonicParsing="false" text="Enable cross-file auto-complete" />
-                        <CheckBox fx:id="metaDataGenerateCheck" layoutX="187.0" layoutY="112.0" mnemonicParsing="false" text="Info Generate on new File" />
-                        <CheckBox fx:id="settingsUpdateDataCheck" layoutX="187.0" layoutY="89.0" mnemonicParsing="false" text="Update data on restart" />
-                        <CheckBox fx:id="webViewDebuggerCheck" layoutX="13.0" layoutY="112.0" mnemonicParsing="false" text="Enable Editor Debugger" />
-                        <CheckBox fx:id="analyiticsCheck" layoutX="13.0" layoutY="138.0" mnemonicParsing="false" text="Send Metrics via Google Analytics" />
+                        <VBox spacing="5.0">
+                           <children>
+                              <CheckBox fx:id="settingsAutoCompleteCheck" mnemonicParsing="false" text="Enable auto-complete" />
+                              <CheckBox fx:id="settingsHighlightingCheck" mnemonicParsing="false" text="Enable highlighting" />
+                              <CheckBox fx:id="crossFileAutoComplete" mnemonicParsing="false" text="Enable cross-file auto-complete" />
+                              <CheckBox fx:id="metaDataGenerateCheck" mnemonicParsing="false" text="Info Generate on new File" />
+                              <CheckBox fx:id="settingsUpdateDataCheck" mnemonicParsing="false" text="Update data on restart" />
+                              <CheckBox fx:id="webViewDebuggerCheck" mnemonicParsing="false" text="Enable Editor Debugger" />
+                              <CheckBox fx:id="analyiticsCheck" mnemonicParsing="false" text="Send Metrics via Google Analytics" />
+                              <Button fx:id="settingsCssFileBtn" disable="true" mnemonicParsing="false" text="Open Highlighting File " />
+                           </children>
+                        </VBox>
+                        <VBox spacing="5.0">
+                           <children>
+                              <Label text="Theme" />
+                              <ComboBox fx:id="settingsTheneComboBox" prefWidth="150.0" />
+                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                 <children>
+                                    <VBox prefHeight="100.0" prefWidth="214.0">
+                                       <children>
+                                          <Label text="Font" />
+                                          <TextField fx:id="settingsFontTextField" />
+                                       </children>
+                                    </VBox>
+                                    <VBox prefHeight="100.0" prefWidth="37.0">
+                                       <children>
+                                          <Label text="Size" />
+                                          <TextField fx:id="settingsFontSizeTextField" minWidth="30.0" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
                      </children>
-                  </Pane>
-               </content></Tab>
-          <Tab text="Servers">
-               <content>
-                  <Pane prefHeight="200.0" prefWidth="200.0">
-                     <children>
-                        <ListView fx:id="serverServerList" layoutX="14.0" layoutY="52.0" prefHeight="149.0" prefWidth="200.0" />
-                        <Label layoutX="223.0" layoutY="106.0" text="Server version" />
-                        <Label layoutX="224.0" layoutY="155.0" text="Skript version" />
-                        <ComboBox fx:id="serverSkriptVersionComboBox" layoutX="224.0" layoutY="172.0" prefWidth="150.0" />
-                        <TextField fx:id="serverServerPathTextField" editable="false" layoutX="222.0" layoutY="126.0" prefHeight="25.0" prefWidth="382.0" />
-                        <Button fx:id="serverServerFolderPathChooseBtn" layoutX="609.0" layoutY="76.0" mnemonicParsing="false" text="..." />
-                        <TextField fx:id="serverNewServerNameTextField" layoutX="14.0" layoutY="19.0" />
-                        <Button fx:id="serverNewServerCreateBtn" layoutX="174.0" layoutY="19.0" mnemonicParsing="false" text="New" />
-                        <Label layoutX="222.0" layoutY="59.0" text="Path" />
-                        <TextField fx:id="serverServerFolderPathTextField" editable="false" layoutX="222.0" layoutY="76.0" prefHeight="25.0" prefWidth="382.0" />
-                        <Button fx:id="serverServertPathChooseBtn" layoutX="609.0" layoutY="126.0" mnemonicParsing="false" text="..." />
-                        <Label layoutX="222.0" layoutY="14.0" prefHeight="17.0" prefWidth="63.0" text="Name" />
-                        <TextField fx:id="serverServerNameTextField" editable="false" layoutX="222.0" layoutY="34.0" prefHeight="25.0" prefWidth="178.0" />
-                        <ListView fx:id="serverAddonList" layoutX="14.0" layoutY="276.0" prefHeight="169.0" prefWidth="200.0" />
-                        <Label layoutX="14.0" layoutY="259.0" text="Addons" />
-                        <Label layoutX="220.0" layoutY="276.0" text="Add from file" />
-                        <Button fx:id="serverAddAddonFromFileChooseBtn" layoutX="609.0" layoutY="293.0" mnemonicParsing="false" text="..." />
-                        <ComboBox fx:id="serverAddAddonFromPresetComboBox" disable="true" layoutX="221.0" layoutY="364.0" prefHeight="25.0" prefWidth="383.0" />
-                        <Button fx:id="serverAddAddonFromPresetBtn" disable="true" layoutX="566.0" layoutY="396.0" mnemonicParsing="false" text="Add" />
-                        <Label layoutX="221.0" layoutY="347.0" text="Add from presets" />
-                        <Button fx:id="serverAddAddonFromFileBtn" layoutX="545.0" layoutY="322.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Add" />
-                        <Button fx:id="serverServerDeleteBtn" layoutX="11.0" layoutY="213.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="202.0" text="Delete Server" />
-                        <Button fx:id="serverAddonDeleteBtn" layoutX="15.0" layoutY="449.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="199.0" text="Remove Addon" />
-                        <TextField fx:id="serverAddAddonFromFileTextField" layoutX="222.0" layoutY="293.0" prefHeight="25.0" prefWidth="382.0" />
-                        <Label layoutX="413.0" layoutY="14.0" text="Start arguments" />
-                        <TextField fx:id="serverStartAgsTextField" layoutX="413.0" layoutY="34.0" prefHeight="25.0" prefWidth="217.0" />
-                     </children>
-                  </Pane>
+                     <padding>
+                        <Insets left="10.0" top="10.0" />
+                     </padding>
+                  </HBox>
                </content>
             </Tab>
-        </tabs>
+            <Tab text="Servers">
+               <content>
+                  <VBox spacing="60.0">
+                     <children>
+                        <HBox spacing="15.0">
+                           <children>
+                              <VBox prefHeight="194.0" prefWidth="222.0" spacing="5.0">
+                                 <children>
+                                    <HBox prefHeight="31.0" prefWidth="222.0" spacing="5.0">
+                                       <children>
+                                          <TextField fx:id="serverNewServerNameTextField" />
+                                          <Button fx:id="serverNewServerCreateBtn" mnemonicParsing="false" text="New" />
+                                       </children>
+                                    </HBox>
+                                    <ListView fx:id="serverServerList" prefHeight="149.0" prefWidth="200.0" />
+                                    <Button fx:id="serverServerDeleteBtn" mnemonicParsing="false" prefHeight="26.0" prefWidth="242.0" text="Delete Server" />
+                                 </children>
+                              </VBox>
+                              <VBox prefHeight="194.0" prefWidth="337.0">
+                                 <children>
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                       <children>
+                                          <VBox prefHeight="43.0" prefWidth="205.0">
+                                             <children>
+                                                <Label prefHeight="17.0" prefWidth="63.0" text="Name" />
+                                                <TextField fx:id="serverServerNameTextField" editable="false" prefHeight="26.0" prefWidth="178.0" />
+                                             </children>
+                                          </VBox>
+                                          <VBox prefHeight="43.0" prefWidth="103.0">
+                                             <children>
+                                                <Label text="Start arguments" />
+                                                <TextField fx:id="serverStartAgsTextField" prefHeight="25.0" prefWidth="217.0" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <Label text="Path" />
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                       <children>
+                                          <TextField fx:id="serverServerFolderPathTextField" editable="false" prefHeight="25.0" prefWidth="382.0" />
+                                          <Button fx:id="serverServerFolderPathChooseBtn" mnemonicParsing="false" text="..." />
+                                       </children>
+                                    </HBox>
+                                    <Label text="Server version" />
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                       <children>
+                                          <TextField fx:id="serverServerPathTextField" editable="false" prefHeight="25.0" prefWidth="382.0" />
+                                          <Button fx:id="serverServertPathChooseBtn" mnemonicParsing="false" text="..." />
+                                       </children>
+                                    </HBox>
+                                    <Label text="Skript version" />
+                                    <ComboBox fx:id="serverSkriptVersionComboBox" prefWidth="150.0" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                        <HBox spacing="15.0">
+                           <children>
+                              <VBox spacing="5.0">
+                                 <children>
+                                    <Label text="Addons" />
+                                    <ListView fx:id="serverAddonList" prefHeight="169.0" prefWidth="200.0" />
+                                    <Button fx:id="serverAddonDeleteBtn" mnemonicParsing="false" prefHeight="26.0" prefWidth="244.0" text="Remove Addon" />
+                                 </children>
+                              </VBox>
+                              <VBox spacing="5.0">
+                                 <children>
+                                    <Label text="Add from file" />
+                                    <HBox spacing="5.0">
+                                       <children>
+                                          <TextField fx:id="serverAddAddonFromFileTextField" prefHeight="25.0" prefWidth="382.0" />
+                                          <Button fx:id="serverAddAddonFromFileChooseBtn" mnemonicParsing="false" text="..." />
+                                       </children>
+                                    </HBox>
+                                    <Button fx:id="serverAddAddonFromFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Add" />
+                                    <Label text="Add from presets">
+                                       <padding>
+                                          <Insets top="30.0" />
+                                       </padding>
+                                    </Label>
+                                    <ComboBox fx:id="serverAddAddonFromPresetComboBox" disable="true" prefHeight="25.0" prefWidth="383.0">
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </ComboBox>
+                                    <Button fx:id="serverAddAddonFromPresetBtn" disable="true" mnemonicParsing="false" text="Add" />
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                     <padding>
+                        <Insets left="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
+               </content>
+            </Tab>
+         </tabs>
       </TabPane>
-      <Button fx:id="okBtn" layoutX="769.0" layoutY="513.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="42.0" text="Ok" />
-      <Button fx:id="cancelBtn" layoutX="14.0" layoutY="513.0" mnemonicParsing="false" text="Cancel" />
-      <Button fx:id="applyBtn" layoutX="691.0" layoutY="513.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Apply" />
-   </children>
-</Pane>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="826.0" spacing="10.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="applyBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Apply" />
+            <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" />
+            <Button fx:id="okBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="42.0" text="Ok" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" right="5.0" />
+         </padding>
+      </HBox>
+   </bottom>
+</BorderPane>

@@ -676,7 +676,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
             window.stage.isResizable = false
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, coreManager, window).init()
-
+            window.stage.isResizable = false
             window.stage.show()
 
         }

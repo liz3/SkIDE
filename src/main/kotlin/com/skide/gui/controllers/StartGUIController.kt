@@ -82,7 +82,7 @@ class StartGUIController {
 
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, manager, window).init()
-
+            window.stage.isResizable = false
             window.stage.show()
         }
         importProject.setOnMouseClicked {
