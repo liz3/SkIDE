@@ -1,6 +1,7 @@
 package com.skide.gui.settings
 
 import com.skide.CoreManager
+import com.skide.Info
 import com.skide.gui.Prompts
 import com.skide.gui.controllers.GeneralSettingsGUIController
 import com.skide.include.ActiveWindow
@@ -26,7 +27,6 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
     var newServerAdded = false
 
     val serverManager = coreManager.serverManager
-    val resourceManager = coreManager.resourceManager
     val deleted = Vector<Server>()
 
 
@@ -43,13 +43,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("webview_debug", "${ctrl.webViewDebuggerCheck.isSelected}")
         coreManager.configManager.set("analytics", "${ctrl.analyiticsCheck.isSelected}")
 
-        if (coreManager.configManager.get("jre_home") == "" && getOS() == OperatingSystemType.MAC_OS) {
-            Platform.runLater {
-                val maybe = String(Runtime.getRuntime().exec("echo \$JAVA_HOME").inputStream.readBytes())
-
-                coreManager.configManager.set("jre_home", Prompts.textPrompt("JRE Path", "SK-IDE needs a JRE/JDK for Servers, please enter the Path to the java home here", maybe))
-            }
-        }
+       if(Info.prodMode) coreManager.configManager.writeUpdateFile(ctrl.updateCheck.isSelected, ctrl.betaUpdateCheck.isSelected)
     }
 
     private fun setShortcut(ev: KeyEvent, field: TextField, key: String) {
@@ -205,6 +199,11 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.settingsUpdateDataCheck.isSelected = coreManager.configManager.get("meta_update") == "true"
         ctrl.webViewDebuggerCheck.isSelected = coreManager.configManager.get("webview_debug") == "true"
         ctrl.analyiticsCheck.isSelected = coreManager.configManager.get("analytics") == "true"
+
+        if(Info.prodMode){
+            ctrl.updateCheck.isSelected = coreManager.configManager.update
+            ctrl.betaUpdateCheck.isSelected = coreManager.configManager.betaChannel
+        }
     }
 
     private fun setNewValues() {

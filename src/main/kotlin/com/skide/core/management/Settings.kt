@@ -1,6 +1,7 @@
 package com.skide.core.management
 
 import com.skide.CoreManager
+import com.skide.Info
 import com.skide.utils.FileReturnResult
 import com.skide.utils.readFile
 import com.skide.utils.restart
@@ -34,6 +35,12 @@ class ConfigManager(val coreManager: CoreManager) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
+
+    val versionsFile = File(File(CoreManager::class.java.protectionDomain.codeSource.location.toURI()).parent, "versions")
+    var installedVersion = ""
+    var update = false
+    var betaChannel = false
+
 
     val rootFolder = File(System.getProperty("user.home"), ".sk-ide-config")
     var defaultProjectPath = File(System.getProperty("user.home"), "SkIDE-Projects")
@@ -74,7 +81,7 @@ class ConfigManager(val coreManager: CoreManager) {
             ConfigLoadResult.FIRST_RUN
         } else ConfigLoadResult.ERROR
 
-
+   if(Info.prodMode) loadUpdateFile()
         //read the main Config
         readConfig()
         checkCssFiles()
@@ -114,7 +121,21 @@ class ConfigManager(val coreManager: CoreManager) {
 
         return ConfigLoadResult.SUCCESS
     }
+    private fun loadUpdateFile() {
+        if(!versionsFile.exists()) return
+        val content = JSONObject(readFile(versionsFile).second)
+        installedVersion = content.getString("binary")
+        update = content.getBoolean("update")
+        betaChannel = content.getBoolean("beta")
+    }
+     fun writeUpdateFile(nUpdate:Boolean, nBeta:Boolean) {
+        val content = JSONObject()
+        content.put("binary", installedVersion)
+        content.put("update", nUpdate)
+        content.put("beta", nBeta)
 
+        writeFile(content.toString().toByteArray(), versionsFile)
+    }
     private fun writeMapToFile(file: File, map: HashMap<Long, PointerHolder>): Boolean {
         val arr = JSONArray()
         for ((id, value) in map) {
@@ -264,9 +285,7 @@ class ConfigManager(val coreManager: CoreManager) {
     }
 
     fun getCssPath(name: String): String {
-
         val file = File(File(rootFolder, "css"), name)
-
         return "file:///${file.absolutePath.replace("\\", "/")}"
     }
 

@@ -25,14 +25,7 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
 
             area.isEditable = false
             val builder = ProcessBuilder()
-            val list = arrayListOf(File(File({
-                if(getOS() != OperatingSystemType.MAC_OS) {
-                    System.getProperty("java.home")
-                } else {
-                    coreManager.configManager.get("jre_home") as String
-                }
-
-            }.invoke(), "bin"), "java").absolutePath, "-jar", File(server.configuration.folder, "server.jar").absolutePath)
+            val list = arrayListOf(File(File(System.getProperty("java.home"), "bin"), "java").absolutePath, "-jar", File(server.configuration.folder, "server.jar").absolutePath)
             server.configuration.startAgrs.split(" ").forEach {
                 list += it
             }

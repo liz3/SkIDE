@@ -55,6 +55,12 @@
                               </HBox>
                            </children>
                         </VBox>
+                        <VBox prefHeight="466.0" prefWidth="181.0">
+                           <children>
+                              <CheckBox fx:id="updateCheck" mnemonicParsing="false" text="Check for updates" />
+                              <CheckBox fx:id="betaUpdateCheck" mnemonicParsing="false" text="Update from Beta Channel" />
+                           </children>
+                        </VBox>
                      </children>
                      <padding>
                         <Insets left="10.0" top="10.0" />

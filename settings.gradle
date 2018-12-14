@@ -14,5 +14,4 @@ include 'shared'
 include 'api'
 include 'services:webservice'
 */
-
 rootProject.name = 'Sk-IDE'

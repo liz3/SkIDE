@@ -38,7 +38,8 @@ class CoreManager {
 
     fun bootstrap(args: Array<String>, classLoader: ClassLoader?) {
 
-        println(getLocale())
+
+
         if (classLoader != null) Info.classLoader = classLoader
         debugger = Debugger()
 
@@ -72,6 +73,8 @@ class CoreManager {
                                 debugLevel = DebugLevel.valueOf(it.split("=")[1].toUpperCase())
                             }
                         }
+                            if(System.getProperty("skide.mode") != null && System.getProperty("skide.mode") == "prod")
+                                Info.prodMode = true
                         configManager = ConfigManager(me)
                         projectManager = ProjectManager(me)
                         serverManager = ServerManager(me)

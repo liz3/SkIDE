@@ -104,4 +104,10 @@ class GeneralSettingsGUIController {
     @FXML
     lateinit var analyiticsCheck: CheckBox
 
+    @FXML
+    lateinit var updateCheck: CheckBox
+
+    @FXML
+    lateinit var betaUpdateCheck: CheckBox
+
 }
