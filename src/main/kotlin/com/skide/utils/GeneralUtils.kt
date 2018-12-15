@@ -93,15 +93,14 @@ fun adjustVersion(value: String): String {
 
 fun restart() {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
-    val currentJar = File(GUIManager::class.java.protectionDomain.codeSource.location.toURI())
-
-    if (!currentJar.name.endsWith(".jar"))
-        return
     val command = ArrayList<String>()
-    command.add(javaBin)
-    command.add("-jar")
-    command.add(currentJar.path)
-
+    if(getOS() == OperatingSystemType.WINDOWS) {
+        command.add(File(File(File(".").canonicalPath).parentFile, "SkIDE.exe").absolutePath)
+    } else {
+        command.add(javaBin)
+        command.add("-jar")
+        command.add(File(File(File(".").canonicalPath).parentFile, "Installer.jar").absolutePath)
+    }
     val builder = ProcessBuilder(command)
     Thread {
         builder.start()
