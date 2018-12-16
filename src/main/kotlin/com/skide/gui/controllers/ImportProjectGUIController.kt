@@ -38,7 +38,7 @@ class ImportProjectGUIController {
 
     var rootProjectFolder = ""
 
-    fun initGui(manager: CoreManager, thisWindow: ActiveWindow, returnWindow: ActiveWindow) {
+    fun initGui(manager: CoreManager, thisWindow: ActiveWindow, returnWindow: ActiveWindow? = null) {
 
         openAfterCreation.isSelected = true
         openAfterCreation.isDisable = true
@@ -93,12 +93,12 @@ class ImportProjectGUIController {
             if (!projectPathField.text.contains(rootProjectFolder)) return@setOnAction
             manager.configManager.defaultProjectPath = File(rootProjectFolder)
             manager.projectManager.importProject(projectNameField.text, projectPathField.text, skriptVersionComboBox.selectionModel.selectedItem, openAfterCreation.isSelected)
-
+            thisWindow.close()
         }
 
         cancelButton.setOnAction {
             thisWindow.close()
-            returnWindow.stage.show()
+            returnWindow?.stage?.show()
         }
     }
 }

@@ -20,20 +20,13 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
     private var crossNodeUpdaterBusy = false
     private val privatecrossNodes = HashMap<File, Vector<Node>>()
     val crossNodes:HashMap<File, Vector<Node>>
-    get() {
-        return if(crossNodeUpdaterBusy)
-            HashMap()
-        else
-            privatecrossNodes
-    }
-
+    get() = if(crossNodeUpdaterBusy) HashMap() else privatecrossNodes
     val guiHandler = OpenProjectGuiManager(this, coreManager)
     val eventManager = guiHandler.startGui()
     val addons = HashMap<String, Vector<AddonItem>>()
     val compiler = SkCompiler()
     val deployer = RemoteDeployer(this)
     val runConfs = HashMap<Server, RunningObjectGuiBinder>()
-
     init {
         updateAddons()
         if (coreManager.configManager.get("cross_auto_complete") == "true") {
@@ -70,7 +63,6 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             crossNodeUpdaterBusy = false
         }.start()
     }
-
     fun updateAddons() {
 
         addons.clear()

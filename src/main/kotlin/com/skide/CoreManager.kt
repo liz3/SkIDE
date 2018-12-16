@@ -124,8 +124,8 @@ class CoreManager {
                                 }
                             }
                             stage.close()
-                            val window = guiManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false, Stage())
-                            stage.isResizable = false
+                            val window = guiManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false)
+                            window.stage.isResizable = false
                             (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
                             window.stage.isResizable = false
                             window.stage.show()

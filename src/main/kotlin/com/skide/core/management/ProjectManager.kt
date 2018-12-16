@@ -49,7 +49,8 @@ class ProjectManager(val coreManager: CoreManager) {
         if (!createProjectFilesFromImport(name, path, skriptVersion, id)) {
             return
         }
-        if (open) openProject(pointHolder)
+        if (open)
+            openProject(pointHolder)
 
 
     }
@@ -126,7 +127,8 @@ class ProjectManager(val coreManager: CoreManager) {
         obj.put("primary_server_id", -1)
         val filesArr = JSONArray()
         projectFolder.listFiles().forEach {
-            filesArr.put(it.absolutePath)
+           if(!it.isDirectory)
+               filesArr.put(it.absolutePath)
         }
         obj.put("files", filesArr)
         val configFile = File(projectFolder, ".project.skide")

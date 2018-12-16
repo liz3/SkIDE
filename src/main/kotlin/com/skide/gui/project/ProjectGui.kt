@@ -2,15 +2,14 @@ package com.skide.gui.project
 
 import com.skide.CoreManager
 import com.skide.core.code.CodeArea
+import com.skide.core.management.ConfigLoadResult
 import com.skide.core.management.ExternalHandler
 import com.skide.core.management.OpenProject
 import com.skide.gui.GUIManager
 import com.skide.gui.Menus
 import com.skide.gui.MouseDragHandler
 import com.skide.gui.Prompts
-import com.skide.gui.controllers.CreateProjectGUIController
-import com.skide.gui.controllers.GeneralSettingsGUIController
-import com.skide.gui.controllers.ProjectGUIController
+import com.skide.gui.controllers.*
 import com.skide.gui.settings.SettingsGUIHandler
 import com.skide.include.EditorMode
 import com.skide.include.OpenFileHolder
@@ -18,6 +17,7 @@ import com.skide.utils.OperatingSystemType
 import com.skide.utils.getOS
 import com.skide.utils.setIcon
 import com.skide.utils.verifyKeyCombo
+import com.sun.jna.platform.win32.Guid
 import com.terminalfx.TerminalTab
 import javafx.application.Platform
 import javafx.scene.Node
@@ -31,6 +31,7 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
+import javafx.stage.Stage
 import java.io.File
 import java.util.*
 
@@ -287,11 +288,10 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
         openFiles.values.forEach {
             it.manager.saveCode()
             openProject.project.fileManager.lastOpen.addElement(it.f.name)
-
         }
+        openFiles.clear()
         openProject.project.fileManager.rewriteConfig()
         if (openProject.runConfs.size != 0) {
-
             Thread {
                 val am = openProject.runConfs.size
                 openProject.runConfs.forEach {
@@ -303,9 +303,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             }.start()
         }
         coreManager.projectManager.openProjects.remove(this.openProject)
-
     }
-
     val projectFiles = openProject.project.fileManager.projectFiles
 }
 
@@ -326,7 +324,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         val treeView = TreeView<String>()
 
         treeView.setOnMouseClicked {
-            if(it.button == MouseButton.PRIMARY && it.clickCount == 2) {
+            if (it.button == MouseButton.PRIMARY && it.clickCount == 2) {
                 val newValue = treeView.selectionModel.selectedItem
                 val selectedItem = newValue as TreeItem<String>
                 if (selectedItem != treeView.root) {
@@ -401,7 +399,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
 
     fun openFile(f: File, isExternal: Boolean = false, cb: (OpenFileHolder) -> Unit = {}) {
-        if(bufferedFiles.contains(f)) return
+        if (bufferedFiles.contains(f)) return
         bufferedFiles.addElement(f)
         if (openProjectGuiManager.openFiles.containsKey(f)) {
             for ((file, holder) in openProjectGuiManager.openFiles) {
@@ -431,7 +429,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     }
 
     fun openFile(f: File, tabPane: TabPane, isExternal: Boolean = false) {
-        if(bufferedFiles.contains(f)) return
+        if (bufferedFiles.contains(f)) return
         bufferedFiles.addElement(f)
         if (openProjectGuiManager.openFiles.containsKey(f)) {
             for ((file, holder) in openProjectGuiManager.openFiles) {
@@ -637,12 +635,22 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         })
 
         val otherProjects = Menu("Other projects")
-
         closeItem.setOnAction {
             openProjectGuiManager.window.close()
             openProjectGuiManager.closeHook()
         }
-
+        val closeProjectItem = MenuItem("Close Project")
+        closeProjectItem.setOnAction {
+            openProjectGuiManager.closeHook()
+            openProjectGuiManager.window.close()
+            if (coreManager.projectManager.openProjects.size == 0) {
+                val window = GUIManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false, Stage())
+                window.stage.isResizable = false
+                (window.controller as StartGUIController).initGui(coreManager, window, false)
+                window.stage.isResizable = false
+                window.stage.show()
+            }
+        }
         val newProject = MenuItem("New Project")
         newProject.setOnAction {
             val window = GUIManager.getWindow("fxml/NewProjectGui.fxml", "Create new Project", false)
@@ -652,6 +660,25 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             window.stage.show()
         }
+        val importProject = MenuItem("Import Project")
+        importProject.setOnAction {
+            val window = GUIManager.getWindow("fxml/ImportProjectGui.fxml", "Import project", false)
+            window.controller as ImportProjectGUIController
+            window.controller.initGui(coreManager, window)
+            window.stage.isResizable = false
+            window.stage.show()
+        }
+        val newSkriptFile = MenuItem("New Skript File")
+        importProject.setOnAction {
+            val name = Prompts.textPrompt("New Skript File", "Enter File name Here")
+            if (name.isNotEmpty()) openProjectGuiManager.openProject.createNewFile(name)
+        }
+        val newFile = MenuItem("New File")
+        importProject.setOnAction {
+            val name = Prompts.textPrompt("New File", "Enter File name Here")
+            if (name.isNotEmpty()) openProjectGuiManager.openProject.createNewFile(name)
+        }
+
 
         val compileMenu = Menu("Compile")
         fileMenu.setOnShowing {
@@ -719,7 +746,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 editServerConfMenu.items.add(tItem)
             }
         }
-        fileMenu.items.addAll(newProject, projectSettings, otherProjects, compileMenu, generalSettings, editServerConfMenu, deployMenu, closeItem)
+        val newMenu = Menu("New")
+
+        newMenu.items.addAll(newProject, importProject, newSkriptFile, newFile)
+        fileMenu.items.addAll(newMenu, projectSettings, otherProjects, compileMenu, generalSettings, editServerConfMenu, deployMenu, closeProjectItem, closeItem)
     }
 
     private fun simpleMenuItem(name: String, action: () -> Unit): MenuItem {
