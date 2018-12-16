@@ -17,7 +17,6 @@ class ReferenceProvider(val manager: CodeManager) {
     }
 
     fun findReference(model: Any, lineNumber: Int, word: String, array: JSObject): JSObject {
-
         var counter = 0
         val nodes = manager.parseResult
         val currentNode = EditorUtils.getLineNode(lineNumber, nodes)

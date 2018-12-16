@@ -14,6 +14,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     val area = manager.area
     val addonSupported = project.openProject.addons
     val keyWordsGen = getKeyWords()
+    val eventTypes = getEventKeywords()
 
     fun createCommand() {
 
@@ -23,8 +24,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             GUIManager.closeGui(window.id)
         }
         generate.createButton.setOnAction {
+
             val line = area.getCurrentLine()
-            area.replaceContentInRange(line, 1, line, area.getColumnLineAmount(line), "command /" + generate.commandNameField.text + ":\n\tdescription: " + generate.descriptionField.text + "\n" + "\tpermission: " + generate.permissionField.text + "\n\ttrigger:\n\t\tsend \"hi\" to player")
+            area.replaceContentInRange(line, 1, line, area.getColumnLineAmount(line), generate.generateString())
             GUIManager.closeGui(window.id)
         }
     }
@@ -60,6 +62,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         //Croos file Auto-complete
         if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
             for ((path, internalNodes) in manager.crossNodes) {
+                if(path == project.f) continue
                 internalNodes.forEach { it ->
                     if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
                         val name = it.fields["name"] as String
@@ -74,7 +77,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         }
                         if (paramsStr != "") paramsStr = paramsStr.substring(1)
                         if (insertParams != "") insertParams = insertParams.substring(1)
-                        val con = "$name($paramsStr):$returnType - $path"
+                        val con = "$name($paramsStr):$returnType - ${path.name}"
 
                         val insert = "$name($insertParams)"
                         addSuggestionToObject(AutoCompleteItem(area, con, CompletionType.FUNCTION, insert), array, count)
@@ -83,11 +86,11 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         if (it.fields.contains("from_option")) {
                             val insertText = "{{@" + it.fields["name"] + "}::PATH}"
                             if (!varsToAdd.containsKey(insertText))
-                                varsToAdd[insertText] = AutoCompleteItem(area, (it.fields["name"] as String) + " [from option] - $path", CompletionType.VARIABLE, insertText)
+                                varsToAdd[insertText] = AutoCompleteItem(area, (it.fields["name"] as String) + " [from option] - ${path.name}", CompletionType.VARIABLE, insertText)
                         } else if (it.fields["visibility"] == "global") {
                             val insert = "{" + it.fields["name"] + "}"
                             if (!varsToAdd.containsKey(insert))
-                                varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String + " - $path", CompletionType.VARIABLE, insert)
+                                varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String + " - ${path.name}", CompletionType.VARIABLE, insert)
                         }
                     }
                 }
@@ -158,9 +161,18 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             addSuggestionToObject(it, array, count)
             count++
         }
+
         if (parent.nodeType == NodeType.EVENT || parent.nodeType == NodeType.COMMAND) {
             addSuggestionToObject(AutoCompleteItem(area, "player", CompletionType.KEYWORD, "player", "event based type"), array, count)
             count++
+            addSuggestionToObject(AutoCompleteItem(area, "event-player", CompletionType.KEYWORD, "event-player", "event based type"), array, count)
+            count++
+            if (parent.nodeType == NodeType.EVENT) {
+                eventTypes.forEach {
+                    addSuggestionToObject(it, array, count)
+                    count++
+                }
+            }
         }
         //Add all nodes in one move
         varsToAdd.values.forEach {
@@ -186,7 +198,15 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     private fun getKeyWords(): Vector<AutoCompleteItem> {
         val vector = Vector<AutoCompleteItem>()
         arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "else", "else if", "trigger", "on", "while", "is").forEach {
-            vector.add(AutoCompleteItem(area, it, CompletionType.KEYWORD, "$it ", "Generic Keyword"))
+            vector.add(AutoCompleteItem(area, it, CompletionType.KEYWORD, it, "Generic Keyword"))
+        }
+        return vector
+    }
+    private fun getEventKeywords(): Vector<AutoCompleteItem> {
+        val vector = Vector<AutoCompleteItem>()
+        arrayOf("block", "world").forEach {
+            vector.add(AutoCompleteItem(area, it, CompletionType.KEYWORD, it, "Event based Keyword"))
+            vector.add(AutoCompleteItem(area, "event-$it", CompletionType.KEYWORD, "event-$it", "Event based Keyword"))
         }
         return vector
     }

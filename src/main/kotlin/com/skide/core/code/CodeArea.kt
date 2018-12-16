@@ -55,6 +55,7 @@ class EventHandler(private val area: CodeArea) {
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
 
                 if (!area.codeManager.gotoActivated) area.codeManager.parseResult = area.codeManager.parseStructure()
+
             }
             area.line = currentLine
         }
@@ -69,7 +70,7 @@ class EventHandler(private val area: CodeArea) {
     fun findReferences(model: Any, position: Any, context: Any): Any {
 
         val lineNumber = (position as JSObject).getMember("lineNumber") as Int
-        val column = (position as JSObject).getMember("column") as Int
+        val column = position.getMember("column") as Int
 
         val word = area.getWordAtPosition(lineNumber, column)
 

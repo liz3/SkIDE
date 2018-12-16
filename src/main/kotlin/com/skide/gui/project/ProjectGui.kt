@@ -189,6 +189,11 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             box.children.add(tabPane)
             tabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
+                if (coreManager.configManager.get("cross_auto_complete") == "true") {
+                    coreManager.projectManager.openProjects.forEach {
+                        it.updateCrossNodes()
+                    }
+                }
                 if (tabPane.tabs.size == 0) {
                     box.children.remove(tabPane)
                     otherTabPanes.remove(tabPane)
@@ -232,7 +237,11 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                 otherTabPanes.addElement(tabPane)
                 box.children.add(tabPane)
                 tabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
-
+                    if (coreManager.configManager.get("cross_auto_complete") == "true") {
+                        coreManager.projectManager.openProjects.forEach {
+                            it.updateCrossNodes()
+                        }
+                    }
                     if (tabPane.tabs.size == 0) {
                         box.children.remove(tabPane)
                         otherTabPanes.remove(tabPane)
@@ -782,6 +791,11 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         controller.editorMainTabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
             if (controller.editorMainTabPane.selectionModel.selectedItem != null) {
+                if (coreManager.configManager.get("cross_auto_complete") == "true") {
+                    coreManager.projectManager.openProjects.forEach {
+                        it.updateCrossNodes()
+                    }
+                }
 
                 val tab = controller.editorMainTabPane.selectionModel.selectedItem
                 openProjectGuiManager.openFiles.values

@@ -11,6 +11,7 @@ import com.skide.utils.readFile
 import javafx.application.Platform
 import javafx.scene.control.TreeItem
 import org.controlsfx.control.BreadCrumbBar
+import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -23,7 +24,7 @@ class CodeManager {
     lateinit var content: String
     lateinit var autoComplete: AutoCompleteCompute
     lateinit var parseResult: Vector<Node>
-    lateinit var crossNodes: HashMap<String, Vector<Node>>
+    lateinit var crossNodes: HashMap<File, Vector<Node>>
     lateinit var definitonFinder: DefinitionsFinder
     lateinit var referenceProvider: ReferenceProvider
     lateinit var sequenceReplaceHandler: ReplaceSequence
@@ -50,10 +51,8 @@ class CodeManager {
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox
 
-
         if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
-            crossNodes = HashMap()
-            loadCrossFileAutoComplete(project)
+            crossNodes = project.openProject.crossNodes
         }
 
         if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
@@ -63,7 +62,7 @@ class CodeManager {
 
         area.view.focusedProperty().addListener { _, _, newValue ->
 
-            if(!newValue) {
+            if (!newValue) {
                 project.manager.saveCode()
                 project.openProject.runConfs.forEach {
                     if (it.value.runner === project) {
@@ -75,47 +74,6 @@ class CodeManager {
 
         parseStructure()
         isSetup = true
-    }
-
-    private fun loadCrossFileAutoComplete(project: OpenFileHolder) {
-
-        project.openProject.project.fileManager.projectFiles.values.forEach { f ->
-
-            if (f.name.endsWith(".sk")) {
-
-                if (project.openProject.guiHandler.openFiles.containsKey(f)) {
-                    val openHolder = project.openProject.guiHandler.openFiles[f]
-                    if (openHolder!!.codeManager != this) updateCrossFileAutoComplete(openHolder.f.name, openHolder.area.text)
-                } else {
-                    updateCrossFileAutoComplete(f.name, readFile(f).second)
-                }
-            }
-
-        }
-
-    }
-
-    fun updateCrossFileAutoComplete(f: String, text: String) {
-        if (!f.endsWith(".sk")) return
-        val result = SkriptParser().superParse(text)
-        if (!crossNodes.containsKey(f))
-            crossNodes[f] = Vector()
-        else
-            crossNodes[f]!!.clear()
-
-        result.forEach {
-            if (it.nodeType == NodeType.FUNCTION) {
-                crossNodes[f]!!.add(it)
-            }
-        }
-        val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, result)
-        vars.forEach {
-            if (it.nodeType == NodeType.SET_VAR && it.fields["visibility"] == "global") {
-                crossNodes[f]!!.add(it)
-            }
-        }
-
-
     }
 
     fun gotoItem(item: TreeItem<String>) {
@@ -144,8 +102,8 @@ class CodeManager {
             stack.addElement(currNode)
 
             while (currNode != null) {
-                if(!stack.contains(currNode))stack.add(currNode)
-                if(currNode.parent == null) break
+                if (!stack.contains(currNode)) stack.add(currNode)
+                if (currNode.parent == null) break
                 currNode = currNode.parent!!
             }
 
@@ -179,7 +137,7 @@ class CodeManager {
             if (node.nodeType == NodeType.EVENT) {
                 name += ": " + node.fields["name"]
             }
-            if(node.nodeType == NodeType.FUNCTION_CALL) {
+            if (node.nodeType == NodeType.FUNCTION_CALL) {
                 name += ": ${node.fields["name"]}"
             }
             if (node.nodeType == NodeType.FUNCTION) {

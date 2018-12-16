@@ -26,7 +26,7 @@ class DefinitionsFinder(val manager: CodeManager) {
                 manager.crossNodes.forEach { entry ->
                     EditorUtils.filterByNodeType(NodeType.FUNCTION, entry.value).forEach {
                         if (it.fields["name"] == name) {
-                            return DefinitionFinderResult(true, it.linenumber, 1, entry.key)
+                            return DefinitionFinderResult(true, it.linenumber, 1, entry.key.name)
                         }
                     }
                 }

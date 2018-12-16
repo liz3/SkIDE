@@ -1,11 +1,10 @@
 package com.skide.core.management
 
 import com.skide.CoreManager
+import com.skide.core.skript.SkriptParser
 import com.skide.gui.project.OpenProjectGuiManager
 import com.skide.include.*
-import com.skide.utils.RemoteDeployer
-import com.skide.utils.Version
-import com.skide.utils.adjustVersion
+import com.skide.utils.*
 import com.skide.utils.skcompiler.SkCompiler
 import javafx.application.Platform
 import javafx.scene.control.Button
@@ -18,6 +17,16 @@ class RunningObjectGuiBinder(val reloadBtn: Button, val stopBtn: Button, val srv
 
 class OpenProject(val project: Project, val coreManager: CoreManager) {
 
+    private var crossNodeUpdaterBusy = false
+    private val privatecrossNodes = HashMap<File, Vector<Node>>()
+    val crossNodes:HashMap<File, Vector<Node>>
+    get() {
+        return if(crossNodeUpdaterBusy)
+            HashMap()
+        else
+            privatecrossNodes
+    }
+
     val guiHandler = OpenProjectGuiManager(this, coreManager)
     val eventManager = guiHandler.startGui()
     val addons = HashMap<String, Vector<AddonItem>>()
@@ -27,6 +36,39 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
 
     init {
         updateAddons()
+        if (coreManager.configManager.get("cross_auto_complete") == "true") {
+            updateCrossNodes()
+        }
+    }
+    private fun addFileToCrossFileComplete(f: File, nodes: Vector<Node>) {
+        val toAdd = Vector<Node>()
+        EditorUtils.filterByNodeType(NodeType.FUNCTION, nodes).forEach {
+            toAdd.add(it)
+        }
+        EditorUtils.filterByNodeType(NodeType.SET_VAR, nodes).forEach {
+            if(it.fields["visibility"] == "global") toAdd.add(it)
+        }
+        privatecrossNodes[f] = toAdd
+    }
+    fun updateCrossNodes() {
+        crossNodeUpdaterBusy = true
+        val openTabs = HashMap<OpenFileHolder, String>()
+        guiHandler.openFiles.forEach {
+            openTabs[it.value] = it.value.area.text
+        }
+        Thread{
+            val parser = SkriptParser()
+
+            for (projectFile in project.fileManager.projectFiles) {
+                if (guiHandler.openFiles.containsKey(projectFile.value)) {
+                    val handler = guiHandler.openFiles[projectFile.value]
+                    addFileToCrossFileComplete(projectFile.value, parser.superParse(openTabs[handler]!!))
+                } else {
+                    addFileToCrossFileComplete(projectFile.value, parser.superParse(readFile(projectFile.value).second))
+                }
+            }
+            crossNodeUpdaterBusy = false
+        }.start()
     }
 
     fun updateAddons() {
@@ -113,9 +155,9 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         if (!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running) {
             runConfs.remove(server)
             val runningServer = coreManager.serverManager.getServerForRun(server) {
-              Platform.runLater {
-                  it.setSkriptFile(file.name, file.area.text)
-              }
+                Platform.runLater {
+                    it.setSkriptFile(file.name, file.area.text)
+                }
             }
             val guiReturn = guiHandler.lowerTabPaneEventManager.getServerTab(runningServer)
             guiReturn.second.setOnAction {
@@ -192,7 +234,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             val value = guiHandler.openFiles.remove(it)
             value?.tabPane?.tabs?.remove(value.tab)
         }
-        if(guiHandler.openFiles.size == 0) {
+        if (guiHandler.openFiles.size == 0) {
             guiHandler.openProject.eventManager.setupPreview()
         }
         project.fileManager.deleteFile(f.name)
