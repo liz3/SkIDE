@@ -64,7 +64,10 @@ class SkCompiler {
                 }
                 val file = File(opts.outputDir, project.name + ".sk")
                 caller("Writing file ${file.absolutePath}")
-                writeFile(out.substring(1).toByteArray(), file, false, true)
+              if(out.isNotEmpty())
+                  writeFile(out.substring(1).toByteArray(), file, false, true)
+                else
+                  caller("can´t write empty fine.")
                 caller("Finished")
             }
             if (opts.method == CompileOptionType.PER_FILE) {

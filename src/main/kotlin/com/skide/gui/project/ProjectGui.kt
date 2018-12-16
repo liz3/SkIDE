@@ -308,6 +308,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     var guiReady = {}
     var contextMenuVisible: ContextMenu? = null
     val mouseDragHandler = MouseDragHandler(controller.editorMainTabPane, this.openProjectGuiManager)
+    val bufferedFiles = Vector<File>()
 
     val filesTab = {
         val tab = Tab()
@@ -391,6 +392,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
 
     fun openFile(f: File, isExternal: Boolean = false, cb: (OpenFileHolder) -> Unit = {}) {
+        if(bufferedFiles.contains(f)) return
+        bufferedFiles.addElement(f)
         if (openProjectGuiManager.openFiles.containsKey(f)) {
             for ((file, holder) in openProjectGuiManager.openFiles) {
                 if (file === f) {
@@ -398,6 +401,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                     break
                 }
             }
+            bufferedFiles.remove(f)
             return
         }
 
@@ -410,23 +414,24 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 it.codeManager = holder.codeManager
                 openProjectGuiManager.openFiles[f] = holder
                 setupNewTabForDisplay(holder)
-
                 cb(holder)
+                bufferedFiles.remove(f)
             }
 
         }
     }
 
     fun openFile(f: File, tabPane: TabPane, isExternal: Boolean = false) {
-
+        if(bufferedFiles.contains(f)) return
+        bufferedFiles.addElement(f)
         if (openProjectGuiManager.openFiles.containsKey(f)) {
             for ((file, holder) in openProjectGuiManager.openFiles) {
                 if (file === f) {
                     holder.tabPane.selectionModel.select(holder.tab)
                     break
-
                 }
             }
+            bufferedFiles.remove(f)
 
             return
         }
@@ -439,6 +444,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 it.codeManager = holder.codeManager
                 openProjectGuiManager.openFiles[f] = holder
                 setupNewTabForDisplay(holder)
+                bufferedFiles.remove(f)
+
             }
 
         }

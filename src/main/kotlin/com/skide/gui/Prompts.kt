@@ -22,6 +22,7 @@ object Prompts {
 
         input.title = title
         input.headerText = header
+        input.graphic = null
 
 
         return try {

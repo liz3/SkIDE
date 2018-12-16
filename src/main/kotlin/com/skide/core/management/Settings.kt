@@ -72,6 +72,7 @@ class ConfigManager(val coreManager: CoreManager) {
 
         loaded = if (loaded) return ConfigLoadResult.SUCCESS else true
         var firstRun = false
+        if (Info.prodMode) loadUpdateFile()
 
         if (!rootFolder.exists()) firstRun = true
         if (!configFile.exists()) firstRun = true
@@ -81,7 +82,6 @@ class ConfigManager(val coreManager: CoreManager) {
             ConfigLoadResult.FIRST_RUN
         } else ConfigLoadResult.ERROR
 
-   if(Info.prodMode) loadUpdateFile()
         //read the main Config
         readConfig()
         checkCssFiles()
@@ -121,14 +121,16 @@ class ConfigManager(val coreManager: CoreManager) {
 
         return ConfigLoadResult.SUCCESS
     }
+
     private fun loadUpdateFile() {
-        if(!versionsFile.exists()) return
+        if (!versionsFile.exists()) return
         val content = JSONObject(readFile(versionsFile).second)
         installedVersion = content.getString("binary")
         update = content.getBoolean("update")
         betaChannel = content.getBoolean("beta")
     }
-     fun writeUpdateFile(nUpdate:Boolean, nBeta:Boolean) {
+
+    fun writeUpdateFile(nUpdate: Boolean, nBeta: Boolean) {
         val content = JSONObject()
         content.put("binary", installedVersion)
         content.put("update", nUpdate)
@@ -136,6 +138,7 @@ class ConfigManager(val coreManager: CoreManager) {
 
         writeFile(content.toString().toByteArray(), versionsFile)
     }
+
     private fun writeMapToFile(file: File, map: HashMap<Long, PointerHolder>): Boolean {
         val arr = JSONArray()
         for ((id, value) in map) {
