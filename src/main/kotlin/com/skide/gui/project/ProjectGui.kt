@@ -704,7 +704,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                     openProjectGuiManager.openFiles.forEach { f ->
                         f.value.manager.saveCode()
                     }
-                    openProjectGuiManager.openProject.compiler.compile(openProjectGuiManager.openProject.project, it.value, openProjectGuiManager.lowerTabPaneEventManager.setupBuildLogTabForInput())
+                    openProjectGuiManager.openProject.compiler.compile(openProjectGuiManager.openProject, it.value, openProjectGuiManager.lowerTabPaneEventManager.setupBuildLogTabForInput())
                 }
                 compileMenu.items.add(item)
             }

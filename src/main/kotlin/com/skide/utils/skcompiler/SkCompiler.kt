@@ -1,5 +1,6 @@
 package com.skide.utils.skcompiler
 
+import com.skide.core.management.OpenProject
 import com.skide.core.skript.SkriptParser
 import com.skide.include.*
 import com.skide.utils.readFile
@@ -10,7 +11,7 @@ import java.util.*
 
 class SkCompiler {
 
-    val parser = SkriptParser()
+    lateinit var parser: SkriptParser
 
     private fun isValid(it: Node, opts: CompileOption): Boolean {
         if (it.nodeType == NodeType.COMMENT && opts.remComments) {
@@ -22,7 +23,9 @@ class SkCompiler {
         return true
     }
 
-    fun compile(project: Project, opts: CompileOption, caller: (String) -> Unit) {
+    fun compile(openProject: OpenProject, opts: CompileOption, caller: (String) -> Unit) {
+        if(!this::parser.isInitialized) parser = SkriptParser(openProject)
+        val project = openProject.project
         Thread {
             caller("Starting compile process...")
 
@@ -83,7 +86,10 @@ class SkCompiler {
             }
         }.start()
     }
-    fun compile(project: Project, opts: CompileOption, caller: (String) -> Unit, returner: (String) -> Unit) {
+    fun compile(openProject: OpenProject, opts: CompileOption, caller: (String) -> Unit, returner: (String) -> Unit) {
+        if(!this::parser.isInitialized) parser = SkriptParser(openProject)
+
+
         Thread {
             caller("Starting compile process...")
 
@@ -130,7 +136,9 @@ class SkCompiler {
         }.start()
     }
 
-    fun compileForServer(project: Project, opts: CompileOption, skFolder: File, caller: (String) -> Unit, finished: () -> Unit) {
+    fun compileForServer(openProject: OpenProject, opts: CompileOption, skFolder: File, caller: (String) -> Unit, finished: () -> Unit) {
+        if(!this::parser.isInitialized) parser = SkriptParser(openProject)
+
         if(!skFolder.exists()) {
             skFolder.mkdirs()
         }
@@ -173,7 +181,7 @@ class SkCompiler {
                         out += computeString(node)
                     }
                 }
-                val file = File(skFolder, project.name + ".sk")
+                val file = File(skFolder, openProject.project.name + ".sk")
                 caller("Writing file ${file.absolutePath}")
                 writeFile(out.substring(1).toByteArray(), file, false, true)
                 caller("Finished")

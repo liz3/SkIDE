@@ -324,7 +324,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
             for ((name, opt) in openProject.project.fileManager.compileOptions) {
                 map[name] = {
                     openProject.guiHandler.openFiles.forEach { it.value.manager.saveCode() }
-                    openProject.compiler.compile(openProject.project, opt,
+                    openProject.compiler.compile(openProject, opt,
                             openProject.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput())
                 }
             }

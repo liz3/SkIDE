@@ -9,7 +9,6 @@ import com.skide.utils.skcompiler.SkCompiler
 import javafx.application.Platform
 import javafx.scene.control.Button
 import java.io.File
-import java.rmi.Remote
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -18,39 +17,45 @@ class RunningObjectGuiBinder(val reloadBtn: Button, val stopBtn: Button, val srv
 class OpenProject(val project: Project, val coreManager: CoreManager) {
 
     private var crossNodeUpdaterBusy = false
-    private val privatecrossNodes = HashMap<File, Vector<Node>>()
-    val crossNodes:HashMap<File, Vector<Node>>
-    get() = if(crossNodeUpdaterBusy) HashMap() else privatecrossNodes
+    private val privateCrossNodes = HashMap<File, Vector<Node>>()
+    val crossNodes: HashMap<File, Vector<Node>>
+        get() = if (crossNodeUpdaterBusy)
+            HashMap()
+        else
+            privateCrossNodes
     val guiHandler = OpenProjectGuiManager(this, coreManager)
     val eventManager = guiHandler.startGui()
     val addons = HashMap<String, Vector<AddonItem>>()
     val compiler = SkCompiler()
     val deployer = RemoteDeployer(this)
     val runConfs = HashMap<Server, RunningObjectGuiBinder>()
+
     init {
         updateAddons()
-        if (coreManager.configManager.get("cross_auto_complete") == "true") {
+        if (coreManager.configManager.get("cross_auto_complete") == "true")
             updateCrossNodes()
-        }
+
     }
+
     private fun addFileToCrossFileComplete(f: File, nodes: Vector<Node>) {
         val toAdd = Vector<Node>()
         EditorUtils.filterByNodeType(NodeType.FUNCTION, nodes).forEach {
             toAdd.add(it)
         }
         EditorUtils.filterByNodeType(NodeType.SET_VAR, nodes).forEach {
-            if(it.fields["visibility"] == "global") toAdd.add(it)
+            if (it.fields["visibility"] == "global") toAdd.add(it)
         }
-        privatecrossNodes[f] = toAdd
+        privateCrossNodes[f] = toAdd
     }
+
     fun updateCrossNodes() {
         crossNodeUpdaterBusy = true
         val openTabs = HashMap<OpenFileHolder, String>()
         guiHandler.openFiles.forEach {
             openTabs[it.value] = it.value.area.text
         }
-        Thread{
-            val parser = SkriptParser()
+        Thread {
+            val parser = SkriptParser(this)
 
             for (projectFile in project.fileManager.projectFiles) {
                 if (guiHandler.openFiles.containsKey(projectFile.value)) {
@@ -63,6 +68,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             crossNodeUpdaterBusy = false
         }.start()
     }
+
     fun updateAddons() {
 
         addons.clear()
@@ -92,7 +98,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         if (!runConfs.containsKey(server) || !runConfs[server]!!.srv.server.running) {
             runConfs.remove(server)
             val runningServer = coreManager.serverManager.getServerForRun(server) { srv ->
-                compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
+                compiler.compileForServer(this, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
 
                     if (configuration.method == CompileOptionType.PER_FILE) {
                         configuration.includedFiles.forEach {
@@ -116,7 +122,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         }
 
         if (runConfs.containsKey(server) && runConfs[server]!!.runner === configuration) {
-            compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
+            compiler.compileForServer(this, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
 
                 if (configuration.method == CompileOptionType.PER_FILE) {
                     configuration.includedFiles.forEach {
@@ -129,7 +135,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             })
         } else {
             runConfs[server]!!.runner = configuration
-            compiler.compileForServer(project, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
+            compiler.compileForServer(this, configuration, File(File(File(server.configuration.folder, "plugins"), "Skript"), "scripts"), {}, {
                 if (configuration.method == CompileOptionType.PER_FILE) {
                     configuration.includedFiles.forEach {
                         runConfs[server]!!.srv.sendCommand("sk reload ${it.name}")

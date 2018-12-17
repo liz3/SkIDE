@@ -1,5 +1,6 @@
 package com.skide.include
 import com.skide.core.skript.NodeBuilder
+import com.skide.core.skript.SkriptParser
 import java.util.*
 
 enum class NodeType {
@@ -20,16 +21,17 @@ enum class NodeType {
     UNDEFINED,
     INVALID,
     CLASS,
-    FUNCTION_CALL
+    FUNCTION_CALL,
+    INTERVAL
 }
 
 class MethodParameter(val name: String, val type: String, val value: String)
 
-class Node(val parent: Node? = null, val raw: String, var tabLevel: Int, val linenumber: Int, val childNodes: Vector<Node> = Vector()) {
+class Node(val parser: SkriptParser, val parent: Node? = null, val raw: String, var tabLevel: Int, val linenumber: Int, val childNodes: Vector<Node> = Vector()) {
     private val builder = NodeBuilder(this)
     val nodeType = builder.getType()
     override fun toString() = builder.content
     val fields = builder.fields
-
+    lateinit var events: Vector<AddonItem>
     fun getContent() = builder.content
 }

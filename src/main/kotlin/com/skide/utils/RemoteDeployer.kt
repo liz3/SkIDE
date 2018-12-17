@@ -28,7 +28,7 @@ class RemoteDeployer(val project: OpenProject) {
     }
 
     fun depploy(compileOption: CompileOption, host: RemoteHost) {
-        project.compiler.compile(project.project, compileOption, project.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput(), { result ->
+        project.compiler.compile(project, compileOption, project.guiHandler.lowerTabPaneEventManager.setupBuildLogTabForInput(), { result ->
             if (host.type == RemoteHostType.SFTP)
                 if (host.isPrivateKey) sftpDeployWithKey(host, compileOption.name + ".sk", result) else sftpDeploy(host, compileOption.name, result)
             else

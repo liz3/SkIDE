@@ -1,8 +1,7 @@
 package com.skide.core.skript
 
-import com.skide.include.MethodParameter
-import com.skide.include.Node
-import com.skide.include.NodeType
+import com.skide.include.*
+import com.skide.utils.EditorUtils
 import java.util.*
 import java.util.regex.Pattern
 
@@ -14,7 +13,7 @@ class NodeBuilder(val node: Node) {
     val fields = HashMap<String, Any>()
     val parent = node.parent
 
-   init{
+    init {
         var inBrace = false
         val arr = content.toCharArray()
         if (node.nodeType != NodeType.COMMENT) {
@@ -42,7 +41,7 @@ class NodeBuilder(val node: Node) {
             theType = NodeType.OPTIONS
         }
         val regex = Pattern.compile("\\S+\\(.*\\)")
-        if(regex.matcher(content).matches()) {
+        if (regex.matcher(content).matches()) {
             theType = NodeType.FUNCTION_CALL
             fields["name"] = content.split("(").first()
         }
@@ -51,6 +50,44 @@ class NodeBuilder(val node: Node) {
             parseMethodParameters()
             theType = NodeType.FUNCTION
         }
+        if (content.toLowerCase().startsWith("every ")) {
+            theType = NodeType.INTERVAL
+        }
+
+        if (theType == NodeType.UNDEFINED && node.tabLevel == 0 && content.isNotEmpty() && content.isNotBlank()) {
+            theType = NodeType.EVENT
+            var found = false
+            val available = Vector<AddonItem>()
+            for (event in node.parser.events) {
+                if (EditorUtils.fullFillsEventRequirements(event.requirements, content)) available.add(event)
+            }
+            if (available.size > 0) {
+                var lastHit = 0
+                var highest = available.firstElement()
+                if (available.size == 1) {
+                    fields["event"] = highest
+                    fields["name"] = highest.name
+                    found = true
+                } else {
+                    for (addonItem in available) {
+                        var hits = 0
+                        content.replace(":", "").split(" ").forEach {
+                            if (addonItem.pattern.contains(it)) hits++
+                        }
+                        if (hits > lastHit) {
+                            highest = addonItem
+                            lastHit = hits
+                        }
+                    }
+                    fields["event"] = highest
+                    fields["name"] = highest.name
+                    found = true
+                }
+                available.clear()
+            }
+            if (!found) fields["name"] = "Unknown Event"
+        }
+
         if (content.toLowerCase().startsWith("command ")) {
             fields.put("name", content.split(" ")[1].replace("/", "").replace(":", ""))
             theType = NodeType.COMMAND
@@ -58,15 +95,10 @@ class NodeBuilder(val node: Node) {
         if (content.toLowerCase().startsWith("#")) {
             theType = NodeType.COMMENT
         }
-        if (content.toLowerCase().startsWith("on ")) {
-            fields.put("name", content.replace(":", "").replace("on ", ""))
-            theType = NodeType.EVENT
-        }
-
         if (content.toLowerCase().startsWith("if ")) {
             theType = NodeType.IF_STATEMENT
         }
-        if (content.toLowerCase().startsWith("else ") ||content.toLowerCase().startsWith("else if")) {
+        if (content.toLowerCase().startsWith("else ") || content.toLowerCase().startsWith("else if")) {
             theType = NodeType.ELSE_STATEMENT
         }
         if (content.toLowerCase().startsWith("loop ")) {

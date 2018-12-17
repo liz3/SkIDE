@@ -14,8 +14,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     val area = manager.area
     val addonSupported = project.openProject.addons
     val keyWordsGen = getKeyWords()
-    val eventTypes = getEventKeywords()
-
     fun createCommand() {
 
         val window = GUIManager.getWindow("fxml/GenerateCommand.fxml", "Generate command", true)
@@ -162,15 +160,15 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             count++
         }
 
-        if (parent.nodeType == NodeType.EVENT || parent.nodeType == NodeType.COMMAND) {
-            addSuggestionToObject(AutoCompleteItem(area, "player", CompletionType.KEYWORD, "player", "event based type"), array, count)
-            count++
-            addSuggestionToObject(AutoCompleteItem(area, "event-player", CompletionType.KEYWORD, "event-player", "event based type"), array, count)
-            count++
-            if (parent.nodeType == NodeType.EVENT) {
-                eventTypes.forEach {
-                    addSuggestionToObject(it, array, count)
-                    count++
+        if (parent.nodeType == NodeType.EVENT) {
+            if(parent.fields["event"] != null) {
+                val ev = parent.fields["event"] as AddonItem
+                if(ev.eventValues != "") {
+                    ev.eventValues.split(",").forEach {
+                        val value = it.trim()
+                        addSuggestionToObject(AutoCompleteItem(area, value, CompletionType.KEYWORD, value, "event based type"), array, count)
+                        count++
+                    }
                 }
             }
         }
@@ -199,14 +197,6 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         val vector = Vector<AutoCompleteItem>()
         arrayOf("set", "if", "stop", "loop", "return", "function", "options", "true", "false", "else", "else if", "trigger", "on", "while", "is").forEach {
             vector.add(AutoCompleteItem(area, it, CompletionType.KEYWORD, it, "Generic Keyword"))
-        }
-        return vector
-    }
-    private fun getEventKeywords(): Vector<AutoCompleteItem> {
-        val vector = Vector<AutoCompleteItem>()
-        arrayOf("block", "world").forEach {
-            vector.add(AutoCompleteItem(area, it, CompletionType.KEYWORD, it, "Event based Keyword"))
-            vector.add(AutoCompleteItem(area, "event-$it", CompletionType.KEYWORD, "event-$it", "Event based Keyword"))
         }
         return vector
     }

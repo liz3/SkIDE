@@ -33,12 +33,13 @@ class CodeManager {
     var gotoActivated = false
 
 
-    private val parser = SkriptParser()
+    private lateinit var parser: SkriptParser
     val ignored = HashMap<Int, String>()
 
 
     fun setup(project: OpenFileHolder) {
 
+        parser = SkriptParser(project.openProject)
         rootStructureItem = TreeItem(project.name)
         content = readFile(project.f).second
         area = project.area

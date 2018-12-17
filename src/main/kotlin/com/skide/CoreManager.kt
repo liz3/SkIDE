@@ -39,7 +39,6 @@ class CoreManager {
     fun bootstrap(args: Array<String>, classLoader: ClassLoader?) {
 
 
-
         if (classLoader != null) Info.classLoader = classLoader
         debugger = Debugger()
 

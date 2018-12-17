@@ -42,7 +42,6 @@ class ResourceManager(val coreManager: CoreManager) {
 
         }
     }
-
     fun loadAddon(name: String) {
         if (addons[name] != null && addons[name]!!.loaded) {
             return
@@ -74,12 +73,15 @@ class ResourceManager(val coreManager: CoreManager) {
                         entry.getString("event_values")
                     else ""
             val item = AddonItem(entry.getInt("id"), title, type, addon, pattern, description, eventValues, returnType)
+            if(item.type == DocType.EVENT)
+                item.requirements = EditorUtils.extractNeededPartsFromEvent(pattern)
 
             for (req in entry.getJSONArray("required_plugins")) {
                 req as JSONObject
                 item.plugins.add(req.getString("name"))
             }
-            if (addonObj.getString("name") == "Skript") skriptDocList.addElement(item)
+            if (addonObj.getString("name") == "Skript")
+                skriptDocList.addElement(item)
             list.add(item)
         }
         addons[name]?.loaded = true

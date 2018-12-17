@@ -1,17 +1,31 @@
 package com.skide.core.skript
 
+import com.skide.CoreManager
+import com.skide.core.management.OpenProject
+import com.skide.include.AddonItem
+import com.skide.include.DocType
 import com.skide.include.Node
 import java.util.*
 
 class LineHolder(val line: String, val tabs: Int, val linenumber: Int)
-class SkriptParser {
+class SkriptParser(val manager: OpenProject) {
+    val events = Vector<AddonItem>()
+
+    init {
+        for (value in manager.addons.values) {
+            for (addonItem in value) {
+                if (addonItem.type == DocType.EVENT)
+                    events.add(addonItem)
+            }
+        }
+    }
 
     fun superParse(rawContent: String): Vector<Node> {
 
         val nodes = Vector<Node>()
         val lines = rawContent.split("\n")
         var currentLevel = 0
-        var lastActive = Node(null, "", 0, 1)
+        var lastActive = Node(this, null, "", 0, 1)
         var count = 0
         for (line in lines) {
             count++
@@ -20,21 +34,21 @@ class SkriptParser {
             if (tabCount == 0) {
                 if (line.isBlank()) {
                     if (currentLevel > 0) {
-                        val node = Node(lastActive.parent, line, currentLevel, count)
+                        val node = Node(this, lastActive.parent, line, currentLevel, count)
                         lastActive.parent!!.childNodes.addElement(node)
                         lastActive = node
                     } else {
-                        nodes.addElement(Node(null, "", 0, count))
+                        nodes.addElement(Node(this, null, "", 0, count))
                     }
                     continue
                 }
-                lastActive = Node(null, line, 0, count)
+                lastActive = Node(this, null, line, 0, count)
                 nodes.add(lastActive)
                 currentLevel = 0
                 continue
             }
             if (tabCount > currentLevel) {
-                val child = Node(lastActive, line, tabCount, count)
+                val child = Node(this, lastActive, line, tabCount, count)
                 currentLevel++
                 lastActive.childNodes.addElement(child)
                 lastActive = child
@@ -45,13 +59,13 @@ class SkriptParser {
                     currentLevel--
                     lastActive = lastActive.parent!!
                 }
-                val nodeAdd = Node(lastActive.parent, line, tabCount, count)
+                val nodeAdd = Node(this, lastActive.parent, line, tabCount, count)
                 lastActive.parent!!.childNodes.addElement(nodeAdd)
                 lastActive = nodeAdd
                 continue
             }
             if (tabCount == currentLevel) {
-                val node = Node(lastActive.parent, line, tabCount, count)
+                val node = Node(this, lastActive.parent, line, tabCount, count)
                 lastActive.parent!!.childNodes.addElement(node)
                 lastActive = node
             }

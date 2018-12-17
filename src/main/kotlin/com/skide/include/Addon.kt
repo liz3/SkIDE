@@ -1,6 +1,8 @@
 package com.skide.include
 
+import com.skide.utils.EventRequirement
 import java.util.*
+import javax.swing.SizeRequirements
 import kotlin.collections.HashMap
 
 enum class DocType {
@@ -23,4 +25,7 @@ data class AddonItem(val id: Int,
                      val description: String = "",
                      val eventValues: String = "",
                      val returnType: String = "",
-                     val plugins: Vector<String> = Vector())
+                     val plugins: Vector<String> = Vector()) {
+
+    lateinit var requirements: EventRequirement
+}
