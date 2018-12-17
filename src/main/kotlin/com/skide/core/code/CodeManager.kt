@@ -29,6 +29,7 @@ class CodeManager {
     lateinit var referenceProvider: ReferenceProvider
     lateinit var sequenceReplaceHandler: ReplaceSequence
     lateinit var tooltipHandler: TooltipHandler
+    lateinit var errorProvider: ErrorProvider
     lateinit var hBox: BreadCrumbBar<Node>
     var gotoActivated = false
 
@@ -39,10 +40,11 @@ class CodeManager {
 
     fun setup(project: OpenFileHolder) {
 
+        area = project.area
+        errorProvider = ErrorProvider(this)
         parser = SkriptParser(project.openProject)
         rootStructureItem = TreeItem(project.name)
         content = readFile(project.f).second
-        area = project.area
 
         tooltipHandler = TooltipHandler(this, project)
         definitonFinder = DefinitionsFinder(this)
@@ -51,18 +53,14 @@ class CodeManager {
         }
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox
-
         if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
             crossNodes = project.openProject.crossNodes
         }
-
-        if (this::content.isInitialized && this::rootStructureItem.isInitialized) parseResult = parseStructure()
+        if (this::content.isInitialized && this::rootStructureItem.isInitialized)
+            parseResult = parseStructure()
         autoComplete = AutoCompleteCompute(this, project)
-
         area.text = content
-
         area.view.focusedProperty().addListener { _, _, newValue ->
-
             if (!newValue) {
                 project.manager.saveCode()
                 project.openProject.runConfs.forEach {
@@ -72,8 +70,6 @@ class CodeManager {
                 }
             }
         }
-
-        parseStructure()
         isSetup = true
     }
 
@@ -99,9 +95,7 @@ class CodeManager {
         Platform.runLater {
             val stack = Vector<Node>()
             var currNode: Node? = EditorUtils.getLineNode(area.getCurrentLine(), parseResult) ?: return@runLater
-
             stack.addElement(currNode)
-
             while (currNode != null) {
                 if (!stack.contains(currNode)) stack.add(currNode)
                 if (currNode.parent == null) break
@@ -122,7 +116,9 @@ class CodeManager {
         parseResult.forEach {
             if (it.nodeType != NodeType.UNDEFINED) addNodeToItemTree(rootStructureItem, it)
         }
-
+        Thread{
+            errorProvider.runChecks(parseResult)
+        }.start()
         return parseResult
     }
 

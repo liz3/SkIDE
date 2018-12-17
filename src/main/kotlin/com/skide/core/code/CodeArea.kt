@@ -53,11 +53,11 @@ class EventHandler(private val area: CodeArea) {
             if (area.line != currentLine) {
                 if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing || area.getLineContent(currentLine).isBlank())
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
-
-                if (!area.codeManager.gotoActivated) area.codeManager.parseResult = area.codeManager.parseStructure()
-
             }
             area.line = currentLine
+        }
+        if (name == "onDidChangeModelContent") {
+           area.updateWatcher.update()
         }
     }
 
@@ -179,12 +179,17 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
     val eventHandler = EventHandler(this)
     lateinit var debugger: WebViewDebugger
     var findWidgetVisible = false
+    val updateWatcher = ChangeWatcher(1000) {
+        Platform.runLater {
+            codeManager.parseResult = codeManager.parseStructure()
+        }
+    }
 
     fun getArray() = engine.executeScript("getArr();") as JSObject
     fun getObject() = engine.executeScript("getObj();") as JSObject
     fun getFunction() = engine.executeScript("getFunc();") as JSObject
-    private fun getWindow() = engine.executeScript("window") as JSObject
-    private fun getModel() = engine.executeScript("editor.getModel()") as JSObject
+    fun getWindow() = engine.executeScript("window") as JSObject
+    fun getModel() = engine.executeScript("editor.getModel()") as JSObject
     private fun startEditor(options: Any) {
         editor = getWindow().call("startEditor", options) as JSObject
     }
@@ -206,8 +211,6 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
         val cb = Clipboard.getSystemClipboard()
         if (cb.hasContent(DataFormat.PLAIN_TEXT)) {
             val text = cb.string
-
-
             replaceContentInRange(selection.startLineNumber, selection.startColumn, selection.endLineNumber, selection.endColumn, text)
 
         }

@@ -21,7 +21,6 @@ class ReferenceProvider(val manager: CodeManager) {
         val nodes = manager.parseResult
         val currentNode = EditorUtils.getLineNode(lineNumber, nodes)
         if (currentNode?.nodeType == NodeType.FUNCTION) {
-
             val name = currentNode.fields["name"] as String
             if (word == name) {
                 val flatList = EditorUtils.flatList(nodes)
@@ -53,8 +52,7 @@ class ReferenceProvider(val manager: CodeManager) {
                     }
                 }
             }
-        }
-        if (currentNode?.nodeType == NodeType.SET_VAR) {
+        } else if (currentNode?.nodeType == NodeType.SET_VAR) {
             val name = currentNode.fields["name"] as String
             val visibility = currentNode.fields["visibility"] as String
             if (visibility == "local") {
@@ -82,7 +80,20 @@ class ReferenceProvider(val manager: CodeManager) {
                     }
                 }
             }
+        } else if(EditorUtils.getRootOf(currentNode!!).nodeType == NodeType.OPTIONS) {
+            val name = word
+            val searched = "{@$name}"
+            for (node in EditorUtils.flatList(nodes)) {
+                if(node.tabLevel == 0 || node == currentNode) continue
+                var index = node.raw.indexOf(searched)
+                while (index >= 0) {
+                    array.setSlot(counter, getObj(node.linenumber, index + 1, searched.length, model))
+                    counter++
+                    index = node.raw.indexOf(searched, index + 1)
+                }
+            }
         }
+
         return array
     }
 }

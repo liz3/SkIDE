@@ -37,22 +37,38 @@ class DefinitionsFinder(val manager: CodeManager) {
             val raw = line.raw
 
             if (raw.indexOf(word) > 1) {
-                if ((raw[raw.indexOf(word) - 1] == '{') || (raw[raw.indexOf(word) - 1] == ':' && raw.contains("{"))) {
-                    if (word.startsWith("_")) {
-                        val root = EditorUtils.getRootOf(line)
-                        EditorUtils.filterByNodeType(NodeType.SET_VAR, root).forEach {
+                if ((raw[raw.indexOf(word) - 1] == '{') || (raw[raw.indexOf(word) - 1] == '@') || (raw[raw.indexOf(word) - 1] == ':' && raw.contains("{"))) {
 
-                            if ((it.fields["name"] as String).contains(word.substring(1)) && it.fields["visibility"] == "local") {
+                    if ((raw[raw.indexOf(word) - 1] == '@')) {
 
-                                return DefinitionFinderResult(true, it.linenumber, it.raw.indexOf(word) + 1)
+                        EditorUtils.filterByNodeType(NodeType.OPTIONS, nodeStructure).forEach {
+                            for (child in it.childNodes) {
+                                if (child.getContent().isNotEmpty() && child.getContent().isNotBlank()) {
+                                    if(child.getContent().split(":").first().contains(word)) {
+                                        return DefinitionFinderResult(true, child.linenumber, child.raw.indexOf(word) + 1)
+                                    }
+                                }
+
                             }
                         }
+
+
+                    } else if (word.startsWith("_")) {
+                        val root = EditorUtils.getRootOf(line)
+
                         if (root.nodeType == NodeType.FUNCTION) {
                             val params = root.fields["params"] as Vector<MethodParameter>
                             params.forEach {
                                 if (it.name == word.substring(1)) {
                                     return DefinitionFinderResult(true, root.linenumber, root.raw.indexOf(word.substring(1)) + 1)
                                 }
+                            }
+                        }
+                        EditorUtils.filterByNodeType(NodeType.SET_VAR, root).forEach {
+
+                            if ((it.fields["name"] as String).contains(word.substring(1)) && it.fields["visibility"] == "local") {
+
+                                return DefinitionFinderResult(true, it.linenumber, it.raw.indexOf(word) + 1)
                             }
                         }
                     } else {

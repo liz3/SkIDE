@@ -85,7 +85,10 @@ class NodeBuilder(val node: Node) {
                 }
                 available.clear()
             }
-            if (!found) fields["name"] = "Unknown Event"
+            if (!found) {
+                fields["name"] = "Unknown Event"
+                fields.put("invalid", true)
+            }
         }
 
         if (content.toLowerCase().startsWith("command ")) {
@@ -121,61 +124,36 @@ class NodeBuilder(val node: Node) {
         if (content.toLowerCase().startsWith("set {")) {
             try {
                 //get var name
+                val pattern = Pattern.compile("\\{([^{}]|%\\{|}%)+}").matcher(content)
 
+                if(pattern.find()) {
 
-                if (content.substring(3).trim().startsWith("{{")) {
-                    val name = content.split("{")[2].split("}").first()
+                    val name = pattern.group()
                     when {
-                        name.startsWith("_") -> fields.put("visibility", "local")
-                        name.startsWith("@") -> {
+                        name.startsWith("{_") -> fields.put("visibility", "local")
+                        name.startsWith("{@") -> {
                             fields["visibility"] = "global"
                             fields["from_option"] = true
                         }
                         else -> fields["visibility"] = "global"
                     }
-                    if (name.startsWith("_") || name.startsWith("@")) {
+                    if (name.startsWith("{_") || name.startsWith("{@")) {
 
-                        fields["name"] = name.substring(1)
+                        fields["name"] = name.substring(2, name.length - 1)
                     } else {
-                        fields["name"] = name
+                        fields["name"] = name.substring(1, name.length - 1)
 
                     }
-                    fields["set_value"] = content.split("to")[1]
-
-
                     if (content.contains("::")) {
                         val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
                         fields["path"] = listOrMapPath
-                    }
-
-                } else {
-                    val name = content.split("{")[1].split("}").first()
-
-                    when {
-                        name.startsWith("_") -> fields.put("visibility", "local")
-                        name.startsWith("@") -> {
-                            fields.put("visibility", "global")
-                            fields.put("from_option", true)
-                        }
-                        else -> fields.put("visibility", "global")
-                    }
-                    if (name.startsWith("_") || name.startsWith("@")) {
-
-                        fields.put("name", name.substring(1))
-                    } else {
-                        fields.put("name", name)
-
-                    }
-                    fields.put("set_value", content.split("to")[1])
-                    if (content.contains("::")) {
-                        val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
-                        fields.put("path", listOrMapPath)
+                        fields["hasPath"] = true
                     }
                 }
+
+
             } catch (e: Exception) {
-                fields.put("visibility", "global")
-                fields.put("name", "")
-                fields.put("invalid", true)
+                e.printStackTrace()
             }
             theType = NodeType.SET_VAR
         }

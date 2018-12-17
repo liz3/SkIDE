@@ -24,6 +24,14 @@ enum class NodeType {
     FUNCTION_CALL,
     INTERVAL
 }
+enum class ErrorSeverity(val num:Int) {
+    HINT(1),
+    INFO(2),
+    WARNING(4),
+    ERROR(8)
+}
+
+class SkError(val startLine:Int, val endLine:Int, val startColumn:Int, val endColumn:Int, val severity:ErrorSeverity, val message:String)
 
 class MethodParameter(val name: String, val type: String, val value: String)
 

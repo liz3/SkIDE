@@ -38,14 +38,6 @@ function startEditor(options) {
     editor.getAction("editor.action.clipboardCutAction").run = function() {
         getHook().cut();
     };
-    editor.onDidChangeModel(function (ev) {
-        if (ev == null) {
-            getHook().eventNotify("onDidChangeModel", {})
-        } else {
-            getHook().eventNotify("onDidChangeModel", ev)
-
-        }
-    });
     editor.onDidChangeCursorPosition(function (ev) {
         if (ev == null) {
             getHook().eventNotify("onDidChangeCursorPosition", {})

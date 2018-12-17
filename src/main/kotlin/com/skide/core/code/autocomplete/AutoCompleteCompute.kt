@@ -30,7 +30,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
     }
 
     fun showLocalAutoComplete(array: JSObject) {
-        val nodes = area.openFileHolder.codeManager.parseStructure()
+        val nodes = area.openFileHolder.codeManager.parseResult
         val currentLine = area.getCurrentLine()
         val currentColumn = area.getCurrentColumn()
         val lineContent = area.getLineContent(currentLine)
