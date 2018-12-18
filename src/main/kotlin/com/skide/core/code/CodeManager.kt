@@ -121,13 +121,12 @@ class CodeManager {
             if (it.nodeType != NodeType.UNDEFINED) addNodeToItemTree(rootStructureItem, it)
         }
 
-        if(update) {
-            if (!Info.prodMode) {
-                Thread {
-                    errorProvider.runChecks(parseResult)
-                }.start()
-            }
-        }
+        if (update)
+            Thread {
+                errorProvider.runChecks(parseResult)
+            }.start()
+
+
         return parseResult
     }
 

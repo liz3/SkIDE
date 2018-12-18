@@ -58,43 +58,40 @@ class NodeBuilder(val node: Node) {
         if (theType == NodeType.UNDEFINED && node.tabLevel == 0 && content.isNotEmpty() && content.isNotBlank()) {
             theType = NodeType.EVENT
 
-           if(!Info.prodMode) {
-               var found = false
-               val available = Vector<AddonItem>()
-               for (event in node.parser.events) {
-                   if (EditorUtils.fullFillsEventRequirements(event.requirements, content)) available.add(event)
-               }
-               if (available.size > 0) {
-                   var lastHit = 0
-                   var highest = available.firstElement()
-                   if (available.size == 1) {
-                       fields["event"] = highest
-                       fields["name"] = highest.name
-                       found = true
-                   } else {
-                       for (addonItem in available) {
-                           var hits = 0
-                           content.replace(":", "").split(" ").forEach {
-                               if (addonItem.pattern.contains(it)) hits++
-                           }
-                           if (hits > lastHit) {
-                               highest = addonItem
-                               lastHit = hits
-                           }
-                       }
-                       fields["event"] = highest
-                       fields["name"] = highest.name
-                       found = true
-                   }
-                   available.clear()
-               }
-               if (!found) {
-                   fields["name"] = "Unknown Event"
-                   fields.put("invalid", true)
-               }
-           } else {
-               fields["name"] = content.replace(":", "")
-           }
+
+            var found = false
+            val available = Vector<AddonItem>()
+            for (event in node.parser.events) {
+                if (EditorUtils.fullFillsEventRequirements(event.requirements, content)) available.add(event)
+            }
+            if (available.size > 0) {
+                var lastHit = 0
+                var highest = available.firstElement()
+                if (available.size == 1) {
+                    fields["event"] = highest
+                    fields["name"] = highest.name
+                    found = true
+                } else {
+                    for (addonItem in available) {
+                        var hits = 0
+                        content.replace(":", "").split(" ").forEach {
+                            if (addonItem.pattern.contains(it)) hits++
+                        }
+                        if (hits > lastHit) {
+                            highest = addonItem
+                            lastHit = hits
+                        }
+                    }
+                    fields["event"] = highest
+                    fields["name"] = highest.name
+                    found = true
+                }
+                available.clear()
+            }
+            if (!found) {
+                fields["name"] = "Unknown Event"
+                fields.put("invalid", true)
+            }
         }
 
         if (content.toLowerCase().startsWith("command ")) {
@@ -132,7 +129,7 @@ class NodeBuilder(val node: Node) {
                 //get var name
                 val pattern = Pattern.compile("\\{([^{}]|%\\{|}%)+}").matcher(content)
 
-                if(pattern.find()) {
+                if (pattern.find()) {
 
                     val name = pattern.group()
                     when {

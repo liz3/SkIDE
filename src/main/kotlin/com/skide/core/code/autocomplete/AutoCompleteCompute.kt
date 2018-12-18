@@ -161,7 +161,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             count++
         }
 
-        if (parent.nodeType == NodeType.EVENT && !Info.prodMode) {
+        if (parent.nodeType == NodeType.EVENT) {
             if(parent.fields["event"] != null) {
                 val ev = parent.fields["event"] as AddonItem
                 if(ev.eventValues != "") {
