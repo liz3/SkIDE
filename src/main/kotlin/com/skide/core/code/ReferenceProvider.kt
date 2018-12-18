@@ -36,12 +36,12 @@ class ReferenceProvider(val manager: CodeManager) {
                         }
                     }
                 }
-              /*
+
                 if(manager.area.openFileHolder.coreManager.configManager.get("cross_auto_complete") == "true") {
                     for (crossNodeFile in manager.area.openFileHolder.openProject.crossNodes) {
                     }
                 }
-               */
+
             } else {
                 val parameters = currentNode.fields["params"] as Vector<*>
                 parameters.forEach {it as MethodParameter

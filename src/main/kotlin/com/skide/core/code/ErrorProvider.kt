@@ -54,7 +54,8 @@ class ErrorProvider(val manager: CodeManager) {
                 }
             }
         }
-        for (node in EditorUtils.flatList(parseResult)) {
+        val allNodes = EditorUtils.flatList(parseResult)
+        for ((nIndex, node) in allNodes.withIndex()) {
             if (node.nodeType == NodeType.FUNCTION ||
                     node.nodeType == NodeType.SET_VAR || node.nodeType == NodeType.EVENT || node.nodeType == NodeType.OPTIONS) {
 
@@ -84,6 +85,7 @@ class ErrorProvider(val manager: CodeManager) {
                             }
                         }
                     }
+
                     run {
                         val vars = Vector<String>()
                         for (methodParameter in parameter) {
@@ -136,6 +138,20 @@ class ErrorProvider(val manager: CodeManager) {
                             }
                         }
                     }
+                    var found = false
+                    for (childNode in allNodes) {
+                        if (childNode == node) continue
+                        if (childNode.nodeType != NodeType.COMMENT && childNode.nodeType != NodeType.COMMAND) {
+                            if (childNode.getContent().replace(" ", "").contains("${node.fields["name"]}(")) {
+                                found = true
+                            }
+                        }
+                    }
+                    if (!found) {
+                        calls += {
+                            reportLineWarning("Function: ${node.fields["name"]} never used", node.linenumber)
+                        }
+                    }
                 } else if (node.nodeType == NodeType.EVENT) {
                     //Check if event is known
                     if (node.fields.containsKey("invalid") && node.fields["invalid"] == true)
@@ -179,29 +195,27 @@ class ErrorProvider(val manager: CodeManager) {
                 }
 
             } else {
-                val matcher = variablePattern.matcher(node.raw)
+                run {
+                    val matcher = variablePattern.matcher(node.raw)
+                    while (matcher.find()) {
+                        val start = matcher.start()
+                        val end = matcher.end()
+                        var text = matcher.group()
+                        if (!text.startsWith("{_")) {
+                            if (text.contains("::")) text = text.split("::").first() + "}"
+                            if (!globalVars.contains(text))
+                                if (checkForQuote(node.raw, start))
+                                    calls += {
+                                        report(node.linenumber, SkError(node.linenumber, node.linenumber, start + 1, end + 1, ErrorSeverity.ERROR, "Variable $text not found!"))
+                                    }
+                        }
+                    }
+                }
+                if (node.nodeType == NodeType.IF_STATEMENT || node.nodeType == NodeType.LOOP) {
+                    if (allNodes[nIndex + 1].tabLevel <= node.tabLevel && allNodes[nIndex + 1].nodeType != NodeType.UNDEFINED) {
 
-                while (matcher.find()) {
-                    val start = matcher.start()
-                    val end = matcher.end()
-                    var text = matcher.group()
-                    if (!text.startsWith("{_")) {
-                        if (text.contains("::")) text = text.split("::").first() + "}"
-                        if (!globalVars.contains(text)) {
-                            var cont = true
-                            var c = start
-                            while (c >= 0) {
-                                if (node.raw[c] == '"') {
-                                    cont = false
-                                    break
-                                }
-                                c--
-                            }
-                            if (cont) {
-                                calls += {
-                                    report(node.linenumber, SkError(node.linenumber, node.linenumber, start + 1, end + 1, ErrorSeverity.ERROR, "Variable $text not found!"))
-                                }
-                            }
+                        calls += {
+                            reportLineWarning("Empty Block", node.linenumber)
                         }
                     }
                 }

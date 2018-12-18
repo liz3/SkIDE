@@ -15,6 +15,7 @@ import org.controlsfx.control.BreadCrumbBar
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.system.measureTimeMillis
 
 
 class CodeManager {
@@ -122,9 +123,9 @@ class CodeManager {
         }
 
         if (update)
-            Thread {
-                errorProvider.runChecks(parseResult)
-            }.start()
+           println(measureTimeMillis {
+               errorProvider.runChecks(parseResult)
+           })
 
 
         return parseResult
