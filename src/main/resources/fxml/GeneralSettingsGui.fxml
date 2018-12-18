@@ -19,7 +19,7 @@
          <tabs>
             <Tab text="General Settings">
                <content>
-                  <HBox>
+                  <HBox spacing="10.0">
                      <children>
                         <VBox spacing="5.0">
                            <children>
@@ -55,8 +55,14 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <VBox prefHeight="466.0" prefWidth="181.0">
+                        <VBox prefHeight="466.0" prefWidth="181.0" spacing="5.0">
                            <children>
+                              <Label text="Global font size" />
+                              <HBox prefHeight="14.0" prefWidth="182.0">
+                                 <children>
+                                    <TextField fx:id="globalFontSize" prefHeight="26.0" prefWidth="33.0" />
+                                 </children>
+                              </HBox>
                               <CheckBox fx:id="updateCheck" mnemonicParsing="false" text="Check for updates" />
                               <CheckBox fx:id="betaUpdateCheck" mnemonicParsing="false" text="Update from Beta Channel" />
                            </children>
@@ -83,7 +89,7 @@
                                        </children>
                                     </HBox>
                                     <ListView fx:id="serverServerList" prefHeight="149.0" prefWidth="200.0" />
-                                    <Button fx:id="serverServerDeleteBtn" mnemonicParsing="false" prefHeight="26.0" prefWidth="242.0" text="Delete Server" />
+                                    <Button fx:id="serverServerDeleteBtn" mnemonicParsing="false" text="Delete Server" />
                                  </children>
                               </VBox>
                               <VBox prefHeight="194.0" prefWidth="337.0">
@@ -130,7 +136,7 @@
                                  <children>
                                     <Label text="Addons" />
                                     <ListView fx:id="serverAddonList" prefHeight="169.0" prefWidth="200.0" />
-                                    <Button fx:id="serverAddonDeleteBtn" mnemonicParsing="false" prefHeight="26.0" prefWidth="244.0" text="Remove Addon" />
+                                    <Button fx:id="serverAddonDeleteBtn" mnemonicParsing="false" text="Remove Addon" />
                                  </children>
                               </VBox>
                               <VBox spacing="5.0">
@@ -142,7 +148,7 @@
                                           <Button fx:id="serverAddAddonFromFileChooseBtn" mnemonicParsing="false" text="..." />
                                        </children>
                                     </HBox>
-                                    <Button fx:id="serverAddAddonFromFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Add" />
+                                    <Button fx:id="serverAddAddonFromFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Add" />
                                     <Label text="Add from presets">
                                        <padding>
                                           <Insets top="30.0" />
@@ -171,9 +177,9 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="826.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="applyBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="59.0" text="Apply" />
+            <Button fx:id="applyBtn" mnemonicParsing="false" text="Apply" />
             <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" />
-            <Button fx:id="okBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="42.0" text="Ok" />
+            <Button fx:id="okBtn" mnemonicParsing="false" text="Ok" />
          </children>
          <padding>
             <Insets bottom="5.0" right="5.0" />

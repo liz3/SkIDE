@@ -57,6 +57,24 @@ function startEditor(options) {
     editor.onMouseDown(function (ev) {
         getHook().contextMenuEmit(ev);
     });
+/*
+    editor.addOverlayWidget({
+        getDomNode: function () {
+            var elem = document.createElement("P");
+            elem.innerText = "This is a Cool test";
+
+            return elem;
+        },
+        getId: function () {
+            return "skide-test1";
+        },
+        getPosition: function () {
+            return {
+                preference: 2
+            }
+        }
+    });
+ */
     return editor;
 }
 

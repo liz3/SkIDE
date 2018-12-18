@@ -17,7 +17,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectSettingsGUIController">
    <center>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+      <TabPane prefHeight="438.0" prefWidth="907.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
           <Tab text="Settings">
             <content>
@@ -241,7 +241,7 @@
             <Button fx:id="okBtn" mnemonicParsing="false" text="Ok" />
          </children>
          <BorderPane.margin>
-            <Insets right="10.0" />
+            <Insets bottom="10.0" right="10.0" />
          </BorderPane.margin>
       </HBox>
    </bottom>

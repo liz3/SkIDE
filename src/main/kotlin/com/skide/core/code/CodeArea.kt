@@ -53,6 +53,7 @@ class EventHandler(private val area: CodeArea) {
             if (area.line != currentLine) {
                 if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing || area.getLineContent(currentLine).isBlank())
                     area.openFileHolder.codeManager.sequenceReplaceHandler.cancel()
+                area.codeManager.parseStructure(false)
             }
             area.line = currentLine
         }
@@ -513,7 +514,6 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
         arr.setSlot(0, replaceObject)
         getModel().call("pushEditOperations", selections, arr, getFunction())
     }
-
     fun replaceLine(number: Int, text: String) {
         replaceContentInRange(number, 1, number, getColumnLineAmount(number), text)
     }

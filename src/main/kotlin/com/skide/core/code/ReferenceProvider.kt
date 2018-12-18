@@ -8,6 +8,7 @@ import java.util.*
 
 class ReferenceProvider(val manager: CodeManager) {
 
+
     private fun getObj(line: Int, col: Int, len: Int, model: Any): JSObject {
         val obj = manager.area.getObject()
         obj.setMember("uri", (model as JSObject).getMember("uri"))
@@ -35,9 +36,15 @@ class ReferenceProvider(val manager: CodeManager) {
                         }
                     }
                 }
+              /*
+                if(manager.area.openFileHolder.coreManager.configManager.get("cross_auto_complete") == "true") {
+                    for (crossNodeFile in manager.area.openFileHolder.openProject.crossNodes) {
+                    }
+                }
+               */
             } else {
-                val parameters = currentNode.fields["params"] as Vector<MethodParameter>
-                parameters.forEach {
+                val parameters = currentNode.fields["params"] as Vector<*>
+                parameters.forEach {it as MethodParameter
                     if (word == it.name) {
                         val searched = "{_${it.name}}"
                         for (node in EditorUtils.flatList(EditorUtils.getRootOf(currentNode))) {
@@ -81,8 +88,7 @@ class ReferenceProvider(val manager: CodeManager) {
                 }
             }
         } else if(EditorUtils.getRootOf(currentNode!!).nodeType == NodeType.OPTIONS) {
-            val name = word
-            val searched = "{@$name}"
+            val searched = "{@$word}"
             for (node in EditorUtils.flatList(nodes)) {
                 if(node.tabLevel == 0 || node == currentNode) continue
                 var index = node.raw.indexOf(searched)
@@ -93,7 +99,6 @@ class ReferenceProvider(val manager: CodeManager) {
                 }
             }
         }
-
         return array
     }
 }

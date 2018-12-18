@@ -1,5 +1,6 @@
 package com.skide.core.code.autocomplete
 
+import com.skide.Info
 import com.skide.core.code.CodeManager
 import com.skide.gui.GUIManager
 import com.skide.gui.controllers.GenerateCommandController
@@ -160,13 +161,13 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
             count++
         }
 
-        if (parent.nodeType == NodeType.EVENT) {
+        if (parent.nodeType == NodeType.EVENT && !Info.prodMode) {
             if(parent.fields["event"] != null) {
                 val ev = parent.fields["event"] as AddonItem
                 if(ev.eventValues != "") {
                     ev.eventValues.split(",").forEach {
                         val value = it.trim()
-                        addSuggestionToObject(AutoCompleteItem(area, value, CompletionType.KEYWORD, value, "event based type"), array, count)
+                        addSuggestionToObject(AutoCompleteItem(area, value, CompletionType.KEYWORD, value, "event value"), array, count)
                         count++
                     }
                 }

@@ -40,8 +40,6 @@ class ListViewPopUp(val info: String, val items: HashMap<String, () -> Unit>, do
             for ((key, cb) in items)
                 controller.list.items.add(ListViewPopUpItem(key, cb))
 
-            if (GUIManager.settings.get("theme") == "Dark")
-                stage.scene.stylesheets.add(GUIManager.settings.getCssPath("ThemeDark.css"))
 
             controller.cancelBtn.setOnAction {
                 stage.close()

@@ -42,8 +42,10 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("meta_update", "${ctrl.settingsUpdateDataCheck.isSelected}")
         coreManager.configManager.set("webview_debug", "${ctrl.webViewDebuggerCheck.isSelected}")
         coreManager.configManager.set("analytics", "${ctrl.analyiticsCheck.isSelected}")
+        coreManager.configManager.set("global_font_size", ctrl.globalFontSize.text)
 
-       if(Info.prodMode) coreManager.configManager.writeUpdateFile(ctrl.updateCheck.isSelected, ctrl.betaUpdateCheck.isSelected)
+
+        if (Info.prodMode) coreManager.configManager.writeUpdateFile(ctrl.updateCheck.isSelected, ctrl.betaUpdateCheck.isSelected)
     }
 
     private fun setShortcut(ev: KeyEvent, field: TextField, key: String) {
@@ -199,8 +201,11 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.settingsUpdateDataCheck.isSelected = coreManager.configManager.get("meta_update") == "true"
         ctrl.webViewDebuggerCheck.isSelected = coreManager.configManager.get("webview_debug") == "true"
         ctrl.analyiticsCheck.isSelected = coreManager.configManager.get("analytics") == "true"
+        if (coreManager.configManager.get("global_font_size").toString().isNotEmpty())
+            ctrl.globalFontSize.text = coreManager.configManager.get("global_font_size").toString()
 
-        if(Info.prodMode){
+
+        if (Info.prodMode) {
             ctrl.updateCheck.isSelected = coreManager.configManager.update
             ctrl.betaUpdateCheck.isSelected = coreManager.configManager.betaChannel
         }

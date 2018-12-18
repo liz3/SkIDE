@@ -81,6 +81,10 @@ class GeneralSettingsGUIController {
     @FXML
     lateinit var settingsFontTextField: TextField
 
+
+    @FXML
+    lateinit var globalFontSize: TextField
+
     @FXML
     lateinit var settingsFontSizeTextField: TextField
 

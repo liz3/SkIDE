@@ -5,6 +5,7 @@ import com.skide.core.management.OpenProject
 import com.skide.include.AddonItem
 import com.skide.include.DocType
 import com.skide.include.Node
+import com.skide.include.NodeType
 import java.util.*
 
 class LineHolder(val line: String, val tabs: Int, val linenumber: Int)
@@ -42,9 +43,14 @@ class SkriptParser(val manager: OpenProject) {
                     }
                     continue
                 }
-                lastActive = Node(this, null, line, 0, count)
-                nodes.add(lastActive)
-                currentLevel = 0
+                val node = Node(this, null, line, 0, count)
+                if (node.nodeType == NodeType.COMMENT) {
+                    nodes.add(node)
+                } else {
+                    lastActive = node
+                    nodes.add(lastActive)
+                    currentLevel = 0
+                }
                 continue
             }
             if (tabCount > currentLevel) {

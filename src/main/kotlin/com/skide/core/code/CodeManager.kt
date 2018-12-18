@@ -1,5 +1,6 @@
 package com.skide.core.code
 
+import com.skide.Info
 import com.skide.core.code.autocomplete.AutoCompleteCompute
 import com.skide.core.code.autocomplete.ReplaceSequence
 import com.skide.core.skript.SkriptParser
@@ -88,10 +89,13 @@ class CodeManager {
         }
     }
 
-    fun parseStructure(): Vector<Node> {
+    fun parseStructure(update: Boolean = true): Vector<Node> {
 
+        val parseResult = if (update)
+            parser.superParse(area.text)
+        else
+            this.parseResult
         rootStructureItem.children.clear()
-        val parseResult = parser.superParse(area.text)
         Platform.runLater {
             val stack = Vector<Node>()
             var currNode: Node? = EditorUtils.getLineNode(area.getCurrentLine(), parseResult) ?: return@runLater
@@ -116,9 +120,14 @@ class CodeManager {
         parseResult.forEach {
             if (it.nodeType != NodeType.UNDEFINED) addNodeToItemTree(rootStructureItem, it)
         }
-        Thread{
-            errorProvider.runChecks(parseResult)
-        }.start()
+
+        if(update) {
+            if (!Info.prodMode) {
+                Thread {
+                    errorProvider.runChecks(parseResult)
+                }.start()
+            }
+        }
         return parseResult
     }
 
