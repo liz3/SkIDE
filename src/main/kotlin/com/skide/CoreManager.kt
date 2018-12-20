@@ -2,12 +2,11 @@ package com.skide
 
 import com.skide.core.debugger.Debugger
 import com.skide.core.management.*
-import com.skide.gui.GUIManager
-import com.skide.gui.JavaFXBootstrapper
-import com.skide.gui.Prompts
+import com.skide.gui.*
 import com.skide.gui.controllers.SplashGuiController
 import com.skide.gui.controllers.StartGUIController
 import com.skide.utils.*
+import com.skide.utils.DebugLevel
 import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXMLLoader
@@ -72,8 +71,8 @@ class CoreManager {
                                 debugLevel = DebugLevel.valueOf(it.split("=")[1].toUpperCase())
                             }
                         }
-                            if(System.getProperty("skide.mode") != null && System.getProperty("skide.mode") == "prod")
-                                Info.prodMode = true
+                        if (System.getProperty("skide.mode") != null && System.getProperty("skide.mode") == "prod")
+                            Info.prodMode = true
                         configManager = ConfigManager(me)
                         projectManager = ProjectManager(me)
                         serverManager = ServerManager(me)
@@ -128,7 +127,6 @@ class CoreManager {
                             (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
                             window.stage.isResizable = false
                             window.stage.show()
-
                         }
 
                     } catch (e: Exception) {

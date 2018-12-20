@@ -2,6 +2,8 @@ package com.skide.core.management
 
 import com.skide.CoreManager
 import com.skide.core.skript.SkriptParser
+import com.skide.gui.SearchPopUp
+import com.skide.gui.SearchPopUpItem
 import com.skide.gui.project.OpenProjectGuiManager
 import com.skide.include.*
 import com.skide.utils.*
@@ -35,6 +37,27 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         if (coreManager.configManager.get("cross_auto_complete") == "true")
             updateCrossNodes()
 
+      /*
+        Platform.runLater {
+            val itemsList = listOf(SearchPopUpItem("Item 1", "Right 1") {
+
+                println("1 clicked")
+            }, SearchPopUpItem("Item 2", "Right 2") {
+                println("2 clicked")
+            }, SearchPopUpItem("Item 3", "Right 3") {
+                println("3 clicked")
+            })
+            SearchPopUp { items, text ->
+                val newItems = Vector<SearchPopUpItem>()
+                for (searchPopUpItem in itemsList) {
+                    if(searchPopUpItem.primaryString.contains(text, true))
+                        newItems.add(searchPopUpItem)
+
+                }
+                newItems
+            }
+        }
+       */
     }
 
     private fun addFileToCrossFileComplete(f: File, nodes: Vector<Node>) {
