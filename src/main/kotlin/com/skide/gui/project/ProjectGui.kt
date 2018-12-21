@@ -301,12 +301,15 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         treeView.setOnMouseClicked {
             if (it.button == MouseButton.PRIMARY && it.clickCount == 2) {
                 val newValue = treeView.selectionModel.selectedItem
-                val selectedItem = newValue as TreeItem<String>
-                if (selectedItem != treeView.root) {
-                    if (openProjectGuiManager.projectFiles.containsKey(selectedItem.value)) {
-                        Thread {
-                            openFile(openProjectGuiManager.projectFiles[selectedItem.value]!!)
-                        }.start()
+                if(newValue != null) {
+
+                    val selectedItem = newValue as TreeItem<String>
+                    if (selectedItem != treeView.root) {
+                        if (openProjectGuiManager.projectFiles.containsKey(selectedItem.value)) {
+                            Thread {
+                                openFile(openProjectGuiManager.projectFiles[selectedItem.value]!!)
+                            }.start()
+                        }
                     }
                 }
             }
@@ -644,9 +647,23 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             if (name.isNotEmpty()) openProjectGuiManager.openProject.createNewFile(name)
         }
 
+        val deployMenu = Menu("Deploy")
 
         val compileMenu = Menu("Compile")
-        fileMenu.setOnShowing {
+        fileMenu.setOnShowing {ev ->
+            deployMenu.items.clear()
+            openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach { compOpt ->
+                val item = Menu(compOpt.key)
+                openProjectGuiManager.openProject.project.fileManager.hosts.forEach {
+                    val depItem = MenuItem(it.name)
+                    depItem.setOnAction { _ ->
+                        openProjectGuiManager.openProject.deployer.depploy(compOpt.value, it)
+                    }
+                    item.items.add(depItem)
+                }
+                deployMenu.items.add(item)
+            }
+
             otherProjects.items.clear()
             coreManager.configManager.projects.values.forEach {
 
@@ -688,18 +705,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             window.stage.show()
 
         }
-        val deployMenu = Menu("Deploy")
-        openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach { compOpt ->
-            val item = Menu(compOpt.key)
-            openProjectGuiManager.openProject.project.fileManager.hosts.forEach {
-                val depItem = MenuItem(it.name)
-                depItem.setOnAction { _ ->
-                    openProjectGuiManager.openProject.deployer.depploy(compOpt.value, it)
-                }
-                item.items.add(depItem)
-            }
-            deployMenu.items.add(item)
-        }
+
         val editServerConfMenu = Menu("Edit server Configuration")
         coreManager.serverManager.servers.forEach {
             val file = File(it.value.configuration.folder, "server.properties")

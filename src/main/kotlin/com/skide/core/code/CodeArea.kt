@@ -353,11 +353,6 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
             }
             ListViewPopUp("Upload this file", map)
         }
-        /*
-          addActionCopyPaste("editor.action.clipboardCutAction", "Copy") {
-              println("Copy action called")
-          }
-         */
 
 
         if (!openFileHolder.isExternal) {
