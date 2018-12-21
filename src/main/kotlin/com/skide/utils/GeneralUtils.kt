@@ -53,15 +53,14 @@ fun unzip(zipFile: String, outputFolder: String) {
     }
 
 }
-fun verifyKeyCombo(ev:KeyEvent): Boolean {
-
+fun KeyEvent.verifyKeyCombo(): Boolean {
+    if(this.isShiftDown) return false
     val os = getOS()
     return when (os) {
-        OperatingSystemType.WINDOWS, OperatingSystemType.LINUX -> ev.isControlDown
-        OperatingSystemType.MAC_OS -> ev.isMetaDown && ev.isShortcutDown
+        OperatingSystemType.WINDOWS, OperatingSystemType.LINUX -> this.isControlDown
+        OperatingSystemType.MAC_OS -> this.isMetaDown && this.isShortcutDown
         else -> false
     }
-
 }
 
 fun extensionToLang(ex:String) : String {

@@ -2,23 +2,16 @@ package com.skide.gui.project
 
 import com.skide.CoreManager
 import com.skide.core.code.CodeArea
-import com.skide.core.management.ConfigLoadResult
 import com.skide.core.management.ExternalHandler
 import com.skide.core.management.OpenProject
-import com.skide.gui.GUIManager
-import com.skide.gui.Menus
-import com.skide.gui.MouseDragHandler
-import com.skide.gui.Prompts
+import com.skide.core.skript.SkriptParser
+import com.skide.gui.*
 import com.skide.gui.controllers.*
 import com.skide.gui.settings.SettingsGUIHandler
 import com.skide.include.EditorMode
+import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
-import com.skide.utils.OperatingSystemType
-import com.skide.utils.getOS
-import com.skide.utils.setIcon
-import com.skide.utils.verifyKeyCombo
-import com.sun.jna.platform.win32.Guid
-import com.terminalfx.TerminalTab
+import com.skide.utils.*
 import javafx.application.Platform
 import javafx.scene.Node
 import javafx.scene.Parent
@@ -34,6 +27,8 @@ import javafx.scene.layout.VBox
 import javafx.stage.Stage
 import java.io.File
 import java.util.*
+import java.util.regex.Pattern
+import kotlin.system.measureTimeMillis
 
 
 class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreManager) {
@@ -47,17 +42,15 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     val otherTabPanes = Vector<TabPane>()
     var paneHolderNode: Node = HBox()
     var draggedTab: Tab? = null
+    var lastActive: OpenFileHolder? = null
     var dragDone = false
     var activeTab = Tab()
 
 
     fun startGui(): ProjectGuiEventListeners {
-
         val controller = window.controller as ProjectGUIController
         val eventManager = ProjectGuiEventListeners(this, controller, coreManager)
         eventManager.guiReady = {
-            // window.stage.maxWidth = 2400.0
-            // window.stage.maxHeight = 2400.0
             window.stage.show()
         }
         window.closeListener = {
@@ -66,20 +59,14 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
         eventManager.setup()
         lowerTabPaneEventManager = LowerTabPaneEventManager(controller, this, coreManager)
         lowerTabPaneEventManager.setup()
-
-
-
         eventManager.filesTab.second.requestFocus()
-
         return eventManager
     }
 
     fun switchMode(mode: EditorMode) {
         if (mode == this.mode) return
         val modeBefore = this.mode
-
         if (mode == EditorMode.NORMAL) {
-
             if (modeBefore != EditorMode.NORMAL) {
                 val mainTabPane = openProject.eventManager.controller.editorMainTabPane
                 val root = openProject.eventManager.controller.mainCenterAnchorPane
@@ -93,7 +80,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                 AnchorPane.setRightAnchor(mainTabPane, 0.0)
                 AnchorPane.setBottomAnchor(mainTabPane, 0.0)
                 AnchorPane.setLeftAnchor(mainTabPane, 0.0)
-
                 this.mode = EditorMode.NORMAL
             }
         }
@@ -105,7 +91,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                 val panesHeight = total / otherTabPanes.size
                 box.children.forEach {
                     it as TabPane
-
                     it.setPrefSize(panesHeight, box.height)
                 }
             }
@@ -142,7 +127,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                 val panesHeight = total / otherTabPanes.size
                 box.children.forEach {
                     it as TabPane
-
                     it.setPrefSize(box.width, panesHeight)
                 }
             }
@@ -172,29 +156,23 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     }
 
     fun addTabPane(tab: Tab) {
-
         if (mode == EditorMode.NORMAL) return
-
         otherTabPanes.forEach {
             if (it.tabs.contains(tab)) it.tabs.remove(tab)
         }
-
         val tabPane = TabPane()
         MouseDragHandler(tabPane, this).setup()
         if (mode == EditorMode.SIDE_SPLIT) {
-
-
             tabPane.tabs.add(tab)
             val box = this.paneHolderNode as HBox
             otherTabPanes.addElement(tabPane)
             box.children.add(tabPane)
             tabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
-
-                if (coreManager.configManager.get("cross_auto_complete") == "true") {
+                if (coreManager.configManager.get("cross_auto_complete") == "true")
                     coreManager.projectManager.openProjects.forEach {
                         it.updateCrossNodes()
                     }
-                }
+
                 if (tabPane.tabs.size == 0) {
                     box.children.remove(tabPane)
                     otherTabPanes.remove(tabPane)
@@ -218,7 +196,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                     AnchorPane.setRightAnchor(mainTabPane, 0.0)
                     AnchorPane.setBottomAnchor(mainTabPane, 0.0)
                     AnchorPane.setLeftAnchor(mainTabPane, 0.0)
-
                     this.mode = EditorMode.NORMAL
                 }
             }
@@ -226,7 +203,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
             val panesHeight = total / otherTabPanes.size
             box.children.forEach {
                 it as TabPane
-
                 it.setPrefSize(panesHeight, box.height)
             }
 
@@ -251,7 +227,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                         val panesHeight = total / otherTabPanes.size
                         box.children.forEach {
                             it as TabPane
-
                             it.setPrefSize(box.width, panesHeight)
                         }
                     }
@@ -268,7 +243,6 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                         AnchorPane.setRightAnchor(mainTabPane, 0.0)
                         AnchorPane.setBottomAnchor(mainTabPane, 0.0)
                         AnchorPane.setLeftAnchor(mainTabPane, 0.0)
-
                         this.mode = EditorMode.NORMAL
                     }
                 }
@@ -304,6 +278,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
         }
         coreManager.projectManager.openProjects.remove(this.openProject)
     }
+
     val projectFiles = openProject.project.fileManager.projectFiles
 }
 
@@ -311,11 +286,11 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
     private var isPreviewActive = false
     var browserVisible = true
-    lateinit var previewPanel: Parent
+    private lateinit var previewPanel: Parent
     var guiReady = {}
-    var contextMenuVisible: ContextMenu? = null
-    val mouseDragHandler = MouseDragHandler(controller.editorMainTabPane, this.openProjectGuiManager)
-    val bufferedFiles = Vector<File>()
+    private var contextMenuVisible: ContextMenu? = null
+    private val mouseDragHandler = MouseDragHandler(controller.editorMainTabPane, this.openProjectGuiManager)
+    private val bufferedFiles = Vector<File>()
 
     val filesTab = {
         val tab = Tab()
@@ -555,22 +530,15 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 if (ev.button == MouseButton.SECONDARY) {
                     if (filesTab.second.selectionModel.selectedItem == null) return@setOnMouseReleased
                     val selectedItem = filesTab.second.selectionModel.selectedItem as TreeItem<String>
-
-
-
                     contextMenuVisible = if (selectedItem == filesTab.second.root) Menus.getMenuForRootProject(openProjectGuiManager.openProject, filesTab.second, ev.screenX, ev.screenY)
                     else
                         Menus.getMenuForProjectFile(openProjectGuiManager.openProject, openProjectGuiManager.projectFiles[selectedItem.value]!!, filesTab.second, ev.screenX, ev.screenY)
-
-
                 }
             } else {
                 contextMenuVisible!!.hide()
                 contextMenuVisible = null
             }
-
         }
-
         controller.browserTabPane.style = "-fx-tab-min-width:5px;"
         controller.browserTabPane.tabs.addAll(filesTab.first, structureTab.first)
         controller.browserTabPane.id = "sideTabArea"
@@ -580,10 +548,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 controller.activeSideLabel.text = "Files"
             else
                 controller.activeSideLabel.text = "Structure"
-
-
         }
-
     }
 
     private fun setupMainMenu() {
@@ -769,9 +734,234 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     private fun registerEditorEvents() {
 
         openProjectGuiManager.window.scene.setOnKeyPressed {
-            if (verifyKeyCombo(it) && it.code == KeyCode.N) {
+            if (it.verifyKeyCombo() && it.code == KeyCode.N) {
                 val name = Prompts.textPrompt("New File", "Enter File name Here")
                 if (name.isNotEmpty()) openProjectGuiManager.openProject.createNewFile(name)
+            }
+
+            if (it.verifyKeyCombo() && it.code == KeyCode.P) {
+                val files = openProjectGuiManager.projectFiles
+                val functions = Vector<Triple<File, com.skide.include.Node, SearchPopUpItem>>()
+                val events = Vector<Triple<File, com.skide.include.Node, SearchPopUpItem>>()
+                val vars = Vector<Triple<File, com.skide.include.Node, SearchPopUpItem>>()
+
+                val items = Vector<SearchPopUpItem>()
+                val box = SearchPopUp { list, text ->
+                    items.clear()
+                    if (text.startsWith("@") && text.length > 1) {
+                        for (function in functions) {
+                            val name = function.second.fields["name"] as String
+                            if (name.contains(text.substring(1), true)) {
+                                items.add(function.third)
+                            }
+                            if (items.size > 125) break
+                        }
+                        for (event in events) {
+                            val name = event.second.fields["name"] as String
+                            if (name.contains(text.substring(1), true)) {
+                                items.add(event.third)
+                            }
+                            if (items.size > 125) break
+
+                        }
+                        for (variable in vars) {
+                            val name = variable.second.fields["name"] as String
+                            if (name.contains(text.substring(1), true)) {
+                                items.add(variable.third)
+                            }
+                            if (items.size > 125) break
+
+                        }
+                    } else if (text.startsWith(":")) {
+                        val lastActive = openProjectGuiManager.lastActive
+                        if (lastActive != null) {
+                            val matcher = Pattern.compile("\\d+").matcher(text)
+                            if (matcher.find()) {
+                                val num = matcher.group().toInt()
+                                items.add(SearchPopUpItem("Go to line $num", lastActive.f.name) {
+                                    lastActive.area.view.requestFocus()
+                                    lastActive.area.moveLineToCenter(num)
+                                    lastActive.area.setSelection(num, 1, num, lastActive.area.getColumnLineAmount(num))
+                                })
+                            }
+                        }
+                    } else {
+                        for (f in files.values) {
+                            if (f.name.contains(text, true)) {
+                                if (openProjectGuiManager.openFiles.containsKey(f)) {
+                                    items.add(SearchPopUpItem("Open ${f.name}", f.name) {
+                                        val holder = openProjectGuiManager.openFiles[f]
+                                        val tab = holder!!.tab
+                                        tab.tabPane.selectionModel.select(tab)
+                                        Platform.runLater {
+                                            holder.area.focusEditor()
+
+                                        }
+                                    })
+                                } else {
+                                    items.add(SearchPopUpItem("Open ${f.name}", f.name) {
+                                        openFile(f, false) {
+                                            Platform.runLater {
+                                               it.area.focusEditor()
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+                        }
+                    }
+
+                    items
+                }
+
+                val parser = SkriptParser(openProjectGuiManager.openProject)
+
+                Thread {
+                    Thread.sleep(250)
+                    for (f in files.values) {
+                        if (openProjectGuiManager.openFiles.containsKey(f)) {
+                            val holder = openProjectGuiManager.openFiles[f]
+                            for (node in EditorUtils.filterByNodeType(NodeType.FUNCTION, holder!!.codeManager.parseResult)) {
+                                if (node.fields["visibility"] == "local") continue
+                                val name = node.fields["name"] as String
+                                functions.add(Triple(f, node, SearchPopUpItem(name, "Function - ${f.name}") {
+                                    if (openProjectGuiManager.openFiles.containsKey(f)) {
+                                        val holder = openProjectGuiManager.openFiles[f]
+                                        val tab = holder!!.tab
+                                        tab.tabPane.selectionModel.select(tab)
+                                        Platform.runLater {
+                                            holder.area.moveLineToCenter(node.linenumber)
+                                            holder.area.setSelection(node.linenumber, 1, node.linenumber, holder.area.getColumnLineAmount(node.linenumber))
+                                        }
+                                    } else {
+                                        openFile(f, false) { it ->
+                                            Platform.runLater {
+                                                it.area.moveLineToCenter(node.linenumber)
+                                                it.area.setSelection(node.linenumber, 1, node.linenumber, it.area.getColumnLineAmount(node.linenumber))
+
+                                            }
+                                        }
+                                    }
+                                }))
+                            }
+                            for (node in EditorUtils.filterByNodeType(NodeType.EVENT, holder.codeManager.parseResult)) {
+                                val name = node.fields["name"] as String
+                                events.add(Triple(f, node, SearchPopUpItem(name, "Event - ${f.name}") {
+                                    if (openProjectGuiManager.openFiles.containsKey(f)) {
+                                        val holder = openProjectGuiManager.openFiles[f]
+                                        val tab = holder!!.tab
+                                        tab.tabPane.selectionModel.select(tab)
+                                        Platform.runLater {
+                                            holder.area.moveLineToCenter(node.linenumber)
+                                            holder.area.setSelection(node.linenumber, 1, node.linenumber, holder.area.getColumnLineAmount(node.linenumber))
+                                        }
+                                    } else {
+                                        openFile(f, false) { it ->
+                                            Platform.runLater {
+                                                it.area.moveLineToCenter(node.linenumber)
+                                                it.area.setSelection(node.linenumber, 1, node.linenumber, it.area.getColumnLineAmount(node.linenumber))
+
+                                            }
+                                        }
+                                    }
+                                }))
+                            }
+                            for (node in EditorUtils.filterByNodeType(NodeType.SET_VAR, holder.codeManager.parseResult)) {
+                                val name = node.fields["name"] as String
+                                vars.add(Triple(f, node, SearchPopUpItem(if (node.fields["visibility"] == "local")
+                                    "{_$name}" else "{$name}", "Variable - ${f.name}") {
+                                    if (openProjectGuiManager.openFiles.containsKey(f)) {
+                                        val holder = openProjectGuiManager.openFiles[f]
+                                        val tab = holder!!.tab
+                                        tab.tabPane.selectionModel.select(tab)
+                                        Platform.runLater {
+                                            holder.area.moveLineToCenter(node.linenumber)
+                                            holder.area.setSelection(node.linenumber, 1, node.linenumber, holder.area.getColumnLineAmount(node.linenumber))
+                                        }
+                                    } else {
+                                        openFile(f, false) { it ->
+                                            Platform.runLater {
+                                                it.area.moveLineToCenter(node.linenumber)
+                                                it.area.setSelection(node.linenumber, 1, node.linenumber, it.area.getColumnLineAmount(node.linenumber))
+
+                                            }
+                                        }
+                                    }
+                                }))
+                            }
+                        } else {
+                            val result = parser.superParse(readFile(f).second)
+                            for (node in EditorUtils.filterByNodeType(NodeType.FUNCTION, result)) {
+                                if (node.fields["visibility"] == "local") continue
+                                val name = node.fields["name"] as String
+                                functions.add(Triple(f, node, SearchPopUpItem(name, "Function - ${f.name}") {
+                                    if (openProjectGuiManager.openFiles.containsKey(f)) {
+                                        val holder = openProjectGuiManager.openFiles[f]
+                                        val tab = holder!!.tab
+                                        tab.tabPane.selectionModel.select(tab)
+                                        Platform.runLater {
+                                            holder.area.moveLineToCenter(node.linenumber)
+                                            holder.area.setSelection(node.linenumber, 1, node.linenumber, holder.area.getColumnLineAmount(node.linenumber))
+                                        }
+                                    } else {
+                                        openFile(f, false) { it ->
+                                            Platform.runLater {
+                                                it.area.moveLineToCenter(node.linenumber)
+                                                it.area.setSelection(node.linenumber, 1, node.linenumber, it.area.getColumnLineAmount(node.linenumber))
+
+                                            }
+                                        }
+                                    }
+                                }))
+                            }
+                            for (node in EditorUtils.filterByNodeType(NodeType.EVENT, result)) {
+                                val name = node.fields["name"] as String
+                                events.add(Triple(f, node, SearchPopUpItem(name, "Event - ${f.name}") {
+                                    if (openProjectGuiManager.openFiles.containsKey(f)) {
+                                        val holder = openProjectGuiManager.openFiles[f]
+                                        val tab = holder!!.tab
+                                        tab.tabPane.selectionModel.select(tab)
+                                        Platform.runLater {
+                                            holder.area.moveLineToCenter(node.linenumber)
+                                            holder.area.setSelection(node.linenumber, 1, node.linenumber, holder.area.getColumnLineAmount(node.linenumber))
+                                        }
+                                    } else {
+                                        openFile(f, false) { it ->
+                                            Platform.runLater {
+                                                it.area.moveLineToCenter(node.linenumber)
+                                                it.area.setSelection(node.linenumber, 1, node.linenumber, it.area.getColumnLineAmount(node.linenumber))
+
+                                            }
+                                        }
+                                    }
+                                }))
+                            }
+                            for (node in EditorUtils.filterByNodeType(NodeType.SET_VAR, result)) {
+                                val name = node.fields["name"] as String
+                                vars.add(Triple(f, node, SearchPopUpItem("{$name}", "Variable - ${f.name}") {
+                                    if (openProjectGuiManager.openFiles.containsKey(f)) {
+                                        val holder = openProjectGuiManager.openFiles[f]
+                                        val tab = holder!!.tab
+                                        tab.tabPane.selectionModel.select(tab)
+                                        Platform.runLater {
+                                            holder.area.moveLineToCenter(node.linenumber)
+                                            holder.area.setSelection(node.linenumber, 1, node.linenumber, holder.area.getColumnLineAmount(node.linenumber))
+                                        }
+                                    } else {
+                                        openFile(f, false) { it ->
+                                            Platform.runLater {
+                                                it.area.moveLineToCenter(node.linenumber)
+                                                it.area.setSelection(node.linenumber, 1, node.linenumber, it.area.getColumnLineAmount(node.linenumber))
+
+                                            }
+                                        }
+                                    }
+                                }))
+                            }
+                        }
+                    }
+                    box.doneIndexing()
+                }.start()
             }
         }
         controller.browserUpperHBox.setOnScroll { ev ->

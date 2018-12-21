@@ -1,7 +1,6 @@
 package com.skide.gui
 
 import javafx.application.Platform
-import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Label
 import javafx.scene.control.ListView
@@ -15,7 +14,7 @@ import javafx.stage.StageStyle
 import java.util.*
 
 
-class SearchPopUpItem(val primaryString: String, val secondaryString: String, val action: () -> Unit) : HBox() {
+class SearchPopUpItem(primaryString: String, secondaryString: String, val action: () -> Unit) : HBox() {
 
     private val labelLeft = Label()
     private val labelRight = Label()
@@ -38,12 +37,24 @@ class SearchPopUp(val update: (List<SearchPopUpItem>, String) -> List<SearchPopU
     private val inputField = TextField()
     private val stage = Stage()
     private val bottomCheck = SearchPopUpItem("No Results...", "") {}
-
+    private val indexing = SearchPopUpItem("Indexing...", "") {}
+    private var indexingDone = false
     private fun getSelected(): SearchPopUpItem? {
         return listView.selectionModel.selectedItem
     }
 
+    fun doneIndexing() {
+        indexingDone = true
+        Platform.runLater {
+            if (listView.items.contains(indexing)) listView.items.remove(indexing)
+            listView.prefHeight = ((listView.items.size * 24 + 2).toDouble())
+            stage.sizeToScene()
+        }
+    }
+
     init {
+
+        indexing.isDisable = true
         bottomCheck.isDisable = true
         inputField.setOnKeyPressed {
             if (it.code == KeyCode.DOWN && listView.items.size != 0 && !listView.items.contains(bottomCheck)) {
@@ -67,12 +78,13 @@ class SearchPopUp(val update: (List<SearchPopUpItem>, String) -> List<SearchPopU
                 for (searchPopUpItem in toRemove)
                     listView.items.remove(searchPopUpItem)
             }
-            if (listView.items.size == 0)
+            if (listView.items.size == 0) {
+                if (!indexingDone) listView.items.add(indexing)
                 listView.items.add(bottomCheck)
-            else
+            } else {
                 if (listView.items.contains(bottomCheck))
                     listView.items.remove(bottomCheck)
-
+            }
             listView.prefHeight = ((listView.items.size * 24 + 2).toDouble())
             stage.sizeToScene()
         }
@@ -128,13 +140,16 @@ class SearchPopUp(val update: (List<SearchPopUpItem>, String) -> List<SearchPopU
         scene.fill = Color.TRANSPARENT
         stage.initStyle(StageStyle.UNDECORATED)
         stage.scene = scene
-        listView.items.add(bottomCheck)
+        listView.items.addAll(indexing, bottomCheck)
         listView.prefHeight = ((listView.items.size * 24 + 2).toDouble())
         if (GUIManager.settings.get("theme") == "Dark")
             root.stylesheets.add(GUIManager.settings.getCssPath("ThemeDark.css"))
         if (GUIManager.settings.get("global_font_size").toString().isNotEmpty())
             root.style = "-fx-font-size: ${GUIManager.settings.get("global_font_size")}px"
         stage.sizeToScene()
+        stage.maxHeight = 1000.0
+
         stage.show()
+
     }
 }

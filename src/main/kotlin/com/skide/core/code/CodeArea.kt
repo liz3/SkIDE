@@ -72,12 +72,10 @@ class EventHandler(private val area: CodeArea) {
 
         val lineNumber = (position as JSObject).getMember("lineNumber") as Int
         val column = position.getMember("column") as Int
-
         val word = area.getWordAtPosition(lineNumber, column)
 
         return area.codeManager.referenceProvider.findReference(model, lineNumber, word, area.getArray())
     }
-
     fun gotoCall(model: Any, position: Any, token: Any): Any {
         val pos = position as JSObject
         val lineNumber = pos.getMember("lineNumber") as Int
@@ -205,7 +203,10 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
         content.putString(str)
         cb.setContent(content)
     }
-
+    fun focusEditor() {
+        while (!view.isFocused) view.requestFocus()
+        editor.call("focus")
+    }
     fun pasteSelectionFromClipboard() {
 
         val selection = getSelection()
@@ -231,24 +232,24 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
             if (getOS() == OperatingSystemType.MAC_OS) {
 
                 if (getLocale() == "de_DE") {
-                    if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
+                    if (ev.verifyKeyCombo() && ev.code == KeyCode.Z)
                         triggerAction("undo")
-                    if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
+                    if (ev.verifyKeyCombo() && ev.code == KeyCode.Y)
                         triggerAction("redo")
                 } else {
-                    if (verifyKeyCombo(ev) && ev.code == KeyCode.Y)
+                    if (ev.verifyKeyCombo() && ev.code == KeyCode.Y)
                         triggerAction("undo")
-                    if (verifyKeyCombo(ev) && ev.code == KeyCode.Z)
+                    if (ev.verifyKeyCombo() && ev.code == KeyCode.Z)
                         triggerAction("redo")
                 }
 
             }
-            if (ev.code == KeyCode.C && verifyKeyCombo(ev)) {
+            if (ev.code == KeyCode.C && ev.verifyKeyCombo()) {
                 Platform.runLater {
                     copySelectionToClipboard()
                 }
             }
-            if (ev.code == KeyCode.X && verifyKeyCombo(ev)) {
+            if (ev.code == KeyCode.X && ev.verifyKeyCombo()) {
                 Platform.runLater {
                     val selection = getSelection()
                     copySelectionToClipboard()

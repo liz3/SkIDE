@@ -64,6 +64,7 @@ class CodeManager {
         area.text = content
         area.view.focusedProperty().addListener { _, _, newValue ->
             if (!newValue) {
+                project.openProject.guiHandler.lastActive = project
                 project.manager.saveCode()
                 project.openProject.runConfs.forEach {
                     if (it.value.runner === project) {
@@ -123,9 +124,9 @@ class CodeManager {
         }
 
         if (update)
-           println(measureTimeMillis {
-               errorProvider.runChecks(parseResult)
-           })
+            Thread {
+                errorProvider.runChecks(parseResult)
+            }.start()
 
 
         return parseResult
