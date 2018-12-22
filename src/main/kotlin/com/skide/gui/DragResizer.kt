@@ -1,6 +1,7 @@
 package com.skide.gui
 
 import javafx.scene.Cursor
+import javafx.scene.control.TreeView
 import javafx.scene.layout.BorderPane
 
 
@@ -38,7 +39,7 @@ class DragResizer {
             windowHeight = bottomSec.scene.height
             mousePosY = event.sceneY
             bottomSecHeight = bottomSec.height
-            if (canDrag(windowHeight, mousePosY, bottomSecHeight)) {
+            if (bottomSec.cursor === Cursor.S_RESIZE) {
                 bottomSec.prefHeight = if (mousePosY < 30) windowHeight - 30 else windowHeight - event.sceneY
             }
         }
@@ -48,5 +49,43 @@ class DragResizer {
         val bottomSecOffsetTop = windowHeight - bottomSecHeight
         val mousePosYRelativeToBottomSec = mousePosY - bottomSecOffsetTop
         return mousePosYRelativeToBottomSec <= 25
+    }
+}
+class DragResizerLeft {
+
+    private var windowWidth = 0.0
+    private var mousePosY = 0.0
+    private var secWidth = 0.0
+
+    fun makeResizable(section: TreeView<String>, xPane:BorderPane) {
+        windowWidth = xPane.scene.width
+
+
+        section.setOnMouseMoved { event ->
+            windowWidth = xPane.scene.width
+            mousePosY = event.sceneX
+            secWidth = section.width
+
+            if (canDrag(mousePosY, secWidth) && section.cursor !== Cursor.S_RESIZE) {
+                section.cursor = Cursor.H_RESIZE
+            } else if (section.cursor === Cursor.H_RESIZE) {
+                section.cursor = Cursor.DEFAULT
+            }
+
+        }
+
+        section.setOnMouseDragged { event ->
+            windowWidth = xPane.scene.width
+            mousePosY = event.sceneX
+            secWidth = section.width
+            if (section.cursor === Cursor.H_RESIZE) {
+                xPane.prefWidth = event.sceneX
+            }
+        }
+    }
+
+    private fun canDrag(mousePosY: Double, secWidth: Double): Boolean {
+        val mousePosYRelativeToBottomSec = mousePosY - secWidth
+        return mousePosYRelativeToBottomSec >= -2
     }
 }

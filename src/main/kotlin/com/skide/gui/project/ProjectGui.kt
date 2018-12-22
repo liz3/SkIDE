@@ -318,7 +318,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         tab.content = treeView
         Pair(tab, treeView)
     }.invoke()
-    val structureTab = {
+    private val structureTab = {
         val tab = Tab()
         val iconView = ImageView(Image(javaClass.getResource("/images/file_skriptstructure.png").toExternalForm()))
 
@@ -970,19 +970,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 }.start()
             }
         }
-        controller.browserUpperHBox.setOnScroll { ev ->
-            if (browserVisible) {
-                val pane = controller.mainLeftBorderPane
-                val x = ev.deltaY
-
-                if (x < 0) {
-                    pane.prefWidth = pane.prefWidth - 6.0
-                } else {
-                    pane.prefWidth = pane.prefWidth + 6.0
-
-                }
-            }
-        }
+        DragResizerLeft().makeResizable(filesTab.second, controller.mainLeftBorderPane)
+        DragResizerLeft().makeResizable(structureTab.second, controller.mainLeftBorderPane)
         controller.toggleTreeViewButton.setIcon("login")
         controller.toggleTreeViewButton.setOnAction {
             val tabPane = controller.browserTabPane
