@@ -212,8 +212,13 @@ class ErrorProvider(val manager: CodeManager) {
                     }
                 }
                 if (node.nodeType == NodeType.IF_STATEMENT || node.nodeType == NodeType.LOOP) {
-                    if (allNodes[nIndex + 1].tabLevel <= node.tabLevel && allNodes[nIndex + 1].nodeType != NodeType.UNDEFINED) {
+                    if(node != allNodes.last()) {
+                        if (allNodes[nIndex + 1].tabLevel <= node.tabLevel && allNodes[nIndex + 1].nodeType != NodeType.UNDEFINED)
+                            calls += {
+                                reportLineWarning("Empty Block", node.linenumber)
+                            }
 
+                    } else {
                         calls += {
                             reportLineWarning("Empty Block", node.linenumber)
                         }
