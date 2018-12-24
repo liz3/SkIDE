@@ -56,6 +56,16 @@ class ErrorProvider(val manager: CodeManager) {
         }
         val allNodes = EditorUtils.flatList(parseResult)
         for ((nIndex, node) in allNodes.withIndex()) {
+            if(node.nodeType == NodeType.FUNCTION ||
+                    node.nodeType == NodeType.IF_STATEMENT || node.nodeType == NodeType.EVENT || node.nodeType == NodeType.OPTIONS || node.nodeType == NodeType.COMMAND) {
+
+                if(!node.getContent().endsWith(":")) {
+                    calls += {
+                        reportLineError("Does not end with :", node.linenumber)
+                    }
+                }
+
+            }
             if (node.nodeType == NodeType.FUNCTION ||
                     node.nodeType == NodeType.SET_VAR || node.nodeType == NodeType.EVENT || node.nodeType == NodeType.OPTIONS) {
 
