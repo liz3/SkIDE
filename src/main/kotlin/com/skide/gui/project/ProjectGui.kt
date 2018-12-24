@@ -24,7 +24,9 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.VBox
+import javafx.stage.Modality
 import javafx.stage.Stage
+import javafx.stage.StageStyle
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -700,8 +702,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
             window.stage.isResizable = false
+            window.stage.initModality(Modality.WINDOW_MODAL)
+            window.stage.initOwner(openProjectGuiManager.window.stage)
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, coreManager, window).init()
-            window.stage.isResizable = false
             window.stage.show()
 
         }
@@ -752,7 +755,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 val vars = Vector<Triple<File, com.skide.include.Node, SearchPopUpItem>>()
 
                 val items = Vector<SearchPopUpItem>()
-                val box = SearchPopUp { list, text ->
+                val box = SearchPopUp(openProjectGuiManager.window.stage) { list, text ->
                     items.clear()
                     if (text.startsWith("@") && text.length > 1) {
                         for (function in functions) {

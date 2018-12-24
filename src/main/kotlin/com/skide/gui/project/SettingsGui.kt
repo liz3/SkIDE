@@ -5,6 +5,8 @@ import com.skide.gui.GUIManager
 import com.skide.gui.controllers.ProjectSettingsGUIController
 import com.skide.include.ActiveWindow
 import com.skide.include.Addon
+import javafx.stage.Modality
+import javafx.stage.StageStyle
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -25,6 +27,8 @@ class SettingsGui(val coreManager: CoreManager, val projGuiManager: OpenProjectG
             co.init()
             val dOpts = DeployOptionsGUI(projGuiManager.openProject, window.controller as ProjectSettingsGUIController)
             dOpts.initDeployModule()
+            window.stage.initModality(Modality.WINDOW_MODAL)
+            window.stage.initOwner(projGuiManager.window.stage)
             SettingsGuiEventListener(this, window.controller as ProjectSettingsGUIController, co, dOpts).init()
         }
 

@@ -9,6 +9,7 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
+import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import java.util.*
@@ -29,7 +30,7 @@ class SearchPopUpItem(primaryString: String, secondaryString: String, val action
     }
 }
 
-class SearchPopUp(val update: (List<SearchPopUpItem>, String) -> List<SearchPopUpItem>) {
+class SearchPopUp(val parent:Stage, val update: (List<SearchPopUpItem>, String) -> List<SearchPopUpItem>) {
 
     private var i = -1
     private val root = BorderPane()
@@ -60,6 +61,9 @@ class SearchPopUp(val update: (List<SearchPopUpItem>, String) -> List<SearchPopU
             if (it.code == KeyCode.DOWN && listView.items.size != 0 && !listView.items.contains(bottomCheck)) {
                 it.consume()
                 listView.requestFocus()
+            } else if(it.code == KeyCode.ESCAPE) {
+                stage.close()
+                listView.items.clear()
             }
         }
         inputField.setOnKeyReleased {
@@ -113,6 +117,11 @@ class SearchPopUp(val update: (List<SearchPopUpItem>, String) -> List<SearchPopU
                     stage.close()
                 }
             } else if (it.code != KeyCode.DOWN) {
+                if(it.code == KeyCode.ESCAPE) {
+                    stage.close()
+                    listView.items.clear()
+                    return@setOnKeyPressed
+                }
                 val text = inputField.text + it.text
                 it.consume()
                 Platform.runLater {
@@ -147,7 +156,12 @@ class SearchPopUp(val update: (List<SearchPopUpItem>, String) -> List<SearchPopU
         if (GUIManager.settings.get("global_font_size").toString().isNotEmpty())
             root.style = "-fx-font-size: ${GUIManager.settings.get("global_font_size")}px"
         stage.sizeToScene()
+        stage.isResizable = false
         stage.maxHeight = 1000.0
+
+
+        stage.x = (parent.x + parent.width / 2.0) * .9
+        stage.y = (parent.y + parent.height / 2.0) * .6
 
         stage.show()
 
