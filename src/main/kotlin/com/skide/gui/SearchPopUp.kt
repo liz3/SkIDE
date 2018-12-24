@@ -156,12 +156,11 @@ class SearchPopUp(val parent:Stage, val update: (List<SearchPopUpItem>, String) 
         if (GUIManager.settings.get("global_font_size").toString().isNotEmpty())
             root.style = "-fx-font-size: ${GUIManager.settings.get("global_font_size")}px"
         stage.sizeToScene()
-        stage.isResizable = false
         stage.maxHeight = 1000.0
 
 
-        stage.x = (parent.x + parent.width / 2.0) * .9
-        stage.y = (parent.y + parent.height / 2.0) * .6
+        stage.x = (parent.x + parent.width / 2.0) -  200.0
+        stage.y = (parent.y + parent.height / 2.0) * 0.7
 
         stage.show()
 

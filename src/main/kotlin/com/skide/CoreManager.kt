@@ -18,6 +18,8 @@ import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
 import javafx.stage.Stage
 import javafx.stage.StageStyle
+import javafx.util.Duration
+import org.controlsfx.control.Notifications
 
 
 class CoreManager {
@@ -59,6 +61,7 @@ class CoreManager {
             controller.view.image = Image(javaClass.getResource("/images/splash.png").toExternalForm())
             controller.logoView.image = Image(javaClass.getResource("/images/21xayah.png").toExternalForm())
             stage.show()
+                        var analyticInf = false
             val task = object : Task<Void>() {
                 @Throws(Exception::class)
                 override fun call(): Void? {
@@ -114,10 +117,10 @@ class CoreManager {
                         Platform.runLater {
                             googleAnalytics = GoogleAnalytics(me)
                             if (configManager.get("analytics") == "") {
-                                Prompts.infoCheck("Analytics", "Analytics Information", "Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). \nI do this only for statistics. If you still don´t want it, disable it in the Settings!", Alert.AlertType.INFORMATION)
+                                analyticInf = true
                                 configManager.set("analytics", "true")
                             } else {
-                                if (configManager.get("analytics") == "true") {
+                                if (configManager.get("analytics") == "true" && !Info.prodMode) {
                                     googleAnalytics.start()
                                 }
                             }
@@ -127,6 +130,12 @@ class CoreManager {
                             (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
                             window.stage.isResizable = false
                             window.stage.show()
+                            if(analyticInf) {
+                                Notifications.create()
+                                        .title("Analytics")
+                                        .text("Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). I do this only for statistics. If you still don´t want it, disable it in the Settings!").darkStyle().hideAfter(Duration.INDEFINITE)
+                                        .show()
+                            }
                         }
 
                     } catch (e: Exception) {
