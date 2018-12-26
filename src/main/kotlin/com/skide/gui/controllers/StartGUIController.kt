@@ -5,11 +5,15 @@ import com.skide.Info
 import com.skide.gui.GUIManager
 import com.skide.gui.settings.SettingsGUIHandler
 import com.skide.include.ActiveWindow
+import com.skide.utils.OperatingSystemType
+import com.skide.utils.getOS
 import javafx.fxml.FXML
 import javafx.scene.control.Label
 import javafx.scene.control.ListView
 import javafx.scene.image.Image
 import javafx.scene.image.ImageView
+import javafx.stage.Modality
+import javafx.stage.StageStyle
 
 
 class StartGUIController {
@@ -53,6 +57,7 @@ class StartGUIController {
             window.controller as CreateProjectGUIController
             window.controller.initGui(manager, window, thisWindow)
             window.stage.isResizable = false
+            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             window.closeListener = {
                 thisWindow.stage.show()
             }
@@ -81,6 +86,7 @@ class StartGUIController {
         settings.setOnMouseReleased {
 
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
+            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, manager, window).init()
             window.stage.isResizable = false
             window.stage.show()
@@ -91,6 +97,7 @@ class StartGUIController {
             window.controller as ImportProjectGUIController
             window.controller.initGui(manager, window, thisWindow)
             window.stage.isResizable = false
+            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             window.closeListener = {
                 thisWindow.stage.show()
             }

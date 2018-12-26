@@ -6,11 +6,13 @@ import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.scene.control.Button
 import javafx.scene.control.TextArea
+import javafx.scene.image.Image
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 import javafx.stage.FileChooser
 import javafx.stage.Stage
+import javafx.stage.StageStyle
 import netscape.javascript.JSObject
 import java.io.File
 import java.lang.Exception
@@ -169,7 +171,9 @@ class WebViewDebugger(val area: CodeArea) {
 
 
         val stage = Stage()
+        stage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
         stage.title = "Debugger"
+        stage.initStyle(StageStyle.UTILITY)
         stage.scene = Scene(pane, 800.0, 600.0)
 
         inputBox.setOnKeyPressed {

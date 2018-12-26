@@ -3,6 +3,7 @@ package com.skide.gui
 import com.skide.gui.controllers.ListViewPopupController
 import javafx.application.Platform
 import javafx.scene.Scene
+import javafx.scene.image.Image
 import javafx.scene.input.MouseButton
 import javafx.stage.Modality
 import javafx.stage.Stage
@@ -18,6 +19,7 @@ class ListViewPopUp(val info: String, val items: HashMap<String, () -> Unit>, do
     init {
         Platform.runLater {
             val stage = Stage()
+            stage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
             val scene = GUIManager.getScene("fxml/ListView.fxml")
             val controller = scene.second as ListViewPopupController
 

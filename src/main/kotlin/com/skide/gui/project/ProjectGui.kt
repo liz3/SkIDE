@@ -703,6 +703,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
             window.stage.isResizable = false
             window.stage.initModality(Modality.WINDOW_MODAL)
+            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             window.stage.initOwner(openProjectGuiManager.window.stage)
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, coreManager, window).init()
             window.stage.show()

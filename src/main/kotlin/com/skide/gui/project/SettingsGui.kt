@@ -5,6 +5,8 @@ import com.skide.gui.GUIManager
 import com.skide.gui.controllers.ProjectSettingsGUIController
 import com.skide.include.ActiveWindow
 import com.skide.include.Addon
+import com.skide.utils.OperatingSystemType
+import com.skide.utils.getOS
 import javafx.stage.Modality
 import javafx.stage.StageStyle
 import java.util.*
@@ -29,6 +31,7 @@ class SettingsGui(val coreManager: CoreManager, val projGuiManager: OpenProjectG
             dOpts.initDeployModule()
             window.stage.initModality(Modality.WINDOW_MODAL)
             window.stage.initOwner(projGuiManager.window.stage)
+            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             SettingsGuiEventListener(this, window.controller as ProjectSettingsGUIController, co, dOpts).init()
         }
 

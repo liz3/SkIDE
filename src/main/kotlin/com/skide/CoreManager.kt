@@ -16,6 +16,7 @@ import javafx.scene.image.Image
 import javafx.scene.layout.Background
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
+import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.Duration
@@ -51,7 +52,10 @@ class CoreManager {
             parent.background = Background.EMPTY
             val controller = loader.getController<SplashGuiController>()
             stage.scene = Scene(parent)
-            stage.initStyle(StageStyle.TRANSPARENT)
+            if (getOS() == OperatingSystemType.LINUX)
+                stage.initStyle(StageStyle.UTILITY)
+            else
+                stage.initStyle(StageStyle.TRANSPARENT)
             stage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
             stage.scene.fill = Color.TRANSPARENT
             stage.sizeToScene()
@@ -60,7 +64,7 @@ class CoreManager {
             controller.view.image = Image(javaClass.getResource("/images/splash.png").toExternalForm())
             controller.logoView.image = Image(javaClass.getResource("/images/21xayah.png").toExternalForm())
             stage.show()
-                        var analyticInf = false
+            var analyticInf = false
             val task = object : Task<Void>() {
                 @Throws(Exception::class)
                 override fun call(): Void? {
@@ -124,12 +128,12 @@ class CoreManager {
                                 }
                             }
                             stage.close()
-                            val window = guiManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false)
-                            window.stage.isResizable = false
+                            val window = guiManager.getWindow("fxml/StartGui.fxml", "SkIDE", false)
                             (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
                             window.stage.isResizable = false
+                            if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
                             window.stage.show()
-                            if(analyticInf) {
+                            if (analyticInf) {
                                 Notifications.create()
                                         .title("Analytics")
                                         .text("Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). I do this only for statistics. If you still don´t want it, disable it in the Settings!").darkStyle().hideAfter(Duration.INDEFINITE)
