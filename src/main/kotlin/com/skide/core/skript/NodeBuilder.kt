@@ -41,10 +41,10 @@ class NodeBuilder(val node: Node) {
         } else if (content.toLowerCase().startsWith("options:")) {
             theType = NodeType.OPTIONS
         }
-        val regex = Pattern.compile("\\S+\\(.*\\)")
-        if (regex.matcher(content).matches()) {
+        val matcher = Pattern.compile("[^\\>\\[( {]+\\(.*\\)(?!.*\")").matcher(content)
+        if (matcher.find()) {
             theType = NodeType.FUNCTION_CALL
-            fields["name"] = content.split("(").first()
+            fields["name"] = matcher.group().split("(").first().trim()
         }
         if (content.toLowerCase().startsWith("function ")) {
             //parse method stuff
@@ -90,7 +90,7 @@ class NodeBuilder(val node: Node) {
             }
             if (!found) {
                 fields["name"] = "Unknown Event"
-                fields.put("invalid", true)
+                fields["invalid"] = true
             }
         }
 
@@ -167,7 +167,10 @@ class NodeBuilder(val node: Node) {
 
     private fun parseMethodParameters() {
         val paramList = Vector<MethodParameter>()
-        if (!content.contains("(") || !content.contains(")")) return
+        if (!content.contains("(") || !content.contains(")")) {
+            fields["invalid"] = true
+            return
+        }
         val name = content.split(" ")[1].split("(")[0]
         val params = content.split("(")[1].split(")")[0].split(",")
         val returnType: String

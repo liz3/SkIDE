@@ -42,4 +42,5 @@ class Node(val parser: SkriptParser, val parent: Node? = null, val raw: String, 
     val fields = builder.fields
     lateinit var events: Vector<AddonItem>
     fun getContent() = builder.content
+    fun hasComment() = builder.hasComment
 }

@@ -39,35 +39,31 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
     }
 
     private fun addFileToCrossFileComplete(f: File, nodes: Vector<Node>) {
-        val toAdd = Vector<Node>()
-        EditorUtils.filterByNodeType(NodeType.FUNCTION, nodes).forEach {
-            toAdd.add(it)
-        }
-        EditorUtils.filterByNodeType(NodeType.SET_VAR, nodes).forEach {
-            if (it.fields["visibility"] == "global") toAdd.add(it)
-        }
-        privateCrossNodes[f] = toAdd
+        privateCrossNodes[f] = EditorUtils.flatList(nodes)
     }
 
-    fun updateCrossNodes() {
-        crossNodeUpdaterBusy = true
-        val openTabs = HashMap<OpenFileHolder, String>()
-        guiHandler.openFiles.forEach {
-            openTabs[it.value] = it.value.area.text
-        }
-        Thread {
-            val parser = SkriptParser(this)
-
-            for (projectFile in project.fileManager.projectFiles) {
-                if (guiHandler.openFiles.containsKey(projectFile.value)) {
-                    val handler = guiHandler.openFiles[projectFile.value]
-                    addFileToCrossFileComplete(projectFile.value, parser.superParse(openTabs[handler]!!))
-                } else {
-                    addFileToCrossFileComplete(projectFile.value, parser.superParse(readFile(projectFile.value).second))
-                }
+    fun updateCrossNodes(cb: () -> Unit = {}) {
+        Platform.runLater {
+            crossNodeUpdaterBusy = true
+            val openTabs = HashMap<OpenFileHolder, String>()
+            guiHandler.openFiles.forEach {
+                openTabs[it.value] = it.value.area.text
             }
-            crossNodeUpdaterBusy = false
-        }.start()
+            Thread {
+                val parser = SkriptParser(this)
+
+                for (projectFile in project.fileManager.projectFiles) {
+                    if (guiHandler.openFiles.containsKey(projectFile.value)) {
+                        val handler = guiHandler.openFiles[projectFile.value]
+                        addFileToCrossFileComplete(projectFile.value, parser.superParse(openTabs[handler]!!))
+                    } else {
+                        addFileToCrossFileComplete(projectFile.value, parser.superParse(readFile(projectFile.value).second))
+                    }
+                }
+                crossNodeUpdaterBusy = false
+                cb()
+            }.start()
+        }
     }
 
     fun updateAddons() {

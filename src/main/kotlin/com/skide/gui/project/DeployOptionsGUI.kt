@@ -11,10 +11,21 @@ import java.io.File
 class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUIController) {
 
 
+    private fun updateActive(value:Boolean) {
+        ctrl.deployMethodComboBox.isDisable = value
+        ctrl.deployDeleteBtn.isDisable = value
+        ctrl.deployHostTextField.isDisable = value
+        ctrl.deployPortTextField.isDisable = value
+        ctrl.deployFolderPathTextField.isDisable = value
+        ctrl.deployUsernameTextField.isDisable = value
+        ctrl.deployPasswordField.isDisable = value
+        ctrl.deployPassphraseButton.isDisable = value
+    }
     fun initDeployModule() {
 
 
         ctrl.deployList.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
+            updateActive(newValue == null)
             if(newValue == null) return@addListener
             ctrl.deployHostTextField.text = newValue.host
             ctrl.deployUsernameTextField.text = newValue.username
@@ -32,6 +43,7 @@ class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICon
         }
         ctrl.deployMethodComboBox.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             if (current() == null) return@addListener
+
             current().type = RemoteHostType.valueOf(newValue)
         }
 
@@ -110,6 +122,7 @@ class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICon
         }
 
         resetValues()
+        updateActive(true)
     }
 
     private fun getFile(name: String): File? {

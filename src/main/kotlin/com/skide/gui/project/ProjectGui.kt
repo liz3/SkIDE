@@ -1009,17 +1009,15 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         controller.editorMainTabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
             if (controller.editorMainTabPane.selectionModel.selectedItem != null) {
-                if (coreManager.configManager.get("cross_auto_complete") == "true") {
-                    coreManager.projectManager.openProjects.forEach {
-                        it.updateCrossNodes()
-                    }
-                }
 
                 val tab = controller.editorMainTabPane.selectionModel.selectedItem
                 openProjectGuiManager.openFiles.values
                         .filter { it.tab == tab }
                         .forEach {
-                            if (it.name.endsWith(".sk")) updateStructureTab(it)
+                            if (it.name.endsWith(".sk")) {
+                                updateStructureTab(it)
+                                it.codeManager.parseResult = it.codeManager.parseStructure(true)
+                            }
                         }
             } else {
                 controller.browserTabPane.selectionModel.select(0)

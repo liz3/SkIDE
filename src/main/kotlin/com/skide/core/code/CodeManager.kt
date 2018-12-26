@@ -26,7 +26,6 @@ class CodeManager {
     lateinit var content: String
     lateinit var autoComplete: AutoCompleteCompute
     lateinit var parseResult: Vector<Node>
-    lateinit var crossNodes: HashMap<File, Vector<Node>>
     lateinit var definitonFinder: DefinitionsFinder
     lateinit var referenceProvider: ReferenceProvider
     lateinit var sequenceReplaceHandler: ReplaceSequence
@@ -34,6 +33,14 @@ class CodeManager {
     lateinit var errorProvider: ErrorProvider
     lateinit var hBox: BreadCrumbBar<Node>
     var gotoActivated = false
+
+    val crossNodes: HashMap<File, Vector<Node>>
+        get() {
+            if (area.coreManager.configManager.get("cross_auto_complete") == "true") {
+                return area.openFileHolder.openProject.crossNodes
+            }
+            return HashMap()
+        }
 
 
     private lateinit var parser: SkriptParser
@@ -55,11 +62,7 @@ class CodeManager {
         }
         sequenceReplaceHandler = ReplaceSequence(this)
         hBox = project.currentStackBox
-        if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
-            crossNodes = project.openProject.crossNodes
-        }
-        if (this::content.isInitialized && this::rootStructureItem.isInitialized)
-            parseResult = parseStructure()
+
         autoComplete = AutoCompleteCompute(this, project)
         area.text = content
         area.view.focusedProperty().addListener { _, _, newValue ->
@@ -74,6 +77,7 @@ class CodeManager {
             }
         }
         isSetup = true
+        parseResult = parseStructure()
     }
 
     fun gotoItem(item: TreeItem<String>) {
@@ -123,10 +127,22 @@ class CodeManager {
             if (it.nodeType != NodeType.UNDEFINED) addNodeToItemTree(rootStructureItem, it)
         }
 
-        if (update)
-            Thread {
-                errorProvider.runChecks(parseResult)
-            }.start()
+        if (update) {
+
+
+            if (area.coreManager.configManager.get("cross_auto_complete") == "true") {
+                area.openFileHolder.openProject.updateCrossNodes {
+                    Thread {
+
+                        errorProvider.runChecks(parseResult)
+                    }.start()
+                }
+            } else {
+                Thread {
+                    errorProvider.runChecks(parseResult)
+                }.start()
+            }
+        }
 
 
         return parseResult

@@ -180,7 +180,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
     var findWidgetVisible = false
     val updateWatcher = ChangeWatcher(1000) {
         Platform.runLater {
-            codeManager.parseResult = codeManager.parseStructure()
+            codeManager.parseResult = codeManager.parseStructure(true)
         }
     }
 
