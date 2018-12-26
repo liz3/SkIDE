@@ -10,25 +10,29 @@ Sk-IDE is written in Kotlin for the most part. Although you can still contribute
  - Java Development Kit version 11
 
 ## Building
+```cmd
+> gradlew shadowJar
+```
+or
 ```sh
-$ gradlew shadowJar
+$ ./gradlew shadowJar
 ```
 This will output the jar file to `build/libs`
 
 # Libraries, Frameworks and APIs in use
- - [Kotlin Language](http://kotlinlang.org/) - Programming language in use.
- - [JavaFX](http://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html) - GUI framework in use
+ - [Kotlin Language](http://kotlinlang.org/) - Programming language
+ - [JavaFX](https://openjdk.java.net/projects/openjfx) - GUI framework
  - [ControlsFX](http://fxexperience.com/controlsfx/) - JavaFX addon for advanced components 
- - [Monaco](https://microsoft.github.io/monaco-editor/) - browser based code editor
- - [TerminalFX](https://github.com/javaterminal/TerminalFX) - JavaFX terminal-view library
- - [Skript Hub](http://skripthub.net/) - Provider for auto-complete data
+ - [Monaco](https://microsoft.github.io/monaco-editor/) - Code Editor based on web technologies
+ - [TerminalFX](https://github.com/javaterminal/TerminalFX) - JavaFX TerminalView
+ - [Skript Hub](http://skripthub.net/) - Auto-Completion Provider
  - [skUnity](http://skunity.com/) - Integration with forums.skunity.com
  - [SkriptTools](https://skripttools.net/) - Information to Skript binary meta data
  - [Gradle](https://gradle.org/) - Build system
- - [Google Analytics](https://analytics.google.com/analytics/web/#/) - Used for weak information collecting
+ - [Google Analytics](https://marketingplatform.google.com/about/analytics/) - Used for weak information collecting
  - [JSON](https://www.json.org/json-en.html) - JSON implementation for Java
  - [Jsch](http://www.jcraft.com/jsch/) - SSH implementation for Java
- - [Apache Commons Net](https://commons.apache.org/proper/commons-net/) - Used for FTP implementation
+ - [Apache Commons Net](https://commons.apache.org/proper/commons-net/) - FTP implementation for Java
 
 # License
 This project is licensed under the GNU General Public License v2.0. You can find more information about it in the [LICENSE](LICENSE) file.
