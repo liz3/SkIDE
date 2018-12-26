@@ -303,7 +303,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         treeView.setOnMouseClicked {
             if (it.button == MouseButton.PRIMARY && it.clickCount == 2) {
                 val newValue = treeView.selectionModel.selectedItem
-                if(newValue != null) {
+                if (newValue != null) {
 
                     val selectedItem = newValue as TreeItem<String>
                     if (selectedItem != treeView.root) {
@@ -379,7 +379,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
 
     fun openFile(f: File, isExternal: Boolean = false, cb: (OpenFileHolder) -> Unit = {}) {
-        if (bufferedFiles.contains(f)) return
+        if (bufferedFiles.size > 0) return
         bufferedFiles.addElement(f)
         if (openProjectGuiManager.openFiles.containsKey(f)) {
             for ((file, holder) in openProjectGuiManager.openFiles) {
@@ -409,7 +409,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
     }
 
     fun openFile(f: File, tabPane: TabPane, isExternal: Boolean = false) {
-        if (bufferedFiles.contains(f)) return
+        if (bufferedFiles.size > 0) return
         bufferedFiles.addElement(f)
         if (openProjectGuiManager.openFiles.containsKey(f)) {
             for ((file, holder) in openProjectGuiManager.openFiles) {
@@ -652,7 +652,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         val deployMenu = Menu("Deploy")
 
         val compileMenu = Menu("Compile")
-        fileMenu.setOnShowing {ev ->
+        fileMenu.setOnShowing { ev ->
             deployMenu.items.clear()
             openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach { compOpt ->
                 val item = Menu(compOpt.key)
@@ -755,6 +755,9 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 val vars = Vector<Triple<File, com.skide.include.Node, SearchPopUpItem>>()
 
                 val items = Vector<SearchPopUpItem>()
+                val lastActive = openProjectGuiManager.lastActive
+
+
                 val box = SearchPopUp(openProjectGuiManager.window.stage) { list, text ->
                     items.clear()
                     if (text.startsWith("@") && text.length > 1) {
@@ -782,7 +785,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
                         }
                     } else if (text.startsWith(":")) {
-                        val lastActive = openProjectGuiManager.lastActive
                         if (lastActive != null) {
                             val matcher = Pattern.compile("\\d+").matcher(text)
                             if (matcher.find()) {
@@ -811,7 +813,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                                     items.add(SearchPopUpItem("Open ${f.name}", f.name) {
                                         openFile(f, false) {
                                             Platform.runLater {
-                                               it.area.focusEditor()
+                                                it.area.focusEditor()
                                             }
                                         }
                                     })
@@ -1015,8 +1017,10 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                         .filter { it.tab == tab }
                         .forEach {
                             if (it.name.endsWith(".sk")) {
-                                updateStructureTab(it)
-                                it.codeManager.parseResult = it.codeManager.parseStructure(true)
+                                Platform.runLater {
+                                    updateStructureTab(it)
+                                    it.codeManager.parseResult = it.codeManager.parseStructure(true)
+                                }
                             }
                         }
             } else {

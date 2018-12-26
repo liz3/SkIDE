@@ -33,6 +33,7 @@ class CallbackHook(private val rdy: () -> Unit) {
 
 class EventHandler(private val area: CodeArea) {
 
+    private var firstTextSet = false
     fun copy() {
         Platform.runLater {
             area.copySelectionToClipboard()
@@ -58,7 +59,10 @@ class EventHandler(private val area: CodeArea) {
             area.line = currentLine
         }
         if (name == "onDidChangeModelContent") {
-           area.updateWatcher.update()
+            if (firstTextSet)
+                area.updateWatcher.update()
+            else
+                firstTextSet = true
         }
     }
 
@@ -76,6 +80,7 @@ class EventHandler(private val area: CodeArea) {
 
         return area.codeManager.referenceProvider.findReference(model, lineNumber, word, area.getArray())
     }
+
     fun gotoCall(model: Any, position: Any, token: Any): Any {
         val pos = position as JSObject
         val lineNumber = pos.getMember("lineNumber") as Int
@@ -203,10 +208,12 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
         content.putString(str)
         cb.setContent(content)
     }
+
     fun focusEditor() {
         while (!view.isFocused) view.requestFocus()
         editor.call("focus")
     }
+
     fun pasteSelectionFromClipboard() {
 
         val selection = getSelection()
@@ -510,6 +517,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
         arr.setSlot(0, replaceObject)
         getModel().call("pushEditOperations", selections, arr, getFunction())
     }
+
     fun replaceLine(number: Int, text: String) {
         replaceContentInRange(number, 1, number, getColumnLineAmount(number), text)
     }

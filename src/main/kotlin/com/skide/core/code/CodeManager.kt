@@ -77,7 +77,7 @@ class CodeManager {
             }
         }
         isSetup = true
-        parseResult = parseStructure()
+        area.updateWatcher.start()
     }
 
     fun gotoItem(item: TreeItem<String>) {
