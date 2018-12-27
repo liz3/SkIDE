@@ -25,6 +25,7 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import netscape.javascript.JSObject
 import java.io.File
+import kotlin.system.measureTimeMillis
 
 
 class CallbackHook(private val rdy: () -> Unit) {
@@ -48,7 +49,10 @@ class EventHandler(private val area: CodeArea) {
         }
     }
 
-    fun eventNotify(name: String, ev: Any) {
+    /**
+     * removed ev
+     */
+    fun eventNotify(name: String) {
         if (name == "onDidChangeCursorPosition") {
             val currentLine = area.getCurrentLine()
             if (area.line != currentLine) {
@@ -67,17 +71,14 @@ class EventHandler(private val area: CodeArea) {
     }
 
     fun cmdCall(key: String) {
-        if (area.editorCommands.containsKey(key)) {
+        if (area.editorCommands.containsKey(key))
             area.editorCommands[key]!!.cb()
-        }
     }
 
     fun findReferences(model: Any, position: Any, context: Any): Any {
-
         val lineNumber = (position as JSObject).getMember("lineNumber") as Int
         val column = position.getMember("column") as Int
         val word = area.getWordAtPosition(lineNumber, column)
-
         return area.codeManager.referenceProvider.findReference(model, lineNumber, word, area.getArray())
     }
 
@@ -86,13 +87,13 @@ class EventHandler(private val area: CodeArea) {
         val lineNumber = pos.getMember("lineNumber") as Int
         val column = pos.getMember("column") as Int
 
-        val result = area.openFileHolder.codeManager.definitonFinder.search(lineNumber, column, area.getWordAtPosition(lineNumber, column))
+        val result = area.openFileHolder.codeManager.definitonFinder.search(lineNumber, area.getWordAtPosition(lineNumber, column))
         val obj = area.getObject()
         if (!result.success) return obj
 
         if (result.fName != "") {
             area.openFileHolder.openProject.project.fileManager.projectFiles.values.forEach { f ->
-                if (f.name.endsWith(".sk") && f.name == result.fName && token as Boolean) {
+                if (f.name.endsWith(".sk") && f.name == result.fName && token as Boolean)
                     if (area.openFileHolder.openProject.guiHandler.openFiles.containsKey(f)) {
                         val entry = area.openFileHolder.openProject.guiHandler.openFiles[f]
                         if (entry != null) {
@@ -109,7 +110,6 @@ class EventHandler(private val area: CodeArea) {
                             }
                         }
                     }
-                }
             }
             return obj
         }
@@ -124,15 +124,11 @@ class EventHandler(private val area: CodeArea) {
 
     fun autoCompleteRequest(doc: Any, pos: Any, token: Any, context: Any): JSObject {
         val array = area.getArray()
-        if (area.coreManager.configManager.get("auto_complete") == "true") {
-
-
-            if (area.getCurrentColumn() < 3 && !area.getLineContent(area.getCurrentLine()).startsWith("\t")) {
+        if (area.coreManager.configManager.get("auto_complete") == "true")
+            if (area.getCurrentColumn() < 3 && !area.getLineContent(area.getCurrentLine()).startsWith("\t"))
                 area.openFileHolder.codeManager.autoComplete.showGlobalAutoComplete(array)
-            } else {
+            else
                 area.openFileHolder.codeManager.autoComplete.showLocalAutoComplete(array)
-            }
-        }
         return array
     }
 
@@ -172,8 +168,8 @@ class EditorCommandBinder(val id: String, val cb: () -> Unit) {
 class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea) -> Unit) {
 
     var line = 1
-    lateinit var view: WebView
-    lateinit var engine: WebEngine
+    var view: WebView = WebView()
+    var engine: WebEngine
     lateinit var editor: JSObject
     lateinit var selection: JSObject
     lateinit var openFileHolder: OpenFileHolder
@@ -227,7 +223,6 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
 
     init {
 
-        view = WebView()
         engine = view.engine
         view.setOnKeyPressed { ev ->
 

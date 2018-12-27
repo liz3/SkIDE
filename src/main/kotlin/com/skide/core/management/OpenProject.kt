@@ -4,6 +4,7 @@ import com.skide.CoreManager
 import com.skide.core.skript.SkriptParser
 import com.skide.gui.SearchPopUp
 import com.skide.gui.SearchPopUpItem
+import com.skide.gui.project.ErrorFrontendHandler
 import com.skide.gui.project.OpenProjectGuiManager
 import com.skide.include.*
 import com.skide.utils.*
@@ -25,6 +26,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             HashMap()
         else
             privateCrossNodes
+    val errorFrontEnd = ErrorFrontendHandler(this)
     val guiHandler = OpenProjectGuiManager(this, coreManager)
     val eventManager = guiHandler.startGui()
     val addons = HashMap<String, Vector<AddonItem>>()

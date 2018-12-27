@@ -40,17 +40,17 @@ function startEditor(options) {
     };
     editor.onDidChangeCursorPosition(function (ev) {
         if (ev == null) {
-            getHook().eventNotify("onDidChangeCursorPosition", {})
+            getHook().eventNotify("onDidChangeCursorPosition")
         } else {
-            getHook().eventNotify("onDidChangeCursorPosition", ev)
+            getHook().eventNotify("onDidChangeCursorPosition")
 
         }
     });
     editor.onDidChangeModelContent(function (ev) {
         if (ev == null) {
-            getHook().eventNotify("onDidChangeModelContent", {})
+            getHook().eventNotify("onDidChangeModelContent")
         } else {
-            getHook().eventNotify("onDidChangeModelContent", ev)
+            getHook().eventNotify("onDidChangeModelContent")
 
         }
     });

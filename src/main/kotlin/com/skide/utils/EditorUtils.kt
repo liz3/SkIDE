@@ -23,9 +23,10 @@ object EditorUtils {
                 lastIndex = raw.indexOf(req.value, lastIndex) + req.value.length - 1
             }
             if (req.type == EventRequirementItemType.VARIABLE) {
-                val values = req.value as Vector<String>
+                val values = req.value as Vector<*>
                 var found = false
                 for (value in values) {
+                    value as String
                     if (raw.indexOf(value, lastIndex) != -1) {
                         found = true
                         lastIndex = raw.indexOf(value, lastIndex) + value.length - 1
@@ -117,6 +118,7 @@ object EditorUtils {
                     if (!it.startsWith("|"))
                         item.items.add(EventRequirementItem(EventRequirementItemType.STRING, it.trim()))
                     else
+                        @Suppress("UNCHECKED_CAST")
                         if(item.items.lastElement().type == EventRequirementItemType.VARIABLE)
                             (item.items.lastElement().value as Vector<String>).addElement(it.substring(1))
             }

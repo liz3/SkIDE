@@ -11,7 +11,7 @@ class DefinitionsFinder(val manager: CodeManager) {
 
     val area = manager.area
 
-    fun search(lineNumber: Int, column: Int, word: String): DefinitionFinderResult {
+    fun search(lineNumber: Int, word: String): DefinitionFinderResult {
         val nodeStructure = manager.parseStructure()
         val line = EditorUtils.getLineNode(lineNumber, nodeStructure) ?: return DefinitionFinderResult(false)
 
@@ -39,9 +39,8 @@ class DefinitionsFinder(val manager: CodeManager) {
             if (raw.indexOf(word) > 1) {
                 if ((raw[raw.indexOf(word) - 1] == '{') || (raw[raw.indexOf(word) - 1] == '@') || (raw[raw.indexOf(word) - 1] == ':' && raw.contains("{"))) {
 
-                    if ((raw[raw.indexOf(word) - 1] == '@')) {
-
-                        EditorUtils.filterByNodeType(NodeType.OPTIONS, nodeStructure).forEach {
+                    when {
+                        raw[raw.indexOf(word) - 1] == '@' -> EditorUtils.filterByNodeType(NodeType.OPTIONS, nodeStructure).forEach {
                             for (child in it.childNodes) {
                                 if (child.getContent().isNotEmpty() && child.getContent().isNotBlank()) {
                                     if(child.getContent().split(":").first().contains(word)) {
@@ -51,28 +50,26 @@ class DefinitionsFinder(val manager: CodeManager) {
 
                             }
                         }
+                        word.startsWith("_") -> {
+                            val root = EditorUtils.getRootOf(line)
 
+                            if (root.nodeType == NodeType.FUNCTION) {
+                                val params = root.fields["params"] as Vector<*>
+                                params.forEach {it as MethodParameter
+                                    if (it.name == word.substring(1)) {
+                                        return DefinitionFinderResult(true, root.linenumber, root.raw.indexOf(word.substring(1)) + 1)
+                                    }
+                                }
+                            }
+                            EditorUtils.filterByNodeType(NodeType.SET_VAR, root).forEach {
 
-                    } else if (word.startsWith("_")) {
-                        val root = EditorUtils.getRootOf(line)
+                                if ((it.fields["name"] as String).contains(word.substring(1)) && it.fields["visibility"] == "local") {
 
-                        if (root.nodeType == NodeType.FUNCTION) {
-                            val params = root.fields["params"] as Vector<MethodParameter>
-                            params.forEach {
-                                if (it.name == word.substring(1)) {
-                                    return DefinitionFinderResult(true, root.linenumber, root.raw.indexOf(word.substring(1)) + 1)
+                                    return DefinitionFinderResult(true, it.linenumber, it.raw.indexOf(word) + 1)
                                 }
                             }
                         }
-                        EditorUtils.filterByNodeType(NodeType.SET_VAR, root).forEach {
-
-                            if ((it.fields["name"] as String).contains(word.substring(1)) && it.fields["visibility"] == "local") {
-
-                                return DefinitionFinderResult(true, it.linenumber, it.raw.indexOf(word) + 1)
-                            }
-                        }
-                    } else {
-                        EditorUtils.filterByNodeType(NodeType.SET_VAR, nodeStructure).forEach {
+                        else -> EditorUtils.filterByNodeType(NodeType.SET_VAR, nodeStructure).forEach {
                             if ((it.fields["name"] as String).contains(word)) {
 
                                 return DefinitionFinderResult(true, it.linenumber, it.raw.indexOf(word) + 1)

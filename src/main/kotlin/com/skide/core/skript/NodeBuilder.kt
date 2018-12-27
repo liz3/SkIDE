@@ -131,15 +131,16 @@ class NodeBuilder(val node: Node) {
 
                 if (pattern.find()) {
 
-                    val name = pattern.group()
+                    var  name = pattern.group()
                     when {
-                        name.startsWith("{_") -> fields.put("visibility", "local")
+                        name.startsWith("{_") -> fields["visibility"] = "local"
                         name.startsWith("{@") -> {
                             fields["visibility"] = "global"
                             fields["from_option"] = true
                         }
                         else -> fields["visibility"] = "global"
                     }
+                    if(name.contains("::")) name = name.substring(0, name.indexOf("::"))
                     if (name.startsWith("{_") || name.startsWith("{@")) {
 
                         fields["name"] = name.substring(2, name.length - 1)
@@ -147,6 +148,7 @@ class NodeBuilder(val node: Node) {
                         fields["name"] = name.substring(1, name.length - 1)
 
                     }
+
                     if (content.contains("::")) {
                         val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
                         fields["path"] = listOrMapPath

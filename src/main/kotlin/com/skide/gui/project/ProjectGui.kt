@@ -30,7 +30,6 @@ import javafx.stage.StageStyle
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.system.measureTimeMillis
 
 
 class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreManager) {
@@ -652,14 +651,14 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         val deployMenu = Menu("Deploy")
 
         val compileMenu = Menu("Compile")
-        fileMenu.setOnShowing { ev ->
+        fileMenu.setOnShowing {
             deployMenu.items.clear()
             openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach { compOpt ->
                 val item = Menu(compOpt.key)
-                openProjectGuiManager.openProject.project.fileManager.hosts.forEach {
-                    val depItem = MenuItem(it.name)
-                    depItem.setOnAction { _ ->
-                        openProjectGuiManager.openProject.deployer.depploy(compOpt.value, it)
+                openProjectGuiManager.openProject.project.fileManager.hosts.forEach {h ->
+                    val depItem = MenuItem(h.name)
+                    depItem.setOnAction {
+                        openProjectGuiManager.openProject.deployer.depploy(compOpt.value, h)
                     }
                     item.items.add(depItem)
                 }
@@ -759,7 +758,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 val lastActive = openProjectGuiManager.lastActive
 
 
-                val box = SearchPopUp(openProjectGuiManager.window.stage) { list, text ->
+                val box = SearchPopUp(openProjectGuiManager.window.stage) {  text ->
                     items.clear()
                     if (text.startsWith("@") && text.length > 1) {
                         for (function in functions) {
@@ -838,12 +837,12 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                                 val name = node.fields["name"] as String
                                 functions.add(Triple(f, node, SearchPopUpItem(name, "Function - ${f.name}") {
                                     if (openProjectGuiManager.openFiles.containsKey(f)) {
-                                        val holder = openProjectGuiManager.openFiles[f]
-                                        val tab = holder!!.tab
+                                        val childHolder = openProjectGuiManager.openFiles[f]
+                                        val tab = childHolder!!.tab
                                         tab.tabPane.selectionModel.select(tab)
                                         Platform.runLater {
-                                            holder.area.moveLineToCenter(node.linenumber)
-                                            holder.area.setSelection(node.linenumber, 1, node.linenumber, holder.area.getColumnLineAmount(node.linenumber))
+                                            childHolder.area.moveLineToCenter(node.linenumber)
+                                            childHolder.area.setSelection(node.linenumber, 1, node.linenumber, childHolder.area.getColumnLineAmount(node.linenumber))
                                         }
                                     } else {
                                         openFile(f, false) { it ->
@@ -860,12 +859,12 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                                 val name = node.fields["name"] as String
                                 events.add(Triple(f, node, SearchPopUpItem(name, "Event - ${f.name}") {
                                     if (openProjectGuiManager.openFiles.containsKey(f)) {
-                                        val holder = openProjectGuiManager.openFiles[f]
-                                        val tab = holder!!.tab
+                                        val childHolder = openProjectGuiManager.openFiles[f]
+                                        val tab = childHolder!!.tab
                                         tab.tabPane.selectionModel.select(tab)
                                         Platform.runLater {
-                                            holder.area.moveLineToCenter(node.linenumber)
-                                            holder.area.setSelection(node.linenumber, 1, node.linenumber, holder.area.getColumnLineAmount(node.linenumber))
+                                            childHolder.area.moveLineToCenter(node.linenumber)
+                                            childHolder.area.setSelection(node.linenumber, 1, node.linenumber, childHolder.area.getColumnLineAmount(node.linenumber))
                                         }
                                     } else {
                                         openFile(f, false) { it ->
@@ -883,12 +882,12 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                                 vars.add(Triple(f, node, SearchPopUpItem(if (node.fields["visibility"] == "local")
                                     "{_$name}" else "{$name}", "Variable - ${f.name}") {
                                     if (openProjectGuiManager.openFiles.containsKey(f)) {
-                                        val holder = openProjectGuiManager.openFiles[f]
-                                        val tab = holder!!.tab
+                                        val childHolder = openProjectGuiManager.openFiles[f]
+                                        val tab = childHolder!!.tab
                                         tab.tabPane.selectionModel.select(tab)
                                         Platform.runLater {
-                                            holder.area.moveLineToCenter(node.linenumber)
-                                            holder.area.setSelection(node.linenumber, 1, node.linenumber, holder.area.getColumnLineAmount(node.linenumber))
+                                            childHolder.area.moveLineToCenter(node.linenumber)
+                                            childHolder.area.setSelection(node.linenumber, 1, node.linenumber, childHolder.area.getColumnLineAmount(node.linenumber))
                                         }
                                     } else {
                                         openFile(f, false) { it ->

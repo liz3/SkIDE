@@ -1,5 +1,7 @@
 package com.skide.gui
 
+import com.skide.utils.OperatingSystemType
+import com.skide.utils.getOS
 import javafx.application.Platform
 import javafx.scene.Scene
 import javafx.scene.control.Label
@@ -30,7 +32,7 @@ class SearchPopUpItem(primaryString: String, secondaryString: String, val action
     }
 }
 
-class SearchPopUp(val parent:Stage, val update: (List<SearchPopUpItem>, String) -> List<SearchPopUpItem>) {
+class SearchPopUp(val parent: Stage, val update: (String) -> List<SearchPopUpItem>) {
 
     private var i = -1
     private val root = BorderPane()
@@ -58,10 +60,15 @@ class SearchPopUp(val parent:Stage, val update: (List<SearchPopUpItem>, String) 
         indexing.isDisable = true
         bottomCheck.isDisable = true
         inputField.setOnKeyPressed {
-            if (it.code == KeyCode.DOWN && listView.items.size != 0 && !listView.items.contains(bottomCheck)) {
+            if(it.code == KeyCode.ENTER && listView.items.size == 1) {
+                listView.items[0].action()
+                stage.close()
+                listView.items.clear()
+                return@setOnKeyPressed
+            } else if (it.code == KeyCode.DOWN && listView.items.size != 0 && !listView.items.contains(bottomCheck)) {
                 it.consume()
                 listView.requestFocus()
-            } else if(it.code == KeyCode.ESCAPE) {
+            } else if (it.code == KeyCode.ESCAPE) {
                 stage.close()
                 listView.items.clear()
             }
@@ -72,7 +79,7 @@ class SearchPopUp(val parent:Stage, val update: (List<SearchPopUpItem>, String) 
             if (text.isEmpty()) {
                 listView.items.clear()
             } else {
-                val result = update(listView.items, text)
+                val result = update(text)
                 val toRemove = Vector<SearchPopUpItem>()
                 for (item in listView.items)
                     if (!result.contains(item)) toRemove.add(item)
@@ -117,7 +124,7 @@ class SearchPopUp(val parent:Stage, val update: (List<SearchPopUpItem>, String) 
                     stage.close()
                 }
             } else if (it.code != KeyCode.DOWN) {
-                if(it.code == KeyCode.ESCAPE) {
+                if (it.code == KeyCode.ESCAPE) {
                     stage.close()
                     listView.items.clear()
                     return@setOnKeyPressed
@@ -147,7 +154,10 @@ class SearchPopUp(val parent:Stage, val update: (List<SearchPopUpItem>, String) 
         val scene = Scene(root)
         root.background = Background.EMPTY
         scene.fill = Color.TRANSPARENT
-        stage.initStyle(StageStyle.UNDECORATED)
+        if (getOS() == OperatingSystemType.LINUX)
+            stage.initStyle(StageStyle.UTILITY)
+        else
+            stage.initStyle(StageStyle.UNDECORATED)
         stage.scene = scene
         listView.items.addAll(indexing, bottomCheck)
         listView.prefHeight = ((listView.items.size * 24 + 2).toDouble())
@@ -159,7 +169,7 @@ class SearchPopUp(val parent:Stage, val update: (List<SearchPopUpItem>, String) 
         stage.maxHeight = 1000.0
 
 
-        stage.x = (parent.x + parent.width / 2.0) -  200.0
+        stage.x = (parent.x + parent.width / 2.0) - 200.0
         stage.y = (parent.y + parent.height / 2.0) * 0.7
 
         stage.show()

@@ -124,7 +124,7 @@ class CompileOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICo
 
 
         ctrl.compileConfListView.selectionModel.select(0)
-        insertCurrentValues()
+       if(ctrl.compileConfListView.items.size > 0) insertCurrentValues()
 
     }
 

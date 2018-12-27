@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectSettingsGUIController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectSettingsGUIController">
    <center>
       <TabPane prefHeight="438.0" prefWidth="907.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -170,11 +170,11 @@
                                     <Button fx:id="deployDeleteBtn" mnemonicParsing="false" text="Delete" />
                                  </children>
                               </VBox>
-                              <VBox prefHeight="474.0" prefWidth="442.0" spacing="5.0">
+                              <VBox prefHeight="451.0" prefWidth="529.0" spacing="5.0">
                                  <children>
                                     <HBox prefHeight="7.0" prefWidth="442.0" spacing="5.0">
                                        <children>
-                                          <Label prefHeight="28.0" prefWidth="32.0" text="Name" />
+                                          <Label text="Name" />
                                           <TextField fx:id="deployNewTextField" prefHeight="25.0" prefWidth="222.0" />
                                           <Button fx:id="deployNewButton" mnemonicParsing="false" text="New" />
                                        </children>

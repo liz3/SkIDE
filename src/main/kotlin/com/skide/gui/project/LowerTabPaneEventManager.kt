@@ -99,7 +99,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
             terminalBuilder.terminalConfig.foregroundColor = "#dbe0dc"
         }
 
-        ctrl.lowerTabPaneToggleBtn.setIcon("upload")
+        ctrl.lowerTabPaneToggleBtn.setIcon("download")
         ctrl.lowerTabPaneToggleBtn.setOnAction {
             if (visible) {
                 ctrl.lowerTabPaneToggleBtn.setIcon("upload")
@@ -129,7 +129,10 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
             if(curr != null) ctrl.consoleTabArea.tabs.remove(curr)
         }
         tabPane.tabs[1]?.isDisable = true
-        rootPane.prefHeight = 0.0
-        visible = false
+        rootPane.prefHeight = 200.0
+        visible = true
+        val errorsTab = openProjectGuiManager.openProject.errorFrontEnd.render()
+        tabPane.tabs.add(errorsTab)
+        tabPane.selectionModel.select(errorsTab)
     }
 }

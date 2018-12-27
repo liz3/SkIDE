@@ -30,7 +30,16 @@ enum class ErrorSeverity(val num:Int) {
     WARNING(4),
     ERROR(8)
 }
+class SkErrorItem(val error:SkError, val cb: () -> Unit)
+class SkErrorFront(val value:Any) {
 
+    override fun toString(): String {
+        if(value is SkErrorItem)
+            return "${value.error.severity} [${value.error.startLine}]: ${value.error.message}"
+        return value as String
+    }
+
+}
 class SkError(val startLine:Int, val endLine:Int, val startColumn:Int, val endColumn:Int, val severity:ErrorSeverity, val message:String)
 
 class MethodParameter(val name: String, val type: String, val value: String)

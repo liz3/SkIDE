@@ -5,7 +5,6 @@ import com.skide.utils.EditorUtils
 import javafx.application.Platform
 import netscape.javascript.JSObject
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import java.util.regex.Pattern
 import kotlin.collections.HashMap
 
@@ -68,11 +67,12 @@ class ErrorProvider(val manager: CodeManager) {
                 if (node.fields["invalid"] == true) continue
                 funcs.add(node)
                 val flatList = EditorUtils.flatList(node.childNodes)
-                val parameter = node.fields["params"] as Vector<MethodParameter>
+                val parameter = node.fields["params"] as Vector<*>
                 //Determine not used Local variables
                 run {
                     val paramMap = HashMap<String, Int>()
                     parameter.forEach { param ->
+                        param as MethodParameter
                         paramMap["{_${param.name}}"] = 0
                     }
                     for (childNodes in flatList) {
@@ -85,7 +85,7 @@ class ErrorProvider(val manager: CodeManager) {
                             val braceIndex = node.raw.indexOf("(")
                             val name = key.substring(2, key.length - 1)
                             calls += {
-                                report(node.linenumber, SkError(node.linenumber, node.linenumber, node.raw.indexOf(name, braceIndex) + 1,
+                                report(SkError(node.linenumber, node.linenumber, node.raw.indexOf(name, braceIndex) + 1,
                                         node.raw.indexOf(name, braceIndex) + name.length + 1, ErrorSeverity.INFO, "Local parameter $name never used"))
                             }
                         }
@@ -95,6 +95,7 @@ class ErrorProvider(val manager: CodeManager) {
                 run {
                     val vars = Vector<String>()
                     for (methodParameter in parameter) {
+                        methodParameter as MethodParameter
                         val name = methodParameter.name
                         val str = "{_$name}"
                         if (!vars.contains(str)) vars.add(str)
@@ -111,11 +112,13 @@ class ErrorProvider(val manager: CodeManager) {
                             vars.add(str)
                         } else {
                             for (methodParameter in parameter) {
+                                methodParameter as MethodParameter
+
                                 val paramName = methodParameter.name
                                 if (paramName == name) {
                                     val index = childNode.raw.indexOf(str)
                                     calls += {
-                                        report(childNode.linenumber, SkError(childNode.linenumber, childNode.linenumber, index + 1,
+                                        report(SkError(childNode.linenumber, childNode.linenumber, index + 1,
                                                 index + str.length + 1, ErrorSeverity.WARNING, "Shadowed variable from function parameter $name"))
                                     }
                                 }
@@ -146,7 +149,7 @@ class ErrorProvider(val manager: CodeManager) {
                                 if (!found) {
                                     if (checkForQuote(childNode.raw, start))
                                         calls += {
-                                            report(childNode.linenumber, SkError(childNode.linenumber, childNode.linenumber, start + 1, end + 1, ErrorSeverity.ERROR, "Local variable $group not found!"))
+                                            report(SkError(childNode.linenumber, childNode.linenumber, start + 1, end + 1, ErrorSeverity.ERROR, "Local variable $group not found!"))
                                         }
                                 }
 
@@ -265,7 +268,7 @@ class ErrorProvider(val manager: CodeManager) {
                     if (!found) {
 
                         calls += {
-                            report(node.linenumber, SkError(node.linenumber, node.linenumber, start + 1, end + name.length + 1, ErrorSeverity.ERROR, "Function $name not found"))
+                            report(SkError(node.linenumber, node.linenumber, start + 1, end + name.length + 1, ErrorSeverity.ERROR, "Function $name not found"))
                         }
 
                     }
@@ -322,11 +325,12 @@ class ErrorProvider(val manager: CodeManager) {
         errors.add(SkError(line, line, 1, area.getColumnLineAmount(line), ErrorSeverity.INFO, message))
     }
 
-    fun report(line: Int, error: SkError) {
+    fun report(error: SkError) {
         errors.add(error)
     }
 
     private fun pushErrors() {
+        area.openFileHolder.openProject.errorFrontEnd.update(area.file, errors, area)
         val array = area.getArray()
         var counter = 0
         errors.forEach {
