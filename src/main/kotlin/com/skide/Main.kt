@@ -1,6 +1,6 @@
 package com.skide
 object Info {
-    const val version = "2018.2ce"
+    const val version = "2018.2cf"
     var classLoader: ClassLoader? = null
     var prodMode = false
 

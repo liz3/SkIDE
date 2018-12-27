@@ -66,7 +66,6 @@ fun KeyEvent.verifyKeyCombo(): Boolean {
 fun extensionToLang(ex:String) : String {
     return when(ex) {
         "sk" -> "skript"
-        "js" -> "javascript"
         "json" -> "json"
         "yaml", "yml" ->  "yaml"
         "java" -> "java"

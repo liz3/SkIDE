@@ -1,10 +1,13 @@
 package com.skide.gui
 
 import com.skide.core.management.ConfigManager
+import com.skide.utils.OperatingSystemType
+import com.skide.utils.getOS
 import javafx.scene.control.Alert
 import javafx.scene.control.ButtonType
 import javafx.scene.control.TextInputDialog
 import javafx.scene.layout.Region
+import javafx.stage.StageStyle
 
 
 object Prompts {
@@ -23,7 +26,7 @@ object Prompts {
         input.title = title
         input.headerText = header
         input.graphic = null
-
+        if(getOS() == OperatingSystemType.LINUX)input.initStyle(StageStyle.UTILITY)
 
         return try {
             input.showAndWait().get()
@@ -39,6 +42,8 @@ object Prompts {
             val dialogPane = pd.dialogPane
             dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))
         }
+        if(getOS() == OperatingSystemType.LINUX)pd.initStyle(StageStyle.UTILITY)
+
         val result = pd.showAndWait()
 
         return try {
@@ -58,6 +63,7 @@ object Prompts {
         alert.isResizable = false
         alert.graphic = null
 
+        if(getOS() == OperatingSystemType.LINUX)alert.initStyle(StageStyle.UTILITY)
         if (theme == "Dark") {
             val dialogPane = alert.dialogPane
             dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))

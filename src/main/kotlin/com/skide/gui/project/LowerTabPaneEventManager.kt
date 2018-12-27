@@ -3,6 +3,7 @@ package com.skide.gui.project
 import com.skide.CoreManager
 import com.skide.core.management.RunningServerManager
 import com.skide.gui.DragResizer
+import com.skide.gui.WebViewDebugger
 import com.skide.gui.controllers.ProjectGUIController
 import com.skide.include.Server
 import com.skide.utils.setIcon
@@ -15,14 +16,16 @@ import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
+import javafx.scene.web.WebView
+
 
 class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGuiManager: OpenProjectGuiManager, val coreManager: CoreManager) {
 
     var visible = true
-    val rootPane = ctrl.mainLowerBorderPane
-    val tabPane = ctrl.lowerTabPane
-    val terminalBuilder = TerminalBuilder()
-    val buildLogArea = TextArea()
+    private val rootPane = ctrl.mainLowerBorderPane
+    private val tabPane = ctrl.lowerTabPane
+    private val terminalBuilder = TerminalBuilder()
+    private val buildLogArea = TextArea()
     private val running = HashMap<Server, Tab>()
 
 
@@ -84,8 +87,20 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
         return recaller
     }
 
+
     fun setup() {
 
+        tabPane.selectionModel.selectedIndexProperty().addListener { _, _, newValue ->
+            if(newValue == 0)
+                if(ctrl.consoleTabArea.tabs.size == 0) {
+                    val tab = terminalBuilder.newTerminal()
+                    fixContextMenu(tab)
+                    tab.text = "Terminal"
+                    tab.isClosable = false
+                    ctrl.consoleTabArea.tabs.add(tab)
+                    ctrl.consoleTabArea.selectionModel.select(tab)
+                }
+        }
         val buildLogTab = Tab("Build Log")
         buildLogTab.isDisable = true
         buildLogTab.content = buildLogArea
@@ -116,11 +131,10 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
         ctrl.consoleAddBtn.setOnAction {
 
             val tab = terminalBuilder.newTerminal()
-            tab.text = "Console"
+            tab.text = "Terminal"
             tab.isClosable = false
+            fixContextMenu(tab)
             ctrl.consoleTabArea.tabs.add(tab)
-
-
             ctrl.consoleTabArea.selectionModel.select(tab)
         }
         ctrl.consoleRemBtn.setIcon("delete", false)
@@ -134,5 +148,18 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
         val errorsTab = openProjectGuiManager.openProject.errorFrontEnd.render()
         tabPane.tabs.add(errorsTab)
         tabPane.selectionModel.select(errorsTab)
+        ctrl
+    }
+
+    private fun fixContextMenu(tab: Tab) {
+        Thread  {
+            while (tab.content == null);
+
+            Platform.runLater {
+                val view = tab.content as WebView
+                view.isContextMenuEnabled = false
+            }
+        }.start()
+
     }
 }
