@@ -617,6 +617,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 window.stage.isResizable = false
                 (window.controller as StartGUIController).initGui(coreManager, window, false)
                 window.stage.isResizable = false
+                if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
                 window.stage.show()
             }
         }
