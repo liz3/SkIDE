@@ -347,10 +347,10 @@ class ProjectFileManager(val project: Project) {
         if (projectFiles.containsKey(rName)) return false
         val file = File(project.folder, rName)
         file.createNewFile()
-        if(GUIManager.settings.get("generate_meta_data") == "true") {
+        if(GUIManager.settings.get("generate_meta_data") == "true" && file.name.endsWith(".sk", true)) {
             writeFile("#Project: ${project.name}\n#File: $rName\n#Author: ${System.getProperty("user.name")}".toByteArray(), file, true, false)
         }
-            projectFiles.put(rName, file)
+        projectFiles[rName] = file
         compileOptions.values.forEach {
             it.includedFiles.add(file)
         }

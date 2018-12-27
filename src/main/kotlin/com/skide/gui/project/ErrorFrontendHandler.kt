@@ -39,6 +39,7 @@ class ErrorFrontendHandler(val openProject: OpenProject) {
             list.clear()
             for (error in errors) {
                 list.add(TreeItem(SkErrorFront(SkErrorItem(error) {
+                    area.openFileHolder.tab.tabPane.selectionModel.select(area.openFileHolder.tab)
                     area.moveLineToCenter(error.startLine)
                     area.setSelection(error.startLine, error.startColumn, error.endLine, error.endColumn)
                 })))
