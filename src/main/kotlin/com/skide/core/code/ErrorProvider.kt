@@ -12,7 +12,7 @@ import kotlin.collections.HashMap
 class ErrorProvider(val manager: CodeManager) {
 
     private val variablePattern = Pattern.compile("\\{([^{}]|%\\{|}%)+}")!!
-    private val callPatterns = Pattern.compile("[^\\>\\[( {]+\\(.*\\)(?!.*\")")!!
+    private val callPatterns = Pattern.compile("[^\\>\\[( {&]+\\(.*\\)(?!.*\")")!!
     private val errors = Vector<SkError>()
     private val area = manager.area
 
@@ -32,8 +32,16 @@ class ErrorProvider(val manager: CodeManager) {
     fun runChecks(parseResult: Vector<Node>) {
         errors.clear()
         var ignoreCase = false
+        var ignoreMissingFuncs = false
         for (node in parseResult) {
             if (node.nodeType == NodeType.COMMENT && node.getContent().contains("@skide:ignore-case")) ignoreCase = true
+            if (node.nodeType == NodeType.COMMENT && node.getContent().contains("@skide:ignore-missing-functions")) ignoreMissingFuncs = true
+            if (node.nodeType == NodeType.COMMENT && node.getContent().contains("@skide:ignore-all")) {
+                Platform.runLater {
+                    pushErrors()
+                }
+                return
+            }
         }
         val calls = Vector<() -> Unit>()
         val variables = EditorUtils.filterByNodeType(NodeType.SET_VAR, parseResult)
@@ -241,7 +249,8 @@ class ErrorProvider(val manager: CodeManager) {
                 }
 
             }
-            if (node.nodeType != NodeType.UNDEFINED && node.nodeType != NodeType.COMMENT) {
+            if (node.nodeType != NodeType.UNDEFINED && node.nodeType != NodeType.COMMENT && !ignoreMissingFuncs && !node.raw.contains("@skide:ignore-missing-functions")) {
+
                 val matcher = callPatterns.matcher(node.raw)
                 while (matcher.find()) {
                     val start = matcher.start()

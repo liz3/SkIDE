@@ -14,8 +14,9 @@ import kotlin.collections.HashMap
 class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder) {
 
     val area = manager.area
-    val addonSupported = project.openProject.addons
-    val keyWordsGen = getKeyWords()
+    private val addonSupported = project.openProject.addons
+    private val keyWordsGen = getKeyWords()
+    private val inspectorItems = getSuppressors()
     fun createCommand() {
 
         val window = GUIManager.getWindow("fxml/GenerateCommand.fxml", "Generate command", true)
@@ -100,10 +101,10 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                         if (child.getContent().isNotEmpty() && child.getContent().isNotBlank()) {
                             val name = child.getContent().split(":").first()
                             val word = "{@$name}"
-                            if(!varsToAdd.containsKey(word))
+                            if (!varsToAdd.containsKey(word))
                                 varsToAdd[word] = AutoCompleteItem(area, name, CompletionType.VARIABLE, word, "Option - ${path.name}")
                         }
-                    }
+                }
             }
         }
 
@@ -124,7 +125,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (it.fields.contains("from_option")) {
                     val insertText = "{@${it.fields["name"]}}"
                     if (!varsToAdd.containsKey(insertText))
-                        varsToAdd[insertText] = AutoCompleteItem(area,  (it.fields["name"] as String), CompletionType.VARIABLE, insertText, "Option")
+                        varsToAdd[insertText] = AutoCompleteItem(area, (it.fields["name"] as String), CompletionType.VARIABLE, insertText, "Option")
                 } else if (it.fields["visibility"] == "global") {
                     val insert = "{${it.fields["name"]}}"
                     if (!varsToAdd.containsKey(insert))
@@ -142,7 +143,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 if (child.getContent().isNotEmpty() && child.getContent().isNotBlank()) {
                     val name = child.getContent().split(":").first()
                     val word = "{@$name}"
-                    if(!varsToAdd.containsKey(word))
+                    if (!varsToAdd.containsKey(word))
                         varsToAdd[word] = AutoCompleteItem(area, name, CompletionType.VARIABLE, word, "Option")
                 }
         }
@@ -155,7 +156,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 var paramsStr = ""
                 var insertParams = ""
 
-                (it.fields["params"] as Vector<*>).forEach {param ->
+                (it.fields["params"] as Vector<*>).forEach { param ->
                     param as MethodParameter
                     paramsStr += ",${param.name}:${param.type}"
                     insertParams += ",${param.name}"
@@ -217,6 +218,14 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         return vector
     }
 
+    private fun getSuppressors(): Vector<AutoCompleteItem> {
+        val vector = Vector<AutoCompleteItem>()
+        vector.add(AutoCompleteItem(area, "@skide:ignore-case", CompletionType.SNIPPET, "#@skide:ignore-case", "SkIDE Inspections", "Variables can ignore cases, when thats enabled, this will tell the error checker to ignore that"))
+        vector.add(AutoCompleteItem(area, "@skide:ignore-missing-functions", CompletionType.SNIPPET, "#@skide:ignore-missing-functions", "SkIDE Inspections", "Ignores missing functions"))
+        vector.add(AutoCompleteItem(area, "@skide:ignore-all", CompletionType.SNIPPET, "#@skide:ignore-all", "SkIDE Inspections", "Disables all inspections"))
+        return vector
+    }
+
     fun showGlobalAutoComplete(array: JSObject) {
 
         var count = 0
@@ -240,6 +249,9 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 }
             }
         }
-
+        inspectorItems.forEach {
+            addSuggestionToObject(it, array, count)
+            count++
+        }
     }
 }
