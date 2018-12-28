@@ -21,7 +21,7 @@ class ErrorFrontendHandler(val openProject: OpenProject) {
     private var rendered = false
     private val tab = Tab("Inspections")
     private val entries = HashMap<File, Vector<TreeItem<SkErrorFront>>>()
-    private val treeView = TreeView<SkErrorFront>()
+    val treeView = TreeView<SkErrorFront>()
     private val root = TreeItem<SkErrorFront>()
 
 

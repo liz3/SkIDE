@@ -101,7 +101,7 @@ class CodeManager {
             parser.superParse(area.text)
         else
             this.parseResult
-        rootStructureItem.children.clear()
+      if(!gotoActivated)  rootStructureItem.children.clear()
         Platform.runLater {
             val stack = Vector<Node>()
             var currNode: Node? = EditorUtils.getLineNode(area.getCurrentLine(), parseResult) ?: return@runLater
@@ -123,10 +123,12 @@ class CodeManager {
             hBox.selectedCrumb = item
 
         }
-        parseResult.forEach {
-            if (it.nodeType != NodeType.UNDEFINED) addNodeToItemTree(rootStructureItem, it)
-        }
 
+        if (!gotoActivated) {
+            parseResult.forEach {
+                if (it.nodeType != NodeType.UNDEFINED) addNodeToItemTree(rootStructureItem, it)
+            }
+        }
         if (update) {
 
 

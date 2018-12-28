@@ -16,7 +16,8 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
 
 
     init {
-        openProject.currentStackBox.style = "-fx-color: -fx-base;"
+
+        openProject.currentStackBox.style = "-fx-color: -fx-base; -fx-background: -fx-base"
         openProject.currentStackBox.setOnCrumbAction {
             val line = it.selectedCrumb.value.linenumber
             openProject.area.moveLineToCenter(line)

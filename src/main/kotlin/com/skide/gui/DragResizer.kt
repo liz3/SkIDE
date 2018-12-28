@@ -1,6 +1,8 @@
 package com.skide.gui
 
+import com.skide.include.SkErrorFront
 import javafx.scene.Cursor
+import javafx.scene.control.TabPane
 import javafx.scene.control.TreeView
 import javafx.scene.layout.BorderPane
 
@@ -12,7 +14,7 @@ class DragResizer {
     private var bottomSecHeight = 0.0
 
 
-    fun makeResizable(bottomSec: BorderPane) {
+    fun makeResizable(bottomSec: BorderPane, tabPane: TabPane) {
         windowHeight = bottomSec.scene.height
 
         bottomSec.minHeight = 30.0
@@ -22,7 +24,7 @@ class DragResizer {
                 //bottomSec.minHeight = newValue.toDouble() - 30
             }
         }
-        bottomSec.setOnMouseMoved { event ->
+        tabPane.setOnMouseMoved { event ->
             windowHeight = bottomSec.scene.height
             mousePosY = event.sceneY
             bottomSecHeight = bottomSec.height
@@ -35,7 +37,71 @@ class DragResizer {
 
         }
 
-        bottomSec.setOnMouseDragged { event ->
+        tabPane.setOnMouseDragged { event ->
+            windowHeight = bottomSec.scene.height
+            mousePosY = event.sceneY
+            bottomSecHeight = bottomSec.height
+            if (bottomSec.cursor === Cursor.S_RESIZE) {
+                bottomSec.prefHeight = if (mousePosY < 30) windowHeight - 30 else windowHeight - event.sceneY
+            }
+        }
+    }
+    fun makeResizable(bottomSec: BorderPane, tabPane: TreeView<SkErrorFront>) {
+        windowHeight = bottomSec.scene.height
+
+        bottomSec.minHeight = 30.0
+
+        bottomSec.scene.heightProperty().addListener { _, _, newValue ->
+            if (bottomSec.height > newValue.toDouble() - 30) {
+                //bottomSec.minHeight = newValue.toDouble() - 30
+            }
+        }
+        tabPane.setOnMouseMoved { event ->
+            windowHeight = bottomSec.scene.height
+            mousePosY = event.sceneY
+            bottomSecHeight = bottomSec.height
+
+            if (canDrag(windowHeight, mousePosY, bottomSecHeight) && bottomSec.cursor !== Cursor.S_RESIZE) {
+                bottomSec.cursor = Cursor.S_RESIZE
+            } else if (bottomSec.cursor === Cursor.S_RESIZE) {
+                bottomSec.cursor = Cursor.DEFAULT
+            }
+
+        }
+
+        tabPane.setOnMouseDragged { event ->
+            windowHeight = bottomSec.scene.height
+            mousePosY = event.sceneY
+            bottomSecHeight = bottomSec.height
+            if (bottomSec.cursor === Cursor.S_RESIZE) {
+                bottomSec.prefHeight = if (mousePosY < 30) windowHeight - 30 else windowHeight - event.sceneY
+            }
+        }
+    }
+    fun makeResizable(bottomSec: BorderPane, tabPane: BorderPane) {
+        windowHeight = bottomSec.scene.height
+
+        bottomSec.minHeight = 30.0
+
+        bottomSec.scene.heightProperty().addListener { _, _, newValue ->
+            if (bottomSec.height > newValue.toDouble() - 30) {
+                //bottomSec.minHeight = newValue.toDouble() - 30
+            }
+        }
+        tabPane.setOnMouseMoved { event ->
+            windowHeight = bottomSec.scene.height
+            mousePosY = event.sceneY
+            bottomSecHeight = bottomSec.height
+
+            if (canDrag(windowHeight, mousePosY, bottomSecHeight) && bottomSec.cursor !== Cursor.S_RESIZE) {
+                bottomSec.cursor = Cursor.S_RESIZE
+            } else if (bottomSec.cursor === Cursor.S_RESIZE) {
+                bottomSec.cursor = Cursor.DEFAULT
+            }
+
+        }
+
+        tabPane.setOnMouseDragged { event ->
             windowHeight = bottomSec.scene.height
             mousePosY = event.sceneY
             bottomSecHeight = bottomSec.height
@@ -45,11 +111,13 @@ class DragResizer {
         }
     }
 
+
     private fun canDrag(windowHeight: Double, mousePosY: Double, bottomSecHeight: Double): Boolean {
         val bottomSecOffsetTop = windowHeight - bottomSecHeight
         val mousePosYRelativeToBottomSec = mousePosY - bottomSecOffsetTop
         return mousePosYRelativeToBottomSec <= 25
     }
+
 }
 class DragResizerLeft {
 

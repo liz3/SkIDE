@@ -3,7 +3,6 @@ package com.skide.gui.project
 import com.skide.CoreManager
 import com.skide.core.management.RunningServerManager
 import com.skide.gui.DragResizer
-import com.skide.gui.WebViewDebugger
 import com.skide.gui.controllers.ProjectGUIController
 import com.skide.include.Server
 import com.skide.utils.setIcon
@@ -15,6 +14,7 @@ import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 import javafx.scene.input.KeyCode
 import javafx.scene.layout.BorderPane
+import javafx.scene.layout.Pane
 import javafx.scene.layout.VBox
 import javafx.scene.web.WebView
 
@@ -26,6 +26,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
     private val tabPane = ctrl.lowerTabPane
     private val terminalBuilder = TerminalBuilder()
     private val buildLogArea = TextArea()
+    val buildLogPane = BorderPane()
     private val running = HashMap<Server, Tab>()
 
 
@@ -91,8 +92,8 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
     fun setup() {
 
         tabPane.selectionModel.selectedIndexProperty().addListener { _, _, newValue ->
-            if(newValue == 0)
-                if(ctrl.consoleTabArea.tabs.size == 0) {
+            if (newValue == 0)
+                if (ctrl.consoleTabArea.tabs.size == 0) {
                     val tab = terminalBuilder.newTerminal()
                     fixContextMenu(tab)
                     tab.text = "Terminal"
@@ -103,11 +104,14 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
         }
         val buildLogTab = Tab("Build Log")
         buildLogTab.isDisable = true
-        buildLogTab.content = buildLogArea
+        val p = Pane()
+        p.prefHeight = 25.0
+        buildLogPane.top = p
+        buildLogPane.center = buildLogArea
+        buildLogTab.content = buildLogPane
         tabPane.tabs.add(buildLogTab)
         buildLogArea.isEditable = false
 
-        DragResizer().makeResizable(ctrl.mainLowerBorderPane)
         terminalBuilder.terminalPath = openProjectGuiManager.openProject.project.folder.toPath()
         if (coreManager.configManager.get("theme") == "Dark") {
             terminalBuilder.terminalConfig.backgroundColor = "#1e1e1e"
@@ -140,7 +144,7 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
         ctrl.consoleRemBtn.setIcon("delete", false)
         ctrl.consoleRemBtn.setOnAction {
             val curr = ctrl.consoleTabArea.selectionModel.selectedItem
-            if(curr != null) ctrl.consoleTabArea.tabs.remove(curr)
+            if (curr != null) ctrl.consoleTabArea.tabs.remove(curr)
         }
         tabPane.tabs[1]?.isDisable = true
         rootPane.prefHeight = 200.0
@@ -148,11 +152,18 @@ class LowerTabPaneEventManager(val ctrl: ProjectGUIController, val openProjectGu
         val errorsTab = openProjectGuiManager.openProject.errorFrontEnd.render()
         tabPane.tabs.add(errorsTab)
         tabPane.selectionModel.select(errorsTab)
-        ctrl
+        val resizer = DragResizer()
+        resizer.makeResizable(ctrl.mainLowerBorderPane, ctrl.lowerTabPane)
+        resizer.makeResizable(ctrl.mainLowerBorderPane, openProjectGuiManager.openProject.errorFrontEnd.treeView)
+        resizer.makeResizable(ctrl.mainLowerBorderPane, ctrl.consoleTabArea)
+        resizer.makeResizable(ctrl.mainLowerBorderPane, ctrl.runsTabPane)
+        resizer.makeResizable(ctrl.mainLowerBorderPane, buildLogPane)
+
+
     }
 
     private fun fixContextMenu(tab: Tab) {
-        Thread  {
+        Thread {
             while (tab.content == null);
 
             Platform.runLater {

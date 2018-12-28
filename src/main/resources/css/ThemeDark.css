@@ -5,8 +5,8 @@
 
 /* Redefine base colors */
 .root {
-    -fx-base: #1e1e1e;
-    -fx-background: #1e1e1e;
+    -fx-base: #232323;
+    -fx-background: #282828;
 
     /* make controls (buttons, thumb, etc.) slightly lighter */
     -fx-color: derive(-fx-base, 10%);
@@ -56,5 +56,5 @@
 }
 
 .menu-bar {
-    -fx-background-color: #1e1e1e;
+    -fx-background-color: -fx-base;
 }
