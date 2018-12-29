@@ -98,7 +98,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                 }
                 EditorUtils.filterByNodeType(NodeType.OPTIONS, internalNodes).forEach {
                     for (child in it.childNodes)
-                        if (child.getContent().isNotEmpty() && child.getContent().isNotBlank()) {
+                        if (child.getContent().isNotEmpty() && child.getContent().isNotBlank() && child.nodeType != NodeType.COMMENT) {
                             val name = child.getContent().split(":").first()
                             val word = "{@$name}"
                             if (!varsToAdd.containsKey(word))
@@ -140,7 +140,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         }
         EditorUtils.filterByNodeType(NodeType.OPTIONS, nodes).forEach {
             for (child in it.childNodes)
-                if (child.getContent().isNotEmpty() && child.getContent().isNotBlank()) {
+                if (child.getContent().isNotEmpty() && child.getContent().isNotBlank() && child.nodeType != NodeType.COMMENT) {
                     val name = child.getContent().split(":").first()
                     val word = "{@$name}"
                     if (!varsToAdd.containsKey(word))

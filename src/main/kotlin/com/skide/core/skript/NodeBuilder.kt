@@ -140,7 +140,6 @@ class NodeBuilder(val node: Node) {
                         }
                         else -> fields["visibility"] = "global"
                     }
-                    if(name.contains("::")) name = name.substring(0, name.indexOf("::"))
                     if (name.startsWith("{_") || name.startsWith("{@")) {
 
                         fields["name"] = name.substring(2, name.length - 1)
