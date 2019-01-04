@@ -1,5 +1,6 @@
 package com.skide.utils
 
+import com.skide.Info
 import com.skide.gui.GUIManager
 import javafx.scene.control.Button
 import javafx.scene.image.Image
@@ -53,8 +54,9 @@ fun unzip(zipFile: String, outputFolder: String) {
     }
 
 }
+
 fun KeyEvent.verifyKeyCombo(): Boolean {
-    if(this.isShiftDown) return false
+    if (this.isShiftDown) return false
     val os = getOS()
     return when (os) {
         OperatingSystemType.WINDOWS, OperatingSystemType.LINUX -> this.isControlDown
@@ -63,15 +65,16 @@ fun KeyEvent.verifyKeyCombo(): Boolean {
     }
 }
 
-fun extensionToLang(ex:String) : String {
-    return when(ex) {
+fun extensionToLang(ex: String): String {
+    return when (ex) {
         "sk" -> "skript"
         "json" -> "json"
-        "yaml", "yml" ->  "yaml"
+        "yaml", "yml" -> "yaml"
         "java" -> "java"
         else -> "text/plain"
     }
 }
+
 fun adjustVersion(value: String): String {
 
     var str = value.replace("-dev", ".")
@@ -93,13 +96,16 @@ fun restart() {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
     val command = ArrayList<String>()
     if(getOS() == OperatingSystemType.WINDOWS) {
-        command.add(File(File(File(".").canonicalPath).parentFile, "SkIDE.exe").absolutePath)
+        command.add(File(File(File(".").canonicalPath), "SkIDE.exe").absolutePath)
     } else {
         command.add(javaBin)
+        if(Info.prodMode) command.add("-Dskide.mode=prod")
         command.add("-jar")
-        command.add(File(File(File(".").canonicalPath).parentFile, "Installer.jar").absolutePath)
+        command.add(File(File(File(".").canonicalPath), "Installer.jar").absolutePath)
     }
+
     val builder = ProcessBuilder(command)
+
     Thread {
         builder.start()
     }.start()
@@ -123,7 +129,8 @@ fun Button.setIcon(name: String, replaceAble: Boolean = true) {
     val view = ImageView(image)
     this.graphic = view
 }
-fun Button.setIcon(name: String, w:Double, h:Double, replaceAble: Boolean = true) {
+
+fun Button.setIcon(name: String, w: Double, h: Double, replaceAble: Boolean = true) {
     var lnk = "/images/$name"
     if (replaceAble) lnk += if (GUIManager.settings.get("theme") == "Dark") "_white" else "_black"
     lnk += ".png"

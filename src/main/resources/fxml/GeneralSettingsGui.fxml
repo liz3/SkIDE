@@ -33,19 +33,19 @@
                               <Button fx:id="settingsCssFileBtn" disable="true" mnemonicParsing="false" text="Open Highlighting File " />
                            </children>
                         </VBox>
-                        <VBox spacing="5.0">
+                        <VBox prefHeight="466.0" prefWidth="241.0" spacing="5.0">
                            <children>
                               <Label text="Theme" />
                               <ComboBox fx:id="settingsTheneComboBox" prefWidth="150.0" />
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                  <children>
-                                    <VBox prefHeight="100.0" prefWidth="214.0">
+                                    <VBox prefHeight="100.0" prefWidth="278.0">
                                        <children>
                                           <Label text="Font" />
                                           <TextField fx:id="settingsFontTextField" />
                                        </children>
                                     </VBox>
-                                    <VBox prefHeight="100.0" prefWidth="37.0">
+                                    <VBox>
                                        <children>
                                           <Label text="Size" />
                                           <TextField fx:id="settingsFontSizeTextField" minWidth="30.0" />
