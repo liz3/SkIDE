@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="907.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectSettingsGUIController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="601.0" prefWidth="1018.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectSettingsGUIController">
    <center>
       <TabPane prefHeight="438.0" prefWidth="907.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
@@ -100,9 +100,9 @@
                                     <Button fx:id="compileNewConfBtn" mnemonicParsing="false" text="New" />
                                  </children>
                               </HBox>
-                              <HBox prefHeight="211.0" prefWidth="886.0" spacing="5.0">
+                              <HBox prefHeight="263.0" prefWidth="1003.0" spacing="5.0">
                                  <children>
-                                    <VBox prefHeight="236.0" prefWidth="185.0">
+                                    <VBox>
                                        <children>
                                           <Label text="Configuration" />
                                           <ListView fx:id="compileConfListView" prefHeight="200.0" prefWidth="200.0" />
@@ -132,17 +132,17 @@
                                     </VBox>
                                  </children>
                               </HBox>
-                              <HBox prefHeight="174.0" prefWidth="886.0" spacing="5.0">
+                              <HBox prefHeight="233.0" prefWidth="1003.0" spacing="5.0">
                                  <children>
-                                    <VBox prefHeight="174.0" prefWidth="315.0">
+                                    <VBox>
                                        <children>
-                                          <ListView fx:id="compileIncludedFileList" prefHeight="200.0" prefWidth="200.0" />
+                                          <ListView fx:id="compileIncludedFileList" />
                                           <Label text="Included files" />
                                        </children>
                                     </VBox>
-                                    <VBox prefHeight="174.0" prefWidth="338.0">
+                                    <VBox>
                                        <children>
-                                          <ListView fx:id="compileExcludedFileList" prefHeight="200.0" prefWidth="200.0" />
+                                          <ListView fx:id="compileExcludedFileList" />
                                           <Label text="Excluded Files" />
                                        </children>
                                     </VBox>

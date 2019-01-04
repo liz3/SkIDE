@@ -7,7 +7,6 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'org.unbroken-dome.gradle-plugins:gradle-testsets-plugin:1.3.2'
-        classpath 'com.google.gradle:osdetector-gradle-plugin:1.6.0'
     }
 }
 
@@ -19,24 +18,9 @@ plugins {
 }
 apply plugin: 'kotlin'
 apply plugin: 'application'
-apply plugin: 'com.google.osdetector'
-
-if (project.hasProperty("jfx-win")) {
-    ext.platform = 'win'
-    ext.platformSecified = true
-} else if (project.hasProperty("jfx-mac")) {
-    ext.platform = 'mac'
-    ext.platformSecified = true
-} else if (project.hasProperty("jfx-linux")) {
-    ext.platform = 'linux'
-    ext.platformSecified = true
-} else {
-    ext.platform = osdetector.os == 'osx' ? 'mac' : osdetector.os == 'windows' ? 'win' : osdetector.os
-    ext.platformSecified = false
-}
 
 group = 'com.skide'
-version = '0.0.6'
+version = "2019.2"
 mainClassName = 'com.skide.MainKt'
 
 sourceCompatibility = 1.8
@@ -50,18 +34,12 @@ repositories {
 }
 
 dependencies {
-    compile "org.openjfx:javafx-base:12-ea+6:$platform"
-    compile "org.openjfx:javafx-graphics:12-ea+6:$platform"
-    compile "org.openjfx:javafx-controls:12-ea+6:$platform"
-    compile "org.openjfx:javafx-fxml:12-ea+6:$platform"
-    compile "org.openjfx:javafx-web:12-ea+6:$platform"
-    compile "org.openjfx:javafx-media:12-ea+6:$platform"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile 'org.controlsfx:controlsfx:9.0.0'
+    compile 'org.controlsfx:controlsfx:8.40.14'
     compile "org.json:json:20180813"
     compile name: 'terminalfx-1.3'
-    compile name: 'analytics'
     compile 'com.jcraft:jsch:0.1.54'
+    compile 'org.apache.httpcomponents:httpclient:4.5.3'
     compile 'commons-net:commons-net:3.6'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
@@ -74,14 +52,10 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = project.targetCompatibility
 }
 shadowJar {
-    println 'Platform is: ' + platform
     mergeServiceFiles()
     exclude 'META-INF/*.DSA'
     exclude 'META-INF/*.RSA'
-    if (platformSecified)
-        archiveName = "ide-${platform}.jar"
-    else
-        archiveName = "ide.jar"
+    archiveName = "ide.jar"
 }
 
 

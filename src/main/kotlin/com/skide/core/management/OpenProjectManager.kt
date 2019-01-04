@@ -23,6 +23,7 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
             openProject.area.moveLineToCenter(line)
             openProject.area.setSelection(line, 1, line, openProject.area.getColumnLineAmount(line))
 
+
         }
     }
 

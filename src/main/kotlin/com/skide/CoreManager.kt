@@ -2,21 +2,20 @@ package com.skide
 
 import com.skide.core.debugger.Debugger
 import com.skide.core.management.*
-import com.skide.gui.*
+import com.skide.gui.GUIManager
+import com.skide.gui.JavaFXBootstrapper
+import com.skide.gui.Prompts
 import com.skide.gui.controllers.SplashGuiController
 import com.skide.gui.controllers.StartGUIController
 import com.skide.utils.*
-import com.skide.utils.DebugLevel
 import javafx.application.Platform
 import javafx.concurrent.Task
 import javafx.fxml.FXMLLoader
 import javafx.scene.Scene
-import javafx.scene.control.Alert
 import javafx.scene.image.Image
 import javafx.scene.layout.Background
 import javafx.scene.layout.Pane
 import javafx.scene.paint.Color
-import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import javafx.util.Duration
@@ -38,16 +37,14 @@ class CoreManager {
 
     private var debugLevel = DebugLevel.INFORMATION
 
-    fun bootstrap(args: Array<String>, classLoader: ClassLoader?) {
+    fun bootstrap(args: Array<String>) {
 
 
-        if (classLoader != null) Info.classLoader = classLoader
         debugger = Debugger()
 
         val me = this
         guiManager.bootstrapCallback = { stage ->
             val loader = FXMLLoader()
-            if (Info.classLoader != null) loader.classLoader = Info.classLoader
             val parent = loader.load<Pane>(javaClass.getResourceAsStream("/fxml/LoadingGui.fxml"))
             parent.background = Background.EMPTY
             val controller = loader.getController<SplashGuiController>()
@@ -117,30 +114,34 @@ class CoreManager {
                         updateMessage("Starting gui...")
                         Prompts.theme = (configManager.get("theme") as String)
                         Prompts.configManager = configManager
-                        Platform.runLater {
-                            googleAnalytics = GoogleAnalytics(me)
-                            if (configManager.get("analytics") == "") {
-                                analyticInf = true
-                                configManager.set("analytics", "true")
-                            } else {
-                                if (configManager.get("analytics") == "true" && !Info.prodMode) {
-                                    googleAnalytics.start()
-                                }
-                            }
-                            stage.close()
-                            val window = guiManager.getWindow("fxml/StartGui.fxml", "SkIDE", false)
-                            (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
-                            window.stage.isResizable = false
-                            if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
-                            window.stage.show()
-                            if (analyticInf) {
-                                Notifications.create()
-                                        .title("Analytics")
-                                        .text("Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). I do this only for statistics. If you still don´t want it, disable it in the Settings!").darkStyle().hideAfter(Duration.INDEFINITE)
-                                        .show()
-                            }
-                        }
 
+                            Platform.runLater {
+                                googleAnalytics = GoogleAnalytics(me)
+                                if (configManager.get("analytics") == "") {
+                                    analyticInf = true
+                                    configManager.set("analytics", "true")
+                                } else {
+                                    if (configManager.get("analytics") == "true" && !Info.prodMode) {
+                                        googleAnalytics.start()
+                                    }
+                                }
+                                stage.close()
+                                val window = guiManager.getWindow("fxml/StartGui.fxml", "SkIDE", false)
+                                (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
+                                window.stage.isResizable = false
+                                if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
+                                window.stage.show()
+
+                                if (analyticInf) {
+                                    Notifications.create()
+                                            .title("Analytics")
+                                            .text("Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). I do this only for statistics. If you still don´t want it, disable it in the Settings!").darkStyle().hideAfter(Duration.INDEFINITE)
+                                            .show()
+                                }
+
+
+
+                        }
                     } catch (e: Exception) {
                         e.printStackTrace()
                     }

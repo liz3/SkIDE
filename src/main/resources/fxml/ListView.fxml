@@ -5,7 +5,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="394.0" prefWidth="251.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ListViewPopupController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="394.0" prefWidth="251.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ListViewPopupController">
    <children>
       <Label fx:id="infoLabel" alignment="TOP_LEFT" layoutX="14.0" layoutY="14.0" prefHeight="32.0" prefWidth="229.0" text="Label" />
       <ListView fx:id="list" layoutX="14.0" layoutY="51.0" prefHeight="296.0" prefWidth="229.0" />

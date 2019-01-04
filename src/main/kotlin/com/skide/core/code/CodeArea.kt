@@ -3,6 +3,7 @@
 package com.skide.core.code
 
 import com.skide.CoreManager
+import com.skide.Info
 import com.skide.gui.ListViewPopUp
 import com.skide.gui.WebViewDebugger
 import com.skide.include.OpenFileHolder
@@ -288,7 +289,6 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
                     else
                         settings.setMember("theme", "skript-light")
                     startEditor(settings)
-                    selection = engine.executeScript("selection") as JSObject
                     rdy(this)
                     prepareEditorActions()
                     debugger = WebViewDebugger(this)
@@ -297,7 +297,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
                 win.setMember("skide", eventHandler)
                 win.setMember("cbh", cbHook)
                 Thread {
-                    Thread.sleep(260)
+                    Thread.sleep(250)
                     Platform.runLater {
                         engine.executeScript("cbhReady();")
                     }
@@ -305,6 +305,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
             }
         }
         engine.load(this.javaClass.getResource("/www/index.html").toString())
+
 
     }
 

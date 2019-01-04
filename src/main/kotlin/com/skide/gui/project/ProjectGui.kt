@@ -394,14 +394,18 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
         Platform.runLater {
             disablePreview()
             CodeArea(coreManager, f) {
+                try {
+                    val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
+                    it.openFileHolder = holder
+                    it.codeManager = holder.codeManager
+                    openProjectGuiManager.openFiles[f] = holder
+                    setupNewTabForDisplay(holder)
+                    cb(holder)
+                    bufferedFiles.remove(f)
+                }catch (e:Exception) {
+                    e.printStackTrace()
+                }
 
-                val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
-                it.openFileHolder = holder
-                it.codeManager = holder.codeManager
-                openProjectGuiManager.openFiles[f] = holder
-                setupNewTabForDisplay(holder)
-                cb(holder)
-                bufferedFiles.remove(f)
             }
 
         }
@@ -617,7 +621,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 window.stage.isResizable = false
                 (window.controller as StartGUIController).initGui(coreManager, window, false)
                 window.stage.isResizable = false
-                if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
+                if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
                 window.stage.show()
             }
         }
@@ -656,7 +660,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             deployMenu.items.clear()
             openProjectGuiManager.openProject.project.fileManager.compileOptions.forEach { compOpt ->
                 val item = Menu(compOpt.key)
-                openProjectGuiManager.openProject.project.fileManager.hosts.forEach {h ->
+                openProjectGuiManager.openProject.project.fileManager.hosts.forEach { h ->
                     val depItem = MenuItem(h.name)
                     depItem.setOnAction {
                         openProjectGuiManager.openProject.deployer.depploy(compOpt.value, h)
@@ -703,7 +707,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
             window.stage.isResizable = false
             window.stage.initModality(Modality.WINDOW_MODAL)
-            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
+            if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             window.stage.initOwner(openProjectGuiManager.window.stage)
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, coreManager, window).init()
             window.stage.show()
@@ -759,7 +763,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 val lastActive = openProjectGuiManager.lastActive
 
 
-                val box = SearchPopUp(openProjectGuiManager.window.stage) {  text ->
+                val box = SearchPopUp(openProjectGuiManager.window.stage) { text ->
                     items.clear()
                     if (text.startsWith("@") && text.length > 1) {
                         for (function in functions) {

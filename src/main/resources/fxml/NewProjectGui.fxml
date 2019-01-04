@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="237.0" prefWidth="616.0" spacing="10.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.CreateProjectGUIController">
+<VBox prefHeight="237.0" prefWidth="616.0" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.CreateProjectGUIController">
    <children>
       <Label text="Name" />
       <TextField fx:id="projectNameField" prefHeight="25.0" prefWidth="328.0" promptText="Project Name" />

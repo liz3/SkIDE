@@ -1,9 +1,9 @@
 package com.skide.core.code
 
-import com.skide.Info
 import com.skide.core.code.autocomplete.AutoCompleteCompute
 import com.skide.core.code.autocomplete.ReplaceSequence
 import com.skide.core.skript.SkriptParser
+import com.skide.gui.crumbbar.CrumBar
 import com.skide.include.Node
 import com.skide.include.NodeType
 import com.skide.include.OpenFileHolder
@@ -15,7 +15,6 @@ import org.controlsfx.control.BreadCrumbBar
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
-import kotlin.system.measureTimeMillis
 
 
 class CodeManager {
@@ -31,7 +30,7 @@ class CodeManager {
     lateinit var sequenceReplaceHandler: ReplaceSequence
     lateinit var tooltipHandler: TooltipHandler
     lateinit var errorProvider: ErrorProvider
-    lateinit var hBox: BreadCrumbBar<Node>
+    lateinit var hBox: CrumBar<Node>
     var gotoActivated = false
 
     val crossNodes: HashMap<File, Vector<Node>>
@@ -120,7 +119,7 @@ class CodeManager {
                 item.children.add(next)
                 item = next
             }
-            hBox.selectedCrumb = item
+           hBox.selectedCrumb = item
 
         }
 
