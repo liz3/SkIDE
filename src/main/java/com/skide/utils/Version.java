@@ -8,10 +8,6 @@ public class Version implements Comparable<Version> {
         return this.version;
     }
 
-    public static void xD() {
-
-    }
-
     public Version(String version) {
         if (version == null)
             throw new IllegalArgumentException("Version value can not be null.");

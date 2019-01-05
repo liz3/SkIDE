@@ -34,6 +34,7 @@
 -printmapping proguard.map
 -flattenpackagehierarchy ''
 -keepattributes *Annotation*
+#-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,LocalVariable*Table,*Annotation*,Synthetic,EnclosingMethod
 -adaptresourcefilecontents **.fxml,**.properties,META-INF/MANIFEST.MF
 
 -keepclassmembernames class * {

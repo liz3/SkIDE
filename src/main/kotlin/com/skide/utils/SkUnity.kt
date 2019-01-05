@@ -46,7 +46,7 @@ class SkUnity(val coreManager: CoreManager) {
         map["username"] = name
         map["password"] = password
 
-        val result = request("https://liz3.net/sk/xf/", "POST", headers, getURLEncoded(map))
+        val result = request("https://liz3.net/sk/xf/", "POST", headers, encodeHTTPParams(map))
         val buff = ByteArray(result.third.available())
         result.third.read(buff)
         val content = JSONObject(String(buff))
@@ -111,7 +111,7 @@ class SkUnity(val coreManager: CoreManager) {
         map["username"] = username
 
 
-        val result = request("https://liz3.net/sk/xf/", "POST", headers, getURLEncoded(map))
+        val result = request("https://liz3.net/sk/xf/", "POST", headers, encodeHTTPParams(map))
         val buff = ByteArray(result.third.available())
         result.third.read(buff)
         val content = JSONObject(String(buff))

@@ -27,13 +27,12 @@ fun downloadFile(target: String, path: String) {
 
 }
 
-fun getURLEncoded(map: Map<String, String>): String {
+fun encodeHTTPParams(params: Map<String, String>): String {
 
-    var content = ""
-    map.forEach {
-        content += "&" + URLEncoder.encode(it.key, "UTF-8") + "=" + URLEncoder.encode(it.value, "UTF-8")
-    }
-    return if (!content.isEmpty()) content.substring(1) else ""
+    return params.map {
+        URLEncoder.encode(it.key, "UTF-8") + "=" + URLEncoder.encode(it.value, "UTF-8")
+    }.joinToString("&")
+
 }
 
 fun request(path: String, method: String = "GET", headers: Map<String, String> = HashMap(), body: String = ""): Triple<Int, MutableMap<String, MutableList<String>>, InputStream> {

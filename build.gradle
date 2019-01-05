@@ -17,7 +17,7 @@ plugins {
     id 'java'
     id 'idea'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '2.0.1'
+    id 'com.github.johnrengelman.shadow' version '4.0.3'
 }
 apply plugin: 'kotlin'
 apply plugin: 'application'
@@ -35,7 +35,6 @@ repositories {
         dirs 'static-libs'
     }
 }
-
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.controlsfx:controlsfx:8.40.14'
@@ -45,9 +44,11 @@ dependencies {
     implementation 'org.apache.httpcomponents:httpclient:4.5.3'
     implementation 'commons-net:commons-net:3.6'
     testImplementation group: 'junit', name: 'junit', version: '4.12'
+    testImplementation "org.jetbrains.kotlin:kotlin-test"
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit"
+
 
 }
-
 compileKotlin {
     kotlinOptions.jvmTarget = project.targetCompatibility
 }
@@ -60,7 +61,6 @@ shadowJar {
     exclude 'META-INF/*.RSA'
     archiveName = "ide.jar"
 }
-
 task proguard(type: proguard.gradle.ProGuardTask) {
 
     configuration 'proguard.txt'
@@ -70,9 +70,7 @@ task proguard(type: proguard.gradle.ProGuardTask) {
     keep 'public class com.skide.MainKt { \
         public static void main(java.lang.String[]); \
     }'
-
 }
-
 jar {
     archiveName = "ide-core.jar"
     manifest {
