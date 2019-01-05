@@ -1,0 +1,62 @@
+-classobfuscationdictionary dir2.txt
+-packageobfuscationdictionary dir2.txt
+
+-libraryjars  <java.home>/lib/rt.jar
+-libraryjars  <java.home>/lib/plugin.jar
+-libraryjars  <java.home>/lib/ext/jfxrt.jar
+
+
+-keep class javafx.** { *; }
+-keep class java.** { *; }
+-keep class javax.** { *; }
+-keep class com.jcraft.** { *; }
+-keep class org.jetbrains.** { *; }
+-keep class org.controlsfx.** { *; }
+-keep class impl.org.controlsfx.** { *; }
+-keep class org.apache.** { *; }
+-keep class mozilla.** { *; }
+-keep class org.hamcrest.** { *; }
+-keep class kotlin.** { *; }
+-keep class intellij.** { *; }
+-keep class org.json.** { *; }
+-keep class org.junit.** { *; }
+-keep class com.brsanthu.** { *; }
+-keep class com.fasterxml.** { *; }
+-keep class com.pty4j.** { *; }
+-keep class com.sun.** { *; }
+-keep class com.terminalfx.** { *; }
+
+-dontwarn org.apache.**
+-dontwarn com.jcraft.**
+
+-dontshrink
+-dontoptimize
+-printmapping proguard.map
+-flattenpackagehierarchy ''
+-keepattributes *Annotation*
+-adaptresourcefilecontents **.fxml,**.properties,META-INF/MANIFEST.MF
+
+-keepclassmembernames class * {
+    @javafx.fxml.FXML *;
+}
+-keepclassmembers class * extends java.lang.Enum {
+    <fields>;
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+-keepclassmembernames class com.skide.core.code.EventHandler {
+        void copy();
+        void cut();
+        void eventNotify(java.lang.String);
+        void cmdCall(java.lang.String);
+        java.lang.Object findReferences(java.lang.Object, java.lang.Object, java.lang.Object);
+        java.lang.Object gotoCall(java.lang.Object, java.lang.Object, java.lang.Object);
+        netscape.javascript.JSObject autoCompleteRequest(java.lang.Object, java.lang.Object, java.lang.Object, java.lang.Object);
+        void contextMenuEmit(netscape.javascript.JSObject);
+        void actionFire(java.lang.String, java.lang.Object);
+        netscape.javascript.JSObject commandFire(java.lang.String);
+
+}
+-keepclassmembernames class com.skide.core.code.CallbackHook {
+    void call();
+}

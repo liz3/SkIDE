@@ -39,7 +39,6 @@ class CoreManager {
 
     fun bootstrap(args: Array<String>) {
 
-
         debugger = Debugger()
 
         val me = this
