@@ -1,6 +1,7 @@
 package com.skide.gui.project
 
 import com.skide.CoreManager
+import com.skide.Info
 import com.skide.core.code.CodeArea
 import com.skide.core.management.ExternalHandler
 import com.skide.core.management.OpenProject
@@ -38,7 +39,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     var mode = EditorMode.NORMAL
     val openFiles = HashMap<File, OpenFileHolder>()
     val settings = SettingsGui(coreManager, this)
-    val window = GUIManager.getWindow("fxml/ProjectGui.fxml", openProject.project.name, false, w = 1280.0, h = 720.0)
+    val window = GUIManager.getWindow("fxml/ProjectGui.fxml", "${openProject.project.name} ${openProject.project.folder.absolutePath} - SkIDE Ultimate", false, w = 1280.0, h = 720.0)
     lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
     val otherTabPanes = Vector<TabPane>()
     var paneHolderNode: Node = HBox()
@@ -47,6 +48,12 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     var dragDone = false
     var activeTab = Tab()
 
+    fun updateProjectTitle(path: String) {
+        window.stage.title = if(path.isEmpty())
+            "${openProject.project.name} ${openProject.project.folder.absolutePath} - SkIDE Ultimate"
+        else
+            "${openProject.project.name} ${openProject.project.folder.absolutePath} - $path - SkIDE Ultimate"
+    }
 
     fun startGui(): ProjectGuiEventListeners {
         val controller = window.controller as ProjectGUIController
@@ -402,7 +409,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                     setupNewTabForDisplay(holder)
                     cb(holder)
                     bufferedFiles.remove(f)
-                }catch (e:Exception) {
+                } catch (e: Exception) {
                     e.printStackTrace()
                 }
 
@@ -617,7 +624,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             openProjectGuiManager.closeHook()
             openProjectGuiManager.window.close()
             if (coreManager.projectManager.openProjects.size == 0) {
-                val window = GUIManager.getWindow("fxml/StartGui.fxml", "Sk-IDE", false, Stage())
+                val window = GUIManager.getWindow("fxml/StartGui.fxml", "SkIDE Ultimate ${Info.version}", false, Stage())
                 window.stage.isResizable = false
                 (window.controller as StartGUIController).initGui(coreManager, window, false)
                 window.stage.isResizable = false
@@ -1025,10 +1032,14 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                                 Platform.runLater {
                                     updateStructureTab(it)
                                     it.codeManager.parseResult = it.codeManager.parseStructure(true)
+                                    openProjectGuiManager.updateProjectTitle(it.f.name)
                                 }
                             }
                         }
             } else {
+                Platform.runLater {
+                    openProjectGuiManager.updateProjectTitle("")
+                }
                 controller.browserTabPane.selectionModel.select(0)
                 structureTab.first.isDisable = true
             }
