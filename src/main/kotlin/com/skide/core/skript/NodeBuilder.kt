@@ -172,14 +172,14 @@ class NodeBuilder(val node: Node) {
             fields["invalid"] = true
             return
         }
-        val name = content.split(" ")[1].split("(")[0]
+        val name = content.split(" ")[1].split("(")[0].trim()
         val params = content.split("(")[1].split(")")[0].split(",")
         val returnType: String
         params.forEach {
 
             if (it != "" && it.contains(":")) {
-                val paramName = it.trim().split(":").first()
-                var paramType = it.trim().split(":")[1]
+                val paramName = it.trim().split(":").first().trim()
+                var paramType = it.trim().split(":")[1].trim()
                 var value = ""
                 if (paramType.contains("=")) {
                     value = paramType.split("=")[1].trim().replace("\"", "")
@@ -192,7 +192,7 @@ class NodeBuilder(val node: Node) {
         fields["params"] = paramList
 
         if (content.contains("::")) {
-            returnType = content.split("::")[1].trim().replace(":", "")
+            returnType = content.split("::")[1].trim().replace(":", "").trim()
             fields["return"] = returnType
         } else {
 

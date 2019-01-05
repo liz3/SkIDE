@@ -180,7 +180,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
     val eventHandler = EventHandler(this)
     lateinit var debugger: WebViewDebugger
     var findWidgetVisible = false
-    val updateWatcher = ChangeWatcher(1000) {
+    val updateWatcher = ChangeWatcher(450) {
         Platform.runLater {
             codeManager.parseResult = codeManager.parseStructure(true)
         }
@@ -381,6 +381,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
 
         addAction("general_auto_complete_finish") {
             openFileHolder.codeManager.sequenceReplaceHandler.compute(getCurrentLine(), getLineContent(getCurrentLine()))
+
         }
         addAction("create_command") {
             openFileHolder.codeManager.autoComplete.createCommand()

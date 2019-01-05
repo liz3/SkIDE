@@ -26,7 +26,10 @@ function getDefaultOptions() {
         automaticLayout: true,
         mouseWheelScrollSensitivity: 0.1,
         copyWithSyntaxHighlighting: false,
-        insertSpaces: false
+        insertSpaces: false,
+        suggestSelection: "recentlyUsed",
+        tabCompletion: "true",
+        wordBasedSuggestions: false
     };
 }
 function startEditor(options) {

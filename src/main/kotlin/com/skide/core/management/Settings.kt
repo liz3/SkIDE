@@ -39,20 +39,20 @@ class ConfigManager(val coreManager: CoreManager) {
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
 
-    val versionsFile = File(File(CoreManager::class.java.protectionDomain.codeSource.location.toURI()).parent, "versions")
-    val checkFile = File(File(CoreManager::class.java.protectionDomain.codeSource.location.toURI()).parent, "check")
-    var installedVersion = ""
+    private val versionsFile = File(File(CoreManager::class.java.protectionDomain.codeSource.location.toURI()).parent, "versions")
+    private val checkFile = File(File(CoreManager::class.java.protectionDomain.codeSource.location.toURI()).parent, "check")
+    private var installedVersion = ""
     var update = false
     var betaChannel = false
 
 
-    val rootFolder = File(System.getProperty("user.home"), ".sk-ide-config")
-    var defaultProjectPath = File(System.getProperty("user.home"), "SkIDE-Projects")
+    val rootFolder = File(System.getProperty("user.home"), if(Info.prodMode) ".sk-ide-config" else ".sk-ide-dev-config")
+    var defaultProjectPath = File(System.getProperty("user.home"), if(Info.prodMode) "SkIDE-Projects" else "SkIDE-dev-Projects")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
-    private var defaultServerPath = File(System.getProperty("user.home"), "SkIDE-Server")
+    private var defaultServerPath = File(System.getProperty("user.home"), if(Info.prodMode) "SkIDE-Server" else "SkIDE-dev-Server")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
@@ -74,7 +74,6 @@ class ConfigManager(val coreManager: CoreManager) {
     private val configFile = File(rootFolder, "settings.skide")
     private val projectsFile = File(rootFolder, "projects.skide")
     private val serversFile = File(rootFolder, "servers.skide")
-    val addonFile = File(rootFolder, "addons.skide")
     private val hostsFile = File(rootFolder, "hosts.skide")
 
     val projects = HashMap<Long, PointerHolder>()

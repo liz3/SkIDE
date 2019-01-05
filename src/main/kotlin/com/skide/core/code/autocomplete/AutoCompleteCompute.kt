@@ -10,6 +10,7 @@ import com.skide.utils.EditorUtils
 import netscape.javascript.JSObject
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.system.measureTimeMillis
 
 class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder) {
 
@@ -34,180 +35,183 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
 
     fun showLocalAutoComplete(array: JSObject) {
 
-        val nodes = area.openFileHolder.codeManager.parseResult
-        val currentLine = area.getCurrentLine()
-        val currentColumn = area.getCurrentColumn()
-        val lineContent = area.getLineContent(currentLine)
-        val node = EditorUtils.getLineNode(currentLine, nodes) ?: return
-        val parent = EditorUtils.getRootOf(node)
-        var count = 0
-        val currentWord = area.getWordUntilPosition(currentLine, currentColumn)
-        val before = area.getContentRange(currentLine, currentLine, 1, currentWord.startColumn)
-        val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, nodes)
 
-        if (before.endsWith(":") && node.nodeType == NodeType.FUNCTION) {
-            addonSupported.values.forEach { addon ->
-                addon.forEach { item ->
-                    if (item.type == DocType.TYPE) {
-                        addSuggestionToObject(AutoCompleteItem(area, "${item.name}:${item.type} - ${item.addon.name}", CompletionType.CLASS, item.name), array, count)
-                        count++
-                    }
-                }
-            }
+           val nodes = area.openFileHolder.codeManager.parseResult
+           val currentLine = area.getCurrentLine()
+           val currentColumn = area.getCurrentColumn()
+           val lineContent = area.getLineContent(currentLine)
+           val node = EditorUtils.getLineNode(currentLine, nodes) ?: return
+           val parent = EditorUtils.getRootOf(node)
+           var count = 0
+           val currentWord = area.getWordUntilPosition(currentLine, currentColumn)
+           val before = area.getContentRange(currentLine, currentLine, 1, currentWord.startColumn)
+           val vars = EditorUtils.filterByNodeType(NodeType.SET_VAR, nodes)
 
-            return
-        }
+           if (before.endsWith(":") && node.nodeType == NodeType.FUNCTION) {
+               addonSupported.values.forEach { addon ->
+                   addon.forEach { item ->
+                       if (item.type == DocType.TYPE) {
+                           addSuggestionToObject(AutoCompleteItem(area, "${item.name}:${item.type} - ${item.addon.name}", CompletionType.CLASS, item.name), array, count)
+                           count++
+                       }
+                   }
+               }
 
-
-        val varsToAdd = HashMap<String, AutoCompleteItem>()
-
-        //Croos file Auto-complete
-        if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
-            for ((path, internalNodes) in manager.crossNodes) {
-                if (path == project.f) continue
-                internalNodes.forEach { it ->
-                    if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
-                        val name = it.fields["name"] as String
-
-                        val returnType = it.fields["return"] as String
-                        var paramsStr = ""
-                        var insertParams = ""
-                        (it.fields["params"] as Vector<*>).forEach {
-                            it as MethodParameter
-                            paramsStr += ",${it.name}:${it.type}"
-                            insertParams += ",${it.name}"
-                        }
-                        if (paramsStr != "") paramsStr = paramsStr.substring(1)
-                        if (insertParams != "") insertParams = insertParams.substring(1)
-                        val con = "$name($paramsStr):$returnType - ${path.name}"
-
-                        val insert = "$name($insertParams)"
-                        addSuggestionToObject(AutoCompleteItem(area, con, CompletionType.FUNCTION, insert), array, count)
-                        count++
-                    } else if (it.nodeType == NodeType.SET_VAR && !it.fields.containsKey("invalid")) {
-                        if (it.fields.contains("from_option")) {
-                            val insertText = "{@${it.fields["name"]}}}"
-                            if (!varsToAdd.containsKey(insertText))
-                                varsToAdd[insertText] = AutoCompleteItem(area, "Option: " + (it.fields["name"] as String) + " - ${path.name}", CompletionType.VARIABLE, insertText)
-                        } else if (it.fields["visibility"] == "global") {
-                            val insert = "{${it.fields["name"]}}"
-                            if (!varsToAdd.containsKey(insert))
-                                varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String + " - ${path.name}", CompletionType.VARIABLE, insert)
-                        }
-                    }
-                }
-                EditorUtils.filterByNodeType(NodeType.OPTIONS, internalNodes).forEach {
-                    for (child in it.childNodes)
-                        if (child.getContent().isNotEmpty() && child.getContent().isNotBlank() && child.nodeType != NodeType.COMMENT) {
-                            val name = child.getContent().split(":").first()
-                            val word = "{@$name}"
-                            if (!varsToAdd.containsKey(word))
-                                varsToAdd[word] = AutoCompleteItem(area, name, CompletionType.VARIABLE, word, "Option - ${path.name}")
-                        }
-                }
-            }
-        }
-
-        //Check parent
-        if (parent.nodeType == NodeType.FUNCTION && parent.fields.contains("ready")) {
-            val params = parent.fields["params"] as Vector<*>
-            params.forEach {
-                it as MethodParameter
-                val insert = "{_" + it.name + "}"
-                if (!varsToAdd.containsKey(insert))
-                    varsToAdd[insert] = AutoCompleteItem(area, it.name + " :" + it.type + " (local)", CompletionType.VARIABLE, insert)
-            }
-        }
-
-        //Loop through this files variable nodes
-        vars.forEach {
-            if (it.nodeType == NodeType.SET_VAR && !it.fields.containsKey("invalid")) {
-                if (it.fields.contains("from_option")) {
-                    val insertText = "{@${it.fields["name"]}}"
-                    if (!varsToAdd.containsKey(insertText))
-                        varsToAdd[insertText] = AutoCompleteItem(area, (it.fields["name"] as String), CompletionType.VARIABLE, insertText, "Option")
-                } else if (it.fields["visibility"] == "global") {
-                    val insert = "{${it.fields["name"]}}"
-                    if (!varsToAdd.containsKey(insert))
-                        varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert, "global variable")
-
-                } else if (EditorUtils.getRootOf(it) == parent) {
-                    val insert = "{_${it.fields["name"]}}"
-                    if (!varsToAdd.containsKey(insert))
-                        varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert, "local variable")
-                }
-            }
-        }
-        EditorUtils.filterByNodeType(NodeType.OPTIONS, nodes).forEach {
-            for (child in it.childNodes)
-                if (child.getContent().isNotEmpty() && child.getContent().isNotBlank() && child.nodeType != NodeType.COMMENT) {
-                    val name = child.getContent().split(":").first()
-                    val word = "{@$name}"
-                    if (!varsToAdd.containsKey(word))
-                        varsToAdd[word] = AutoCompleteItem(area, name, CompletionType.VARIABLE, word, "Option")
-                }
-        }
-
-        //Add functions
-        nodes.forEach {
-            if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
-                val name = it.fields["name"] as String
-                val returnType = it.fields["return"] as String
-                var paramsStr = ""
-                var insertParams = ""
-
-                (it.fields["params"] as Vector<*>).forEach { param ->
-                    param as MethodParameter
-                    paramsStr += ",${param.name}:${param.type}"
-                    insertParams += ",${param.name}"
-                }
-                if (paramsStr != "") paramsStr = paramsStr.substring(1)
-                if (insertParams != "") insertParams = insertParams.substring(1)
-                val con = "$name($paramsStr):$returnType"
-                val insert = "$name($insertParams)"
-                addSuggestionToObject(AutoCompleteItem(area, con, CompletionType.FUNCTION, insert), array, count)
-                count++
-            }
-        }
+               return
+           }
 
 
-        //add generic keywords
-        keyWordsGen.forEach {
-            addSuggestionToObject(it, array, count)
-            count++
-        }
+           val varsToAdd = HashMap<String, AutoCompleteItem>()
 
-        if (parent.nodeType == NodeType.EVENT)
-            if (parent.fields["event"] != null) {
-                val ev = parent.fields["event"] as AddonItem
-                if (ev.eventValues != "") {
-                    ev.eventValues.split(",").forEach {
-                        val value = it.trim()
-                        addSuggestionToObject(AutoCompleteItem(area, value, CompletionType.KEYWORD, value, "event value"), array, count)
-                        count++
-                    }
-                }
-            }
+           //Croos file Auto-complete
+           if (project.coreManager.configManager.get("cross_auto_complete") == "true") {
+               for ((path, internalNodes) in manager.crossNodes) {
+                   if (path == project.f) continue
+                   internalNodes.forEach { it ->
+                       if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
+                           val name = it.fields["name"] as String
 
-        //Add all nodes in one move
-        varsToAdd.values.forEach {
-            addSuggestionToObject(it, array, count)
-            count++
-        }
-        if (!manager.sequenceReplaceHandler.computing)
-            addonSupported.values.forEach { addon ->
-                addon.forEach { item ->
-                    if (item.type != DocType.EVENT) {
-                        val name = "${item.name}:${item.type} - ${item.addon.name}"
-                        var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "")
-                        if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder"
-                        if (item.type == DocType.CONDITION) adder += ":"
-                        addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.SNIPPET, adder, commandId = "general_auto_complete_finish"), array, count)
-                        count++
-                    }
-                }
-            }
-        varsToAdd.clear()
+                           val returnType = it.fields["return"] as String
+                           var paramsStr = ""
+                           var insertParams = ""
+                           (it.fields["params"] as Vector<*>).forEach {
+                               it as MethodParameter
+                               paramsStr += ",${it.name} ${it.type}"
+                               insertParams += ",${it.name}"
+                           }
+                           if (paramsStr != "") paramsStr = paramsStr.substring(1)
+                           if (insertParams != "") insertParams = insertParams.substring(1)
+                           val con = "$name($paramsStr)"
+
+                           val insert = "$name($insertParams)"
+                           addSuggestionToObject(AutoCompleteItem(area, con, CompletionType.FUNCTION, insert, "$returnType - ${path.name}"), array, count)
+                           count++
+                       } else if (it.nodeType == NodeType.SET_VAR && !it.fields.containsKey("invalid")) {
+                           if (it.fields.contains("from_option")) {
+                               val insertText = "{@${it.fields["name"]}}}"
+                               if (!varsToAdd.containsKey(insertText))
+                                   varsToAdd[insertText] = AutoCompleteItem(area,  (it.fields["name"] as String), CompletionType.VARIABLE, insertText, "Option - ${path.name}")
+                           } else if (it.fields["visibility"] == "global") {
+                               val insert = "{${it.fields["name"]}}"
+                               if (!varsToAdd.containsKey(insert))
+                                   varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert, "Variable - ${path.name}")
+                           }
+                       }
+                   }
+                   EditorUtils.filterByNodeType(NodeType.OPTIONS, internalNodes).forEach {
+                       for (child in it.childNodes)
+                           if (child.getContent().isNotEmpty() && child.getContent().isNotBlank() && child.nodeType != NodeType.COMMENT) {
+                               val name = child.getContent().split(":").first()
+                               val word = "{@$name}"
+                               if (!varsToAdd.containsKey(word))
+                                   varsToAdd[word] = AutoCompleteItem(area, name, CompletionType.VARIABLE, word, "Option - ${path.name}")
+                           }
+                   }
+               }
+           }
+
+           //Check parent
+           if (parent.nodeType == NodeType.FUNCTION && parent.fields.contains("ready")) {
+               val params = parent.fields["params"] as Vector<*>
+               params.forEach {
+                   it as MethodParameter
+                   val insert = "{_" + it.name + "}"
+                   if (!varsToAdd.containsKey(insert))
+                       varsToAdd[insert] = AutoCompleteItem(area, it.name, CompletionType.VARIABLE, insert, it.type)
+               }
+           }
+
+           //Loop through this files variable nodes
+           vars.forEach {
+               if (it.nodeType == NodeType.SET_VAR && !it.fields.containsKey("invalid")) {
+                   if (it.fields.contains("from_option")) {
+                       val insertText = "{@${it.fields["name"]}}"
+                       if (!varsToAdd.containsKey(insertText))
+                           varsToAdd[insertText] = AutoCompleteItem(area, (it.fields["name"] as String), CompletionType.VARIABLE, insertText, "Option")
+                   } else if (it.fields["visibility"] == "global") {
+                       val insert = "{${it.fields["name"]}}"
+                       if (!varsToAdd.containsKey(insert))
+                           varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert, "Global Variable")
+
+                   } else if (EditorUtils.getRootOf(it) == parent) {
+                       val insert = "{_${it.fields["name"]}}"
+                       if (!varsToAdd.containsKey(insert))
+                           varsToAdd[insert] = AutoCompleteItem(area, it.fields["name"] as String, CompletionType.VARIABLE, insert, "Local variable")
+                   }
+               }
+           }
+           EditorUtils.filterByNodeType(NodeType.OPTIONS, nodes).forEach {
+               for (child in it.childNodes)
+                   if (child.getContent().isNotEmpty() && child.getContent().isNotBlank() && child.nodeType != NodeType.COMMENT) {
+                       val name = child.getContent().split(":").first()
+                       val word = "{@$name}"
+                       if (!varsToAdd.containsKey(word))
+                           varsToAdd[word] = AutoCompleteItem(area, name, CompletionType.VARIABLE, word, "Option")
+                   }
+           }
+
+           //Add functions
+           nodes.forEach {
+               if (it.nodeType == NodeType.FUNCTION && it.fields.contains("ready")) {
+                   val name = it.fields["name"] as String
+                   val returnType = it.fields["return"] as String
+                   var paramsStr = ""
+                   var insertParams = ""
+
+                   (it.fields["params"] as Vector<*>).forEach { param ->
+                       param as MethodParameter
+                       paramsStr += ",${param.name} ${param.type}"
+                       insertParams += ",${param.name}"
+                   }
+                   if (paramsStr != "") paramsStr = paramsStr.substring(1)
+                   if (insertParams != "") insertParams = insertParams.substring(1)
+                   val con = "$name($paramsStr)"
+                   val insert = "$name($insertParams)"
+
+                   addSuggestionToObject(AutoCompleteItem(area, con, CompletionType.FUNCTION, insert, returnType), array, count)
+                   count++
+               }
+           }
+
+
+           //add generic keywords
+           keyWordsGen.forEach {
+               addSuggestionToObject(it, array, count)
+               count++
+           }
+
+           if (parent.nodeType == NodeType.EVENT)
+               if (parent.fields["event"] != null) {
+                   val ev = parent.fields["event"] as AddonItem
+                   if (ev.eventValues != "") {
+                       ev.eventValues.split(",").forEach {
+                           val value = it.trim()
+                           addSuggestionToObject(AutoCompleteItem(area, value, CompletionType.KEYWORD, value, "event value"), array, count)
+                           count++
+                       }
+                   }
+               }
+
+           //Add all nodes in one move
+           varsToAdd.values.forEach {
+               addSuggestionToObject(it, array, count)
+               count++
+           }
+
+           if (!manager.sequenceReplaceHandler.computing)
+               addonSupported.values.forEach { addon ->
+                   addon.forEach { item ->
+                       if (item.type != DocType.EVENT) {
+                           val name = item.name
+                           var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "").replace("\r","")
+                           if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder"
+                           if (item.type == DocType.CONDITION) adder += ":"
+                           addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, adder, commandId = "general_auto_complete_finish", detail = "${item.type} - ${item.addon.name}"), array, count)
+                           count++
+                       }
+                   }
+               }
+           varsToAdd.clear()
     }
 
     private fun getKeyWords(): Vector<AutoCompleteItem> {
