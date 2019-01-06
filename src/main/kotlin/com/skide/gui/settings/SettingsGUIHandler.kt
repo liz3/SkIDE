@@ -8,8 +8,6 @@ import com.skide.include.ActiveWindow
 import com.skide.include.Server
 import com.skide.include.ServerAddon
 import com.skide.include.ServerConfiguration
-import com.skide.utils.OperatingSystemType
-import com.skide.utils.getOS
 import com.skide.utils.restart
 import javafx.application.Platform
 import javafx.scene.control.Alert
@@ -107,9 +105,15 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         }
         ctrl.serverStartAgsTextField.textProperty().addListener { _, _, newValue ->
 
-            currentSelected()?.configuration?.startAgrs = newValue
+            currentSelected()?.configuration?.startArgs = newValue
+        }
+        ctrl.jvmStartAgsTextField.textProperty().addListener { _, _, newValue ->
+
+            currentSelected()?.configuration?.jvmArgs = newValue
         }
         ctrl.serverServerList.selectionModel.selectedItemProperty().addListener { _, oldValue, newValue ->
+
+            updateFocusAllow(newValue == null)
 
             if (oldValue == null) {
                 if (!newServerAdded) {
@@ -124,6 +128,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
                 if (!deleted.contains(oldValue)) serverManager.saveServerConfigution(oldValue)
             }
             if (!newServerAdded && newValue != null) setNewValues()
+
         }
         ctrl.serverServertPathChooseBtn.setOnAction {
             val file = getFile("Choose the Bukkit/Spigot Jar File")
@@ -178,7 +183,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             val name = ctrl.serverNewServerNameTextField.text
             if (serverManager.servers.containsKey(name) || name.isEmpty() || name.isBlank()) return@setOnAction
             newServerAdded = true
-            val server = Server(ServerConfiguration(name, "", File(""), File(""), ""), File(""), false, System.currentTimeMillis())
+            val server = Server(ServerConfiguration(name, "", File(""), File(""), "", ""), File(""), false, System.currentTimeMillis())
             ctrl.serverServerList.items.add(server)
             ctrl.serverServerList.selectionModel.select(server)
             clearValues()
@@ -209,8 +214,20 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             ctrl.updateCheck.isSelected = coreManager.configManager.update
             ctrl.betaUpdateCheck.isSelected = coreManager.configManager.betaChannel
         }
+        updateFocusAllow(true)
     }
 
+    private fun updateFocusAllow(v:Boolean) {
+
+        ctrl.jvmStartAgsTextField.isDisable = v
+        ctrl.serverStartAgsTextField.isDisable = v
+        ctrl.serverSkriptVersionComboBox.isDisable = v
+        ctrl.serverAddAddonFromFileBtn.isDisable = v
+        ctrl.serverServerFolderPathChooseBtn.isDisable = v
+        ctrl.serverServertPathChooseBtn.isDisable = v
+        ctrl.serverAddonDeleteBtn.isDisable = v
+        ctrl.serverAddAddonFromFileChooseBtn.isDisable = v
+    }
     private fun setNewValues() {
 
         ctrl.serverServerNameTextField.text = currentSelected()?.configuration?.name

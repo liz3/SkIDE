@@ -44,7 +44,7 @@ class ServerManager(val coreManager: CoreManager) {
             try {
                 val confFile = File(it.path, ".server.skide")
                 val obj = JSONObject(readFile(confFile).second)
-                val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args")), confFile, false, obj.getLong("id"))
+                val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args"), obj.getString("jvm_args")), confFile, false, obj.getLong("id"))
                 obj.getJSONArray("addons").forEach {
                     if (it is JSONObject) {
 
@@ -53,6 +53,7 @@ class ServerManager(val coreManager: CoreManager) {
                 }
                 servers[obj.getString("name")] = server
             } catch (e: Exception) {
+                e.printStackTrace()
                 deleteServerByName(it.id)
                 Platform.runLater {
                     Prompts.infoCheck("Error", "Error while loading serer", "An error occurred while loading server ${it.name} at ${it.path}", Alert.AlertType.ERROR)
@@ -77,7 +78,8 @@ class ServerManager(val coreManager: CoreManager) {
         confObject.put("skript_version", server.configuration.skriptVersion)
         confObject.put("api", server.configuration.apiPath.absolutePath)
         confObject.put("id", id)
-        confObject.put("start_args", server.configuration.startAgrs)
+        confObject.put("start_args", server.configuration.startArgs)
+        confObject.put("jvm_args", server.configuration.jvmArgs)
         val addonArray = JSONArray()
         server.configuration.addons.forEach {
             val itsObj = JSONObject()
@@ -108,7 +110,7 @@ class ServerManager(val coreManager: CoreManager) {
         confObject.put("skript_version", server.configuration.skriptVersion)
         confObject.put("api", server.configuration.apiPath.absolutePath)
         confObject.put("id", server.id)
-        confObject.put("start_args", server.configuration.startAgrs)
+        confObject.put("start_args", server.configuration.startArgs)
         val addonArray = JSONArray()
         server.configuration.addons.forEach {
             val itsObj = JSONObject()

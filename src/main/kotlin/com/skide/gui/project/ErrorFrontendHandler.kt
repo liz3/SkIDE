@@ -25,6 +25,21 @@ class ErrorFrontendHandler(val openProject: OpenProject) {
     private val root = TreeItem<SkErrorFront>()
 
 
+    private fun updateFrontend() {
+
+        Platform.runLater {
+            root.children.clear()
+            for (entry in entries) {
+                val fileItem = TreeItem(SkErrorFront(entry.key.name + " - ${entry.value.size}"))
+                for (err in entry.value) {
+                    fileItem.children.add(err)
+                }
+                root.children.add(fileItem)
+            }
+            busy = false
+        }
+
+    }
     fun update(f: File, errors: Vector<SkError>, area: CodeArea) {
         if(busy) return
         Thread{
@@ -44,18 +59,19 @@ class ErrorFrontendHandler(val openProject: OpenProject) {
                     area.setSelection(error.startLine, error.startColumn, error.endLine, error.endColumn)
                 })))
             }
-            Platform.runLater {
-                entries[f] = list
-                root.children.clear()
-                for (entry in entries) {
-                    val fileItem = TreeItem(SkErrorFront(entry.key.name + " - ${entry.value.size}"))
-                    for (err in entry.value) {
-                        fileItem.children.add(err)
-                    }
-                    root.children.add(fileItem)
-                }
-                busy = false
-            }
+            entries[f] = list
+            updateFrontend()
+
+        }.start()
+    }
+    fun removeFile(f: File) {
+        if(busy) return
+        Thread{
+            busy = true
+            if(entries.containsKey(f))
+                entries.remove(f)
+
+            updateFrontend()
 
         }.start()
     }

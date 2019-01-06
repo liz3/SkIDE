@@ -76,6 +76,9 @@ class GeneralSettingsGUIController {
     lateinit var serverStartAgsTextField: TextField
 
     @FXML
+    lateinit var jvmStartAgsTextField: TextField
+
+    @FXML
     lateinit var settingsTheneComboBox: ComboBox<String>
 
     @FXML

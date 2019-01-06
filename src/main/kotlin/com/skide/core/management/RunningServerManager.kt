@@ -2,8 +2,6 @@ package com.skide.core.management
 
 import com.skide.CoreManager
 import com.skide.include.Server
-import com.skide.utils.OperatingSystemType
-import com.skide.utils.getOS
 import com.skide.utils.writeFile
 import javafx.application.Platform
 import javafx.scene.control.TextArea
@@ -25,9 +23,20 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
 
             area.isEditable = false
             val builder = ProcessBuilder()
-            val list = arrayListOf(File(File(System.getProperty("java.home"), "bin"), "java").absolutePath, "-jar", File(server.configuration.folder, "server.jar").absolutePath)
-            server.configuration.startAgrs.split(" ").forEach {
-                list += it
+            val javaPath = File(File(System.getProperty("java.home"), "bin"), "java").absolutePath
+            val serverFile = File(server.configuration.folder, "server.jar").absolutePath
+            val list = arrayListOf(javaPath, "-jar")
+            if(server.configuration.jvmArgs.isNotEmpty()) {
+                server.configuration.jvmArgs.split(" ").forEach {
+                    list += it
+                }
+            }
+            list.add("-jar")
+            list.add(serverFile)
+            if(server.configuration.startArgs.isNotEmpty()) {
+                server.configuration.startArgs.split(" ").forEach {
+                    list += it
+                }
             }
             builder.command(list)
             builder.directory(server.configuration.folder)

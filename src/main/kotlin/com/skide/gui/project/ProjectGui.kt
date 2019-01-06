@@ -506,6 +506,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             holder.manager.saveCode()
             openProjectGuiManager.openFiles.remove(holder.f)
             System.gc()
+            openProjectGuiManager.openProject.errorFrontEnd.removeFile(holder.f)
             if (openProjectGuiManager.openFiles.size == 0) {
                 controller.browserTabPane.selectionModel.select(0)
                 structureTab.first.isDisable = true

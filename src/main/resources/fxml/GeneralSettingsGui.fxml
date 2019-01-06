@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="778.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.GeneralSettingsGUIController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="660.0" prefWidth="1010.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.GeneralSettingsGUIController">
    <center>
       <TabPane prefHeight="524.0" prefWidth="826.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
          <tabs>
@@ -80,44 +80,54 @@
                      <children>
                         <HBox spacing="15.0">
                            <children>
-                              <VBox prefHeight="194.0" prefWidth="222.0" spacing="5.0">
+                              <VBox prefHeight="210.0" prefWidth="286.0" spacing="5.0">
                                  <children>
                                     <HBox prefHeight="31.0" prefWidth="222.0" spacing="5.0">
                                        <children>
-                                          <TextField fx:id="serverNewServerNameTextField" />
-                                          <Button fx:id="serverNewServerCreateBtn" mnemonicParsing="false" text="New" />
+                                          <TextField fx:id="serverNewServerNameTextField" prefHeight="25.0" prefWidth="199.0" />
+                                          <Button fx:id="serverNewServerCreateBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="91.0" text="New" />
                                        </children>
                                     </HBox>
                                     <ListView fx:id="serverServerList" prefHeight="149.0" prefWidth="200.0" />
                                     <Button fx:id="serverServerDeleteBtn" mnemonicParsing="false" text="Delete Server" />
                                  </children>
                               </VBox>
-                              <VBox prefHeight="194.0" prefWidth="337.0">
+                              <VBox prefHeight="190.0" prefWidth="543.0">
                                  <children>
-                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                    <HBox spacing="5.0">
                                        <children>
-                                          <VBox prefHeight="43.0" prefWidth="205.0">
+                                          <VBox>
                                              <children>
-                                                <Label prefHeight="17.0" prefWidth="63.0" text="Name" />
-                                                <TextField fx:id="serverServerNameTextField" editable="false" prefHeight="26.0" prefWidth="178.0" />
-                                             </children>
-                                          </VBox>
-                                          <VBox prefHeight="43.0" prefWidth="103.0">
-                                             <children>
-                                                <Label text="Start arguments" />
-                                                <TextField fx:id="serverStartAgsTextField" prefHeight="25.0" prefWidth="217.0" />
+                                                <Label text="Name" />
+                                                <TextField fx:id="serverServerNameTextField" editable="false" />
                                              </children>
                                           </VBox>
                                        </children>
                                     </HBox>
-                                    <Label text="Path" />
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                       <children>
+                                          <VBox prefHeight="43.0" prefWidth="266.0">
+                                             <children>
+                                                <Label text="JVM Start Args" />
+                                                <TextField fx:id="jvmStartAgsTextField" />
+                                             </children>
+                                          </VBox>
+                                          <VBox prefHeight="43.0" prefWidth="266.0">
+                                             <children>
+                                                <Label text="Server Start arguments" />
+                                                <TextField fx:id="serverStartAgsTextField" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
+                                    <Label text="Server Folder" />
                                     <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                        <children>
                                           <TextField fx:id="serverServerFolderPathTextField" editable="false" prefHeight="25.0" prefWidth="382.0" />
                                           <Button fx:id="serverServerFolderPathChooseBtn" mnemonicParsing="false" text="..." />
                                        </children>
                                     </HBox>
-                                    <Label text="Server version" />
+                                    <Label text="Server JAR (Bukkit/Spigot/Paper)" />
                                     <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                        <children>
                                           <TextField fx:id="serverServerPathTextField" editable="false" prefHeight="25.0" prefWidth="382.0" />
@@ -132,7 +142,7 @@
                         </HBox>
                         <HBox spacing="15.0">
                            <children>
-                              <VBox spacing="5.0">
+                              <VBox prefHeight="221.0" prefWidth="293.0" spacing="5.0">
                                  <children>
                                     <Label text="Addons" />
                                     <ListView fx:id="serverAddonList" prefHeight="169.0" prefWidth="200.0" />
@@ -141,17 +151,17 @@
                               </VBox>
                               <VBox spacing="5.0">
                                  <children>
-                                    <Label text="Add from file" />
+                                    <Label text="Add Addon from file" />
                                     <HBox spacing="5.0">
                                        <children>
-                                          <TextField fx:id="serverAddAddonFromFileTextField" prefHeight="25.0" prefWidth="382.0" />
+                                          <TextField fx:id="serverAddAddonFromFileTextField" editable="false" prefHeight="25.0" prefWidth="382.0" />
                                           <Button fx:id="serverAddAddonFromFileChooseBtn" mnemonicParsing="false" text="..." />
                                        </children>
                                     </HBox>
                                     <Button fx:id="serverAddAddonFromFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Add" />
                                     <Label text="Add from presets">
                                        <padding>
-                                          <Insets top="30.0" />
+                                          <Insets top="5.0" />
                                        </padding>
                                     </Label>
                                     <ComboBox fx:id="serverAddAddonFromPresetComboBox" disable="true" prefHeight="25.0" prefWidth="383.0">
@@ -161,6 +171,9 @@
                                     </ComboBox>
                                     <Button fx:id="serverAddAddonFromPresetBtn" disable="true" mnemonicParsing="false" text="Add" />
                                  </children>
+                                 <padding>
+                                    <Insets top="5.0" />
+                                 </padding>
                               </VBox>
                            </children>
                         </HBox>
