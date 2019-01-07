@@ -37,6 +37,11 @@ public class Version implements Comparable<Version> {
     }
 
     @Override
+    public String toString() {
+        return version;
+    }
+
+    @Override
     public boolean equals(Object that) {
         return this == that || that != null && this.getClass() == that.getClass() && this.compareTo((Version) that) == 0;
     }

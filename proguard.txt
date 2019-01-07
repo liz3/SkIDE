@@ -31,7 +31,6 @@
 
 -dontwarn org.apache.**
 -dontwarn com.jcraft.**
-
 -dontshrink
 -dontoptimize
 -printmapping proguard.map

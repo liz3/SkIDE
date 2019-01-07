@@ -37,6 +37,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("highlighting", "${ctrl.settingsHighlightingCheck.isSelected}")
         coreManager.configManager.set("theme", ctrl.settingsTheneComboBox.selectionModel.selectedItem)
         coreManager.configManager.set("auto_complete", "${ctrl.settingsAutoCompleteCheck.isSelected}")
+        coreManager.configManager.set("auto_complete_skript", "${ctrl.settingsAutoCompleteSkriptCheck.isSelected}")
         coreManager.configManager.set("auto_complete_addon", "${ctrl.settingsAutoCompleteAddonCheck.isSelected}")
         coreManager.configManager.set("cross_auto_complete", "${ctrl.crossFileAutoComplete.isSelected}")
         coreManager.configManager.set("font", ctrl.settingsFontTextField.text)
@@ -207,6 +208,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
         ctrl.settingsAutoCompleteCheck.isSelected = coreManager.configManager.get("auto_complete") == "true"
         ctrl.settingsAutoCompleteAddonCheck.isSelected = coreManager.configManager.get("auto_complete_addon") == "true"
+        ctrl.settingsAutoCompleteSkriptCheck.isSelected = coreManager.configManager.get("auto_complete_skript") == "true"
         ctrl.crossFileAutoComplete.isSelected = coreManager.configManager.get("cross_auto_complete") == "true"
         ctrl.settingsHighlightingCheck.isSelected = coreManager.configManager.get("highlighting") == "true"
         ctrl.settingsTheneComboBox.selectionModel.select(coreManager.configManager.get("theme").toString())

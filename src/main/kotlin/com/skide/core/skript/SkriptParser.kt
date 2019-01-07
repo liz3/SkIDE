@@ -19,6 +19,10 @@ class SkriptParser(val manager: OpenProject) {
                     events.add(addonItem)
             }
         }
+        for (addonItem in manager.coreManager.resourceManager.skript.versions["default"]!!) {
+            if (addonItem.type == DocType.EVENT)
+                events.add(addonItem)
+        }
     }
 
     fun superParse(rawContent: String): Vector<Node> {

@@ -17,7 +17,7 @@ class ProjectSettingsGUIController {
     lateinit var prNameTextField: TextField
 
     @FXML
-    lateinit var skriptVersionComboBox: ComboBox<*>
+    lateinit var skriptVersionComboBox: ComboBox<String>
 
     @FXML
     lateinit var plListView: ListView<Addon>

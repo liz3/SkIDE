@@ -31,7 +31,7 @@ class SettingsGui(val coreManager: CoreManager, val projGuiManager: OpenProjectG
             dOpts.initDeployModule()
             window.stage.initModality(Modality.WINDOW_MODAL)
             window.stage.initOwner(projGuiManager.window.stage)
-            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
+            if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             SettingsGuiEventListener(this, window.controller as ProjectSettingsGUIController, co, dOpts).init()
         }
 
@@ -53,13 +53,10 @@ enum class SettingsChangeType {
 class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGUIController, val co: CompileOptionsGUI, val dOpts: DeployOptionsGUI) {
 
 
-    val resourceManager = gui.coreManager.resourceManager
-
-    val currentInstalled = gui.projGuiManager.openProject.project.fileManager.addons
-
+    private val resourceManager = gui.coreManager.resourceManager
+    private val currentInstalled = gui.projGuiManager.openProject.project.fileManager.addons
     val changes = Vector<Pair<Addon, SettingsChangeType>>()
-
-    val alterValues = HashMap<Addon, String>()
+    private val alterValues = HashMap<Addon, String>()
 
     var loaded = false
 
@@ -83,30 +80,16 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
                 }
                 endVal
             }.invoke()
-/*
-      ctrl.plVersionsComboBox.items.clear()
-            item.versions.keys.forEach {
-                ctrl.plVersionsComboBox.items.add(it)
-            }
-            if (alterValues.containsKey(currItem())) {
-                ctrl.plVersionsComboBox.selectionModel.select(alterValues[currItem()])
-            }
-            if (currentInstalled.containsKey(item.name)) ctrl.plVersionsComboBox.selectionModel.select(currentInstalled[item.name])
- */
-
         }
     }
 
     fun init() {
 
         ctrl.plListView.items.clear()
-
         resourceManager.addons.forEach {
             ctrl.plListView.items.add(it.value)
         }
-
         ctrl.prNameTextField.text = gui.project.name
-
         ctrl.plNameLabel.text = ""
         ctrl.plDescriptionLabel.text = ""
         ctrl.plAuthorLabel.text = ""
@@ -114,6 +97,9 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
             loaded = true
 
             ctrl.skriptVersionComboBox.isDisable = true
+            if (ctrl.skriptVersionComboBox.items.contains(gui.project.skriptVersion))
+                ctrl.skriptVersionComboBox.selectionModel.select(gui.project.skriptVersion)
+
             ctrl.plListView.selectionModel.selectedItemProperty().addListener { _, _, _ ->
 
                 updateState()
@@ -129,7 +115,7 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
                     }
                     if (toRemove != null) changes.remove(toRemove)
                     changes.addElement(Pair(currItem(), SettingsChangeType.ADDON_ADD))
-                    alterValues[currItem()] = "0.0.0"
+                    alterValues[currItem()] = "default"
                 } else {
                     var toRemove: Pair<Addon, SettingsChangeType>? = null
                     changes.forEach {
@@ -141,24 +127,6 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
                     changes.addElement(Pair(currItem(), SettingsChangeType.ADDON_REMOVE))
                 }
             }
-            /*
-               ctrl.plVersionsComboBox.selectionModel.selectedItemProperty().addListener { _, _, _ ->
-
-                ctrl.enableSupportCheckBox.isDisable = false
-                if (ctrl.plVersionsComboBox.selectionModel.selectedItem == null) return@addListener
-                var toRemove: Pair<Addon, SettingsChangeType>? = null
-                changes.forEach {
-                    if (it.first == currItem()) {
-                        if (it.second == SettingsChangeType.ADDON_ALTER) toRemove = it
-                    }
-                }
-                if (toRemove != null) changes.remove(toRemove)
-                val elem = Pair(currItem(), SettingsChangeType.ADDON_ALTER)
-                changes.addElement(elem)
-
-
-            }
-             */
             ctrl.plVersionsComboBox.isDisable = true
             ctrl.enableSupportCheckBox.isDisable = true
             ctrl.applyBtn.setOnAction {
@@ -179,6 +147,10 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
 
     private fun performChanges() {
 
+        val selectedSkriptVersion = ctrl.skriptVersionComboBox.selectionModel.selectedItem
+        if (selectedSkriptVersion != null && selectedSkriptVersion.isNotEmpty())
+            gui.project.skriptVersion = selectedSkriptVersion
+
         alterValues.forEach {
             currentInstalled[it.key.name] = it.value
         }
@@ -197,8 +169,6 @@ class SettingsGuiEventListener(val gui: SettingsGui, val ctrl: ProjectSettingsGU
                 }
             }
         }
-
-
         if (ctrl.prNameTextField.text != gui.projGuiManager.openProject.project.name) {
             gui.projGuiManager.openProject.renameProject(ctrl.prNameTextField.text)
         }

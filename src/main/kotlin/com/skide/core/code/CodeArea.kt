@@ -125,11 +125,14 @@ class EventHandler(private val area: CodeArea) {
 
     fun autoCompleteRequest(doc: Any, pos: Any, token: Any, context: Any): JSObject {
         val array = area.getArray()
-        if (area.coreManager.configManager.get("auto_complete") == "true")
-            if (area.getCurrentColumn() < 3 && !area.getLineContent(area.getCurrentLine()).startsWith("\t"))
-                area.openFileHolder.codeManager.autoComplete.showGlobalAutoComplete(array)
-            else
-                area.openFileHolder.codeManager.autoComplete.showLocalAutoComplete(array)
+
+
+            if (area.coreManager.configManager.get("auto_complete") == "true")
+                if (area.getCurrentColumn() < 3 && !area.getLineContent(area.getCurrentLine()).startsWith("\t"))
+                    area.openFileHolder.codeManager.autoComplete.showGlobalAutoComplete(array)
+                else
+                    area.openFileHolder.codeManager.autoComplete.showLocalAutoComplete(array)
+
         return array
     }
 

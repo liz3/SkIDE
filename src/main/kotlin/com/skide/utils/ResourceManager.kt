@@ -16,32 +16,35 @@ import kotlin.collections.HashMap
 
 class ResourceManager(val coreManager: CoreManager) {
 
-
+    val skript = Addon(-1, "Skript", "")
     val addons = HashMap<String, Addon>()
-    val skriptDocList = Vector<AddonItem>()
     val skriptVersions = Vector<String>()
-    val addonsFile = File(coreManager.configManager.rootFolder, "addons.json")
-    val skriptVersionsFile = File(coreManager.configManager.rootFolder, "skript-vers.json")
-    val skriptVersionsFolder = File(coreManager.configManager.rootFolder, "skript-versions")
+    private val addonsFile = File(coreManager.configManager.rootFolder, "addons.json")
+    private val skriptVersionsFile = File(coreManager.configManager.rootFolder, "skript-vers.json")
+    private val skriptVersionsFolder = File(coreManager.configManager.rootFolder, "skript-versions")
 
-    val skHubFile = File(coreManager.configManager.rootFolder, "skHub.json")
+    private val skHubFile = File(coreManager.configManager.rootFolder, "skHub.json")
 
 
-    fun parseSkriptVersions() {
-        JSONArray(readFile(skriptVersionsFile).second).forEach { skriptVersions.add(it as String) }
+    private fun parseSkriptVersions() {
+        val obj = JSONArray(readFile(skHubFile.absolutePath).second)
+        skriptVersions.sort()
+        skriptVersions.reverse()
     }
 
-    fun readAddons() {
+    private fun readAddons() {
 
         for (entry in JSONArray(readFile(addonsFile).second)) {
             entry as JSONObject
             val name = entry.getString("name")
+            if (name == "Skript") continue
             val addon = Addon(addons.size.toLong(), name, entry.getString("author"))
             addons[name] = addon
-            addon.versions["0.0.0"] = Vector()
+            addon.versions["default"] = Vector()
 
         }
     }
+
     fun loadAddon(name: String) {
         if (addons[name] != null && addons[name]!!.loaded) {
             return
@@ -52,7 +55,7 @@ class ResourceManager(val coreManager: CoreManager) {
             val addonObj = entry.getJSONObject("addon")
             if (addonObj.getString("name") != name) continue
             val addon = getAddon(addonObj.getString("name"))
-            val list = addon.versions["0.0.0"]!!
+            val list = addon.versions["default"]!!
             val title = entry.getString("title")
             val type = when (entry.getString("syntax_type")) {
                 "event" -> DocType.EVENT
@@ -62,8 +65,7 @@ class ResourceManager(val coreManager: CoreManager) {
                 "type" -> DocType.TYPE
                 else -> DocType.TYPE
             }
-            val description = entry.getString("description")
-            val pattern = entry.getString("syntax_pattern").split("\n").first()
+            val patterns = entry.getString("syntax_pattern").split("\n")
             val returnType =
                     if (entry.has("return_type") && !entry.isNull("return_type"))
                         entry.getString("return_type")
@@ -72,17 +74,19 @@ class ResourceManager(val coreManager: CoreManager) {
                     if (entry.has("event_values") && !entry.isNull("event_values"))
                         entry.getString("event_values")
                     else ""
-            val item = AddonItem(entry.getInt("id"), title, type, addon, pattern, description, eventValues, returnType)
-            if(item.type == DocType.EVENT)
-                item.requirements = EditorUtils.extractNeededPartsFromEvent(pattern)
+            val version = entry.getString("compatible_addon_version")
+            for ((counter, pattern) in patterns.withIndex()) {
+                val description = entry.getString("description")
+                val item = AddonItem(entry.getInt("id"), "$title - ${counter + 1}", type, addon, pattern, "Description: $description\nSince: $version", eventValues, returnType)
+                if (item.type == DocType.EVENT)
+                    item.requirements = EditorUtils.extractNeededPartsFromEvent(pattern)
 
-            for (req in entry.getJSONArray("required_plugins")) {
-                req as JSONObject
-                item.plugins.add(req.getString("name"))
+                for (req in entry.getJSONArray("required_plugins")) {
+                    req as JSONObject
+                    item.plugins.add(req.getString("name"))
+                }
+                list.add(item)
             }
-            if (addonObj.getString("name") == "Skript")
-                skriptDocList.addElement(item)
-            list.add(item)
         }
         addons[name]?.loaded = true
     }
@@ -108,8 +112,51 @@ class ResourceManager(val coreManager: CoreManager) {
         callback(total, 6, "Reading script versions")
         parseSkriptVersions()
         readAddons()
+        readSkript()
         callback(total, 8, "Parsing Addons...")
-        loadAddon("Skript")
+    }
+
+    private fun readSkript() {
+        val l = Vector<AddonItem>()
+        val obj = JSONArray(readFile(skHubFile.absolutePath).second)
+        for (entry in obj) {
+            entry as JSONObject
+            val addonObj = entry.getJSONObject("addon")
+            if (addonObj.getString("name") != "Skript") continue
+            val syntaxTitle = entry.getString("title")
+            val type = when (entry.getString("syntax_type")) {
+                "event" -> DocType.EVENT
+                "condition" -> DocType.CONDITION
+                "effect" -> DocType.EFFECTS
+                "expression" -> DocType.EXPRESSION
+                "type" -> DocType.TYPE
+                else -> DocType.TYPE
+            }
+            val patterns = entry.getString("syntax_pattern").split("\n")
+            val returnType =
+                    if (entry.has("return_type") && !entry.isNull("return_type"))
+                        entry.getString("return_type")
+                    else ""
+            val eventValues =
+                    if (entry.has("event_values") && !entry.isNull("event_values"))
+                        entry.getString("event_values")
+                    else ""
+            val version = entry.getString("compatible_addon_version")
+            for (pattern in patterns) {
+                val description = entry.getString("description")
+                val item = AddonItem(entry.getInt("id"), syntaxTitle, type, skript, pattern, "Description: $description\nSince: $version", eventValues, returnType)
+                if (item.type == DocType.EVENT)
+                    item.requirements = EditorUtils.extractNeededPartsFromEvent(pattern)
+
+                for (req in entry.getJSONArray("required_plugins")) {
+                    req as JSONObject
+                    item.plugins.add(req.getString("name"))
+                }
+                l.add(item)
+                break
+            }
+        }
+        skript.versions["default"] = l
     }
 
     private fun getAddon(name: String): Addon {
@@ -117,7 +164,7 @@ class ResourceManager(val coreManager: CoreManager) {
             return addons[name]!!
         val addon = Addon(addons.size.toLong(), name, "unknown")
         addons[name] = addon
-        addon.versions["0.0.0"] = Vector()
+        addon.versions["default"] = Vector()
         return addon
     }
 
@@ -132,6 +179,31 @@ class ResourceManager(val coreManager: CoreManager) {
         }
 
         return skFile
+    }
+
+    private fun skriptVersionPatcher(raw: String): Version {
+        if (raw.isEmpty()) {
+            return Version("1.0")
+        }
+        if (raw == "unknown (2.2)") {
+            return Version("2.2")
+        }
+        if (raw == "unknown (before 2.1)") {
+            return Version("2.1")
+        }
+        if (raw == "unknown" || raw == " add" || raw == " unknown (mine)" || raw == " remove" || raw == " delete)"
+                || raw == " unknown (player list name)") {
+            return Version("1.0")
+        }
+        val static = raw.trim()
+        val version = static.replace("-dev", ".").split(" ").first()
+        return try {
+            Version(version)
+        } catch (e: Exception) {
+
+            Version("1.0")
+
+        }
     }
 }
 
