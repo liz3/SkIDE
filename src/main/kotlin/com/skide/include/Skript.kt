@@ -20,7 +20,6 @@ enum class NodeType {
     FUNCTION,
     UNDEFINED,
     INVALID,
-    CLASS,
     FUNCTION_CALL,
     INTERVAL
 }

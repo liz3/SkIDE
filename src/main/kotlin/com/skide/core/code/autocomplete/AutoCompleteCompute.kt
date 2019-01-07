@@ -198,7 +198,7 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                count++
            }
 
-           if (!manager.sequenceReplaceHandler.computing)
+           if (!manager.sequenceReplaceHandler.computing) {
                addonSupported.values.forEach { addon ->
                    addon.forEach { item ->
                        if (item.type != DocType.EVENT) {
@@ -211,6 +211,35 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
                        }
                    }
                }
+
+               for (snippet in project.coreManager.snippetManager.snippets) {
+                   if(node.parent == null) continue
+                   if(!snippet.rootRule.allowedTypes.contains(parent.nodeType)) continue
+                   if(!snippet.parentRule.allowedTypes.contains(node.parent.nodeType)) continue
+
+                   if(snippet.rootRule.startsWith.first &&
+                           !parent.getContent().startsWith(snippet.rootRule.startsWith.second))continue
+                   if(snippet.rootRule.contains.first &&
+                           !parent.getContent().contains(snippet.rootRule.contains.second))continue
+                   if(snippet.rootRule.endsWith.first &&
+                           !parent.getContent().endsWith(snippet.rootRule.endsWith.second))continue
+
+                   if(snippet.parentRule.startsWith.first &&
+                           !node.parent.getContent().startsWith(snippet.parentRule.startsWith.second))continue
+                   if(snippet.parentRule.contains.first &&
+                           !node.parent.getContent().contains(snippet.parentRule.contains.second))continue
+                   if(snippet.parentRule.endsWith.first &&
+                           !node.parent.getContent().endsWith(snippet.parentRule.endsWith.second))continue
+
+
+                   if(!snippet.triggerReplaceSequence)
+                       addSuggestionToObject(AutoCompleteItem(area, snippet.label, CompletionType.SNIPPET, snippet.insertText), array, count)
+                   else
+                       addSuggestionToObject(AutoCompleteItem(area, snippet.label, CompletionType.SNIPPET, snippet.insertText, commandId = "general_auto_complete_finish", detail = snippet.name), array, count)
+                   count++
+               }
+           }
+
            varsToAdd.clear()
     }
 
@@ -255,6 +284,11 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
         }
         inspectorItems.forEach {
             addSuggestionToObject(it, array, count)
+            count++
+        }
+        for (snippet in project.coreManager.snippetManager.snippets) {
+            if(!snippet.rootRule.allowedTypes.contains(NodeType.ROOT)) continue
+            addSuggestionToObject(AutoCompleteItem(area, snippet.label, CompletionType.SNIPPET, snippet.insertText, snippet.name), array, count)
             count++
         }
     }

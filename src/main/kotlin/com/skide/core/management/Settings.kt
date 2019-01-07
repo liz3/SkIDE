@@ -46,13 +46,13 @@ class ConfigManager(val coreManager: CoreManager) {
     var betaChannel = false
 
 
-    val rootFolder = File(System.getProperty("user.home"), if(Info.prodMode) ".sk-ide-config" else ".sk-ide-dev-config")
-    var defaultProjectPath = File(System.getProperty("user.home"), if(Info.prodMode) "SkIDE-Projects" else "SkIDE-dev-Projects")
+    val rootFolder = File(System.getProperty("user.home"), if (Info.prodMode) ".sk-ide-config" else ".sk-ide-dev-config")
+    var defaultProjectPath = File(System.getProperty("user.home"), if (Info.prodMode) "SkIDE-Projects" else "SkIDE-dev-Projects")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
         }
-    private var defaultServerPath = File(System.getProperty("user.home"), if(Info.prodMode) "SkIDE-Server" else "SkIDE-dev-Server")
+    private var defaultServerPath = File(System.getProperty("user.home"), if (Info.prodMode) "SkIDE-Server" else "SkIDE-dev-Server")
         set(value) {
             field = value
             if (configLoaded) writeFile(getConfigObject().toString().toByteArray(), configFile)
@@ -65,16 +65,18 @@ class ConfigManager(val coreManager: CoreManager) {
 
 
     private fun oldVerCheck() {
-        if(!checkFile.exists() && Info.prodMode) {
+        if (!checkFile.exists() && Info.prodMode) {
             JOptionPane.showMessageDialog(null, "Please re install SkIDE From: https://skide.21xayah.com, major changes have been made which require a re install!")
             LinkOpener().open("https://skide.21xayah.com/#download")
             System.exit(0)
         }
     }
+
     private val configFile = File(rootFolder, "settings.skide")
     private val projectsFile = File(rootFolder, "projects.skide")
     private val serversFile = File(rootFolder, "servers.skide")
     private val hostsFile = File(rootFolder, "hosts.skide")
+    val snippetsFile = File(rootFolder, "snippets.skide")
 
     val projects = HashMap<Long, PointerHolder>()
     val servers = HashMap<Long, PointerHolder>()
@@ -86,7 +88,9 @@ class ConfigManager(val coreManager: CoreManager) {
 
         if (!rootFolder.exists()) firstRun = true
         if (!configFile.exists()) firstRun = true
-
+        if (!snippetsFile.exists()) {
+            writeFile("[]".toByteArray(), snippetsFile, false, true)
+        }
         if (firstRun) return if (createFiles()) {
             checkCssFiles()
             ConfigLoadResult.FIRST_RUN

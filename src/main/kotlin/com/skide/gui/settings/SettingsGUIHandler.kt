@@ -24,6 +24,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
     var newServerAdded = false
 
+    val snippetGuiHandler = SnippetGuiHandler(ctrl, coreManager)
     val serverManager = coreManager.serverManager
     val deleted = Vector<Server>()
 
@@ -79,6 +80,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
             deleted.clear()
             updateSettings()
+            snippetGuiHandler.applyChanges()
             window.stage.close()
             if (Prompts.infoCheck("Restart", "Sk-IDE restart", "In order to perform all changes, SkIde needs to be restarted!", Alert.AlertType.CONFIRMATION)) {
                 restart()
@@ -97,6 +99,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             }
 
             deleted.clear()
+            snippetGuiHandler.applyChanges()
             updateSettings()
         }
         ctrl.cancelBtn.setOnAction {
@@ -214,6 +217,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             ctrl.updateCheck.isSelected = coreManager.configManager.update
             ctrl.betaUpdateCheck.isSelected = coreManager.configManager.betaChannel
         }
+        snippetGuiHandler.init()
         updateFocusAllow(true)
     }
 

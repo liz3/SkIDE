@@ -2,12 +2,12 @@ package com.skide.gui.controllers
 
 import com.skide.include.Server
 import com.skide.include.ServerAddon
+import com.skide.include.Snippet
 import javafx.fxml.FXML
-import javafx.scene.control.Button
-import javafx.scene.control.ComboBox
-import javafx.scene.control.ListView
-import javafx.scene.control.TextField
-import javafx.scene.control.CheckBox
+import javafx.scene.control.*
+import javafx.scene.layout.HBox
+
+
 
 
 class GeneralSettingsGUIController {
@@ -113,8 +113,32 @@ class GeneralSettingsGUIController {
 
     @FXML
     lateinit var updateCheck: CheckBox
-
     @FXML
     lateinit var betaUpdateCheck: CheckBox
+
+    @FXML
+    lateinit var snippetTriggerReplaceSequence: CheckBox
+
+
+    @FXML
+    lateinit var snippetNewField: TextField
+
+    @FXML
+    lateinit var snippetNewBtn: Button
+
+    @FXML
+    lateinit var snippetListView: ListView<Snippet>
+
+    @FXML
+    lateinit var snippetDeleteBtn: Button
+
+    @FXML
+    lateinit var snippetLabelField: TextField
+
+    @FXML
+    lateinit var snippetContentArea: TextArea
+
+    @FXML
+    lateinit var snippetRulesContainer: HBox
 
 }

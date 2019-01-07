@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="362.0" prefWidth="410.0" spacing="5.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.SnippetRuleController">
+   <children>
+      <Label fx:id="titleLabel" />
+      <Label text="Type" />
+      <ListView fx:id="typeList" />
+      <HBox prefHeight="4.0" prefWidth="356.0" spacing="5.0">
+         <children>
+            <CheckBox fx:id="startsWithCheck" mnemonicParsing="false" prefHeight="25.0" prefWidth="115.0" text="Starts With" />
+            <TextField fx:id="startsWithField" prefHeight="26.0" prefWidth="217.0" />
+         </children>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="237.0" prefHeight="4.0" prefWidth="356.0" spacing="5.0">
+         <children>
+            <CheckBox fx:id="containsCheck" mnemonicParsing="false" prefHeight="25.0" prefWidth="115.0" text="Contains" />
+            <TextField fx:id="containsField" prefHeight="26.0" prefWidth="217.0" />
+         </children>
+      </HBox>
+      <HBox layoutX="10.0" layoutY="268.0" prefHeight="4.0" prefWidth="356.0" spacing="5.0">
+         <children>
+            <CheckBox fx:id="endsWithCheck" mnemonicParsing="false" prefHeight="25.0" prefWidth="115.0" text="Ends with" />
+            <TextField fx:id="endsWithField" prefHeight="26.0" prefWidth="217.0" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

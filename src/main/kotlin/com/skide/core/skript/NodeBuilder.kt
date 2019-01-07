@@ -116,11 +116,13 @@ class NodeBuilder(val node: Node) {
         if (content.toLowerCase().startsWith("trigger:")) {
             theType = NodeType.TRIGGER
         }
+       /*
         if (content.toLowerCase().startsWith("class ")) {
             fields.put("name", content.split(" ")[1].replace(":", ""))
             theType = NodeType.CLASS
 
         }
+        */
         if (content.toLowerCase().startsWith("stop ")) {
             theType = NodeType.STOP
         }
