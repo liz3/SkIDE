@@ -1,7 +1,7 @@
 -injars 'build/libs/ide.jar'
 -outjars 'build/libs/pro.jar'
--classobfuscationdictionary dir2.txt
--packageobfuscationdictionary dir2.txt
+-classobfuscationdictionary dictionary.txt
+-packageobfuscationdictionary dictionary.txt
 
 -libraryjars  <java.home>/lib/rt.jar
 -libraryjars  <java.home>/lib/plugin.jar
@@ -61,6 +61,7 @@
         netscape.javascript.JSObject commandFire(java.lang.String);
 
 }
+
 -keepclassmembernames class com.skide.core.code.CallbackHook {
     void call();
 }
