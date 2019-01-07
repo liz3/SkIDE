@@ -199,19 +199,22 @@ class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder)
            }
 
            if (!manager.sequenceReplaceHandler.computing) {
-               addonSupported.values.forEach { addon ->
-                   addon.forEach { item ->
-                       if (item.type != DocType.EVENT) {
-                           val name = item.name
-                           var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "").replace("\r","")
-                           if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder"
-                           if (item.type == DocType.CONDITION) adder += ":"
-                           addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, adder, commandId = "general_auto_complete_finish", detail = "${item.type} - ${item.addon.name}"), array, count)
-                           count++
+
+               if(project.coreManager.configManager.get("auto_complete_addon") == "true") {
+                   addonSupported.values.forEach { addon ->
+                       addon.forEach { item ->
+                           if (item.type != DocType.EVENT) {
+                               val name = item.name
+                               var adder = (if (item.pattern == "") item.name.toLowerCase() else item.pattern).replace("\n", "").replace("\r","")
+                               if (item.type == DocType.CONDITION) if (!lineContent.contains("if ")) adder = "if $adder"
+                               if (item.type == DocType.CONDITION) adder += ":"
+                               addSuggestionToObject(AutoCompleteItem(area, name, CompletionType.MODULE, adder, commandId = "general_auto_complete_finish", detail = "${item.type} - ${item.addon.name}"), array, count)
+                               count++
+                           }
                        }
                    }
-               }
 
+               }
                for (snippet in project.coreManager.snippetManager.snippets) {
                    if(node.parent == null) continue
                    if(!snippet.rootRule.allowedTypes.contains(parent.nodeType)) continue

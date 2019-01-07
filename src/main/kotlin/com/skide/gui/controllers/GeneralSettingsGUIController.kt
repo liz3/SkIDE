@@ -95,6 +95,9 @@ class GeneralSettingsGUIController {
     lateinit var settingsAutoCompleteCheck: CheckBox
 
     @FXML
+    lateinit var settingsAutoCompleteAddonCheck: CheckBox
+
+    @FXML
     lateinit var webViewDebuggerCheck: CheckBox
 
     @FXML

@@ -24,13 +24,14 @@
                      <children>
                         <VBox spacing="5.0">
                            <children>
-                              <CheckBox fx:id="settingsAutoCompleteCheck" mnemonicParsing="false" text="Enable auto-complete" />
-                              <CheckBox fx:id="settingsHighlightingCheck" mnemonicParsing="false" text="Enable highlighting" />
+                              <CheckBox fx:id="settingsHighlightingCheck" disable="true" mnemonicParsing="false" text="Enable highlighting" />
                               <CheckBox fx:id="crossFileAutoComplete" mnemonicParsing="false" text="Enable cross-file auto-complete" />
                               <CheckBox fx:id="metaDataGenerateCheck" mnemonicParsing="false" text="Info Generate on new File" />
                               <CheckBox fx:id="settingsUpdateDataCheck" mnemonicParsing="false" text="Update data on restart" />
                               <CheckBox fx:id="webViewDebuggerCheck" mnemonicParsing="false" text="Enable Editor Debugger" />
                               <CheckBox fx:id="analyiticsCheck" mnemonicParsing="false" text="Send Metrics via Google Analytics" />
+                              <CheckBox fx:id="settingsAutoCompleteCheck" mnemonicParsing="false" text="Enable General Autocomplete" />
+                              <CheckBox fx:id="settingsAutoCompleteAddonCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Enable Addon Autocomplete" />
                               <Button fx:id="settingsCssFileBtn" disable="true" mnemonicParsing="false" text="Open Highlighting File " />
                            </children>
                         </VBox>
