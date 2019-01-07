@@ -62,14 +62,7 @@ shadowJar {
     archiveName = "ide.jar"
 }
 task proguard(type: proguard.gradle.ProGuardTask) {
-
     configuration 'proguard.txt'
-    injars 'build/libs/ide.jar'
-    outjars 'build/libs/pro.jar'
-
-    keep 'public class com.skide.MainKt { \
-        public static void main(java.lang.String[]); \
-    }'
 }
 jar {
     archiveName = "ide-core.jar"

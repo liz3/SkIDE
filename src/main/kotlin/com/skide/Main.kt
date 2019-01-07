@@ -4,3 +4,9 @@ object Info {
     var prodMode = false
 }
 fun main(args: Array<String>) = CoreManager().bootstrap(args)
+
+class ReflectionLauncher {
+    fun start(args:Array<String>) {
+       CoreManager().bootstrap(args)
+   }
+}

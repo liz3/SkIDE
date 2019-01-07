@@ -38,6 +38,50 @@ class CoreManager {
 
     private var debugLevel = DebugLevel.INFORMATION
 
+    private fun initialize(args: Array<String>) {
+        args.forEach {
+            //first lets set the debug level
+            if (it.startsWith("--debug")) {
+                debugLevel = DebugLevel.valueOf(it.split("=")[1].toUpperCase())
+            }
+        }
+        if (System.getProperty("skide.mode") != null && System.getProperty("skide.mode") == "prod")
+            Info.prodMode = true
+    }
+    private fun setupInstances(me: CoreManager) {
+        configManager = ConfigManager(me)
+        projectManager = ProjectManager(me)
+        serverManager = ServerManager(me)
+        resourceManager = ResourceManager(me)
+        saver = AutoSaver(me)
+        skUnity = SkUnity(me)
+        sockServer = SocketManager(me)
+        snippetManager = SnippetManager(me)
+        debugger.syserr.core = me
+        sockServer.start()
+    }
+
+    fun googleAnalyticsSetup(me:CoreManager): Boolean {
+        var r = false
+        googleAnalytics = GoogleAnalytics(me)
+        if (configManager.get("analytics") == "") {
+            r = true
+            configManager.set("analytics", "true")
+        } else {
+            if (configManager.get("analytics") == "true" && !Info.prodMode) {
+                googleAnalytics.start()
+            }
+        }
+        return r
+    }
+    private fun welcomeWindow(me:CoreManager, configLoadResult:ConfigLoadResult) {
+
+        val window = guiManager.getWindow("fxml/StartGui.fxml", "SkIDE Ultimate ${Info.version}", false)
+        (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
+        window.stage.isResizable = false
+        if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
+        window.stage.show()
+    }
     fun bootstrap(args: Array<String>) {
 
         debugger = Debugger()
@@ -68,28 +112,10 @@ class CoreManager {
                     try {
                         updateMessage("Initializing...")
                         updateProgress(0.0, 100.0)
-                        args.forEach {
-                            //first lets set the debug level
-                            if (it.startsWith("--debug")) {
-                                debugLevel = DebugLevel.valueOf(it.split("=")[1].toUpperCase())
-                            }
-                        }
-                        if (System.getProperty("skide.mode") != null && System.getProperty("skide.mode") == "prod")
-                            Info.prodMode = true
-                        configManager = ConfigManager(me)
-                        projectManager = ProjectManager(me)
-                        serverManager = ServerManager(me)
-                        resourceManager = ResourceManager(me)
-                        saver = AutoSaver(me)
-                        skUnity = SkUnity(me)
-                        sockServer = SocketManager(me)
-                        snippetManager = SnippetManager(me)
 
+                        initialize(args)
 
-                        debugger.syserr.core = me
-
-                        sockServer.start()
-
+                        setupInstances(me)
                         updateProgress(5.0, 100.0)
                         updateMessage("Loading Config...")
                         val configLoadResult = configManager.load()
@@ -117,32 +143,16 @@ class CoreManager {
                         Prompts.theme = (configManager.get("theme") as String)
                         Prompts.configManager = configManager
 
-                            Platform.runLater {
-                                googleAnalytics = GoogleAnalytics(me)
-                                if (configManager.get("analytics") == "") {
-                                    analyticInf = true
-                                    configManager.set("analytics", "true")
-                                } else {
-                                    if (configManager.get("analytics") == "true" && !Info.prodMode) {
-                                        googleAnalytics.start()
-                                    }
-                                }
-                                stage.close()
-                                val window = guiManager.getWindow("fxml/StartGui.fxml", "SkIDE Ultimate ${Info.version}", false)
-                                (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
-                                window.stage.isResizable = false
-                                if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
-                                window.stage.show()
-
-                                if (analyticInf) {
-                                    Notifications.create()
-                                            .title("Analytics")
-                                            .text("Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). I do this only for statistics. If you still don´t want it, disable it in the Settings!").darkStyle().hideAfter(Duration.INDEFINITE)
-                                            .show()
-                                }
-
-
-
+                        Platform.runLater {
+                            analyticInf = googleAnalyticsSetup(me)
+                            stage.close()
+                            welcomeWindow(me, configLoadResult)
+                            if (analyticInf) {
+                                Notifications.create()
+                                        .title("Analytics")
+                                        .text("Sk-IDE is collecting: When you start the IDE and when you open a Project(ANY INFORMATION ABOUT THE PROJECT IS NOT INCLUDED). I do this only for statistics. If you still don´t want it, disable it in the Settings!").darkStyle().hideAfter(Duration.INDEFINITE)
+                                        .show()
+                            }
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
