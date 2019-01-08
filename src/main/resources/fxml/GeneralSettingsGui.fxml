@@ -13,6 +13,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.web.WebView?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="660.0" prefWidth="1010.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.GeneralSettingsGUIController">
    <center>
@@ -20,61 +21,109 @@
          <tabs>
             <Tab text="General Settings">
                <content>
-                  <HBox spacing="10.0">
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="15.0">
                      <children>
-                        <VBox spacing="5.0">
+                        <HBox prefHeight="153.0" prefWidth="1010.0" spacing="10.0">
                            <children>
-                              <CheckBox fx:id="settingsHighlightingCheck" disable="true" mnemonicParsing="false" text="Enable highlighting" />
-                              <CheckBox fx:id="crossFileAutoComplete" mnemonicParsing="false" text="Enable cross-file auto-complete" />
-                              <CheckBox fx:id="metaDataGenerateCheck" mnemonicParsing="false" text="Info Generate on new File" />
-                              <CheckBox fx:id="settingsUpdateDataCheck" mnemonicParsing="false" text="Update data on restart" />
-                              <CheckBox fx:id="webViewDebuggerCheck" mnemonicParsing="false" text="Enable Editor Debugger" />
-                              <CheckBox fx:id="analyiticsCheck" mnemonicParsing="false" text="Send Metrics via Google Analytics" />
-                              <CheckBox fx:id="settingsAutoCompleteCheck" mnemonicParsing="false" text="Enable Autocomplete" />
-                              <CheckBox fx:id="settingsAutoCompleteSkriptCheck" layoutX="10.0" layoutY="144.0" mnemonicParsing="false" text="Enable Skript Syntax Autocomplete" />
-                              <CheckBox fx:id="settingsAutoCompleteAddonCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Enable Addon Syntax Autocomplete" />
-                              <Button fx:id="settingsCssFileBtn" disable="true" mnemonicParsing="false" text="Open Highlighting File " />
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="466.0" prefWidth="241.0" spacing="5.0">
-                           <children>
-                              <Label text="Theme" />
-                              <ComboBox fx:id="settingsTheneComboBox" prefWidth="150.0" />
-                              <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                              <VBox spacing="5.0">
                                  <children>
-                                    <VBox prefHeight="100.0" prefWidth="278.0">
-                                       <children>
-                                          <Label text="Font" />
-                                          <TextField fx:id="settingsFontTextField" />
-                                       </children>
-                                    </VBox>
-                                    <VBox>
-                                       <children>
-                                          <Label text="Size" />
-                                          <TextField fx:id="settingsFontSizeTextField" minWidth="30.0" />
-                                       </children>
-                                    </VBox>
+                                    <CheckBox fx:id="settingsHighlightingCheck" disable="true" mnemonicParsing="false" text="Enable highlighting" />
+                                    <CheckBox fx:id="crossFileAutoComplete" mnemonicParsing="false" text="Enable cross-file auto-complete" />
+                                    <CheckBox fx:id="metaDataGenerateCheck" mnemonicParsing="false" text="Info Generate on new File" />
+                                    <CheckBox fx:id="settingsUpdateDataCheck" mnemonicParsing="false" text="Update data on restart" />
+                                    <CheckBox fx:id="webViewDebuggerCheck" mnemonicParsing="false" text="Enable Editor Debugger" />
+                                    <CheckBox fx:id="analyiticsCheck" mnemonicParsing="false" text="Send Metrics via Google Analytics" />
+                                    <CheckBox fx:id="settingsAutoCompleteCheck" mnemonicParsing="false" text="Enable Autocomplete" />
+                                    <CheckBox fx:id="settingsAutoCompleteSkriptCheck" layoutX="10.0" layoutY="144.0" mnemonicParsing="false" text="Enable Skript Syntax Autocomplete" />
+                                    <CheckBox fx:id="settingsAutoCompleteAddonCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Enable Addon Syntax Autocomplete" />
                                  </children>
-                              </HBox>
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="466.0" prefWidth="181.0" spacing="5.0">
-                           <children>
-                              <Label text="Global font size" />
-                              <HBox prefHeight="14.0" prefWidth="182.0">
+                              </VBox>
+                              <VBox prefHeight="466.0" prefWidth="241.0" spacing="5.0">
                                  <children>
-                                    <TextField fx:id="globalFontSize" prefHeight="26.0" prefWidth="33.0" />
+                                    <Label text="Theme" />
+                                    <ComboBox fx:id="settingsTheneComboBox" prefWidth="150.0" />
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                       <children>
+                                          <VBox prefHeight="100.0" prefWidth="278.0">
+                                             <children>
+                                                <Label text="Font" />
+                                                <TextField fx:id="settingsFontTextField" />
+                                             </children>
+                                          </VBox>
+                                          <VBox>
+                                             <children>
+                                                <Label text="Size" />
+                                                <TextField fx:id="settingsFontSizeTextField" minWidth="30.0" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                    </HBox>
                                  </children>
-                              </HBox>
-                              <CheckBox fx:id="updateCheck" mnemonicParsing="false" text="Check for updates" />
-                              <CheckBox fx:id="betaUpdateCheck" mnemonicParsing="false" text="Update from Beta Channel" />
+                              </VBox>
+                              <VBox prefHeight="466.0" prefWidth="181.0" spacing="5.0">
+                                 <children>
+                                    <Label text="Global font size" />
+                                    <HBox prefHeight="14.0" prefWidth="182.0">
+                                       <children>
+                                          <TextField fx:id="globalFontSize" prefHeight="26.0" prefWidth="33.0" />
+                                       </children>
+                                    </HBox>
+                                    <CheckBox fx:id="updateCheck" mnemonicParsing="false" text="Check for updates" />
+                                    <CheckBox fx:id="betaUpdateCheck" mnemonicParsing="false" text="Update from Beta Channel" />
+                                 </children>
+                              </VBox>
                            </children>
-                        </VBox>
+                           <padding>
+                              <Insets left="10.0" top="10.0" />
+                           </padding>
+                        </HBox>
+                        <Label text="Color Themes" />
+                        <HBox prefHeight="414.0" prefWidth="1010.0" spacing="5.0">
+                           <children>
+                              <VBox prefHeight="411.0" prefWidth="1011.0">
+                                 <children>
+                                    <HBox prefHeight="11.0" prefWidth="1011.0" spacing="5.0">
+                                       <children>
+                                          <ComboBox prefWidth="150.0" />
+                                          <TextField prefHeight="26.0" prefWidth="210.0" />
+                                          <Button mnemonicParsing="false" text="New" />
+                                          <Button mnemonicParsing="false" text="Delete" />
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="394.0" prefWidth="1011.0" spacing="5.0">
+                                       <children>
+                                          <VBox prefHeight="353.0" prefWidth="327.0">
+                                             <children>
+                                                <Label text="General Colors" />
+                                                <ListView prefHeight="348.0" prefWidth="326.0" />
+                                             </children>
+                                          </VBox>
+                                          <VBox layoutX="10.0" layoutY="10.0" prefHeight="353.0" prefWidth="327.0">
+                                             <children>
+                                                <Label text="Editor " />
+                                                <ListView prefHeight="368.0" prefWidth="326.0" />
+                                             </children>
+                                          </VBox>
+                                          <VBox prefHeight="353.0" prefWidth="362.0">
+                                             <children>
+                                                <Label text="Preview" />
+                                                <WebView prefHeight="342.0" prefWidth="361.0" />
+                                             </children>
+                                          </VBox>
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets bottom="5.0" />
+                           </VBox.margin>
+                        </HBox>
                      </children>
-                     <padding>
-                        <Insets left="10.0" top="10.0" />
-                     </padding>
-                  </HBox>
+                  </VBox>
                </content>
             </Tab>
             <Tab text="Servers">

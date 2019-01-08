@@ -45,9 +45,8 @@ function registerSkript() {
         // The main tokenizer for our languages
         tokenizer: {
             root: [
-                [/\s+[^\}\s]+(?=\(.*\))/, 'function.call'],  // to show class names nicely
-               // [/\.\S+(?=\(.*\))/, 'function.call'],  // to show class names nicely
-                // identifiers and keywords
+                [/\s+[^\}\s]+(?=\(.*\))/, 'function.call'],
+
                 [/[a-z_$][\w$]*/, {
                     cases: {
                         '@typeKeywords': 'keyword',
@@ -70,12 +69,6 @@ function registerSkript() {
                         '@default': ''
                     }
                 }],
-
-
-                // @ annotations.
-                // As an example, we emit a debugging log message on these tokens.
-                // Note: message are supressed during the first load -- change some lines to see them.
-                [/@\s*[a-zA-Z_\$][\w\$]*/, {token: 'annotation', log: 'annotation token: $0'}],
 
 
                 // numbers
@@ -130,30 +123,6 @@ function registerSkript() {
                 notIn: ["string", "comment"]
             }, {open: "/**", close: " */", notIn: ["string"]}],
     });
-    function createDependencyProposals() {
-        // returning a static list of proposals, not even looking at the prefix (filtering is done by the Monaco editor),
-        // here you could do a server side lookup
-        return [
-            {
-                label: '"lodash"',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "The Lodash library exported as Node.js modules.",
-                insertText: '"lodash": "*"'
-            },
-            {
-                label: '"express"',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "Fast, unopinionated, minimalist web framework",
-                insertText: '"express": "*"'
-            },
-            {
-                label: '"mkdirp"',
-                kind: monaco.languages.CompletionItemKind.Function,
-                documentation: "Recursively mkdir, like <code>mkdir -p</code>",
-                insertText: '"mkdirp": "*"'
-            }
-        ];
-    }
     monaco.languages.registerCodeActionProvider('skript', {
         provideCodeActions: function (model, range, context, token) {
 

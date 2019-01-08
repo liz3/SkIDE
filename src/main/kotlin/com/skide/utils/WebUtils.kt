@@ -23,29 +23,22 @@ fun downloadFile(target: String, path: String) {
     }
     fis.close()
     bis.close()
-
-
 }
 
 fun encodeHTTPParams(params: Map<String, String>): String {
-
     return params.map {
         URLEncoder.encode(it.key, "UTF-8") + "=" + URLEncoder.encode(it.value, "UTF-8")
     }.joinToString("&")
-
 }
 
 fun request(path: String, method: String = "GET", headers: Map<String, String> = HashMap(), body: String = ""): Triple<Int, MutableMap<String, MutableList<String>>, InputStream> {
-
     val connection = {
         val url = URL(path)
-
         if (path.startsWith("https://")) {
             url.openConnection() as HttpsURLConnection
         } else {
             url.openConnection() as HttpURLConnection
         }
-
     }.invoke()
 
     connection.requestMethod = method
@@ -53,10 +46,8 @@ fun request(path: String, method: String = "GET", headers: Map<String, String> =
     headers.forEach {
         connection.addRequestProperty(it.key, it.value)
     }
-
     connection.doInput = true
     connection.doOutput = true
-
     if (method == "POST") {
         connection.outputStream.write(body.toByteArray())
         connection.outputStream.flush()

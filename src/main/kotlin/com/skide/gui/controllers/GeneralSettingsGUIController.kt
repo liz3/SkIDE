@@ -107,8 +107,6 @@ class GeneralSettingsGUIController {
     lateinit var settingsHighlightingCheck: CheckBox
 
     @FXML
-    lateinit var settingsCssFileBtn: Button
-    @FXML
     lateinit var crossFileAutoComplete: CheckBox
     @FXML
     lateinit var metaDataGenerateCheck: CheckBox
