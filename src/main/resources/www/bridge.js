@@ -21,6 +21,14 @@ window.console = {
 var editor = null;
 var selection = null;
 
+function registerTheme(name, base, colors, rules) {
+    monaco.editor.defineTheme(name, {
+        base:base,
+        inherit: true,
+        rules: rules,
+        colors: colors
+    })
+}
 function getDefaultOptions() {
     return {
         automaticLayout: true,

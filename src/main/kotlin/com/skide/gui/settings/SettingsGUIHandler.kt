@@ -28,6 +28,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
     private var restartRequired = false
     private val snippetGuiHandler = SnippetGuiHandler(ctrl, coreManager)
+    private val schemesGuiHandler = ThemesGuiHandler(ctrl, coreManager)
     private val serverManager = coreManager.serverManager
     val deleted = Vector<Server>()
 
@@ -36,6 +37,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
         coreManager.configManager.set("highlighting", "${ctrl.settingsHighlightingCheck.isSelected}")
         coreManager.configManager.set("theme", ctrl.settingsTheneComboBox.selectionModel.selectedItem)
+        coreManager.configManager.set("color_scheme", ctrl.schemesSelectComboBox.selectionModel.selectedItem.name)
         coreManager.configManager.set("auto_complete", "${ctrl.settingsAutoCompleteCheck.isSelected}")
         coreManager.configManager.set("auto_complete_skript", "${ctrl.settingsAutoCompleteSkriptCheck.isSelected}")
         coreManager.configManager.set("auto_complete_addon", "${ctrl.settingsAutoCompleteAddonCheck.isSelected}")
@@ -51,25 +53,6 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
         if (Info.prodMode) coreManager.configManager.writeUpdateFile(ctrl.updateCheck.isSelected, ctrl.betaUpdateCheck.isSelected)
     }
-
-    private fun setShortcut(ev: KeyEvent, field: TextField, key: String) {
-
-
-        if (ev.code == KeyCode.SHIFT || ev.code == KeyCode.CONTROL || ev.code == KeyCode.ALT || ev.code == KeyCode.ALT_GRAPH) return
-
-        var content = ev.code.toString()
-
-        if (ev.isShiftDown) content = "SHIFT+$content"
-        if (ev.isAltDown) content = "ALT+$content"
-        if (ev.isControlDown) content = "CONTROL+$content"
-
-        coreManager.configManager.set(key, content)
-
-        Platform.runLater {
-            field.text = content
-        }
-    }
-
     fun init() {
 
         ctrl.okBtn.setOnAction {
@@ -86,6 +69,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             deleted.clear()
             updateSettings()
             snippetGuiHandler.applyChanges()
+            schemesGuiHandler.applySettings()
             window.stage.close()
             if(restartRequired) {
                 if (Prompts.infoCheck("Restart", "Sk-IDE restart", "In order to perform all changes, SkIde needs to be restarted!", Alert.AlertType.CONFIRMATION)) {
@@ -107,6 +91,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
             deleted.clear()
             snippetGuiHandler.applyChanges()
+            schemesGuiHandler.applySettings()
             updateSettings()
         }
         ctrl.cancelBtn.setOnAction {
@@ -227,6 +212,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             ctrl.betaUpdateCheck.isSelected = coreManager.configManager.betaChannel
         }
         snippetGuiHandler.init()
+        schemesGuiHandler.setup()
         updateFocusAllow(true)
 
         requireRestart(ctrl.globalFontSize)

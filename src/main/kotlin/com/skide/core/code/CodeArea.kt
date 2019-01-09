@@ -127,11 +127,11 @@ class EventHandler(private val area: CodeArea) {
         val array = area.getArray()
 
 
-            if (area.coreManager.configManager.get("auto_complete") == "true")
-                if (area.getCurrentColumn() < 3 && !area.getLineContent(area.getCurrentLine()).startsWith("\t"))
-                    area.openFileHolder.codeManager.autoComplete.showGlobalAutoComplete(array)
-                else
-                    area.openFileHolder.codeManager.autoComplete.showLocalAutoComplete(array)
+        if (area.coreManager.configManager.get("auto_complete") == "true")
+            if (area.getCurrentColumn() < 3 && !area.getLineContent(area.getCurrentLine()).startsWith("\t"))
+                area.openFileHolder.codeManager.autoComplete.showGlobalAutoComplete(array)
+            else
+                area.openFileHolder.codeManager.autoComplete.showLocalAutoComplete(array)
 
         return array
     }
@@ -284,13 +284,29 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
             if (newValue === Worker.State.SUCCEEDED) {
                 val win = getWindow()
                 val cbHook = CallbackHook {
+
                     val settings = engine.executeScript("getDefaultOptions();") as JSObject
                     settings.setMember("fontSize", coreManager.configManager.get("font_size"))
                     settings.setMember("language", extensionToLang(file.name.split(".").last()))
-                    if (coreManager.configManager.get("theme") == "Dark")
-                        settings.setMember("theme", "skript-dark")
-                    else
-                        settings.setMember("theme", "skript-light")
+                    val scheme = coreManager.configManager.get("color_scheme")
+                    if (scheme == "") {
+                        if (coreManager.configManager.get("theme") == "Dark")
+                            settings.setMember("theme", "skript-dark")
+                        else
+                            settings.setMember("theme", "skript-light")
+                    } else {
+                        if (scheme != "vs" && scheme != "vs-dark") {
+                            coreManager.schemesManager.registerTheme(this, scheme as String)
+                            settings.setMember("theme", scheme)
+                        } else {
+                            if(scheme == "vs-dark")
+                                settings.setMember("theme", "skript-dark")
+                            else
+                                settings.setMember("theme", "skript-light")
+
+                        }
+
+                    }
                     startEditor(settings)
                     rdy(this)
                     prepareEditorActions()

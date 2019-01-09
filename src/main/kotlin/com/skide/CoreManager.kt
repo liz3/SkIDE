@@ -34,6 +34,7 @@ class CoreManager {
     lateinit var saver: AutoSaver
     lateinit var sockServer: SocketManager
     lateinit var snippetManager: SnippetManager
+    lateinit var schemesManager: SchemesManager
     lateinit var skUnity: SkUnity
 
     private var debugLevel = DebugLevel.INFORMATION
@@ -57,6 +58,7 @@ class CoreManager {
         skUnity = SkUnity(me)
         sockServer = SocketManager(me)
         snippetManager = SnippetManager(me)
+        schemesManager = SchemesManager(me)
         debugger.syserr.core = me
         sockServer.start()
     }
@@ -122,6 +124,7 @@ class CoreManager {
                         if (configLoadResult == ConfigLoadResult.ERROR) return null
                         GUIManager.settings = configManager
                         snippetManager.prepare()
+                        schemesManager.prepare()
                         updateProgress(25.0, 100.0)
                         updateMessage("Checking skUnity access...")
                         skUnity.load()

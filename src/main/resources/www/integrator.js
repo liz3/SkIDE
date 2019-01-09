@@ -1,6 +1,7 @@
 function registerSkript() {
 
-    var darkFunc = "#9fceff"
+    var darkFunc = "#9fceff";
+
     monaco.editor.defineTheme('skript-light', {
         base: 'vs',
         inherit: true,
@@ -54,7 +55,7 @@ function registerSkript() {
                         '@default': 'identifier'
                     }
                 }],
-                [/\{([^{}]|%\{|}%)+}/, 'type'],
+                [/\{([^{}]|%\{|}%)+}/, 'variable'],
 
 
                 // whitespace

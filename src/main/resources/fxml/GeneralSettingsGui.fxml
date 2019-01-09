@@ -84,10 +84,10 @@
                                  <children>
                                     <HBox prefHeight="11.0" prefWidth="1011.0" spacing="5.0">
                                        <children>
-                                          <ComboBox prefWidth="150.0" />
-                                          <TextField prefHeight="26.0" prefWidth="210.0" />
-                                          <Button mnemonicParsing="false" text="New" />
-                                          <Button mnemonicParsing="false" text="Delete" />
+                                          <ComboBox fx:id="schemesSelectComboBox" prefWidth="150.0" />
+                                          <TextField fx:id="schemesNewTextField" prefHeight="26.0" prefWidth="210.0" />
+                                          <Button fx:id="schemesNewBtn" mnemonicParsing="false" text="New" />
+                                          <Button fx:id="schemesDeleteBtn" mnemonicParsing="false" text="Delete" />
                                        </children>
                                     </HBox>
                                     <HBox prefHeight="394.0" prefWidth="1011.0" spacing="5.0">
@@ -95,19 +95,19 @@
                                           <VBox prefHeight="353.0" prefWidth="327.0">
                                              <children>
                                                 <Label text="General Colors" />
-                                                <ListView prefHeight="348.0" prefWidth="326.0" />
+                                                <ListView fx:id="schemesColorsList" prefHeight="348.0" prefWidth="326.0" />
                                              </children>
                                           </VBox>
                                           <VBox layoutX="10.0" layoutY="10.0" prefHeight="353.0" prefWidth="327.0">
                                              <children>
                                                 <Label text="Editor " />
-                                                <ListView prefHeight="368.0" prefWidth="326.0" />
+                                                <ListView fx:id="schemesRulesList" prefHeight="368.0" prefWidth="326.0" />
                                              </children>
                                           </VBox>
                                           <VBox prefHeight="353.0" prefWidth="362.0">
                                              <children>
                                                 <Label text="Preview" />
-                                                <WebView prefHeight="342.0" prefWidth="361.0" />
+                                                <WebView fx:id="schemesPreviewView" prefHeight="342.0" prefWidth="361.0" />
                                              </children>
                                           </VBox>
                                        </children>

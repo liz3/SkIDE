@@ -1,11 +1,17 @@
 package com.skide.gui.controllers
 
+import com.skide.gui.settings.ColorListEntry
+import com.skide.include.ColorScheme
 import com.skide.include.Server
 import com.skide.include.ServerAddon
 import com.skide.include.Snippet
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.HBox
+import javafx.scene.web.WebView
+import javafx.scene.control.ComboBox
+
+
 
 
 
@@ -144,5 +150,26 @@ class GeneralSettingsGUIController {
 
     @FXML
     lateinit var snippetRulesContainer: HBox
+
+    @FXML
+    lateinit var schemesSelectComboBox: ComboBox<ColorScheme>
+
+    @FXML
+    lateinit var schemesNewTextField: TextField
+
+    @FXML
+    lateinit var schemesNewBtn: Button
+
+    @FXML
+    lateinit var schemesDeleteBtn: Button
+
+    @FXML
+    lateinit var schemesColorsList: ListView<ColorListEntry>
+
+    @FXML
+    lateinit var schemesRulesList: ListView<ColorListEntry>
+
+    @FXML
+    lateinit var schemesPreviewView: WebView
 
 }

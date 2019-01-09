@@ -77,6 +77,7 @@ class ConfigManager(val coreManager: CoreManager) {
     private val serversFile = File(rootFolder, "servers.skide")
     private val hostsFile = File(rootFolder, "hosts.skide")
     val snippetsFile = File(rootFolder, "snippets.skide")
+    val colorSchemesFile = File(rootFolder, "schemes.skide")
 
     val projects = HashMap<Long, PointerHolder>()
     val servers = HashMap<Long, PointerHolder>()
@@ -88,9 +89,10 @@ class ConfigManager(val coreManager: CoreManager) {
 
         if (!rootFolder.exists()) firstRun = true
         if (!configFile.exists()) firstRun = true
-        if (!snippetsFile.exists()) {
+        if (!snippetsFile.exists())
             writeFile("[]".toByteArray(), snippetsFile, false, true)
-        }
+        if(!colorSchemesFile.exists())
+            writeFile("[]".toByteArray(), colorSchemesFile, false, true)
         if (firstRun) return if (createFiles()) {
             checkCssFiles()
             ConfigLoadResult.FIRST_RUN
