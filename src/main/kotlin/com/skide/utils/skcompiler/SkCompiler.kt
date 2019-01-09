@@ -129,7 +129,7 @@ class SkCompiler {
                         out += computeString(node)
                     }
                 }
-                returner(out.substring(1))
+                returner(if (out.isEmpty()) "" else out.substring(1))
                 caller("Finished")
             }
 
