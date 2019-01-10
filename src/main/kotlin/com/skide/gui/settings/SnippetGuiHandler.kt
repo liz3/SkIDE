@@ -44,7 +44,7 @@ class SnippetGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager:
         val pane = GUIManager.getScene("fxml/SnippetRuleGui.fxml")
         val pCtrl = pane.second as SnippetRuleController
         pCtrl.titleLabel.text = "Root line of Tree"
-        pCtrl.startsWithCheck.setOnAction { ev ->
+        pCtrl.startsWithCheck.setOnAction { _ ->
             runAsserted {
                 val currentVal = it.rootRule.startsWith.second
                 it.rootRule.startsWith = Pair(pCtrl.startsWithCheck.isSelected, currentVal)
@@ -52,7 +52,7 @@ class SnippetGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager:
 
             }
         }
-        pCtrl.containsCheck.setOnAction { ev ->
+        pCtrl.containsCheck.setOnAction { _ ->
             runAsserted {
                 val currentVal = it.rootRule.contains.second
                 it.rootRule.contains = Pair(pCtrl.containsCheck.isSelected, currentVal)

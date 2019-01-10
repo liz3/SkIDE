@@ -7,7 +7,6 @@
 -libraryjars  <java.home>/lib/plugin.jar
 -libraryjars  <java.home>/lib/ext/jfxrt.jar
 
-
 -keep class javafx.** { *; }
 -keep class java.** { *; }
 -keep class javax.** { *; }

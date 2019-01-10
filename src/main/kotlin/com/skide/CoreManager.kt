@@ -70,7 +70,7 @@ class CoreManager {
             r = true
             configManager.set("analytics", "true")
         } else {
-            if (configManager.get("analytics") == "true" && !Info.prodMode) {
+            if (configManager.get("analytics") == "true" && Info.prodMode) {
                 googleAnalytics.start()
             }
         }
@@ -107,7 +107,7 @@ class CoreManager {
             controller.view.image = Image(javaClass.getResource("/images/splash.png").toExternalForm())
             controller.logoView.image = Image(javaClass.getResource("/images/21xayah.png").toExternalForm())
             stage.show()
-            var analyticInf = false
+            var analyticInf: Boolean
             val task = object : Task<Void>() {
                 @Throws(Exception::class)
                 override fun call(): Void? {
