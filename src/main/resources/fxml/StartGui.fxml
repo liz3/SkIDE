@@ -9,13 +9,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="450.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.StartGUIController">
+<AnchorPane prefHeight="518.0" prefWidth="774.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.StartGUIController">
    <children>
-      <HBox prefHeight="450.0" prefWidth="650.0">
+      <HBox prefHeight="518.0" prefWidth="774.0">
          <children>
-            <VBox prefHeight="450.0" prefWidth="233.0">
+            <VBox prefHeight="518.0" prefWidth="343.0">
                <children>
-                  <ListView fx:id="projectsList" prefHeight="450.0" prefWidth="235.0" />
+                  <ListView fx:id="projectsList" prefHeight="518.0" prefWidth="258.0" />
                </children>
             </VBox>
             <VBox alignment="CENTER" prefHeight="450.0" prefWidth="419.0">

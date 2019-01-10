@@ -159,6 +159,7 @@ class ThemesGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager: 
                                 "\ttrigger:\n" +
                                 "\t\tif {variable} is true:\n" +
                                 "\t\t\tset {_testtest} to \"Test String\"\n" +
+                                "\t\t\tset {_number} to 25\n" +
                                 "\t\tif {_testtest} is \"Cool Test String\":\n" +
                                 "\t\t\tif player has permission \"skide.owned\":\n" +
                                 "\t\t\t\tsend \"Message\" to player\t\t\n" +
@@ -318,7 +319,7 @@ class ThemesGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager: 
     }
 
     private fun current() = ctrl.schemesSelectComboBox.selectionModel.selectedItem
-    private fun getRulesSettings() = arrayOf("variable", "string", "comment", "keyword", "identifier")
+    private fun getRulesSettings() = arrayOf("variable", "string", "comment", "keyword", "identifier", "number", "function")
     private fun getColorSettings(): Array<Pair<String, String>> {
         return arrayOf(Pair("foreground", "Overall foreground color. This color is only used if not overridden by a component."),
                 Pair("errorForeground", "Overall foreground color for error messages. This color is only used if not overridden by a component."),

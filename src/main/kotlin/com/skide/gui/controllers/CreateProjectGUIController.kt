@@ -48,8 +48,6 @@ class CreateProjectGUIController {
         skriptVersionComboBox.selectionModel.select(0)
 
         projectNameField.setOnKeyReleased { _ ->
-
-
             projectPathField.text = File(rootProjectFolder, projectNameField.text).absolutePath
 
             if (projectNameField.text == "") {

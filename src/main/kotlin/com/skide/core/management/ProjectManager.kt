@@ -4,6 +4,7 @@ import com.skide.CoreManager
 import com.skide.gui.GUIManager
 import com.skide.include.*
 import com.skide.utils.FileReturnResult
+import com.skide.utils.deleteDirectoryRecursion
 import com.skide.utils.readFile
 import com.skide.utils.writeFile
 import org.json.JSONArray
@@ -134,6 +135,23 @@ class ProjectManager(val coreManager: CoreManager) {
         val configFile = File(projectFolder, ".project.skide")
         writeFile(obj.toString().toByteArray(), configFile, false, true)
         return true
+    }
+
+    fun deleteProject(it: PointerHolder, removeFolder:Boolean) {
+
+            for (p in openProjects) {
+                if(p.project.id == it.id) {
+                    p.guiHandler.otherTabPanes.clear()
+                    p.guiHandler.openFiles.clear()
+                }
+            }
+            coreManager.configManager.deleteProject(it.id)
+            System.gc()
+
+            if(removeFolder) {
+                deleteDirectoryRecursion(File(it.path).toPath())
+            }
+
     }
 
 }

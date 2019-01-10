@@ -28,6 +28,7 @@
 -keep class com.terminalfx.** { *; }
 -keep class com.skide.ReflectionLauncher { *; }
 
+
 -dontwarn org.apache.**
 -dontwarn com.jcraft.**
 -dontshrink
