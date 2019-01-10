@@ -183,7 +183,7 @@ class SkCompiler {
                 }
                 val file = File(skFolder, openProject.project.name + ".sk")
                 caller("Writing file ${file.absolutePath}")
-                writeFile(out.substring(1).toByteArray(), file, false, true)
+                writeFile((if(out.isEmpty()) "" else out.substring(1)).toByteArray(), file, false, true)
                 caller("Finished")
                 finished()
             }
@@ -194,7 +194,7 @@ class SkCompiler {
                     var out = ""
                     arr.value.forEach { out += computeString(it) }
                     caller("Writing file ${file.absolutePath}")
-                    writeFile(out.substring(1).toByteArray(), file, false, true)
+                    writeFile((if(out.isEmpty()) "" else out.substring(1)).toByteArray(), file, false, true)
                 }
                 caller("Finished")
                 finished()

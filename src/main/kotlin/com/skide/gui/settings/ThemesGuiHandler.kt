@@ -1,15 +1,62 @@
 package com.skide.gui.settings
 
 import com.skide.CoreManager
+import com.skide.core.code.ChangeWatcher
+import com.skide.core.code.CodeArea
+import com.skide.gui.GUIManager
 import com.skide.gui.controllers.GeneralSettingsGUIController
+import com.skide.include.ColorRule
 import com.skide.include.ColorScheme
+import javafx.application.Platform
+import javafx.concurrent.Worker
+import javafx.scene.Scene
+import javafx.scene.control.ColorPicker
 import javafx.scene.control.Label
 import javafx.scene.control.TextField
+import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Priority
-import java.util.*
+import javafx.scene.paint.Color
+import javafx.stage.Modality
+import javafx.stage.Stage
+import javafx.stage.StageStyle
+import netscape.javascript.JSObject
+import org.json.JSONObject
 import kotlin.collections.HashMap
+import java.awt.MouseInfo
+
+
+fun colorPicker(start: String, settingsStage: Stage, callback: (String) -> Unit) {
+
+    val stage = Stage()
+    stage.title = "Color"
+    stage.initModality(Modality.WINDOW_MODAL)
+    stage.initStyle(StageStyle.UTILITY)
+    stage.initOwner(settingsStage)
+
+    val p = MouseInfo.getPointerInfo().location
+    stage.x = p.x.toDouble()
+    stage.y = p.y.toDouble()
+
+    val pane = AnchorPane()
+    if (GUIManager.settings.get("global_font_size").toString().isNotEmpty())
+        pane.style = "-fx-font-size: ${GUIManager.settings.get("global_font_size")}px"
+    val picker = if (start.isNotEmpty())
+        ColorPicker(Color.web(start))
+    else
+        ColorPicker()
+
+    pane.children.add(picker)
+    stage.scene = Scene(pane, 155.0, 50.0)
+    picker.setOnAction {
+        callback(Integer.toHexString(picker.value.hashCode()))
+    }
+    if (GUIManager.settings.get("theme") == "Dark")
+        stage.scene.stylesheets.add(GUIManager.settings.getCssPath("ThemeDark.css"))
+
+    stage.show()
+}
 
 class ColorListEntry(val name: String, val action: (String) -> Unit) : HBox() {
 
@@ -20,16 +67,64 @@ class ColorListEntry(val name: String, val action: (String) -> Unit) : HBox() {
         field.textProperty().addListener { _, _, newValue ->
             action(newValue)
         }
+        field.setOnMouseClicked {
+            if (it.clickCount == 2)
+                colorPicker(field.text, field.scene.window as Stage) { color ->
+                    field.text = "#$color"
+                    action(field.text)
+                }
+        }
         val pane = Pane()
         labelLeft.text = name
         HBox.setHgrow(pane, Priority.ALWAYS)
-        field.prefWidth = 65.0
+        field.prefWidth = 70.0
+        field.promptText = "Color"
         this.children.addAll(labelLeft, pane, field)
 
     }
 
 }
 
+class RuleListEntry(val name: String, val action: (String, String) -> Unit) : HBox() {
+
+    private val labelLeft = Label()
+    val foreGround = TextField()
+    val style = TextField()
+
+    init {
+        foreGround.textProperty().addListener { _, _, newValue ->
+            action(newValue, style.text)
+        }
+        style.textProperty().addListener { _, _, newValue ->
+            action(foreGround.text, newValue)
+        }
+        foreGround.setOnMouseClicked {
+            if (it.clickCount == 2)
+                colorPicker(foreGround.text, foreGround.scene.window as Stage) { color ->
+                    foreGround.text = "#$color"
+                    action(foreGround.text, style.text)
+                }
+        }
+        val pane = Pane()
+        labelLeft.text = name
+        HBox.setHgrow(pane, Priority.ALWAYS)
+        this.spacing = 5.0
+        foreGround.prefWidth = 70.0
+        style.prefWidth = 70.0
+        foreGround.promptText = "Color"
+        style.promptText = "Style"
+        this.children.addAll(labelLeft, pane, foreGround, style)
+
+    }
+
+}
+
+class DemoReady(val cb: () -> Unit) {
+
+    fun ready() {
+        cb()
+    }
+}
 
 class ThemesGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager: CoreManager) {
 
@@ -37,19 +132,85 @@ class ThemesGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager: 
     var loaded = false
     private val vs = ColorScheme("vs", "", HashMap(), HashMap())
     private val vsDark = ColorScheme("vs-dark", "", HashMap(), HashMap())
+    val engine = ctrl.schemesPreviewView.engine!!
+    private val updateWatcher = ChangeWatcher(650) {
+        Platform.runLater {
+            reloadPreview()
+        }
+    }
+
+    private fun reloadPreview() {
+        engine.load(this.javaClass.getResource("/www/preview.html").toString())
+    }
+
+    private fun preparePreview() {
+        engine.loadWorker.stateProperty().addListener { _, _, newValue ->
+            runAsserted { scheme ->
+                if (newValue == Worker.State.SUCCEEDED) {
+                    val window = engine.executeScript("window") as JSObject
+                    window.setMember("demo", DemoReady {
+                        val theme = getTheme(scheme)
+
+                        window.call("start", scheme.base, scheme.name, theme.first, theme.second, "on world saving:\n" +
+                                "\tset {variable} to true\n" +
+                                "\t\n" +
+                                "command /testCommand testtest:\n" +
+                                "\tusage: TestCommand\n" +
+                                "\ttrigger:\n" +
+                                "\t\tif {variable} is true:\n" +
+                                "\t\t\tset {_testtest} to \"Test String\"\n" +
+                                "\t\tif {_testtest} is \"Cool Test String\":\n" +
+                                "\t\t\tif player has permission \"skide.owned\":\n" +
+                                "\t\t\t\tsend \"Message\" to player\t\t\n" +
+                                "function test():\n" +
+                                "\t# this is a comment")
+                    })
+                    Thread {
+
+                        Platform.runLater {
+                            engine.executeScript("boot();")
+                        }
+                    }.start()
+                }
+            }
+        }
+
+    }
+
+    private fun getTheme(scheme: ColorScheme): Pair<JSObject, JSObject> {
+        val colors = engine.executeScript("getObj();") as JSObject
+        val rules = engine.executeScript("getArr()") as JSObject
+        for (c in scheme.colors) {
+            colors.setMember(c.key, c.value)
+        }
+        var count = 0
+        for (rule in scheme.rules) {
+            val obj = engine.executeScript("getObj()") as JSObject
+            obj.setMember("token", rule.key)
+            if (rule.value.foreground.isNotEmpty())
+                obj.setMember("foreground", rule.value.foreground)
+            if (rule.value.style.isNotEmpty())
+                obj.setMember("fontStyle", rule.value.style)
+            rules.setSlot(count, obj)
+            count++
+        }
+        return Pair(colors, rules)
+    }
 
     fun setup() {
         if (loaded) return
         loaded = true
 
+        preparePreview()
         localSchemes += coreManager.schemesManager.schemes
         localSchemes["vs"] = vs
         localSchemes["vs-dark"] = vsDark
 
         ctrl.schemesSelectComboBox.items.addAll(localSchemes.values)
 
-        val all = getColorSettings()
-        for (c in all) {
+
+
+        for (c in getColorSettings()) {
             ctrl.schemesColorsList.items.add(ColorListEntry(c.first) { str ->
                 runAsserted {
                     if (str.isNotEmpty()) {
@@ -57,10 +218,32 @@ class ThemesGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager: 
                     } else {
                         it.colors.remove(c.first)
                     }
+                    updateWatcher.update()
                 }
             })
         }
-
+        for (c in getRulesSettings()) {
+            ctrl.schemesRulesList.items.add(RuleListEntry(c) { color, style ->
+                runAsserted {
+                    if (color.isNotEmpty() || style.isNotEmpty()) {
+                        it.rules[c] = ColorRule(color, style)
+                    } else {
+                        if (it.rules.containsKey(c)) {
+                            it.rules.remove(c)
+                        }
+                    }
+                    updateWatcher.update()
+                }
+            })
+        }
+        ctrl.schemesDeleteBtn.setOnAction { ev ->
+            runAsserted {
+                localSchemes.remove(it.name)
+                ctrl.schemesSelectComboBox.items.remove(it)
+                ctrl.schemesSelectComboBox.selectionModel.select(vsDark)
+                reloadPreview()
+            }
+        }
         ctrl.schemesNewBtn.setOnAction {
             val name = ctrl.schemesNewTextField.text
             if (localSchemes.containsKey(name)) return@setOnAction
@@ -77,16 +260,26 @@ class ThemesGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager: 
                 ctrl.schemesDeleteBtn.isDisable = true
                 ctrl.schemesColorsList.isDisable = true
                 ctrl.schemesRulesList.isDisable = true
+                reloadPreview()
             } else {
                 ctrl.schemesNewBtn.isDisable = true
                 ctrl.schemesColorsList.isDisable = false
                 ctrl.schemesRulesList.isDisable = false
                 ctrl.schemesDeleteBtn.isDisable = false
 
-                val scheme = current()
-                for (item in ctrl.schemesColorsList.items) {
-                    if (scheme.colors.containsKey(item.name)) {
-                        item.field.text = scheme.colors[item.name].toString()
+                runAsserted {scheme ->
+
+                    for (item in ctrl.schemesColorsList.items) {
+                        if (scheme.colors.containsKey(item.name)) {
+                            item.field.text = scheme.colors[item.name].toString()
+                        }
+                    }
+                    for (item in ctrl.schemesRulesList.items) {
+                        if (scheme.rules.containsKey(item.name)) {
+                            val e = scheme.rules[item.name]!!
+                            item.foreGround.text = e.foreground
+                            item.style.text = e.style
+                        }
                     }
                 }
             }
@@ -105,6 +298,8 @@ class ThemesGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager: 
             ctrl.schemesColorsList.isDisable = true
             ctrl.schemesRulesList.isDisable = true
         }
+
+        updateWatcher.start()
     }
 
     fun applySettings() {
@@ -122,12 +317,9 @@ class ThemesGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager: 
         block(c)
     }
 
-
-
     private fun current() = ctrl.schemesSelectComboBox.selectionModel.selectedItem
-
-
-    fun getColorSettings(): Array<Pair<String, String>> {
+    private fun getRulesSettings() = arrayOf("variable", "string", "comment", "keyword", "identifier")
+    private fun getColorSettings(): Array<Pair<String, String>> {
         return arrayOf(Pair("foreground", "Overall foreground color. This color is only used if not overridden by a component."),
                 Pair("errorForeground", "Overall foreground color for error messages. This color is only used if not overridden by a component."),
                 Pair("descriptionForeground", "Foreground color for description text providing additional information, for example for a label."),

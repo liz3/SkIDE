@@ -60,6 +60,10 @@
         netscape.javascript.JSObject commandFire(java.lang.String);
 
 }
+-keepclassmembernames class com.skide.gui.settings.DemoReady {
+        void ready();
+
+}
 
 -keepclassmembernames class com.skide.core.code.CallbackHook {
     void call();

@@ -1,6 +1,7 @@
 package com.skide.gui.controllers
 
 import com.skide.gui.settings.ColorListEntry
+import com.skide.gui.settings.RuleListEntry
 import com.skide.include.ColorScheme
 import com.skide.include.Server
 import com.skide.include.ServerAddon
@@ -167,7 +168,7 @@ class GeneralSettingsGUIController {
     lateinit var schemesColorsList: ListView<ColorListEntry>
 
     @FXML
-    lateinit var schemesRulesList: ListView<ColorListEntry>
+    lateinit var schemesRulesList: ListView<RuleListEntry>
 
     @FXML
     lateinit var schemesPreviewView: WebView

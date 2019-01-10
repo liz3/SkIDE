@@ -39,7 +39,6 @@ class SchemesManager(val core: CoreManager) {
             for (rule in scheme.rules) {
                 val rObj = JSONObject()
                 rObj.put("foreground", rule.value.foreground)
-                rObj.put("background", rule.value.background)
                 rObj.put("style", rule.value.style)
                 rules.put(rule.key, rObj)
             }
@@ -59,13 +58,22 @@ class SchemesManager(val core: CoreManager) {
         for (c in scheme.colors) {
             colors.setMember(c.key, c.value)
         }
-
+        var count = 0
+        for (rule in scheme.rules) {
+            val obj = area.getObject()
+            obj.setMember("token", rule.key)
+            if(rule.value.foreground.isNotEmpty())
+                obj.setMember("foreground", rule.value.foreground)
+            if(rule.value.style.isNotEmpty())
+                obj.setMember("fontStyle", rule.value.style)
+            rules.setSlot(count, obj)
+            count++
+        }
         try {
             area.getWindow().call("registerTheme", scheme.name, scheme.base, colors, rules)
         }catch (e:Exception) {
             e.printStackTrace()
         }
-
     }
 
     private fun loadSchemes() {
@@ -84,7 +92,7 @@ class SchemesManager(val core: CoreManager) {
 
             for (key in rules.keys()) {
                 val e = rules.get(key) as JSONObject
-                scheme.rules[key] = ColorRule(e.getString("foreground"), e.getString("background"), e.getString("style"))
+                scheme.rules[key] = ColorRule(e.getString("foreground"),  e.getString("style"))
             }
             schemes[name] = scheme
         }

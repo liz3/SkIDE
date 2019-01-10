@@ -98,13 +98,13 @@
                                                 <ListView fx:id="schemesColorsList" prefHeight="348.0" prefWidth="326.0" />
                                              </children>
                                           </VBox>
-                                          <VBox layoutX="10.0" layoutY="10.0" prefHeight="353.0" prefWidth="327.0">
+                                          <VBox layoutX="10.0" layoutY="10.0" prefHeight="314.0" prefWidth="250.0">
                                              <children>
                                                 <Label text="Editor " />
                                                 <ListView fx:id="schemesRulesList" prefHeight="368.0" prefWidth="326.0" />
                                              </children>
                                           </VBox>
-                                          <VBox prefHeight="353.0" prefWidth="362.0">
+                                          <VBox prefHeight="314.0" prefWidth="413.0">
                                              <children>
                                                 <Label text="Preview" />
                                                 <WebView fx:id="schemesPreviewView" prefHeight="342.0" prefWidth="361.0" />

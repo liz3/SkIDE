@@ -12,7 +12,7 @@ function registerSkript() {
         base: 'vs-dark',
         inherit: true,
         rules: [
-            { token: 'function.call', foreground: darkFunc.substring(1) }
+            { token: 'function', foreground: darkFunc.substring(1) }
         ]
     });
 
@@ -46,7 +46,7 @@ function registerSkript() {
         // The main tokenizer for our languages
         tokenizer: {
             root: [
-                [/\s+[^\}\s]+(?=\(.*\))/, 'function.call'],
+                [/\s+[^\}\s]+(?=\(.*\))/, 'function'],
 
                 [/[a-z_$][\w$]*/, {
                     cases: {
