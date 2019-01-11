@@ -186,6 +186,12 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         eventManager.updateProjectFilesTreeView()
         eventManager.openFile(project.fileManager.projectFiles[name]!!)
     }
+    fun createNewFile(orig: String, content:String) {
+        val name = if (!orig.contains(".")) "$orig.sk" else orig
+        project.fileManager.addFile(name, content)
+        eventManager.updateProjectFilesTreeView()
+        eventManager.openFile(project.fileManager.projectFiles[name]!!)
+    }
 
     fun reName(oldName: String, newName: String, path: String) {
 

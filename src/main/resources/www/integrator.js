@@ -20,29 +20,23 @@ function registerSkript() {
         id: 'skript'
     });
     monaco.languages.setMonarchTokensProvider('skript', {
-
-
         keywords: [
             "set", "if", "stop", "loop", "return", "function", "options", "true", "false", "else", "else if", "trigger", "on", "while", "is", "effect", "expression", "command", "delete"
         ],
-
         typeKeywords: [
             'player', 'integer', 'string', 'text'
         ],
-
         operators: [
             '=', '>', '<', '!', '~', '?', ':', '==', '<=', '>=', '!=',
             '&&', '||', '++', '--', '+', '-', '*', '/', '&', '|', '^', '%',
             '<<', '>>', '>>>', '+=', '-=', '*=', '/=', '&=', '|=', '^=',
             '%=', '<<=', '>>=', '>>>='
         ],
-
         // we include these common regular expressions
         symbols: /[=><!~?:&|+\-*\/\^%]+/,
 
         // C# style strings
         escapes: /\\(?:[abfnrtv\\"']|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})/,
-
         // The main tokenizer for our languages
         tokenizer: {
             root: [

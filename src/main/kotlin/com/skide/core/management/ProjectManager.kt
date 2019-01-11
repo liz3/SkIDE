@@ -62,7 +62,7 @@ class ProjectManager(val coreManager: CoreManager) {
 
         if (projectConfig.first == ProjectConfigurationLoadResult.SUCCESS && projectConfig.second != null) {
 
-            if(coreManager.googleAnalytics.enabled) {
+            if (coreManager.googleAnalytics.enabled) {
                 coreManager.googleAnalytics.ga.pageView()
                         .documentTitle("Sk-IDE Project")
                         .documentPath("/project")
@@ -128,8 +128,8 @@ class ProjectManager(val coreManager: CoreManager) {
         obj.put("primary_server_id", -1)
         val filesArr = JSONArray()
         projectFolder.listFiles().forEach {
-           if(!it.isDirectory)
-               filesArr.put(it.absolutePath)
+            if (!it.isDirectory)
+                filesArr.put(it.absolutePath)
         }
         obj.put("files", filesArr)
         val configFile = File(projectFolder, ".project.skide")
@@ -137,20 +137,20 @@ class ProjectManager(val coreManager: CoreManager) {
         return true
     }
 
-    fun deleteProject(it: PointerHolder, removeFolder:Boolean) {
+    fun deleteProject(it: PointerHolder, removeFolder: Boolean) {
 
-            for (p in openProjects) {
-                if(p.project.id == it.id) {
-                    p.guiHandler.otherTabPanes.clear()
-                    p.guiHandler.openFiles.clear()
-                }
+        for (p in openProjects) {
+            if (p.project.id == it.id) {
+                p.guiHandler.otherTabPanes.clear()
+                p.guiHandler.openFiles.clear()
             }
-            coreManager.configManager.deleteProject(it.id)
-            System.gc()
+        }
+        coreManager.configManager.deleteProject(it.id)
+        System.gc()
 
-            if(removeFolder) {
-                deleteDirectoryRecursion(File(it.path).toPath())
-            }
+        if (removeFolder) {
+            deleteDirectoryRecursion(File(it.path).toPath())
+        }
 
     }
 
@@ -192,7 +192,7 @@ class ProjectFileManager(val project: Project) {
             writeCompileOptions()
 
         }
-        if(!hostOptsFile.exists()) {
+        if (!hostOptsFile.exists()) {
             writeFile("[]".toByteArray(), hostOptsFile, false, true)
         } else {
             loadHosts()
@@ -205,13 +205,14 @@ class ProjectFileManager(val project: Project) {
 
         val result = JSONObject(readFile(configFile).second)
 
-       if(result.has("last_open")) {
-           result.getJSONArray("last_open").forEach {
-               if(projectFiles.containsKey(it as String))
-               lastOpen.addElement(it)
-           }
-       }
+        if (result.has("last_open")) {
+            result.getJSONArray("last_open").forEach {
+                if (projectFiles.containsKey(it as String))
+                    lastOpen.addElement(it)
+            }
+        }
     }
+
     fun delCompileOption(name: String) {
         if (!compileOptions.containsKey(name)) return
         compileOptions.remove(name)
@@ -247,6 +248,7 @@ class ProjectFileManager(val project: Project) {
         }
 
     }
+
     fun writeHosts() {
         val arr = JSONArray()
         hosts.forEach {
@@ -265,6 +267,7 @@ class ProjectFileManager(val project: Project) {
         }
         writeFile(arr.toString().toByteArray(), hostOptsFile, false, false)
     }
+
     private fun loadCompileOptions() {
         JSONArray(readFile(compileOptsFile).second).forEach { current ->
             if (current is JSONObject) {
@@ -365,9 +368,27 @@ class ProjectFileManager(val project: Project) {
         if (projectFiles.containsKey(rName)) return false
         val file = File(project.folder, rName)
         file.createNewFile()
-        if(GUIManager.settings.get("generate_meta_data") == "true" && file.name.endsWith(".sk", true)) {
+        if (GUIManager.settings.get("generate_meta_data") == "true" && file.name.endsWith(".sk", true)) {
             writeFile("#Project: ${project.name}\n#File: $rName\n#Author: ${System.getProperty("user.name")}".toByteArray(), file, true, false)
         }
+        projectFiles[rName] = file
+        compileOptions.values.forEach {
+            it.includedFiles.add(file)
+        }
+        rewriteConfig()
+        writeCompileOptions()
+        return true
+    }
+
+    fun addFile(name: String, content: String): Boolean {
+        val rName = if (name.contains(".")) name else "$name.sk"
+        if (projectFiles.containsKey(rName)) return false
+        val file = File(project.folder, rName)
+        file.createNewFile()
+        if (GUIManager.settings.get("generate_meta_data") == "true" && file.name.endsWith(".sk", true)) {
+            writeFile("#Project: ${project.name}\n#File: $rName\n#Author: ${System.getProperty("user.name")}".toByteArray(), file, true, false)
+        }
+        writeFile(content.toByteArray(), file, true, false)
         projectFiles[rName] = file
         compileOptions.values.forEach {
             it.includedFiles.add(file)
