@@ -85,7 +85,6 @@ class StartGUIController {
             window.controller as CreateProjectGUIController
             window.controller.initGui(manager, window, thisWindow)
             window.stage.isResizable = false
-            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             window.closeListener = {
                 thisWindow.stage.show()
             }
@@ -113,7 +112,6 @@ class StartGUIController {
         settings.setOnMouseReleased {
 
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
-            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             SettingsGUIHandler(window.controller as GeneralSettingsGUIController, manager, window).init()
             window.stage.isResizable = false
             window.stage.show()
@@ -124,7 +122,6 @@ class StartGUIController {
             window.controller as ImportProjectGUIController
             window.controller.initGui(manager, window, thisWindow)
             window.stage.isResizable = false
-            if(getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             window.closeListener = {
                 thisWindow.stage.show()
             }

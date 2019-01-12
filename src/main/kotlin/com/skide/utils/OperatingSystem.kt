@@ -33,9 +33,9 @@ fun openInExplorer(f:File) {
             Runtime.getRuntime().exec("open -R ${f.absolutePath}")
         else -> {
             if(f.isDirectory) {
-                Runtime.getRuntime().exec("xdg-open \"${f.absolutePath}\"")
+                Runtime.getRuntime().exec("xdg-open ${f.absolutePath}")
             } else {
-                Runtime.getRuntime().exec("xdg-open \"${f.parentFile.absolutePath}\"")
+                Runtime.getRuntime().exec("xdg-open ${f.parentFile.absolutePath}")
             }
         }
     }

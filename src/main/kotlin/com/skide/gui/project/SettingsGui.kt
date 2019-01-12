@@ -31,7 +31,6 @@ class SettingsGui(val coreManager: CoreManager, val projGuiManager: OpenProjectG
             dOpts.initDeployModule()
             window.stage.initModality(Modality.WINDOW_MODAL)
             window.stage.initOwner(projGuiManager.window.stage)
-            if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
             SettingsGuiEventListener(this, window.controller as ProjectSettingsGUIController, co, dOpts).init()
         }
 

@@ -81,7 +81,6 @@ class CoreManager {
         val window = guiManager.getWindow("fxml/StartGui.fxml", "SkIDE Ultimate ${Info.version}", false)
         (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
         window.stage.isResizable = false
-        if (getOS() == OperatingSystemType.LINUX) window.stage.initStyle(StageStyle.UTILITY)
         window.stage.show()
     }
     fun bootstrap(args: Array<String>) {
@@ -95,10 +94,7 @@ class CoreManager {
             parent.background = Background.EMPTY
             val controller = loader.getController<SplashGuiController>()
             stage.scene = Scene(parent)
-            if (getOS() == OperatingSystemType.LINUX)
-                stage.initStyle(StageStyle.UTILITY)
-            else
-                stage.initStyle(StageStyle.TRANSPARENT)
+            stage.initStyle(StageStyle.TRANSPARENT)
             stage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
             stage.scene.fill = Color.TRANSPARENT
             stage.sizeToScene()

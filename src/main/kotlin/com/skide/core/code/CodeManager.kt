@@ -48,6 +48,7 @@ class CodeManager {
 
     fun setup(project: OpenFileHolder) {
 
+        parseResult = Vector()
         area = project.area
         errorProvider = ErrorProvider(this)
         parser = SkriptParser(project.openProject)
