@@ -49,7 +49,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     var activeTab = Tab()
 
     fun updateProjectTitle(path: String) {
-        window.stage.title = if(path.isEmpty())
+        window.stage.title = if (path.isEmpty())
             "${openProject.project.name} ${openProject.project.folder.absolutePath} - SkIDE Ultimate"
         else
             "${openProject.project.name} ${openProject.project.folder.absolutePath} - $path - SkIDE Ultimate"
@@ -767,6 +767,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
 
                 val items = Vector<SearchPopUpItem>()
                 val lastActive = openProjectGuiManager.lastActive
+                val count = lastActive?.area?.getLineCount() ?: 0
 
 
                 val box = SearchPopUp(openProjectGuiManager.window.stage) { text ->
@@ -800,11 +801,13 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                             val matcher = Pattern.compile("\\d+").matcher(text)
                             if (matcher.find()) {
                                 val num = matcher.group().toInt()
-                                items.add(SearchPopUpItem("Go to line $num", lastActive.f.name) {
-                                    lastActive.area.view.requestFocus()
-                                    lastActive.area.moveLineToCenter(num)
-                                    lastActive.area.setSelection(num, 1, num, lastActive.area.getColumnLineAmount(num))
-                                })
+                                if (num <= count) {
+                                    items.add(SearchPopUpItem("Go to line $num", lastActive.f.name) {
+                                        lastActive.area.view.requestFocus()
+                                        lastActive.area.moveLineToCenter(num)
+                                        lastActive.area.setSelection(num, 1, num, lastActive.area.getColumnLineAmount(num))
+                                    })
+                                }
                             }
                         }
                     } else {
