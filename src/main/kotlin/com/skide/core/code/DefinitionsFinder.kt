@@ -33,10 +33,9 @@ class DefinitionsFinder(val manager: CodeManager) {
             }
 
         }
-        if (line.nodeType == NodeType.IF_STATEMENT || line.nodeType == NodeType.STATEMENT || line.nodeType == NodeType.LOOP || line.nodeType == NodeType.SET_VAR || line.nodeType == NodeType.IF_STATEMENT) {
             val raw = line.raw
 
-            if (raw.indexOf(word) > 1) {
+            if (raw.indexOf(word) >= 1) {
                 if ((raw[raw.indexOf(word) - 1] == '{') || (raw[raw.indexOf(word) - 1] == '@') || (raw[raw.indexOf(word) - 1] == ':' && raw.contains("{"))) {
 
                     when {
@@ -69,10 +68,19 @@ class DefinitionsFinder(val manager: CodeManager) {
                                 }
                             }
                         }
-                        else -> EditorUtils.filterByNodeType(NodeType.SET_VAR, nodeStructure).forEach {
-                            if ((it.fields["name"] as String).contains(word)) {
-
-                                return DefinitionFinderResult(true, it.linenumber, it.raw.indexOf(word) + 1)
+                        else -> {
+                            EditorUtils.filterByNodeType(NodeType.SET_VAR, nodeStructure).forEach {
+                                if ((it.fields["name"] as String).contains(word))
+                                    return DefinitionFinderResult(true, it.linenumber, it.raw.indexOf(word) + 1)
+                            }
+                            if (area.coreManager.configManager.get("cross_auto_complete") == "true") {
+                                manager.crossNodes.forEach { entry ->
+                                    EditorUtils.filterByNodeType(NodeType.SET_VAR, entry.value).forEach {
+                                        if ((it.fields["name"] as String).contains(word)) {
+                                            return DefinitionFinderResult(true, it.linenumber, it.raw.indexOf(word) + 1, entry.key.name)
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -86,7 +94,7 @@ class DefinitionsFinder(val manager: CodeManager) {
                 }
             }
 
-        }
+
 
 
         return DefinitionFinderResult(false)

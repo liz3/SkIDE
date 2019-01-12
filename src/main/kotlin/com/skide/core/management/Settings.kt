@@ -87,21 +87,24 @@ class ConfigManager(val coreManager: CoreManager) {
         var firstRun = false
         if (Info.prodMode) loadUpdateFile()
 
-        if (!rootFolder.exists()) firstRun = true
-        if (!configFile.exists()) firstRun = true
-        if (!snippetsFile.exists())
-            writeFile("[]".toByteArray(), snippetsFile, false, true)
-        if(!colorSchemesFile.exists())
-            writeFile("[]".toByteArray(), colorSchemesFile, false, true)
+        if (!rootFolder.exists() || !configFile.exists() ) firstRun = true
         if (firstRun) return if (createFiles()) {
+            if (!snippetsFile.exists())
+                writeFile("[]".toByteArray(), snippetsFile, false, true)
+            if(!colorSchemesFile.exists())
+                writeFile("[]".toByteArray(), colorSchemesFile, false, true)
             checkCssFiles()
             ConfigLoadResult.FIRST_RUN
         } else ConfigLoadResult.ERROR
 
+        if (!snippetsFile.exists())
+            writeFile("[]".toByteArray(), snippetsFile, false, true)
+        if(!colorSchemesFile.exists())
+            writeFile("[]".toByteArray(), colorSchemesFile, false, true)
+
         //read the main Config
         readConfig()
         checkCssFiles()
-
         val projectsFileResult = readFile(projectsFile)
         val serversFileResult = readFile(serversFile)
 

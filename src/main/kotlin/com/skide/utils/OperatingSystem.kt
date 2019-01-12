@@ -29,7 +29,8 @@ fun getOS(): OperatingSystemType {
 fun openInExplorer(f:File) {
     when (getOS()) {
         OperatingSystemType.WINDOWS -> Runtime.getRuntime().exec("explorer.exe /select,\"${f.absolutePath}\"")
-        OperatingSystemType.MAC_OS -> Runtime.getRuntime().exec("open -R \"${f.absolutePath}\"")
+        OperatingSystemType.MAC_OS ->
+            Runtime.getRuntime().exec("open -R ${f.absolutePath}")
         else -> {
             if(f.isDirectory) {
                 Runtime.getRuntime().exec("xdg-open \"${f.absolutePath}\"")

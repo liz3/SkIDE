@@ -50,7 +50,7 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
             }
             MouseDragHandler(tabPane, openProject.openProject.guiHandler).setup()
             val oldPane = openProject.tab.tabPane
-            oldPane.tabs.remove(openProject.tab)
+            oldPane?.tabs?.remove(openProject.tab)
             tabPane.tabs.add(openProject.tab)
             externStage.title = openProject.name
             externStage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))
