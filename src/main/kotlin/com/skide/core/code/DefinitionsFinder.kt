@@ -14,7 +14,6 @@ class DefinitionsFinder(val manager: CodeManager) {
     fun search(lineNumber: Int, word: String): DefinitionFinderResult {
         val nodeStructure = manager.parseStructure()
         val line = EditorUtils.getLineNode(lineNumber, nodeStructure) ?: return DefinitionFinderResult(false)
-
         if (line.nodeType == NodeType.FUNCTION_CALL) {
             val name = line.fields["name"]
             EditorUtils.filterByNodeType(NodeType.FUNCTION, nodeStructure).forEach {
@@ -31,10 +30,9 @@ class DefinitionsFinder(val manager: CodeManager) {
                     }
                 }
             }
-
         }
+        if (line.nodeType == NodeType.IF_STATEMENT || line.nodeType == NodeType.STATEMENT || line.nodeType == NodeType.LOOP || line.nodeType == NodeType.SET_VAR || line.nodeType == NodeType.IF_STATEMENT) {
             val raw = line.raw
-
             if (raw.indexOf(word) >= 1) {
                 if ((raw[raw.indexOf(word) - 1] == '{') || (raw[raw.indexOf(word) - 1] == '@') || (raw[raw.indexOf(word) - 1] == ':' && raw.contains("{"))) {
 
@@ -42,7 +40,7 @@ class DefinitionsFinder(val manager: CodeManager) {
                         raw[raw.indexOf(word) - 1] == '@' -> EditorUtils.filterByNodeType(NodeType.OPTIONS, nodeStructure).forEach {
                             for (child in it.childNodes) {
                                 if (child.getContent().isNotEmpty() && child.getContent().isNotBlank()) {
-                                    if(child.getContent().split(":").first().contains(word)) {
+                                    if (child.getContent().split(":").first().contains(word)) {
                                         return DefinitionFinderResult(true, child.linenumber, child.raw.indexOf(word) + 1)
                                     }
                                 }
@@ -54,7 +52,8 @@ class DefinitionsFinder(val manager: CodeManager) {
 
                             if (root.nodeType == NodeType.FUNCTION) {
                                 val params = root.fields["params"] as Vector<*>
-                                params.forEach {it as MethodParameter
+                                params.forEach {
+                                    it as MethodParameter
                                     if (it.name == word.substring(1)) {
                                         return DefinitionFinderResult(true, root.linenumber, root.raw.indexOf(word.substring(1)) + 1)
                                     }
@@ -93,10 +92,7 @@ class DefinitionsFinder(val manager: CodeManager) {
                     }
                 }
             }
-
-
-
-
+        }
         return DefinitionFinderResult(false)
     }
 
