@@ -11,7 +11,7 @@ enum class EventRequirementItemType {
 
 class EventRequirementItem(val type: EventRequirementItemType, val value: Any)
 
-class EventRequirement(val raw:String, val items: Vector<EventRequirementItem> = Vector())
+class EventRequirement(val raw: String, val items: Vector<EventRequirementItem> = Vector())
 
 object EditorUtils {
 
@@ -119,7 +119,7 @@ object EditorUtils {
                         item.items.add(EventRequirementItem(EventRequirementItemType.STRING, it.trim()))
                     else
                         @Suppress("UNCHECKED_CAST")
-                        if(item.items.lastElement().type == EventRequirementItemType.VARIABLE)
+                        if (item.items.lastElement().type == EventRequirementItemType.VARIABLE)
                             (item.items.lastElement().value as Vector<String>).addElement(it.substring(1))
             }
         return item

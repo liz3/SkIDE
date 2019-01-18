@@ -3,7 +3,6 @@ package com.skide.gui.crumbbar;
 public class Control extends javafx.scene.control.Control {
 
 
-
     private String stylesheet;
 
     /**
@@ -11,10 +10,8 @@ public class Control extends javafx.scene.control.Control {
      * agent stylesheet only happens once. Caches the external form of the
      * resource.
      *
-     * @param clazz
-     *            the class used for the resource lookup
-     * @param fileName
-     *            the name of the user agent stylesheet
+     * @param clazz    the class used for the resource lookup
+     * @param fileName the name of the user agent stylesheet
      * @return the external form of the user agent stylesheet (the path)
      */
     protected final String getUserAgentStylesheet(Class<?> clazz,

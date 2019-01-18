@@ -56,16 +56,16 @@ class GenerateCommandController {
 
     fun generateString(): String {
         var out = "command /${commandNameField.text}:\n"
-        out  += addline("aliases", aliasesField)
-        out  += addline("executable by", executableField)
-        out  += addline("usage", usageField)
-        out  += addline("description", descriptionField)
-        out  += addline("permission", permissionField)
-        out  += addline("permission message", permissionMessageField)
-        out  += addline("cooldown", cooldownField)
-        out  += addline("cooldown message", cooldownMessageField)
-        out  += addline("cooldown bypass", cooldownBypassField)
-        out  += addline("cooldown storage", cooldownStorageField)
+        out += addline("aliases", aliasesField)
+        out += addline("executable by", executableField)
+        out += addline("usage", usageField)
+        out += addline("description", descriptionField)
+        out += addline("permission", permissionField)
+        out += addline("permission message", permissionMessageField)
+        out += addline("cooldown", cooldownField)
+        out += addline("cooldown message", cooldownMessageField)
+        out += addline("cooldown bypass", cooldownBypassField)
+        out += addline("cooldown storage", cooldownStorageField)
         out += "\ttrigger:\n\t\t# Code here"
         return out
     }

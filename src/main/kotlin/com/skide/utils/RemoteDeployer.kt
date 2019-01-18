@@ -49,17 +49,17 @@ class RemoteDeployer(val project: OpenProject) {
                 c.setFileType(FTP.BINARY_FILE_TYPE)
                 c.storeFile(host.folderPath + fileName, ByteArrayInputStream(content.toByteArray()))
 
-                    Notifications.create()
-                            .title("File Deployed")
-                            .text("File $fileName has been deployed successfully to ${host.host}").darkStyle()
-                            .showInformation()
+                Notifications.create()
+                        .title("File Deployed")
+                        .text("File $fileName has been deployed successfully to ${host.host}").darkStyle()
+                        .showInformation()
 
             } catch (e: Exception) {
 
-                        Notifications.create()
-                                .title("File Deploy error")
-                                .text("Error while deploying $fileName ${e.message}").darkStyle()
-                                .showError()
+                Notifications.create()
+                        .title("File Deploy error")
+                        .text("Error while deploying $fileName ${e.message}").darkStyle()
+                        .showError()
 
             }
         }
@@ -83,16 +83,16 @@ class RemoteDeployer(val project: OpenProject) {
                 c.exit()
                 session.disconnect()
 
-                          Notifications.create()
-                                  .title("File Deployed")
-                                  .text("File $fileName has been deployed successfully to ${host.host}").darkStyle()
-                                  .showInformation()
+                Notifications.create()
+                        .title("File Deployed")
+                        .text("File $fileName has been deployed successfully to ${host.host}").darkStyle()
+                        .showInformation()
 
             } catch (e: Exception) {
-                   Notifications.create()
-                               .title("File Deploy error")
-                               .text("Error while deploying $fileName ${e.message}").darkStyle()
-                               .showError()
+                Notifications.create()
+                        .title("File Deploy error")
+                        .text("Error while deploying $fileName ${e.message}").darkStyle()
+                        .showError()
 
             }
         }

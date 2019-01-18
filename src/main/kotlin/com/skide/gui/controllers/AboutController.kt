@@ -10,19 +10,19 @@ class AboutController {
 
 
     @FXML
-    lateinit var imageView: ImageView 
+    lateinit var imageView: ImageView
 
     @FXML
-    lateinit var versionLabel: Label 
+    lateinit var versionLabel: Label
 
     @FXML
-    lateinit var infoTextLabel: Label 
+    lateinit var infoTextLabel: Label
 
     @FXML
-    lateinit var discordBtn: Button 
+    lateinit var discordBtn: Button
 
     @FXML
-    lateinit var gitlabBtn: Button 
+    lateinit var gitlabBtn: Button
 
     @FXML
     lateinit var donateBtn: Button

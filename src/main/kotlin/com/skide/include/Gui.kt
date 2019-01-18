@@ -18,6 +18,7 @@ import java.io.File
 class ActiveWindow(val stage: Stage, val scene: Scene, val loader: FXMLLoader, val controller: Any, val id: Int) {
     fun close() = GUIManager.closeGui(id)
     var closeListener = {}
+
     init {
         stage.setOnCloseRequest {
             closeListener()

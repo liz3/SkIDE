@@ -11,7 +11,7 @@ import java.io.File
 class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUIController) {
 
 
-    private fun updateActive(value:Boolean) {
+    private fun updateActive(value: Boolean) {
         ctrl.deployMethodComboBox.isDisable = value
         ctrl.deployDeleteBtn.isDisable = value
         ctrl.deployHostTextField.isDisable = value
@@ -21,19 +21,20 @@ class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICon
         ctrl.deployPasswordField.isDisable = value
         ctrl.deployPassphraseButton.isDisable = value
     }
+
     fun initDeployModule() {
 
 
         ctrl.deployList.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
             updateActive(newValue == null)
-            if(newValue == null) return@addListener
+            if (newValue == null) return@addListener
             ctrl.deployHostTextField.text = newValue.host
             ctrl.deployUsernameTextField.text = newValue.username
             ctrl.deployMethodComboBox.selectionModel.select(newValue.type.toString())
             ctrl.deployPasswordField.text = if (newValue.passwordSaved) newValue.password else ""
             ctrl.deployFolderPathTextField.text = newValue.folderPath
             ctrl.deployPortTextField.text = newValue.port.toString()
-            if(newValue.isPrivateKey) {
+            if (newValue.isPrivateKey) {
                 ctrl.deployPassphraseLabel.text = newValue.privateKeyPath
             }
         }
@@ -110,10 +111,10 @@ class DeployOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICon
                 val name = ctrl.deployNewTextField.text
                 val opt = RemoteHost(name, RemoteHostType.SFTP, "", 22, false, false, "", "", "", "")
 
-                    ctrl.deployList.items.add(opt)
-                    ctrl.deployList.selectionModel.select(opt)
-                    ctrl.deployNewTextField.text = ""
-                    resetValues()
+                ctrl.deployList.items.add(opt)
+                ctrl.deployList.selectionModel.select(opt)
+                ctrl.deployNewTextField.text = ""
+                resetValues()
 
             }
         }

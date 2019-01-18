@@ -2,7 +2,6 @@ package com.skide.core.management
 
 import com.skide.CoreManager
 import com.skide.Info
-import com.skide.gui.GUIManager
 import com.skide.gui.LinkOpener
 import com.skide.utils.FileReturnResult
 import com.skide.utils.readFile
@@ -87,11 +86,11 @@ class ConfigManager(val coreManager: CoreManager) {
         var firstRun = false
         if (Info.prodMode) loadUpdateFile()
 
-        if (!rootFolder.exists() || !configFile.exists() ) firstRun = true
+        if (!rootFolder.exists() || !configFile.exists()) firstRun = true
         if (firstRun) return if (createFiles()) {
             if (!snippetsFile.exists())
                 writeFile("[]".toByteArray(), snippetsFile, false, true)
-            if(!colorSchemesFile.exists())
+            if (!colorSchemesFile.exists())
                 writeFile("[]".toByteArray(), colorSchemesFile, false, true)
             checkCssFiles()
             ConfigLoadResult.FIRST_RUN
@@ -99,7 +98,7 @@ class ConfigManager(val coreManager: CoreManager) {
 
         if (!snippetsFile.exists())
             writeFile("[]".toByteArray(), snippetsFile, false, true)
-        if(!colorSchemesFile.exists())
+        if (!colorSchemesFile.exists())
             writeFile("[]".toByteArray(), colorSchemesFile, false, true)
 
         //read the main Config

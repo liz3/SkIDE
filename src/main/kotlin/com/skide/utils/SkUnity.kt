@@ -19,9 +19,10 @@ class SkUnity(val coreManager: CoreManager) {
     var username = ""
 
 
-     fun addListener(callback: () -> Unit) {
-            callers.add(callback)
+    fun addListener(callback: () -> Unit) {
+        callers.add(callback)
     }
+
     fun load() {
         if (coreManager.configManager.skUnityKey != "") {
             loggedIn = true
@@ -69,7 +70,7 @@ class SkUnity(val coreManager: CoreManager) {
         return true
     }
 
-    fun initer(content:String) {
+    fun initer(content: String) {
 
         val scene = GUIManager.getWindow("fxml/SkUnityQuestionFrame.fxml", "Ask on skUnity", true)
         val controller = scene.controller as SkunityQuestionFameController
@@ -80,7 +81,7 @@ class SkUnity(val coreManager: CoreManager) {
             popUp.hide()
         }
 
-          controller.contentArea.text = "[CODE=SKRIPT]$content[/CODE]\n"
+        controller.contentArea.text = "[CODE=SKRIPT]$content[/CODE]\n"
 
 
         controller.cancelBtn.setOnAction {
@@ -92,13 +93,14 @@ class SkUnity(val coreManager: CoreManager) {
             val msg = controller.contentArea.text
 
             if (title != "" || msg != "") {
-               report(title, msg)
+                report(title, msg)
                 scene.stage.close()
             }
 
         }
 
     }
+
     fun report(title: String, msg: String) {
 
         val headers = HashMap<String, String>()

@@ -26,13 +26,14 @@ fun getOS(): OperatingSystemType {
 
     return OperatingSystemType.OTHER
 }
-fun openInExplorer(f:File) {
+
+fun openInExplorer(f: File) {
     when (getOS()) {
         OperatingSystemType.WINDOWS -> Runtime.getRuntime().exec("explorer.exe /select,\"${f.absolutePath}\"")
         OperatingSystemType.MAC_OS ->
             Runtime.getRuntime().exec("open -R ${f.absolutePath}")
         else -> {
-            if(f.isDirectory) {
+            if (f.isDirectory) {
                 Runtime.getRuntime().exec("xdg-open ${f.absolutePath}")
             } else {
                 Runtime.getRuntime().exec("xdg-open ${f.parentFile.absolutePath}")
@@ -40,13 +41,15 @@ fun openInExplorer(f:File) {
         }
     }
 }
-fun copyFileToClipboard(file:File) {
+
+fun copyFileToClipboard(file: File) {
     val listOfFiles = ArrayList<File>()
     listOfFiles.add(file)
     val ft = FileTransferable(listOfFiles)
-    Toolkit.getDefaultToolkit().systemClipboard.setContents(ft) { _, _ ->  }
+    Toolkit.getDefaultToolkit().systemClipboard.setContents(ft) { _, _ -> }
 
 }
+
 private class FileTransferable(private val listOfFiles: List<*>) : Transferable {
 
     override fun getTransferDataFlavors(): Array<DataFlavor> {

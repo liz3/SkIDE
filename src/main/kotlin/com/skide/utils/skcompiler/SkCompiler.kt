@@ -2,7 +2,10 @@ package com.skide.utils.skcompiler
 
 import com.skide.core.management.OpenProject
 import com.skide.core.skript.SkriptParser
-import com.skide.include.*
+import com.skide.include.CompileOption
+import com.skide.include.CompileOptionType
+import com.skide.include.Node
+import com.skide.include.NodeType
 import com.skide.utils.readFile
 import com.skide.utils.writeFile
 import java.io.File
@@ -24,7 +27,7 @@ class SkCompiler {
     }
 
     fun compile(openProject: OpenProject, opts: CompileOption, caller: (String) -> Unit) {
-        if(!this::parser.isInitialized) parser = SkriptParser(openProject)
+        if (!this::parser.isInitialized) parser = SkriptParser(openProject)
         val project = openProject.project
         Thread {
             caller("Starting compile process...")
@@ -67,10 +70,10 @@ class SkCompiler {
                 }
                 val file = File(opts.outputDir, project.name + ".sk")
                 caller("Writing file ${file.absolutePath}")
-              if(out.isNotEmpty())
-                  writeFile(out.substring(1).toByteArray(), file, false, true)
+                if (out.isNotEmpty())
+                    writeFile(out.substring(1).toByteArray(), file, false, true)
                 else
-                  caller("can´t write empty fine.")
+                    caller("can´t write empty fine.")
                 caller("Finished")
             }
             if (opts.method == CompileOptionType.PER_FILE) {
@@ -86,8 +89,9 @@ class SkCompiler {
             }
         }.start()
     }
+
     fun compile(openProject: OpenProject, opts: CompileOption, caller: (String) -> Unit, returner: (String) -> Unit) {
-        if(!this::parser.isInitialized) parser = SkriptParser(openProject)
+        if (!this::parser.isInitialized) parser = SkriptParser(openProject)
 
 
         Thread {
@@ -137,9 +141,9 @@ class SkCompiler {
     }
 
     fun compileForServer(openProject: OpenProject, opts: CompileOption, skFolder: File, caller: (String) -> Unit, finished: () -> Unit) {
-        if(!this::parser.isInitialized) parser = SkriptParser(openProject)
+        if (!this::parser.isInitialized) parser = SkriptParser(openProject)
 
-        if(!skFolder.exists()) {
+        if (!skFolder.exists()) {
             skFolder.mkdirs()
         }
         Thread {
@@ -183,7 +187,7 @@ class SkCompiler {
                 }
                 val file = File(skFolder, openProject.project.name + ".sk")
                 caller("Writing file ${file.absolutePath}")
-                writeFile((if(out.isEmpty()) "" else out.substring(1)).toByteArray(), file, false, true)
+                writeFile((if (out.isEmpty()) "" else out.substring(1)).toByteArray(), file, false, true)
                 caller("Finished")
                 finished()
             }
@@ -194,7 +198,7 @@ class SkCompiler {
                     var out = ""
                     arr.value.forEach { out += computeString(it) }
                     caller("Writing file ${file.absolutePath}")
-                    writeFile((if(out.isEmpty()) "" else out.substring(1)).toByteArray(), file, false, true)
+                    writeFile((if (out.isEmpty()) "" else out.substring(1)).toByteArray(), file, false, true)
                 }
                 caller("Finished")
                 finished()

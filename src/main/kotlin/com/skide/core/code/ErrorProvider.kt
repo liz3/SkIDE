@@ -240,7 +240,7 @@ class ErrorProvider(val manager: CodeManager) {
         }
         for ((nIndex, node) in allNodes.withIndex()) {
             if (node.nodeType == NodeType.FUNCTION ||
-                    node.nodeType == NodeType.IF_STATEMENT || node.nodeType == NodeType.EVENT ||  node.nodeType == NodeType.LOOP || node.nodeType == NodeType.OPTIONS || node.nodeType == NodeType.COMMAND) {
+                    node.nodeType == NodeType.IF_STATEMENT || node.nodeType == NodeType.EVENT || node.nodeType == NodeType.LOOP || node.nodeType == NodeType.OPTIONS || node.nodeType == NodeType.COMMAND) {
 
                 if (if (node.hasComment()) !node.getContent().substring(0, node.getContent().lastIndexOf("#")).trim().endsWith(":") else !node.getContent().endsWith(":")) {
                     calls += {

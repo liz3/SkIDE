@@ -1,18 +1,18 @@
 /**
  * Copyright (c) 2014, 2015 ControlsFX
  * All rights reserved.
- *
+ * <p>
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- *     * Redistributions of source code must retain the above copyright
+ * * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
- *     * Redistributions in binary form must reproduce the above copyright
+ * * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- *     * Neither the name of ControlsFX, any associated website, nor the
+ * * Neither the name of ControlsFX, any associated website, nor the
  * names of its contributors may be used to endorse or promote products
  * derived from this software without specific prior written permission.
- *
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -26,10 +26,13 @@
  */
 package com.skide.gui.crumbbar;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import com.sun.javafx.scene.control.behavior.BehaviorBase;
+import com.sun.javafx.scene.control.behavior.KeyBinding;
+import com.sun.javafx.scene.control.skin.BehaviorSkinBase;
+import com.sun.javafx.scene.traversal.Algorithm;
+import com.sun.javafx.scene.traversal.Direction;
+import com.sun.javafx.scene.traversal.ParentTraversalEngine;
+import com.sun.javafx.scene.traversal.TraversalContext;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.beans.property.ObjectProperty;
@@ -42,24 +45,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeItem.TreeModificationEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.ArcTo;
-import javafx.scene.shape.ClosePath;
-import javafx.scene.shape.HLineTo;
-import javafx.scene.shape.LineTo;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
+import javafx.scene.shape.*;
 import javafx.util.Callback;
-
 import org.controlsfx.control.BreadCrumbBar;
 import org.controlsfx.control.BreadCrumbBar.BreadCrumbActionEvent;
 
-import com.sun.javafx.scene.control.behavior.BehaviorBase;
-import com.sun.javafx.scene.control.behavior.KeyBinding;
-import com.sun.javafx.scene.control.skin.BehaviorSkinBase;
-import com.sun.javafx.scene.traversal.Algorithm;
-import com.sun.javafx.scene.traversal.Direction;
-import com.sun.javafx.scene.traversal.ParentTraversalEngine;
-import com.sun.javafx.scene.traversal.TraversalContext;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Basic Skin implementation for the {@link BreadCrumbBar}
@@ -69,9 +62,13 @@ import com.sun.javafx.scene.traversal.TraversalContext;
 public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<CrumBar<T>>> {
 
     private static final String STYLE_CLASS_FIRST = "first"; //$NON-NLS-1$
+    private final EventHandler<TreeModificationEvent<Object>> treeChildrenModifiedHandler =
+            args -> updateBreadCrumbs();
+    private final ChangeListener<TreeItem<T>> selectedPathChangeListener =
+            (obs, oldItem, newItem) -> updateSelectedPath(newItem, oldItem);
 
     public CrumBarSkin(final CrumBar<T> control) {
-        super(control, new BehaviorBase<>(control, Collections.<KeyBinding> emptyList()));
+        super(control, new BehaviorBase<>(control, Collections.emptyList()));
         control.selectedCrumbProperty().addListener(selectedPathChangeListener);
         updateSelectedPath(getSkinnable().selectedCrumbProperty().get(), null);
         fixFocusTraversal();
@@ -87,18 +84,18 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
             public Node select(Node owner, Direction dir, TraversalContext context) {
                 Node node = null;
                 int idx = getChildren().indexOf(owner);
-                switch(dir) {
+                switch (dir) {
                     case NEXT:
                     case NEXT_IN_LINE:
                     case RIGHT:
                         if (idx < getChildren().size() - 1) {
-                            node = getChildren().get(idx+1);
+                            node = getChildren().get(idx + 1);
                         }
                         break;
                     case PREVIOUS:
                     case LEFT:
                         if (idx > 0) {
-                            node = getChildren().get(idx-1);
+                            node = getChildren().get(idx - 1);
                         }
                         break;
                 }
@@ -118,7 +115,7 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
             public Node selectLast(TraversalContext context) {
                 Node last = null;
                 if (!getChildren().isEmpty()) {
-                    last = getChildren().get(getChildren().size()-1);
+                    last = getChildren().get(getChildren().size() - 1);
                 }
                 return last;
             }
@@ -128,26 +125,18 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
 
     }
 
-    private final ChangeListener<TreeItem<T>> selectedPathChangeListener =
-            (obs, oldItem, newItem) -> updateSelectedPath(newItem, oldItem);
-
     private void updateSelectedPath(TreeItem<T> newTarget, TreeItem<T> oldTarget) {
-        if(oldTarget != null){
+        if (oldTarget != null) {
             // remove old listener
             oldTarget.removeEventHandler(
                     TreeItem.childrenModificationEvent(), treeChildrenModifiedHandler);
         }
-        if(newTarget != null){
+        if (newTarget != null) {
             // add new listener
             newTarget.addEventHandler(TreeItem.childrenModificationEvent(), treeChildrenModifiedHandler);
         }
         updateBreadCrumbs();
     }
-
-
-    private final EventHandler<TreeModificationEvent<Object>> treeChildrenModifiedHandler =
-            args -> updateBreadCrumbs();
-
 
     private void updateBreadCrumbs() {
         final CrumBar<T> buttonBar = getSkinnable();
@@ -156,14 +145,14 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
 
         getChildren().clear();
 
-        if(pathTarget != null){
+        if (pathTarget != null) {
             List<TreeItem<T>> crumbs = constructFlatPath(pathTarget);
 
-            for (int i=0; i < crumbs.size(); i++) {
+            for (int i = 0; i < crumbs.size(); i++) {
                 Button crumb = createCrumb(factory, crumbs.get(i));
                 crumb.setMnemonicParsing(false);
                 if (i == 0) {
-                    if (! crumb.getStyleClass().contains(STYLE_CLASS_FIRST)) {
+                    if (!crumb.getStyleClass().contains(STYLE_CLASS_FIRST)) {
                         crumb.getStyleClass().add(STYLE_CLASS_FIRST);
                     }
                 } else {
@@ -175,7 +164,8 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
         }
     }
 
-    @Override protected void layoutChildren(double x, double y, double w, double h) {
+    @Override
+    protected void layoutChildren(double x, double y, double w, double h) {
         for (int i = 0; i < getChildren().size(); i++) {
             Node n = getChildren().get(i);
 
@@ -184,7 +174,7 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
 
             if (i > 0) {
                 // We have to position the bread crumbs slightly overlapping
-                double ins = n instanceof BreadCrumbButton ?  ((BreadCrumbButton)n).getArrowWidth() : 0;
+                double ins = n instanceof BreadCrumbButton ? ((BreadCrumbButton) n).getArrowWidth() : 0;
                 x = snapPosition(x - ins);
             }
 
@@ -199,7 +189,7 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
      * @param bottomMost The crumb node at the end of the path
      * @return
      */
-    private List<TreeItem<T>> constructFlatPath(TreeItem<T> bottomMost){
+    private List<TreeItem<T>> constructFlatPath(TreeItem<T> bottomMost) {
         List<TreeItem<T>> path = new ArrayList<>();
 
         TreeItem<T> current = bottomMost;
@@ -235,19 +225,17 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
      *
      * @param crumbModel The crumb which received the action event
      */
-    protected void onBreadCrumbAction(final TreeItem<T> crumbModel){
+    protected void onBreadCrumbAction(final TreeItem<T> crumbModel) {
         final CrumBar<T> breadCrumbBar = getSkinnable();
 
         // fire the composite event in the breadCrumbBar
         Event.fireEvent(breadCrumbBar, new BreadCrumbActionEvent<>(crumbModel));
 
         // navigate to the clicked crumb
-        if(breadCrumbBar.isAutoNavigationEnabled()){
+        if (breadCrumbBar.isAutoNavigationEnabled()) {
             breadCrumbBar.setSelectedCrumb(crumbModel);
         }
     }
-
-
 
 
     /**
@@ -274,7 +262,7 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
          *
          * @param text Buttons text
          */
-        public BreadCrumbButton(String text){
+        public BreadCrumbButton(String text) {
             this(text, null);
         }
 
@@ -283,12 +271,13 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
          * @param text Buttons text
          * @param gfx Gfx of the Button
          */
-        public BreadCrumbButton(String text, Node gfx){
+        public BreadCrumbButton(String text, Node gfx) {
             super(text, gfx);
             first.set(false);
 
             getStyleClass().addListener(new InvalidationListener() {
-                @Override public void invalidated(Observable arg0) {
+                @Override
+                public void invalidated(Observable arg0) {
                     updateShape();
                 }
             });
@@ -296,7 +285,7 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
             updateShape();
         }
 
-        private void updateShape(){
+        private void updateShape() {
             this.setShape(createButtonShape());
         }
 
@@ -305,7 +294,7 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
          * Gets the crumb arrow with
          * @return
          */
-        public double getArrowWidth(){
+        public double getArrowWidth() {
             return arrowWidth;
         }
 
@@ -316,7 +305,7 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
          * @see http://ustesis.wordpress.com/2013/11/04/implementing-breadcrumbs-in-javafx/
          * @return
          */
-        private Path createButtonShape(){
+        private Path createButtonShape() {
             // build the following shape (or home without left arrow)
 
             //   --------
@@ -353,12 +342,12 @@ public class CrumBarSkin<T> extends BehaviorSkinBase<CrumBar<T>, BehaviorBase<Cr
             HLineTo e5 = new HLineTo(0);
             path.getElements().add(e5);
 
-            if(! getStyleClass().contains(STYLE_CLASS_FIRST)){
+            if (!getStyleClass().contains(STYLE_CLASS_FIRST)) {
                 // draw lower part of left arrow
                 // we simply can omit it for the first Button
                 LineTo e6 = new LineTo(arrowWidth, arrowHeight / 2.0);
                 path.getElements().add(e6);
-            }else{
+            } else {
                 // draw an arc for the first bread crumb
                 ArcTo arcTo = new ArcTo();
                 arcTo.setSweepFlag(true);

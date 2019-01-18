@@ -5,10 +5,7 @@ import com.skide.gui.GUIManager
 import com.skide.gui.controllers.ProjectSettingsGUIController
 import com.skide.include.ActiveWindow
 import com.skide.include.Addon
-import com.skide.utils.OperatingSystemType
-import com.skide.utils.getOS
 import javafx.stage.Modality
-import javafx.stage.StageStyle
 import java.util.*
 import kotlin.collections.HashMap
 

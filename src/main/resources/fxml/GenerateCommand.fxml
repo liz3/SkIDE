@@ -1,56 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="607.0" prefWidth="600.0" spacing="25.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.GenerateCommandController">
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-   </padding>
-   <children>
-      <VBox prefHeight="70.0" prefWidth="579.0">
-         <children>
-            <Label text="Name" />
-            <TextField fx:id="commandNameField" prefHeight="25.0" prefWidth="328.0" promptText="Command Name" />
-            <Label text="Aliases" />
-            <TextField fx:id="aliasesField" promptText="Aliase" />
-            <Label layoutX="10.0" layoutY="53.0" text="Usage" />
-            <TextField fx:id="usageField" layoutX="10.0" layoutY="71.0" promptText="Usage" />
-         </children>
-      </VBox>
-      <VBox prefHeight="42.0" prefWidth="579.0">
-         <children>
-            <Label text="Executable by" />
-            <TextField fx:id="executableField" promptText="Executable by" />
-            <Label text="Description" />
-            <TextField fx:id="descriptionField" prefHeight="25.0" prefWidth="328.0" promptText="Description Name" />
-            <Label text="Permission" />
-            <TextField fx:id="permissionField" prefHeight="25.0" prefWidth="328.0" promptText="Permission Name" />
-            <Label text="Permission Message" />
-            <TextField fx:id="permissionMessageField" prefHeight="25.0" prefWidth="328.0" promptText="Permission Message Name" />
-         </children>
-      </VBox>
-      <VBox prefHeight="121.0" prefWidth="579.0">
-         <children>
-            <Label text="Cooldown" />
-            <TextField fx:id="cooldownField" prefHeight="25.0" prefWidth="328.0" promptText="Cooldown timespan" />
-            <Label text="Cooldown Message" />
-            <TextField fx:id="cooldownMessageField" prefHeight="25.0" prefWidth="328.0" promptText="Cooldown Message" />
-            <Label text="Cooldown Bypass" />
-            <TextField fx:id="cooldownBypassField" prefHeight="25.0" prefWidth="328.0" promptText="Cooldown Bypass value" />
-            <Label text="Cooldown Storage" />
-            <TextField fx:id="cooldownStorageField" prefHeight="25.0" prefWidth="328.0" promptText="Cooldown Storage variable" />
-         </children>
-      </VBox>
-      <HBox alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="600.0" spacing="5.0">
-         <children>
-            <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel" />
-            <Button fx:id="createButton" mnemonicParsing="false" text="Create" />
-         </children>
-      </HBox>
-   </children>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="607.0" prefWidth="600.0" spacing="25.0" xmlns="http://javafx.com/javafx/8.0.191"
+      fx:controller="com.skide.gui.controllers.GenerateCommandController">
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+    <children>
+        <VBox prefHeight="70.0" prefWidth="579.0">
+            <children>
+                <Label text="Name"/>
+                <TextField fx:id="commandNameField" prefHeight="25.0" prefWidth="328.0" promptText="Command Name"/>
+                <Label text="Aliases"/>
+                <TextField fx:id="aliasesField" promptText="Aliase"/>
+                <Label layoutX="10.0" layoutY="53.0" text="Usage"/>
+                <TextField fx:id="usageField" layoutX="10.0" layoutY="71.0" promptText="Usage"/>
+            </children>
+        </VBox>
+        <VBox prefHeight="42.0" prefWidth="579.0">
+            <children>
+                <Label text="Executable by"/>
+                <TextField fx:id="executableField" promptText="Executable by"/>
+                <Label text="Description"/>
+                <TextField fx:id="descriptionField" prefHeight="25.0" prefWidth="328.0" promptText="Description Name"/>
+                <Label text="Permission"/>
+                <TextField fx:id="permissionField" prefHeight="25.0" prefWidth="328.0" promptText="Permission Name"/>
+                <Label text="Permission Message"/>
+                <TextField fx:id="permissionMessageField" prefHeight="25.0" prefWidth="328.0"
+                           promptText="Permission Message Name"/>
+            </children>
+        </VBox>
+        <VBox prefHeight="121.0" prefWidth="579.0">
+            <children>
+                <Label text="Cooldown"/>
+                <TextField fx:id="cooldownField" prefHeight="25.0" prefWidth="328.0" promptText="Cooldown timespan"/>
+                <Label text="Cooldown Message"/>
+                <TextField fx:id="cooldownMessageField" prefHeight="25.0" prefWidth="328.0"
+                           promptText="Cooldown Message"/>
+                <Label text="Cooldown Bypass"/>
+                <TextField fx:id="cooldownBypassField" prefHeight="25.0" prefWidth="328.0"
+                           promptText="Cooldown Bypass value"/>
+                <Label text="Cooldown Storage"/>
+                <TextField fx:id="cooldownStorageField" prefHeight="25.0" prefWidth="328.0"
+                           promptText="Cooldown Storage variable"/>
+            </children>
+        </VBox>
+        <HBox alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="600.0" spacing="5.0">
+            <children>
+                <Button fx:id="cancelButton" mnemonicParsing="false" text="Cancel"/>
+                <Button fx:id="createButton" mnemonicParsing="false" text="Create"/>
+            </children>
+        </HBox>
+    </children>
 </VBox>

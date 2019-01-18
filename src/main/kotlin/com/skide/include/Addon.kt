@@ -2,7 +2,6 @@ package com.skide.include
 
 import com.skide.utils.EventRequirement
 import java.util.*
-import javax.swing.SizeRequirements
 import kotlin.collections.HashMap
 
 enum class DocType {
@@ -13,7 +12,7 @@ enum class DocType {
     TYPE
 }
 
-class Addon(val id: Long, val name: String, val author: String, val versions: HashMap<String, Vector<AddonItem>> = HashMap(), var loaded:Boolean = false) {
+class Addon(val id: Long, val name: String, val author: String, val versions: HashMap<String, Vector<AddonItem>> = HashMap(), var loaded: Boolean = false) {
     override fun toString() = name
 }
 

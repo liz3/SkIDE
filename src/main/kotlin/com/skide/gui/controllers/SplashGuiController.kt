@@ -1,8 +1,8 @@
 package com.skide.gui.controllers
 
-import javafx.scene.control.ProgressBar
 import javafx.fxml.FXML
 import javafx.scene.control.Label
+import javafx.scene.control.ProgressBar
 import javafx.scene.image.ImageView
 
 

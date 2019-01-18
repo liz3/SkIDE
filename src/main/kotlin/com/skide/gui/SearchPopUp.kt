@@ -11,7 +11,6 @@ import javafx.scene.input.KeyCode
 import javafx.scene.input.MouseButton
 import javafx.scene.layout.*
 import javafx.scene.paint.Color
-import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import java.util.*
@@ -25,7 +24,7 @@ class SearchPopUpItem(primaryString: String, secondaryString: String, val action
     init {
         val pane = Pane()
         labelLeft.text = primaryString
-        HBox.setHgrow(pane, Priority.ALWAYS);
+        HBox.setHgrow(pane, Priority.ALWAYS)
         labelRight.text = secondaryString
         this.children.addAll(labelLeft, pane, labelRight)
 
@@ -60,7 +59,7 @@ class SearchPopUp(val parent: Stage, val update: (String) -> List<SearchPopUpIte
         indexing.isDisable = true
         bottomCheck.isDisable = true
         inputField.setOnKeyPressed {
-            if(it.code == KeyCode.ENTER && listView.items.size == 1) {
+            if (it.code == KeyCode.ENTER && listView.items.size == 1) {
                 listView.items[0].action()
                 stage.close()
                 listView.items.clear()

@@ -2,7 +2,6 @@ package com.skide.gui.settings
 
 import com.skide.CoreManager
 import com.skide.core.code.ChangeWatcher
-import com.skide.core.code.CodeArea
 import com.skide.gui.GUIManager
 import com.skide.gui.controllers.GeneralSettingsGUIController
 import com.skide.include.ColorRule
@@ -22,8 +21,6 @@ import javafx.stage.Modality
 import javafx.stage.Stage
 import javafx.stage.StageStyle
 import netscape.javascript.JSObject
-import org.json.JSONObject
-import kotlin.collections.HashMap
 import java.awt.MouseInfo
 
 
@@ -268,7 +265,7 @@ class ThemesGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager: 
                 ctrl.schemesRulesList.isDisable = false
                 ctrl.schemesDeleteBtn.isDisable = false
 
-                runAsserted {scheme ->
+                runAsserted { scheme ->
 
                     for (item in ctrl.schemesColorsList.items) {
                         if (scheme.colors.containsKey(item.name)) {

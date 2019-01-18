@@ -11,7 +11,6 @@ import com.skide.utils.EditorUtils
 import com.skide.utils.readFile
 import javafx.application.Platform
 import javafx.scene.control.TreeItem
-import org.controlsfx.control.BreadCrumbBar
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
@@ -101,7 +100,7 @@ class CodeManager {
             parser.superParse(area.text)
         else
             this.parseResult
-      if(!gotoActivated)  rootStructureItem.children.clear()
+        if (!gotoActivated) rootStructureItem.children.clear()
         Platform.runLater {
             val stack = Vector<Node>()
             var currNode: Node? = EditorUtils.getLineNode(area.getCurrentLine(), parseResult) ?: return@runLater
@@ -120,7 +119,7 @@ class CodeManager {
                 item.children.add(next)
                 item = next
             }
-           hBox.selectedCrumb = item
+            hBox.selectedCrumb = item
 
         }
 

@@ -1,8 +1,6 @@
 package com.skide.core.code.autocomplete
 
-import com.skide.Info
 import com.skide.core.code.CodeManager
-import com.skide.core.code.DefinitionFinderResult
 import com.skide.gui.GUIManager
 import com.skide.gui.controllers.GenerateCommandController
 import com.skide.include.*
@@ -10,7 +8,6 @@ import com.skide.utils.EditorUtils
 import netscape.javascript.JSObject
 import java.util.*
 import kotlin.collections.HashMap
-import kotlin.system.measureTimeMillis
 
 class AutoCompleteCompute(val manager: CodeManager, val project: OpenFileHolder) {
 

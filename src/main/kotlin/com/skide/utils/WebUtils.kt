@@ -11,7 +11,7 @@ import javax.net.ssl.HttpsURLConnection
 
 
 fun downloadFile(target: String, path: String) {
-    val url = URL(target);
+    val url = URL(target)
     val bis = BufferedInputStream(url.openStream())
     val fis = FileOutputStream(File(path))
     val buffer = ByteArray(1024)

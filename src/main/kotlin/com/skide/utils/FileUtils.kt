@@ -1,9 +1,7 @@
 package com.skide.utils
 
 import java.io.File
-import java.io.FileInputStream
 import java.nio.charset.Charset
-import java.io.IOException
 import java.nio.file.*
 
 
@@ -25,6 +23,7 @@ fun deleteDirectoryRecursion(path: Path) {
     }
     Files.delete(path)
 }
+
 fun writeFile(data: ByteArray, path: String, append: Boolean = false, createIfNotExists: Boolean = false) = writeFile(data, File(path), append, createIfNotExists)
 fun writeFile(data: ByteArray, path: String) = writeFile(data, File(path))
 

@@ -20,7 +20,7 @@ class CompileOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICo
         return true
     }
 
-    private fun updateActive(value:Boolean) {
+    private fun updateActive(value: Boolean) {
 
         ctrl.compileOutPutPathField.isDisable = value
         ctrl.compileMethodComboBox.isDisable = value
@@ -32,6 +32,7 @@ class CompileOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICo
         ctrl.compileExcludedFileList.isDisable = value
 
     }
+
     fun init() {
 
         ctrl.compileMethodComboBox.items.addAll(CompileOptionType.CONCATENATE, CompileOptionType.PER_FILE, CompileOptionType.JAR)
@@ -42,8 +43,7 @@ class CompileOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICo
         ctrl.compileConfListView.selectionModel.selectedItemProperty().addListener { _, oldValue, newVal ->
 
 
-
-                updateActive(newVal == null)
+            updateActive(newVal == null)
 
 
             if (oldValue != null && !applyCurr(oldValue)) return@addListener
@@ -124,7 +124,7 @@ class CompileOptionsGUI(val project: OpenProject, val ctrl: ProjectSettingsGUICo
 
 
         ctrl.compileConfListView.selectionModel.select(0)
-       if(ctrl.compileConfListView.items.size > 0) insertCurrentValues()
+        if (ctrl.compileConfListView.items.size > 0) insertCurrentValues()
 
     }
 

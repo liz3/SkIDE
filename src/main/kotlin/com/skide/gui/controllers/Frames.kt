@@ -1,8 +1,8 @@
 package com.skide.gui.controllers
 
-import javafx.scene.control.CheckBox
 import javafx.fxml.FXML
 import javafx.scene.control.Button
+import javafx.scene.control.CheckBox
 import javafx.scene.control.TextArea
 import javafx.scene.control.TextField
 
@@ -25,7 +25,7 @@ class FindFrameController {
     lateinit var caseSensitive: CheckBox
 
     @FXML
-    lateinit var closeBtn:Button
+    lateinit var closeBtn: Button
 
 }
 
@@ -56,7 +56,7 @@ class ReplaceFrameController {
     lateinit var replaceAllBtn: Button
 
     @FXML
-    lateinit var closeBtn:Button
+    lateinit var closeBtn: Button
 
 }
 

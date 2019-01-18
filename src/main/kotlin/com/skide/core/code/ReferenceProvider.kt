@@ -37,21 +37,22 @@ class ReferenceProvider(val manager: CodeManager) {
                     }
                 }
 
-                if(manager.area.openFileHolder.coreManager.configManager.get("cross_auto_complete") == "true") {
+                if (manager.area.openFileHolder.coreManager.configManager.get("cross_auto_complete") == "true") {
                     for (crossNodeFile in manager.area.openFileHolder.openProject.crossNodes) {
                     }
                 }
 
             } else {
                 val parameters = currentNode.fields["params"] as Vector<*>
-                parameters.forEach {it as MethodParameter
+                parameters.forEach {
+                    it as MethodParameter
                     if (word == it.name) {
                         val searched = "{_${it.name}}"
                         for (node in EditorUtils.flatList(EditorUtils.getRootOf(currentNode))) {
                             if (node == currentNode) continue
                             var index = node.raw.indexOf(searched)
                             while (index >= 0) {
-                                array.setSlot(counter, getObj(node.linenumber, index  + 1, searched.length, model))
+                                array.setSlot(counter, getObj(node.linenumber, index + 1, searched.length, model))
                                 counter++
                                 index = node.raw.indexOf(searched, index + 1)
                             }
@@ -78,7 +79,7 @@ class ReferenceProvider(val manager: CodeManager) {
                 val flatList = EditorUtils.flatList(nodes)
                 val searched = "{$name}"
                 for (node in flatList) {
-                    if (node == currentNode ||node.nodeType == NodeType.COMMENT) continue
+                    if (node == currentNode || node.nodeType == NodeType.COMMENT) continue
                     var index = node.raw.indexOf(searched)
                     while (index >= 0) {
                         array.setSlot(counter, getObj(node.linenumber, index + 1, searched.length, model))
@@ -87,10 +88,10 @@ class ReferenceProvider(val manager: CodeManager) {
                     }
                 }
             }
-        } else if(EditorUtils.getRootOf(currentNode!!).nodeType == NodeType.OPTIONS) {
+        } else if (EditorUtils.getRootOf(currentNode!!).nodeType == NodeType.OPTIONS) {
             val searched = "{@$word}"
             for (node in EditorUtils.flatList(nodes)) {
-                if(node.tabLevel == 0 || node == currentNode) continue
+                if (node.tabLevel == 0 || node == currentNode) continue
                 var index = node.raw.indexOf(searched)
                 while (index >= 0) {
                     array.setSlot(counter, getObj(node.linenumber, index + 1, searched.length, model))

@@ -4,7 +4,6 @@ import com.skide.gui.project.OpenProjectGuiManager
 import javafx.scene.control.TabPane
 import javafx.scene.input.ClipboardContent
 import javafx.scene.input.TransferMode
-import javafx.scene.layout.BorderPane
 import javafx.scene.layout.VBox
 
 

@@ -6,11 +6,8 @@ import com.skide.include.ColorRule
 import com.skide.include.ColorScheme
 import com.skide.utils.readFile
 import com.skide.utils.writeFile
-import netscape.javascript.JSObject
 import org.json.JSONArray
 import org.json.JSONObject
-import java.util.*
-import kotlin.collections.HashMap
 
 class SchemesManager(val core: CoreManager) {
 
@@ -62,16 +59,16 @@ class SchemesManager(val core: CoreManager) {
         for (rule in scheme.rules) {
             val obj = area.getObject()
             obj.setMember("token", rule.key)
-            if(rule.value.foreground.isNotEmpty())
+            if (rule.value.foreground.isNotEmpty())
                 obj.setMember("foreground", rule.value.foreground)
-            if(rule.value.style.isNotEmpty())
+            if (rule.value.style.isNotEmpty())
                 obj.setMember("fontStyle", rule.value.style)
             rules.setSlot(count, obj)
             count++
         }
         try {
             area.getWindow().call("registerTheme", scheme.name, scheme.base, colors, rules)
-        }catch (e:Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
@@ -92,7 +89,7 @@ class SchemesManager(val core: CoreManager) {
 
             for (key in rules.keys()) {
                 val e = rules.get(key) as JSONObject
-                scheme.rules[key] = ColorRule(e.getString("foreground"),  e.getString("style"))
+                scheme.rules[key] = ColorRule(e.getString("foreground"), e.getString("style"))
             }
             schemes[name] = scheme
         }

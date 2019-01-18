@@ -2,12 +2,12 @@ package com.skide.core.management
 
 import com.skide.CoreManager
 import com.skide.core.skript.SkriptParser
-import com.skide.gui.SearchPopUp
-import com.skide.gui.SearchPopUpItem
 import com.skide.gui.project.ErrorFrontendHandler
 import com.skide.gui.project.OpenProjectGuiManager
 import com.skide.include.*
-import com.skide.utils.*
+import com.skide.utils.EditorUtils
+import com.skide.utils.RemoteDeployer
+import com.skide.utils.readFile
 import com.skide.utils.skcompiler.SkCompiler
 import javafx.application.Platform
 import javafx.scene.control.Button
@@ -186,7 +186,8 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         eventManager.updateProjectFilesTreeView()
         eventManager.openFile(project.fileManager.projectFiles[name]!!)
     }
-    fun createNewFile(orig: String, content:String) {
+
+    fun createNewFile(orig: String, content: String) {
         val name = if (!orig.contains(".")) "$orig.sk" else orig
         project.fileManager.addFile(name, content)
         eventManager.updateProjectFilesTreeView()

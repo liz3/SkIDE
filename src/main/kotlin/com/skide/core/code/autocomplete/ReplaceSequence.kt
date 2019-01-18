@@ -31,7 +31,6 @@ data class ReplaceSeuenceItem(val absoluteStart: Int, val absoluteEnd: Int, val 
 class ReplaceSequence(val manager: CodeManager) {
 
 
-
     val area = manager.area
     var computing = false
     val list = Vector<ReplaceSeuenceItem>()
@@ -40,14 +39,14 @@ class ReplaceSequence(val manager: CodeManager) {
     var originalLength = 0
     var lineIndex = 0
 
-    fun compute(lineNumber:Int, lineContent:String) {
+    fun compute(lineNumber: Int, lineContent: String) {
         if (computing) return
         computing = true
         area.activateCommand("sequence_replacer")
         parse(lineNumber, lineContent)
     }
 
-    private fun parse(lineNumber:Int, lineContent:String) {
+    private fun parse(lineNumber: Int, lineContent: String) {
         list.clear()
         lineIndex = lineNumber
         originalLength = lineContent.length
@@ -77,7 +76,7 @@ class ReplaceSequence(val manager: CodeManager) {
         val currentItem = list[atIndex]
         val nowLength = area.getLineContent(lineIndex).length
         if (currentItem != null) {
-            area.setSelection(lineIndex, currentItem.absoluteStart + (nowLength - originalLength) + 1, lineIndex,  currentItem.absoluteEnd + (nowLength - originalLength) + 1)
+            area.setSelection(lineIndex, currentItem.absoluteStart + (nowLength - originalLength) + 1, lineIndex, currentItem.absoluteEnd + (nowLength - originalLength) + 1)
         } else {
             cancel()
         }

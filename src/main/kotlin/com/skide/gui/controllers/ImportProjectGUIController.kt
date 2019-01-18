@@ -4,12 +4,12 @@ import com.skide.CoreManager
 import com.skide.include.ActiveWindow
 import javafx.fxml.FXML
 import javafx.scene.control.Button
-import javafx.scene.control.TextField
+import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
+import javafx.scene.control.TextField
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
 import java.io.File
-import javafx.scene.control.CheckBox
 
 
 class ImportProjectGUIController {

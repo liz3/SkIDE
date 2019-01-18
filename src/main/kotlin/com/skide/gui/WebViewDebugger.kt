@@ -15,7 +15,6 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import netscape.javascript.JSObject
 import java.io.File
-import java.lang.Exception
 import java.util.*
 
 class ConsoleProxy(val debugger: WebViewDebugger) {

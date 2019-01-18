@@ -3,7 +3,6 @@
 package com.skide.core.code
 
 import com.skide.CoreManager
-import com.skide.Info
 import com.skide.gui.ListViewPopUp
 import com.skide.gui.WebViewDebugger
 import com.skide.include.OpenFileHolder
@@ -26,7 +25,6 @@ import javafx.stage.Stage
 import javafx.stage.StageStyle
 import netscape.javascript.JSObject
 import java.io.File
-import kotlin.system.measureTimeMillis
 
 
 class CallbackHook(private val rdy: () -> Unit) {
@@ -143,7 +141,7 @@ class EventHandler(private val area: CodeArea) {
         val selection = area.getSelection()
         if (selection.startColumn == selection.endColumn && selection.startLineNumber == selection.endLineNumber &&
                 area.editorActions.containsKey("skunityReport")) {
-            area.removeAction("skunityReport");
+            area.removeAction("skunityReport")
         } else if (area.coreManager.skUnity.loggedIn && !area.editorActions.containsKey("skunityReport")) {
             area.addSkUnityReportAction()
         }
@@ -299,7 +297,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
                             coreManager.schemesManager.registerTheme(this, scheme as String)
                             settings.setMember("theme", scheme)
                         } else {
-                            if(scheme == "vs-dark")
+                            if (scheme == "vs-dark")
                                 settings.setMember("theme", "skript-dark")
                             else
                                 settings.setMember("theme", "skript-light")

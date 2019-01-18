@@ -6,16 +6,11 @@ import com.skide.gui.controllers.AboutController
 import com.skide.include.ActiveWindow
 import com.skide.utils.setIcon
 import javafx.application.Application
-import javafx.application.Platform
-import javafx.concurrent.Worker.State
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
 import javafx.scene.Scene
 import javafx.scene.image.Image
-import javafx.scene.layout.BorderPane
-import javafx.scene.web.WebView
 import javafx.stage.Stage
-import javafx.stage.StageStyle
 import java.awt.Desktop
 import java.net.URI
 import java.util.*
@@ -46,7 +41,7 @@ object GUIManager {
 
         scene.stylesheets.add(settings.getCssPath("Reset.css"))
         if (settings.get("theme") == "Dark") scene.stylesheets.add(settings.getCssPath("ThemeDark.css"))
-        if(GUIManager.settings.get("global_font_size").toString().isNotEmpty())
+        if (GUIManager.settings.get("global_font_size").toString().isNotEmpty())
             rootNode.style = "-fx-font-size: ${GUIManager.settings.get("global_font_size")}px"
 
         stage.scene = scene
@@ -64,8 +59,8 @@ object GUIManager {
         if (GUIManager.settings.get("theme") == "Dark")
             rootNode.stylesheets.add(GUIManager.settings.getCssPath("ThemeDark.css"))
         val controller = loader.getController<Any>()
-        if(GUIManager.settings.get("global_font_size").toString().isNotEmpty())
-          rootNode.style = "-fx-font-size: ${GUIManager.settings.get("global_font_size")}px"
+        if (GUIManager.settings.get("global_font_size").toString().isNotEmpty())
+            rootNode.style = "-fx-font-size: ${GUIManager.settings.get("global_font_size")}px"
 
 
         return Pair(rootNode, controller)
@@ -116,7 +111,7 @@ class LinkOpener {
 class JavaFXBootstrapper : Application() {
     //Call the method with the primary created stage
     override fun start(primaryStage: Stage) {
-
+        //   LicenseChecker().runCheck()
         GUIManager.bootstrapCallback(primaryStage)
 
     }

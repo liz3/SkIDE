@@ -5,14 +5,13 @@ function registerSkript() {
     monaco.editor.defineTheme('skript-light', {
         base: 'vs',
         inherit: true,
-        rules: [
-        ]
+        rules: []
     });
     monaco.editor.defineTheme('skript-dark', {
         base: 'vs-dark',
         inherit: true,
         rules: [
-            { token: 'function', foreground: darkFunc.substring(1) }
+            {token: 'function', foreground: darkFunc.substring(1)}
         ]
     });
 
@@ -124,13 +123,12 @@ function registerSkript() {
         }
     });
     monaco.languages.registerCompletionItemProvider('skript', {
-        provideCompletionItems: function(model, position, token, context) {
+        provideCompletionItems: function (model, position, token, context) {
             return {suggestions: skide.autoCompleteRequest(model, position, token, context)};
         }
     });
 
-    monaco.languages.registerLinkProvider("skript", {
-    });
+    monaco.languages.registerLinkProvider("skript", {});
     monaco.languages.registerReferenceProvider("skript", {
         provideReferences: function (model, position, context, token) {
             return skide.findReferences(model, position, context);

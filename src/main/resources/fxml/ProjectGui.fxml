@@ -1,120 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-
-<BorderPane fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="646.0" prefWidth="1068.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.ProjectGUIController">
-   <bottom>
-      <BorderPane fx:id="mainLowerBorderPane" minHeight="0.0" prefHeight="200.0" prefWidth="1068.0" BorderPane.alignment="CENTER">
-         <center>
-            <TabPane fx:id="lowerTabPane" prefHeight="200.0" prefWidth="1233.0" side="BOTTOM" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-              <tabs>
-                <Tab text="Console">
-                     <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
-                           <center>
-                              <TabPane fx:id="consoleTabArea" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
-                           </center>
-                           <left>
-                              <VBox prefHeight="172.0" prefWidth="31.0" BorderPane.alignment="CENTER">
-                                 <children>
-                                    <Button fx:id="consoleAddBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="51.0" text="+" />
-                                    <Button fx:id="consoleRemBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="56.0" text="X" />
-                                 </children>
-                              </VBox>
-                           </left>
-                        </BorderPane>
-                     </content>
-                </Tab>
-                  <Tab text="Server">
-                     <content>
-                        <BorderPane prefHeight="200.0" prefWidth="200.0">
-                           <center>
-                              <TabPane fx:id="runsTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
-                           </center>
-                        </BorderPane>
-                     </content>
-                  </Tab>
-              </tabs>
-            </TabPane>
-         </center>
-         <right>
-            <Button fx:id="lowerTabPaneToggleBtn" alignment="TOP_CENTER" mnemonicParsing="false" text="Toggle" BorderPane.alignment="TOP_CENTER">
-               <font>
-                  <Font size="8.0" />
-               </font>
-            </Button>
-         </right>
-      </BorderPane>
-   </bottom>
-   <left>
-      <BorderPane fx:id="mainLeftBorderPane" minHeight="0.0" minWidth="25.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-         <center>
-            <TabPane fx:id="browserTabPane" prefHeight="200.0" prefWidth="200.0" side="LEFT" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER" />
-         </center>
-         <top>
-            <HBox fx:id="browserUpperHBox" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-               <children>
-                  <Label fx:id="activeSideLabel" alignment="CENTER" prefHeight="26.0" prefWidth="168.0" text="Label" />
-                  <Button fx:id="toggleTreeViewButton" mnemonicParsing="false" text="X" />
-               </children>
-            </HBox>
-         </top>
-      </BorderPane>
-   </left>
-   <top>
-      <BorderPane fx:id="mainUpperBorderPane" prefHeight="16.0" prefWidth="1068.0" BorderPane.alignment="CENTER">
-         <top>
-            <MenuBar fx:id="mainBenuBar" BorderPane.alignment="CENTER">
-              <menus>
-                <Menu mnemonicParsing="false" text="File">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="Close" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Edit" />
-                <Menu mnemonicParsing="false" text="Help">
-                  <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
-                  </items>
-                </Menu>
-              </menus>
-            </MenuBar>
-         </top>
-         <center>
-            <!--HBox fx:id="controlsHBox" minWidth="0.0" prefHeight="0.0" prefWidth="1068.0" BorderPane.alignment="CENTER" /-->
-         </center>
-      </BorderPane>
-   </top>
-   <center>
-      <AnchorPane fx:id="mainCenterAnchorPane" prefHeight="376.0" prefWidth="868.0" BorderPane.alignment="CENTER">
-         <children>
-            <TabPane fx:id="editorMainTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <tabs>
-                <Tab fx:id="templateTab" text="Untitled Tab 1">
-                     <content>
-                        <BorderPane fx:id="templateTabBorderPane" prefHeight="200.0" prefWidth="200.0">
-                           <center>
-                              <TextArea fx:id="templateEditorTextArea" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-                           </center>
-                        </BorderPane>
-                     </content>
-                </Tab>
-              </tabs>
-            </TabPane>
-         </children>
-      </AnchorPane>
-   </center>
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" fx:id="rootBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0"
+            minWidth="0.0" prefHeight="646.0" prefWidth="1068.0"
+            xmlns="http://javafx.com/javafx/8.0.191" fx:controller="com.skide.gui.controllers.ProjectGUIController">
+    <bottom>
+        <BorderPane fx:id="mainLowerBorderPane" minHeight="0.0" prefHeight="200.0" prefWidth="1068.0"
+                    BorderPane.alignment="CENTER">
+            <center>
+                <TabPane fx:id="lowerTabPane" prefHeight="200.0" prefWidth="1233.0" side="BOTTOM"
+                         tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+                    <tabs>
+                        <Tab text="Console">
+                            <content>
+                                <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                    <center>
+                                        <TabPane fx:id="consoleTabArea" prefHeight="200.0" prefWidth="200.0"
+                                                 tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER"/>
+                                    </center>
+                                    <left>
+                                        <VBox prefHeight="172.0" prefWidth="31.0" BorderPane.alignment="CENTER">
+                                            <children>
+                                                <Button fx:id="consoleAddBtn" mnemonicParsing="false" prefHeight="25.0"
+                                                        prefWidth="51.0" text="+"/>
+                                                <Button fx:id="consoleRemBtn" mnemonicParsing="false" prefHeight="25.0"
+                                                        prefWidth="56.0" text="X"/>
+                                            </children>
+                                        </VBox>
+                                    </left>
+                                </BorderPane>
+                            </content>
+                        </Tab>
+                        <Tab text="Server">
+                            <content>
+                                <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                    <center>
+                                        <TabPane fx:id="runsTabPane" prefHeight="200.0" prefWidth="200.0"
+                                                 tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER"/>
+                                    </center>
+                                </BorderPane>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </center>
+            <right>
+                <Button fx:id="lowerTabPaneToggleBtn" alignment="TOP_CENTER" mnemonicParsing="false" text="Toggle"
+                        BorderPane.alignment="TOP_CENTER">
+                    <font>
+                        <Font size="8.0"/>
+                    </font>
+                </Button>
+            </right>
+        </BorderPane>
+    </bottom>
+    <left>
+        <BorderPane fx:id="mainLeftBorderPane" minHeight="0.0" minWidth="25.0" prefHeight="200.0" prefWidth="200.0"
+                    BorderPane.alignment="CENTER">
+            <center>
+                <TabPane fx:id="browserTabPane" prefHeight="200.0" prefWidth="200.0" side="LEFT"
+                         tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER"/>
+            </center>
+            <top>
+                <HBox fx:id="browserUpperHBox" alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0"
+                      BorderPane.alignment="CENTER">
+                    <children>
+                        <Label fx:id="activeSideLabel" alignment="CENTER" prefHeight="26.0" prefWidth="168.0"
+                               text="Label"/>
+                        <Button fx:id="toggleTreeViewButton" mnemonicParsing="false" text="X"/>
+                    </children>
+                </HBox>
+            </top>
+        </BorderPane>
+    </left>
+    <top>
+        <BorderPane fx:id="mainUpperBorderPane" prefHeight="16.0" prefWidth="1068.0" BorderPane.alignment="CENTER">
+            <top>
+                <MenuBar fx:id="mainBenuBar" BorderPane.alignment="CENTER">
+                    <menus>
+                        <Menu mnemonicParsing="false" text="File">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Close"/>
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Edit"/>
+                        <Menu mnemonicParsing="false" text="Help">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="About"/>
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+            </top>
+            <center>
+                <!--HBox fx:id="controlsHBox" minWidth="0.0" prefHeight="0.0" prefWidth="1068.0" BorderPane.alignment="CENTER" /-->
+            </center>
+        </BorderPane>
+    </top>
+    <center>
+        <AnchorPane fx:id="mainCenterAnchorPane" prefHeight="376.0" prefWidth="868.0" BorderPane.alignment="CENTER">
+            <children>
+                <TabPane fx:id="editorMainTabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="ALL_TABS"
+                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                         AnchorPane.topAnchor="0.0">
+                    <tabs>
+                        <Tab fx:id="templateTab" text="Untitled Tab 1">
+                            <content>
+                                <BorderPane fx:id="templateTabBorderPane" prefHeight="200.0" prefWidth="200.0">
+                                    <center>
+                                        <TextArea fx:id="templateEditorTextArea" prefHeight="200.0" prefWidth="200.0"
+                                                  BorderPane.alignment="CENTER"/>
+                                    </center>
+                                </BorderPane>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </children>
+        </AnchorPane>
+    </center>
 
 </BorderPane>

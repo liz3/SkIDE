@@ -40,9 +40,10 @@ class ErrorFrontendHandler(val openProject: OpenProject) {
         }
 
     }
+
     fun update(f: File, errors: Vector<SkError>, area: CodeArea) {
-        if(busy) return
-        Thread{
+        if (busy) return
+        Thread {
             busy = true
             val list = if (entries.containsKey(f)) {
                 entries[f]!!
@@ -64,11 +65,12 @@ class ErrorFrontendHandler(val openProject: OpenProject) {
 
         }.start()
     }
+
     fun removeFile(f: File) {
-        if(busy) return
-        Thread{
+        if (busy) return
+        Thread {
             busy = true
-            if(entries.containsKey(f))
+            if (entries.containsKey(f))
                 entries.remove(f)
 
             updateFrontend()
@@ -77,16 +79,16 @@ class ErrorFrontendHandler(val openProject: OpenProject) {
     }
 
     fun render(): Tab {
-        if(rendered) return tab
+        if (rendered) return tab
         rendered = true
         val pane = BorderPane()
         treeView.root = root
         treeView.isShowRoot = false
         treeView.setOnMouseClicked {
-            if(it.button == MouseButton.PRIMARY && it.clickCount == 2) {
-                if(treeView.selectionModel.selectedItem != null) {
+            if (it.button == MouseButton.PRIMARY && it.clickCount == 2) {
+                if (treeView.selectionModel.selectedItem != null) {
                     val item = treeView.selectionModel.selectedItem.value
-                    if(item != null && item.value is SkErrorItem) item.value.cb()
+                    if (item != null && item.value is SkErrorItem) item.value.cb()
                 }
             }
         }

@@ -21,13 +21,15 @@ class GoogleAnalytics(val coreManager: CoreManager) {
             ga.screenView()
                     .sessionControl("start")
                     .send().requestParams.get("cid")!!
-        } catch (e: Exception) {}
+        } catch (e: Exception) {
+        }
         try {
             ga.pageView()
                     .documentTitle("Sk-IDE main menu")
                     .documentPath("/start")
                     .send()
-        } catch (e: Exception) { }
+        } catch (e: Exception) {
+        }
 
         GUIManager.closingHooks.add {
             println("Sending session close")
@@ -36,7 +38,8 @@ class GoogleAnalytics(val coreManager: CoreManager) {
                         .documentTitle("stopped")
                         .documentPath("/end")
                         .send()
-            }catch (e:Exception) { }
+            } catch (e: Exception) {
+            }
         }
     }
 

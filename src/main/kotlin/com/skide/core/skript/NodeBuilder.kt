@@ -1,7 +1,9 @@
 package com.skide.core.skript
 
-import com.skide.Info
-import com.skide.include.*
+import com.skide.include.AddonItem
+import com.skide.include.MethodParameter
+import com.skide.include.Node
+import com.skide.include.NodeType
 import com.skide.utils.EditorUtils
 import java.util.*
 import java.util.regex.Pattern
@@ -116,13 +118,13 @@ class NodeBuilder(val node: Node) {
         if (content.toLowerCase().startsWith("trigger:")) {
             theType = NodeType.TRIGGER
         }
-       /*
-        if (content.toLowerCase().startsWith("class ")) {
-            fields.put("name", content.split(" ")[1].replace(":", ""))
-            theType = NodeType.CLASS
+        /*
+         if (content.toLowerCase().startsWith("class ")) {
+             fields.put("name", content.split(" ")[1].replace(":", ""))
+             theType = NodeType.CLASS
 
-        }
-        */
+         }
+         */
         if (content.toLowerCase().startsWith("stop ")) {
             theType = NodeType.STOP
         }
@@ -133,7 +135,7 @@ class NodeBuilder(val node: Node) {
 
                 if (pattern.find()) {
 
-                    var  name = pattern.group()
+                    var name = pattern.group()
                     when {
                         name.startsWith("{_") -> fields["visibility"] = "local"
                         name.startsWith("{@") -> {

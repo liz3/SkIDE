@@ -49,6 +49,7 @@ class CoreManager {
         if (System.getProperty("skide.mode") != null && System.getProperty("skide.mode") == "prod")
             Info.prodMode = true
     }
+
     private fun setupInstances(me: CoreManager) {
         configManager = ConfigManager(me)
         projectManager = ProjectManager(me)
@@ -63,7 +64,7 @@ class CoreManager {
         sockServer.start()
     }
 
-    fun googleAnalyticsSetup(me:CoreManager): Boolean {
+    fun googleAnalyticsSetup(me: CoreManager): Boolean {
         var r = false
         googleAnalytics = GoogleAnalytics(me)
         if (configManager.get("analytics") == "") {
@@ -76,13 +77,15 @@ class CoreManager {
         }
         return r
     }
-    private fun welcomeWindow(me:CoreManager, configLoadResult:ConfigLoadResult) {
+
+    private fun welcomeWindow(me: CoreManager, configLoadResult: ConfigLoadResult) {
 
         val window = guiManager.getWindow("fxml/StartGui.fxml", "SkIDE Ultimate ${Info.version}", false)
         (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
         window.stage.isResizable = false
         window.stage.show()
     }
+
     fun bootstrap(args: Array<String>) {
 
         debugger = Debugger()

@@ -10,11 +10,6 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.HBox
 import javafx.scene.web.WebView
-import javafx.scene.control.ComboBox
-
-
-
-
 
 
 class GeneralSettingsGUIController {

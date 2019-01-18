@@ -6,8 +6,6 @@ import com.skide.include.CompileOptionType
 import com.skide.include.RemoteHost
 import javafx.fxml.FXML
 import javafx.scene.control.*
-import javafx.scene.control.ComboBox
-import javafx.scene.control.CheckBox
 import java.io.File
 
 

@@ -95,11 +95,11 @@ fun adjustVersion(value: String): String {
 fun restart() {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
     val command = ArrayList<String>()
-    if(getOS() == OperatingSystemType.WINDOWS) {
+    if (getOS() == OperatingSystemType.WINDOWS) {
         command.add(File(File(File(".").canonicalPath), "SkIDE.exe").absolutePath)
     } else {
         command.add(javaBin)
-        if(Info.prodMode) command.add("-Dskide.mode=prod")
+        if (Info.prodMode) command.add("-Dskide.mode=prod")
         command.add("-jar")
         command.add(File(File(File(".").canonicalPath), "Installer.jar").absolutePath)
     }

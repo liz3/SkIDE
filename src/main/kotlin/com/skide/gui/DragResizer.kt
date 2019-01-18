@@ -46,6 +46,7 @@ class DragResizer {
             }
         }
     }
+
     fun makeResizable(bottomSec: BorderPane, tabPane: TreeView<SkErrorFront>) {
         windowHeight = bottomSec.scene.height
 
@@ -78,6 +79,7 @@ class DragResizer {
             }
         }
     }
+
     fun makeResizable(bottomSec: BorderPane, tabPane: BorderPane) {
         windowHeight = bottomSec.scene.height
 
@@ -119,13 +121,14 @@ class DragResizer {
     }
 
 }
+
 class DragResizerLeft {
 
     private var windowWidth = 0.0
     private var mousePosY = 0.0
     private var secWidth = 0.0
 
-    fun makeResizable(section: TreeView<String>, xPane:BorderPane) {
+    fun makeResizable(section: TreeView<String>, xPane: BorderPane) {
         windowWidth = xPane.scene.width
 
 

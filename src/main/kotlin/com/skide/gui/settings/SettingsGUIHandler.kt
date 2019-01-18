@@ -9,13 +9,10 @@ import com.skide.include.Server
 import com.skide.include.ServerAddon
 import com.skide.include.ServerConfiguration
 import com.skide.utils.restart
-import javafx.application.Platform
 import javafx.scene.control.Alert
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
-import javafx.scene.input.KeyCode
-import javafx.scene.input.KeyEvent
 import javafx.stage.DirectoryChooser
 import javafx.stage.FileChooser
 import javafx.stage.Stage
@@ -53,6 +50,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
 
         if (Info.prodMode) coreManager.configManager.writeUpdateFile(ctrl.updateCheck.isSelected, ctrl.betaUpdateCheck.isSelected)
     }
+
     fun init() {
 
         ctrl.okBtn.setOnAction {
@@ -71,7 +69,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             snippetGuiHandler.applyChanges()
             schemesGuiHandler.applySettings()
             window.stage.close()
-            if(restartRequired) {
+            if (restartRequired) {
                 if (Prompts.infoCheck("Restart", "Sk-IDE restart", "In order to perform all changes, SkIde needs to be restarted!", Alert.AlertType.CONFIRMATION)) {
                     restart()
                 }
@@ -222,22 +220,26 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         requireRestart(ctrl.betaUpdateCheck)
 
     }
-    private fun requireRestart(box:CheckBox) {
+
+    private fun requireRestart(box: CheckBox) {
         box.setOnAction {
             restartRequired = true
         }
     }
-    private fun requireRestart(box:ComboBox<*>) {
+
+    private fun requireRestart(box: ComboBox<*>) {
         box.setOnAction {
             restartRequired = true
         }
     }
-    private fun requireRestart(box:TextField) {
+
+    private fun requireRestart(box: TextField) {
         box.textProperty().addListener { _, _, _ ->
             restartRequired = true
         }
     }
-    private fun updateFocusAllow(v:Boolean) {
+
+    private fun updateFocusAllow(v: Boolean) {
 
         ctrl.jvmStartAgsTextField.isDisable = v
         ctrl.serverStartAgsTextField.isDisable = v
@@ -248,6 +250,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.serverAddonDeleteBtn.isDisable = v
         ctrl.serverAddAddonFromFileChooseBtn.isDisable = v
     }
+
     private fun setNewValues() {
 
         ctrl.serverServerNameTextField.text = currentSelected()?.configuration?.name

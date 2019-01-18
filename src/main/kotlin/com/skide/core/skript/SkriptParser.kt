@@ -1,6 +1,5 @@
 package com.skide.core.skript
 
-import com.skide.CoreManager
 import com.skide.core.management.OpenProject
 import com.skide.include.AddonItem
 import com.skide.include.DocType

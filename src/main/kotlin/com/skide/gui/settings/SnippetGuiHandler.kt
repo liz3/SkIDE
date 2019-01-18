@@ -8,7 +8,6 @@ import com.skide.include.NodeType
 import com.skide.include.Snippet
 import com.skide.include.SnippetRule
 import com.skide.include.toVector
-import com.skide.utils.deleteDirectoryRecursion
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Label
 import javafx.scene.layout.HBox
@@ -17,7 +16,7 @@ import javafx.scene.layout.Priority
 import java.util.*
 
 
-class TypeListEntry(val theType: NodeType,val action: (Boolean) -> Unit) : HBox() {
+class TypeListEntry(val theType: NodeType, val action: (Boolean) -> Unit) : HBox() {
 
     private val labelLeft = Label()
     val checkBox = CheckBox()
@@ -85,12 +84,12 @@ class SnippetGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager:
                 it.rootRule.endsWith = Pair(currentVal, newValue)
             }
         }
-        for(value in NodeType.values()) {
-            pCtrl.typeList.items.add(TypeListEntry(value) {v ->
+        for (value in NodeType.values()) {
+            pCtrl.typeList.items.add(TypeListEntry(value) { v ->
                 runAsserted {
-                    if(!it.rootRule.allowedTypes.contains(value) && v) {
+                    if (!it.rootRule.allowedTypes.contains(value) && v) {
                         it.rootRule.allowedTypes.add(value)
-                    } else if(!v && it.rootRule.allowedTypes.contains(value)) {
+                    } else if (!v && it.rootRule.allowedTypes.contains(value)) {
                         it.rootRule.allowedTypes.remove(value)
                     }
                 }
@@ -143,12 +142,12 @@ class SnippetGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager:
                 it.parentRule.endsWith = Pair(currentVal, newValue)
             }
         }
-        for(value in NodeType.values()) {
-            pCtrl.typeList.items.add(TypeListEntry(value) {v ->
+        for (value in NodeType.values()) {
+            pCtrl.typeList.items.add(TypeListEntry(value) { v ->
                 runAsserted {
-                    if(!it.parentRule.allowedTypes.contains(value) && v) {
+                    if (!it.parentRule.allowedTypes.contains(value) && v) {
                         it.parentRule.allowedTypes.add(value)
-                    } else if(!v && it.parentRule.allowedTypes.contains(value)) {
+                    } else if (!v && it.parentRule.allowedTypes.contains(value)) {
                         it.parentRule.allowedTypes.remove(value)
                     }
                 }
@@ -173,6 +172,7 @@ class SnippetGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager:
 
         return Snippet(System.currentTimeMillis(), name, "", "", SnippetRule(NodeType.values().toVector(), Pair(false, ""), Pair(false, ""), Pair(false, "")), SnippetRule(NodeType.values().toVector(), Pair(false, ""), Pair(false, ""), Pair(false, "")), true)
     }
+
     private fun resetValues() {
 
         ctrl.snippetLabelField.text = ""
@@ -200,6 +200,7 @@ class SnippetGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager:
         parentPane.endsWithField.text = ""
 
     }
+
     private fun setupItem() {
 
         ctrl.snippetLabelField.text = current().label
@@ -238,6 +239,7 @@ class SnippetGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager:
         parentPane.endsWithField.text = current().parentRule.endsWith.second
 
     }
+
     fun init() {
 
         localSnippets.clear()
@@ -246,13 +248,13 @@ class SnippetGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager:
         ctrl.snippetListView.items.addAll(localSnippets)
 
         ctrl.snippetListView.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
-            if(newValue != null)
+            if (newValue != null)
                 setupItem()
             else
                 resetValues()
         }
         ctrl.snippetDeleteBtn.setOnAction {
-            if(current() != null) {
+            if (current() != null) {
                 val item = current()
                 ctrl.snippetListView.items.remove(item)
                 localSnippets.remove(item)
@@ -275,9 +277,9 @@ class SnippetGuiHandler(val ctrl: GeneralSettingsGUIController, val coreManager:
         }
         ctrl.snippetNewBtn.setOnAction {
             val name = ctrl.snippetNewField.text
-            if(name.isEmpty() ||name.isBlank()) return@setOnAction
+            if (name.isEmpty() || name.isBlank()) return@setOnAction
             for (x in localSnippets)
-                if(x.name == name) return@setOnAction
+                if (x.name == name) return@setOnAction
             val item = getSnippet(name)
             localSnippets.add(item)
             ctrl.snippetListView.items.add(item)

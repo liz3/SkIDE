@@ -4,16 +4,16 @@ public class Version implements Comparable<Version> {
 
     private String version;
 
-    public final String get() {
-        return this.version;
-    }
-
     public Version(String version) {
         if (version == null)
             throw new IllegalArgumentException("Version value can not be null.");
         if (!version.matches("[0-9]+(\\.[0-9]+)*"))
             throw new IllegalArgumentException("Malformed version value.");
         this.version = version;
+    }
+
+    public final String get() {
+        return this.version;
     }
 
     @Override

@@ -1,19 +1,19 @@
 window.console = {
-    log:function () {
+    log: function () {
         xlogger.prePrint(0);
-        for (var i = 0, j = arguments.length; i < j; i++){
+        for (var i = 0, j = arguments.length; i < j; i++) {
             xlogger.log(arguments[i]);
         }
-    } ,
-    warn:function () {
+    },
+    warn: function () {
         xlogger.prePrint(1);
-        for (var i = 0, j = arguments.length; i < j; i++){
+        for (var i = 0, j = arguments.length; i < j; i++) {
             xlogger.warn(arguments[i]);
         }
     },
-    error:function () {
+    error: function () {
         xlogger.prePrint(2);
-        for (var i = 0, j = arguments.length; i < j; i++){
+        for (var i = 0, j = arguments.length; i < j; i++) {
             xlogger.error(arguments[i]);
         }
     }
@@ -23,12 +23,13 @@ var selection = null;
 
 function registerTheme(name, base, colors, rules) {
     monaco.editor.defineTheme(name, {
-        base:base,
+        base: base,
         inherit: true,
         rules: rules,
         colors: colors
     })
 }
+
 function getDefaultOptions() {
     return {
         automaticLayout: true,
@@ -40,13 +41,14 @@ function getDefaultOptions() {
         wordBasedSuggestions: false
     };
 }
+
 function startEditor(options) {
     editor = monaco.editor.create(document.getElementById('root'), options);
-    editor.getAction("editor.action.clipboardCopyAction").run = function() {
+    editor.getAction("editor.action.clipboardCopyAction").run = function () {
         getHook().copy();
     };
 
-    editor.getAction("editor.action.clipboardCutAction").run = function() {
+    editor.getAction("editor.action.clipboardCutAction").run = function () {
         getHook().cut();
     };
     editor.onDidChangeCursorPosition(function (ev) {
@@ -68,24 +70,24 @@ function startEditor(options) {
     editor.onMouseDown(function (ev) {
         getHook().contextMenuEmit(ev);
     });
-/*
-    editor.addOverlayWidget({
-        getDomNode: function () {
-            var elem = document.createElement("P");
-            elem.innerText = "This is a Cool test";
+    /*
+        editor.addOverlayWidget({
+            getDomNode: function () {
+                var elem = document.createElement("P");
+                elem.innerText = "This is a Cool test";
 
-            return elem;
-        },
-        getId: function () {
-            return "skide-test1";
-        },
-        getPosition: function () {
-            return {
-                preference: 2
+                return elem;
+            },
+            getId: function () {
+                return "skide-test1";
+            },
+            getPosition: function () {
+                return {
+                    preference: 2
+                }
             }
-        }
-    });
- */
+        });
+     */
     return editor;
 }
 
