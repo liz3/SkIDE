@@ -1,10 +1,13 @@
 package com.skide.utils
 
 import com.skide.CoreManager
+import com.skide.gui.LoginPrompt
+import com.skide.gui.PasswordDialog
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.InetAddress
+import java.net.URLEncoder
 import java.security.MessageDigest
 
 class LicenseChecker {
@@ -24,11 +27,9 @@ class LicenseChecker {
     }
 
     private fun licenseCheck(key: String): String {
-        val obj = JSONObject()
-        obj.put("q", "check_license")
-        obj.put("key", key)
 
-        val request = request("http://localhost", "POST", body = obj.toString())
+
+        val request = request("http://localhost/web-api/?q=check_license&key=${URLEncoder.encode(key, "UTF-8")}")
         val stream = ByteArrayOutputStream()
         request.third.copyTo(stream)
 
@@ -36,12 +37,8 @@ class LicenseChecker {
     }
 
     private fun getLicense(user: String, pass: String): String {
-        val obj = JSONObject()
-        obj.put("q", "get_license")
-        obj.put("user", user)
-        obj.put("pass", pass)
 
-        val request = request("http://localhost", "POST", body = obj.toString())
+        val request = request("http://localhost/web-api/?q=get_license&user=${URLEncoder.encode(user, "UTF-8")}&pass=${URLEncoder.encode(pass, "UTF-8")}")
         val stream = ByteArrayOutputStream()
         request.third.copyTo(stream)
 
@@ -57,7 +54,34 @@ class LicenseChecker {
         }
     }
 
-    fun runCheck() {
+    private fun askForLogin(cb: () -> Unit) {
+        LoginPrompt("Login", "Login with your SkIDE Account.") { wasSuccess, user, pass ->
+            if (wasSuccess) {
+                val r = getLicense(user, pass)
+                val check = JSONObject(r)
+                if (check.getBoolean("success")) {
+                    val hasher = MessageDigest.getInstance("SHA-256")
+                    val license = check.getJSONObject("data").getString("license")
+                    val hash = String(hasher.digest("$pass${System.getProperty("user.home")}".toByteArray()))
+                    val obj = JSONObject()
+                    obj.put("key", license)
+                    obj.put("derivation_check", hash)
+                    writeFile(obj.toString().toByteArray(), licenseFile, false, true)
+                    cb()
+                } else {
+
+                    askForLogin {
+                        cb()
+                    }
+                }
+            } else {
+                error("Error while checking license")
+            }
+        }
+
+    }
+
+    fun runCheck(cb: () -> Unit) {
         val hasConnection = hasInternet()
         if (licenseFile.exists()) {
             val result = parseFile()
@@ -66,36 +90,21 @@ class LicenseChecker {
                 if (!check.getBoolean("success")) {
                     error("Error while checking license")
                 }
-                val hasher = MessageDigest.getInstance("SHA-256")
-                val givenHash = String(hasher.digest("${result.second}${System.getProperty("user.home")}".toByteArray()))
-                if (givenHash != result.first) {
-                    licenseFile.delete()
-                    error("Error while checking license")
-                }
+                cb()
             } else {
-                val password = ""
+                val pass = PasswordDialog()
                 val hasher = MessageDigest.getInstance("SHA-256")
-                val givenHash = String(hasher.digest("${result.second}${System.getProperty("user.home")}".toByteArray()))
+                val givenHash = String(hasher.digest("$pass${System.getProperty("user.home")}".toByteArray()))
                 if (givenHash != result.first) {
                     error("Error while checking license")
+                } else {
+                    cb()
                 }
             }
         } else {
-            val user = ""
-            val pass = ""
-            val check = JSONObject(getLicense(user, pass))
-            if (check.getBoolean("success")) {
-                val hasher = MessageDigest.getInstance("SHA-256")
-                val license = check.getJSONObject("data").getString("license")
-                val hash = String(hasher.digest("$license${System.getProperty("user.home")}".toByteArray()))
-                val obj = JSONObject()
-                obj.put("key", license)
-                obj.put("derivation_check", hash)
-                writeFile(obj.toString().toByteArray(), licenseFile, false, true)
-            } else {
-                error("Error while checking license")
+            askForLogin {
+                cb()
             }
-
         }
     }
 
