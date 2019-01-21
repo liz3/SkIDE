@@ -36,6 +36,7 @@ class SkErrorItem(val error: SkError, val cb: () -> Unit)
 class SkErrorFront(val value: Any) {
 
     override fun toString(): String {
+
         if (value is SkErrorItem)
             return "${value.error.severity} [${value.error.startLine}]: ${value.error.message}"
         return value as String

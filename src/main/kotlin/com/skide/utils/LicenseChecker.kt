@@ -88,9 +88,10 @@ class LicenseChecker {
             if (hasConnection) {
                 val check = JSONObject(licenseCheck(result.second))
                 if (!check.getBoolean("success")) {
-                    error("Error while checking license")
+                    licenseFile.delete()
+                } else {
+                    cb()
                 }
-                cb()
             } else {
                 val pass = PasswordDialog()
                 val hasher = MessageDigest.getInstance("SHA-256")

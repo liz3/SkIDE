@@ -27,9 +27,7 @@ class ResourceManager(val coreManager: CoreManager) {
 
 
     private fun parseSkriptVersions() {
-        val obj = JSONArray(readFile(skHubFile.absolutePath).second)
-        skriptVersions.sort()
-        skriptVersions.reverse()
+        JSONArray(readFile(skriptVersionsFile).second).forEach { skriptVersions.add(it as String) }
     }
 
     private fun readAddons() {
