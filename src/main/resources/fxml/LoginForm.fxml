@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="206.0" prefWidth="366.0" spacing="15.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.LoginPromptController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="212.0" prefWidth="372.0" spacing="15.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.LoginPromptController">
    <children>
-      <VBox prefHeight="200.0" prefWidth="100.0">
+      <VBox prefHeight="72.0" prefWidth="369.0">
          <children>
             <Label fx:id="titleLabel" text="Login">
                <font>
@@ -23,13 +23,13 @@
       </VBox>
       <HBox prefHeight="30.0" prefWidth="600.0" spacing="5.0">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="26.0" prefWidth="64.0" text="Username" />
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="26.0" prefWidth="80.0" text="Username" />
             <TextField fx:id="nameField" prefHeight="28.0" prefWidth="245.0" />
          </children>
       </HBox>
       <HBox layoutX="10.0" layoutY="79.0" prefHeight="30.0" prefWidth="600.0" spacing="5.0">
          <children>
-            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="26.0" prefWidth="64.0" text="Password" />
+            <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="26.0" prefWidth="79.0" text="Password" />
             <PasswordField fx:id="passField" prefHeight="28.0" prefWidth="245.0" />
          </children>
       </HBox>

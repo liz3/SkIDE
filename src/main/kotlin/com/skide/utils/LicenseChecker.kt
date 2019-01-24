@@ -3,12 +3,15 @@ package com.skide.utils
 import com.skide.CoreManager
 import com.skide.gui.LoginPrompt
 import com.skide.gui.PasswordDialog
+import com.skide.gui.Prompts
+import javafx.scene.control.Alert
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.InetAddress
 import java.net.URLEncoder
 import java.security.MessageDigest
+import java.util.*
 
 class LicenseChecker {
 
@@ -18,7 +21,7 @@ class LicenseChecker {
     private fun parseFile(): Pair<String, String> {
         try {
             val obj = JSONObject(readFile(licenseFile).second)
-            val keyHash = obj.getString("derivation_check")
+            val keyHash = String(Base64.getDecoder().decode(obj.getString("derivation_check").toByteArray()))
             val key = obj.getString("key")
             return Pair(keyHash, key)
         } catch (e: Exception) {
@@ -28,8 +31,7 @@ class LicenseChecker {
 
     private fun licenseCheck(key: String): String {
 
-
-        val request = request("http://localhost/web-api/?q=check_license&key=${URLEncoder.encode(key, "UTF-8")}")
+        val request = request("https://skide.21xayah.com/web-api/?q=check_license&key=${URLEncoder.encode(key, "UTF-8")}")
         val stream = ByteArrayOutputStream()
         request.third.copyTo(stream)
 
@@ -38,7 +40,7 @@ class LicenseChecker {
 
     private fun getLicense(user: String, pass: String): String {
 
-        val request = request("http://localhost/web-api/?q=get_license&user=${URLEncoder.encode(user, "UTF-8")}&pass=${URLEncoder.encode(pass, "UTF-8")}")
+        val request = request("https://skide.21xayah.com/web-api/?q=get_license&user=${URLEncoder.encode(user, "UTF-8")}&pass=${URLEncoder.encode(pass, "UTF-8")}")
         val stream = ByteArrayOutputStream()
         request.third.copyTo(stream)
 
@@ -65,11 +67,11 @@ class LicenseChecker {
                     val hash = String(hasher.digest("$pass${System.getProperty("user.home")}".toByteArray()))
                     val obj = JSONObject()
                     obj.put("key", license)
-                    obj.put("derivation_check", hash)
-                    writeFile(obj.toString().toByteArray(), licenseFile, false, true)
+                    obj.put("derivation_check", String(Base64.getEncoder().encode(hash.toByteArray())))
+                    writeFile(obj.toString().toByteArray(), licenseFile, append = false, createIfNotExists = true)
                     cb()
                 } else {
-
+                    Prompts.infoCheck("Error", "Error while logging in", "The Combination of Username and Password was not found", Alert.AlertType.INFORMATION)
                     askForLogin {
                         cb()
                     }
@@ -78,10 +80,10 @@ class LicenseChecker {
                 error("Error while checking license")
             }
         }
-
     }
 
     fun runCheck(cb: () -> Unit) {
+        
         val hasConnection = hasInternet()
         if (licenseFile.exists()) {
             val result = parseFile()

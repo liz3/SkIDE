@@ -111,6 +111,8 @@ class ServerManager(val coreManager: CoreManager) {
         confObject.put("api", server.configuration.apiPath.absolutePath)
         confObject.put("id", server.id)
         confObject.put("start_args", server.configuration.startArgs)
+        confObject.put("jvm_args", server.configuration.jvmArgs)
+
         val addonArray = JSONArray()
         server.configuration.addons.forEach {
             val itsObj = JSONObject()
@@ -146,7 +148,7 @@ class ServerManager(val coreManager: CoreManager) {
         try {
             Files.copy(server.configuration.apiPath.toPath(), File(server.configuration.folder, "Server.jar").toPath(), StandardCopyOption.REPLACE_EXISTING)
         } catch (e: Exception) {
-            Prompts.infoCheck("Error", "Error while updating server files", "The file ${server.configuration.apiPath.absolutePath} cold not be copied to ${File(server.configuration.folder, "Server.jar").absolutePath} because ${e.message}", Alert.AlertType.ERROR)
+            Prompts.infoCheck("Error", "Error while updating server files", "The file ${server.configuration.apiPath.absolutePath} could not be copied to ${File(server.configuration.folder, "Server.jar").absolutePath} because ${e.message}", Alert.AlertType.ERROR)
             return
         }
 

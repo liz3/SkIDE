@@ -45,7 +45,7 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
 
             Thread {
                 var msg: String?
-                val reader = BufferedReader(InputStreamReader(process.inputStream))
+                val reader = BufferedReader(InputStreamReader(process.inputStream, "UTF-8"))
                 while (true) {
                     msg = reader.readLine()
                     if (!process.isAlive || msg == null) break
@@ -65,6 +65,22 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
                 coreManager.serverManager.running.remove(server)
                 Platform.runLater {
                     area.appendText("\n\nSERVER STOPPED")
+                }
+            }.start()
+            Thread {
+                var msg: String?
+                val reader = BufferedReader(InputStreamReader(process.errorStream, "UTF-8"))
+                while (true) {
+                    msg = reader.readLine()
+                    if (!process.isAlive || msg == null) break
+                    if (msg != "") {
+                        Thread {
+                            Platform.runLater {
+                                if (msg != null && msg!!.length > 1) area.appendText("ERR: $msg\n")
+                                msg = ""
+                            }
+                        }.start()
+                    }
                 }
             }.start()
         }

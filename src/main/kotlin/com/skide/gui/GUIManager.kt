@@ -112,8 +112,9 @@ class LinkOpener {
 class JavaFXBootstrapper : Application() {
     //Call the method with the primary created stage
     override fun start(primaryStage: Stage) {
-  //      LicenseChecker().runCheck {}
+        LicenseChecker().runCheck {
             GUIManager.bootstrapCallback(primaryStage)
+        }
 
     }
 
