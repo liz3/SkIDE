@@ -35,7 +35,6 @@ class CoreManager {
     lateinit var sockServer: SocketManager
     lateinit var snippetManager: SnippetManager
     lateinit var schemesManager: SchemesManager
-    lateinit var skUnity: SkUnity
 
     private var debugLevel = DebugLevel.INFORMATION
 
@@ -56,7 +55,6 @@ class CoreManager {
         serverManager = ServerManager(me)
         resourceManager = ResourceManager(me)
         saver = AutoSaver(me)
-        skUnity = SkUnity(me)
         sockServer = SocketManager(me)
         snippetManager = SnippetManager(me)
         schemesManager = SchemesManager(me)
@@ -124,9 +122,6 @@ class CoreManager {
                         GUIManager.settings = configManager
                         snippetManager.prepare()
                         schemesManager.prepare()
-                        updateProgress(25.0, 100.0)
-                        updateMessage("Checking skUnity access...")
-                        skUnity.load()
                         updateProgress(35.0, 100.0)
                         updateMessage("Initializing server manager")
                         serverManager.init()

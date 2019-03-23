@@ -578,13 +578,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             GUIManager.showAbout()
         }
 
-
-        val skUnity = MenuItem("Log in to SkUnity")
-        skUnity.setOnAction {
-            if (coreManager.skUnity.login()) controller.mainBenuBar.menus[2].items.remove(skUnity)
-        }
-        controller.mainBenuBar.menus[2].items.add(skUnity)
-
         editMenu.items.add(simpleMenuItem("Find") {
             openProjectGuiManager.openFiles.values.forEach {
                 if (it.tab === openProjectGuiManager.activeTab)

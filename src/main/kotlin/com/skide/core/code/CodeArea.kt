@@ -141,12 +141,6 @@ class EventHandler(private val area: CodeArea) {
                 !((ev.getMember("event") as JSObject).getMember("rightButton") as Boolean)) return
 
         val selection = area.getSelection()
-        if (selection.startColumn == selection.endColumn && selection.startLineNumber == selection.endLineNumber &&
-                area.editorActions.containsKey("skunityReport")) {
-            area.removeAction("skunityReport")
-        } else if (area.coreManager.skUnity.loggedIn && !area.editorActions.containsKey("skunityReport")) {
-            area.addSkUnityReportAction()
-        }
     }
 
     fun actionFire(id: String, ev: Any) {
@@ -328,23 +322,7 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
 
     }
 
-    fun addSkUnityReportAction() {
-        addAction("skunityReport", "Ask on skUnity") {
-            val selection = getSelection()
-            val content = getContentRange(selection.startLineNumber, selection.endLineNumber,
-                    selection.startColumn, selection.endColumn)
-            coreManager.skUnity.initer(content)
-        }
-    }
-
     private fun prepareEditorActions() {
-        if (coreManager.skUnity.loggedIn) {
-            addSkUnityReportAction()
-        } else {
-            coreManager.skUnity.addListener {
-                addSkUnityReportAction()
-            }
-        }
         addAction("compile", "Export/Minify") {
             val openProject = openFileHolder.openProject
             val map = HashMap<String, () -> Unit>()
