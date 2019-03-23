@@ -252,7 +252,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
     }
 
     private fun setNewValues() {
-
+        ctrl.jvmStartAgsTextField.text = currentSelected()?.configuration?.jvmArgs
         ctrl.serverServerNameTextField.text = currentSelected()?.configuration?.name
         ctrl.serverServerFolderPathTextField.text = currentSelected()?.configuration?.folder?.absolutePath
         ctrl.serverServerPathTextField.text = currentSelected()?.configuration?.apiPath?.absolutePath

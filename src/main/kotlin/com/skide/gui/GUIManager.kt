@@ -4,7 +4,6 @@ import com.skide.Info
 import com.skide.core.management.ConfigManager
 import com.skide.gui.controllers.AboutController
 import com.skide.include.ActiveWindow
-import com.skide.utils.LicenseChecker
 import com.skide.utils.setIcon
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
@@ -112,10 +111,7 @@ class LinkOpener {
 class JavaFXBootstrapper : Application() {
     //Call the method with the primary created stage
     override fun start(primaryStage: Stage) {
-        LicenseChecker().runCheck {
-            GUIManager.bootstrapCallback(primaryStage)
-        }
-
+        GUIManager.bootstrapCallback(primaryStage)
     }
 
     override fun stop() {

@@ -10,7 +10,7 @@
     <children>
         <ImageView fx:id="imageView" fitHeight="194.0" fitWidth="184.0" layoutX="14.0" layoutY="14.0"
                    pickOnBounds="true" preserveRatio="true"/>
-        <Label layoutX="205.0" layoutY="14.0" text="Sk IDE Ultimate">
+        <Label layoutX="205.0" layoutY="14.0" text="SkIDE">
             <font>
                 <Font size="37.0"/>
             </font>

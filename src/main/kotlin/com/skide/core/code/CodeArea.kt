@@ -62,6 +62,8 @@ class EventHandler(private val area: CodeArea) {
             area.line = currentLine
         }
         if (name == "onDidChangeModelContent") {
+            if(firstTextSet)
+                area.openFileHolder.manager.updateEdited(true)
             if (firstTextSet)
                 area.updateWatcher.update()
             else

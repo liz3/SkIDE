@@ -44,7 +44,7 @@ class ServerManager(val coreManager: CoreManager) {
             try {
                 val confFile = File(it.path, ".server.skide")
                 val obj = JSONObject(readFile(confFile).second)
-                val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args"), obj.getString("jvm_args")), confFile, false, obj.getLong("id"))
+                val server = Server(ServerConfiguration(obj.getString("name"), obj.getString("skript_version"), File(obj.getString("api")), File(it.path), obj.getString("start_args"), if(obj.has("jvm_args")) obj.getString("jvm_args") else ""), confFile, false, obj.getLong("id"))
                 obj.getJSONArray("addons").forEach {
                     if (it is JSONObject) {
 

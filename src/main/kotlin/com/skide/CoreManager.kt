@@ -80,7 +80,7 @@ class CoreManager {
 
     private fun welcomeWindow(me: CoreManager, configLoadResult: ConfigLoadResult) {
 
-        val window = guiManager.getWindow("fxml/StartGui.fxml", "SkIDE Ultimate ${Info.version}", false)
+        val window = guiManager.getWindow("fxml/StartGui.fxml", "SkIDE ${Info.version}", false)
         (window.controller as StartGUIController).initGui(me, window, configLoadResult == ConfigLoadResult.FIRST_RUN)
         window.stage.isResizable = false
         window.stage.show()

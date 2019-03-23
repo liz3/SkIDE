@@ -22,7 +22,7 @@ plugins {
 apply plugin: 'kotlin'
 apply plugin: 'application'
 
-group = 'com.skide-ultimate'
+group = 'com.skide'
 version = "2019.2"
 mainClassName = 'com.skide.MainKt'
 
@@ -58,9 +58,6 @@ shadowJar {
     exclude 'META-INF/*.DSA'
     exclude 'META-INF/*.RSA'
     archiveName = "ide.jar"
-}
-task proguard(type: proguard.gradle.ProGuardTask) {
-    configuration 'proguard.txt'
 }
 jar {
     archiveName = "ide-core.jar"

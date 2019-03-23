@@ -4,6 +4,7 @@ import com.skide.include.*
 import com.skide.utils.EditorUtils
 import javafx.application.Platform
 import netscape.javascript.JSObject
+import java.lang.Exception
 import java.util.*
 import java.util.regex.Pattern
 import kotlin.collections.HashMap
@@ -323,19 +324,27 @@ class ErrorProvider(val manager: CodeManager) {
     }
 
     fun reportLineError(message: String, line: Int) {
-        errors.add(SkError(line, line, 1, area.getColumnLineAmount(line), ErrorSeverity.ERROR, message))
+      try {
+          errors.add(SkError(line, line, 1, area.getColumnLineAmount(line), ErrorSeverity.ERROR, message))
+      }catch (ignored:Exception) {}
     }
 
     fun reportLineWarning(message: String, line: Int) {
+        try {
         errors.add(SkError(line, line, 1, area.getColumnLineAmount(line), ErrorSeverity.WARNING, message))
+        }catch (ignored:Exception) {}
     }
 
     fun reportLineInfo(message: String, line: Int) {
+        try {
         errors.add(SkError(line, line, 1, area.getColumnLineAmount(line), ErrorSeverity.INFO, message))
+        }catch (ignored:Exception) {}
     }
 
     fun report(error: SkError) {
+        try {
         errors.add(error)
+        }catch (ignored:Exception) {}
     }
 
     private fun pushErrors() {

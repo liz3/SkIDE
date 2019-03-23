@@ -13,7 +13,7 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
 
     var isExluded = false
     lateinit var externStage: Stage
-
+    var edited = false
 
     init {
 
@@ -26,6 +26,17 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
 
         }
     }
+
+    fun updateEdited(edited: Boolean) {
+        if (edited && !this.edited) {
+            openProject.tab.text = "${openProject.tab.text}*"
+        }
+        if(!edited && this.edited) {
+            openProject.tab.text = openProject.tab.text.substring(0, openProject.tab.text.length - 1)
+        }
+        this.edited = edited
+    }
+
 
     fun toggleExclude() {
 
@@ -71,8 +82,7 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
         Thread {
             Platform.runLater {
                 writeFile(openProject.area.text.toByteArray(), openProject.f)
-                if (openProject.tab.text.endsWith("*"))
-                    openProject.tab.text = openProject.tab.text.substring(0, openProject.tab.text.length - 1)
+                updateEdited(false)
             }
         }.start()
     }

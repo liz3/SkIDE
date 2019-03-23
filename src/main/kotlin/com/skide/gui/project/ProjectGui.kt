@@ -38,7 +38,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
     var mode = EditorMode.NORMAL
     val openFiles = HashMap<File, OpenFileHolder>()
     val settings = SettingsGui(coreManager, this)
-    val window = GUIManager.getWindow("fxml/ProjectGui.fxml", "${openProject.project.name} ${openProject.project.folder.absolutePath} - SkIDE Ultimate", false, w = 1280.0, h = 720.0)
+    val window = GUIManager.getWindow("fxml/ProjectGui.fxml", "${openProject.project.name} ${openProject.project.folder.absolutePath} - SkIDE", false, w = 1280.0, h = 720.0)
     lateinit var lowerTabPaneEventManager: LowerTabPaneEventManager
     val otherTabPanes = Vector<TabPane>()
     var paneHolderNode: Node = HBox()
@@ -49,9 +49,9 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
 
     fun updateProjectTitle(path: String) {
         window.stage.title = if (path.isEmpty())
-            "${openProject.project.name} ${openProject.project.folder.absolutePath} - SkIDE Ultimate"
+            "${openProject.project.name} ${openProject.project.folder.absolutePath} - SkIDE"
         else
-            "${openProject.project.name} ${openProject.project.folder.absolutePath} - $path - SkIDE Ultimate"
+            "${openProject.project.name} ${openProject.project.folder.absolutePath} - $path - SkIDE"
     }
 
     fun startGui(): ProjectGuiEventListeners {
@@ -624,7 +624,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             openProjectGuiManager.closeHook()
             openProjectGuiManager.window.close()
             if (coreManager.projectManager.openProjects.size == 0) {
-                val window = GUIManager.getWindow("fxml/StartGui.fxml", "SkIDE Ultimate ${Info.version}", false, Stage())
+                val window = GUIManager.getWindow("fxml/StartGui.fxml", "SkIDE ${Info.version}", false, Stage())
                 window.stage.isResizable = false
                 (window.controller as StartGUIController).initGui(coreManager, window, false)
                 window.stage.isResizable = false
@@ -758,6 +758,33 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 if (name.isNotEmpty()) openProjectGuiManager.openProject.createNewFile(name)
             }
 
+            if(it.verifyKeyCombo() && it.code == KeyCode.W) {
+                val tab = openProjectGuiManager.activeTab
+                for (holder in openProjectGuiManager.openFiles.values) {
+                    if(holder.tab == tab) {
+                        holder.manager.saveCode()
+                        openProjectGuiManager.openFiles.remove(holder.f)
+                        System.gc()
+                        if (openProjectGuiManager.openFiles.size == 0) {
+                            controller.browserTabPane.selectionModel.select(0)
+                            structureTab.first.isDisable = true
+                            setupPreview()
+                        }
+                        tab.tabPane.tabs.remove(tab)
+                        break
+                    }
+                }
+            }
+            if(it.verifyKeyCombo() && it.code == KeyCode.Q) {
+                val prs = Vector<OpenProject>()
+                prs += coreManager.projectManager.openProjects
+                prs.forEach {pr ->
+                    pr.guiHandler.closeHook()
+                }
+                Platform.exit()
+                System.exit(0)
+
+            }
             if (it.verifyKeyCombo() && it.code == KeyCode.P) {
                 val files = openProjectGuiManager.projectFiles
                 val functions = Vector<Triple<File, com.skide.include.Node, SearchPopUpItem>>()
