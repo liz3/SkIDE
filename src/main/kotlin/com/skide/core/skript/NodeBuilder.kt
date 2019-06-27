@@ -153,9 +153,17 @@ class NodeBuilder(val node: Node) {
                     }
 
                     if (content.contains("::")) {
-                        val listOrMapPath = content.split(name)[1].substring(3).split("}").first().split("::")
-                        fields["path"] = listOrMapPath
-                        fields["hasPath"] = true
+                        var level = 0
+                        val listOrMapPath = content.substring(content.indexOf("::") + 2).takeWhile {
+                            if(it == '{') level++
+                            if(it == '}') level--
+                            !(it == '}' && level == -1)
+                        }
+
+                        if(listOrMapPath.isNotEmpty()) {
+                            fields["path"] = listOrMapPath
+                            fields["hasPath"] = true
+                        }
                     }
                 }
 

@@ -1,7 +1,7 @@
 package com.skide
 
 object Info {
-    const val version = "2019.2"
+    const val version = "2019.2.1"
     var prodMode = false
 }
 
