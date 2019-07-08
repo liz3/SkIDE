@@ -17,7 +17,7 @@ class SocketManager(val core: CoreManager) {
     private var running = false
     fun start() {
 
-        val lockfile = File(File(CoreManager::class.java.protectionDomain.codeSource.location.toURI()).parent, "lockfile")
+        val lockfile = File(System.getProperty("user.home"), ".skide_lockfile")
         var start = 45664
 
         while (true) {
