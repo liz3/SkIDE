@@ -47,6 +47,10 @@ class CoreManager {
         }
         if (System.getProperty("skide.mode") != null && System.getProperty("skide.mode") == "prod")
             Info.prodMode = true
+        if (System.getProperty("skide.os") != null && System.getProperty("skide.os") == "arch") {
+            Info.indpendentInstall = true
+            println("I use arch btw")
+        }
     }
 
     private fun setupInstances(me: CoreManager) {

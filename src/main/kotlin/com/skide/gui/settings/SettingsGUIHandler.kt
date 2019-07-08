@@ -48,7 +48,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("global_font_size", ctrl.globalFontSize.text)
 
 
-        if (Info.prodMode) coreManager.configManager.writeUpdateFile(ctrl.updateCheck.isSelected, ctrl.betaUpdateCheck.isSelected)
+        if (Info.prodMode && !Info.indpendentInstall) coreManager.configManager.writeUpdateFile(ctrl.updateCheck.isSelected, ctrl.betaUpdateCheck.isSelected)
     }
 
     fun init() {
@@ -205,7 +205,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             ctrl.globalFontSize.text = coreManager.configManager.get("global_font_size").toString()
 
 
-        if (Info.prodMode) {
+        if (Info.prodMode && !Info.indpendentInstall) {
             ctrl.updateCheck.isSelected = coreManager.configManager.update
             ctrl.betaUpdateCheck.isSelected = coreManager.configManager.betaChannel
         }
