@@ -17,17 +17,13 @@ object Prompts {
 
     fun textPrompt(title: String, header: String, default: String = ""): String {
         val input = TextInputDialog(default)
-
         if (theme == "Dark") {
             val dialogPane = input.dialogPane
             dialogPane.stylesheets.add(configManager.getCssPath("ThemeDark.css"))
         }
-
         input.title = title
         input.headerText = header
         input.graphic = null
-        if (getOS() == OperatingSystemType.LINUX) input.initStyle(StageStyle.UTILITY)
-
         return try {
             input.showAndWait().get()
         } catch (e: Exception) {

@@ -82,10 +82,17 @@ object GUIManager {
         controller.okBtn.setOnAction {
             win.stage.close()
         }
-        controller.discordBtn.setOnAction { Desktop.getDesktop().browse(URI("https://discord.gg/Ud2WdVU")) }
-        controller.gitlabBtn.setOnAction { Desktop.getDesktop().browse(URI("https://gitlab.com/sk-ide/SkIDE/issues")) }
-        controller.donateBtn.setOnAction { Desktop.getDesktop().browse(URI("https://paypal.me/liz3de")) }
-        controller.infoTextLabel.text = "Developed and maintained by Liz3 aka 21 Xayah\nContributors: NickAc, 4rno, BaeFell, NanoDankster, Nicofisi, Scrumplex"
+        controller.discordBtn.setOnAction {
+            LinkOpener().open("https://discord.gg/Ex8d34E")
+        }
+        controller.gitlabBtn.setOnAction {
+            LinkOpener().open("https://github.com/SavageLLC/SkIDE/issues")
+
+        }
+        controller.donateBtn.setOnAction {
+          LinkOpener().open("https://paypal.me/liz3de")
+        }
+        controller.infoTextLabel.text = "Developed and maintained by Liz3\nContributors: NickAc, 4rno, eyesniper2, NanoDankster, Nicofisi, Scrumplex"
         win.stage.show()
     }
 
@@ -103,8 +110,9 @@ object GUIManager {
 class LinkOpener {
 
     fun open(link: Any) {
-
-        Desktop.getDesktop().browse(URI(link.toString()))
+        Thread {
+            Desktop.getDesktop().browse(URI(link.toString()))
+        }.start()
     }
 }
 
