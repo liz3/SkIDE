@@ -168,4 +168,10 @@ class GeneralSettingsGUIController {
     @FXML
     lateinit var schemesPreviewView: WebView
 
+    @FXML
+    lateinit var generalJrePathField: TextField
+
+    @FXML
+    lateinit var generalJrePathButton: Button
+
 }

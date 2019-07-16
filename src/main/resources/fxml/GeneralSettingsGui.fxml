@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.web.WebView?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-            prefHeight="660.0" prefWidth="1010.0" xmlns="http://javafx.com/javafx/8.0.191"
-            fx:controller="com.skide.gui.controllers.GeneralSettingsGUIController">
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="660.0" prefWidth="1010.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.skide.gui.controllers.GeneralSettingsGUIController">
     <center>
         <TabPane prefHeight="524.0" prefWidth="826.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
@@ -18,121 +27,106 @@
                                     <children>
                                         <VBox spacing="5.0">
                                             <children>
-                                                <CheckBox fx:id="settingsHighlightingCheck" disable="true"
-                                                          mnemonicParsing="false" text="Enable highlighting"/>
-                                                <CheckBox fx:id="crossFileAutoComplete" mnemonicParsing="false"
-                                                          text="Enable cross-file auto-complete"/>
-                                                <CheckBox fx:id="metaDataGenerateCheck" mnemonicParsing="false"
-                                                          text="Info Generate on new File"/>
-                                                <CheckBox fx:id="settingsUpdateDataCheck" mnemonicParsing="false"
-                                                          text="Update data on restart"/>
-                                                <CheckBox fx:id="webViewDebuggerCheck" mnemonicParsing="false"
-                                                          text="Enable Editor Debugger"/>
-                                                <CheckBox fx:id="analyiticsCheck" mnemonicParsing="false"
-                                                          text="Send Metrics via Google Analytics"/>
-                                                <CheckBox fx:id="settingsAutoCompleteCheck" mnemonicParsing="false"
-                                                          text="Enable Autocomplete"/>
-                                                <CheckBox fx:id="settingsAutoCompleteSkriptCheck" layoutX="10.0"
-                                                          layoutY="144.0" mnemonicParsing="false"
-                                                          text="Enable Skript Syntax Autocomplete"/>
-                                                <CheckBox fx:id="settingsAutoCompleteAddonCheck" layoutX="10.0"
-                                                          layoutY="10.0" mnemonicParsing="false"
-                                                          text="Enable Addon Syntax Autocomplete"/>
+                                                <CheckBox fx:id="settingsHighlightingCheck" disable="true" mnemonicParsing="false" text="Enable highlighting" />
+                                                <CheckBox fx:id="crossFileAutoComplete" mnemonicParsing="false" text="Enable cross-file auto-complete" />
+                                                <CheckBox fx:id="metaDataGenerateCheck" mnemonicParsing="false" text="Info Generate on new File" />
+                                                <CheckBox fx:id="settingsUpdateDataCheck" mnemonicParsing="false" text="Update data on restart" />
+                                                <CheckBox fx:id="webViewDebuggerCheck" mnemonicParsing="false" text="Enable Editor Debugger" />
+                                                <CheckBox fx:id="analyiticsCheck" mnemonicParsing="false" text="Send Metrics via Google Analytics" />
+                                                <CheckBox fx:id="settingsAutoCompleteCheck" mnemonicParsing="false" text="Enable Autocomplete" />
+                                                <CheckBox fx:id="settingsAutoCompleteSkriptCheck" layoutX="10.0" layoutY="144.0" mnemonicParsing="false" text="Enable Skript Syntax Autocomplete" />
+                                                <CheckBox fx:id="settingsAutoCompleteAddonCheck" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Enable Addon Syntax Autocomplete" />
                                             </children>
                                         </VBox>
                                         <VBox prefHeight="466.0" prefWidth="241.0" spacing="5.0">
                                             <children>
-                                                <Label text="Theme"/>
-                                                <ComboBox fx:id="settingsTheneComboBox" prefWidth="150.0"/>
+                                                <Label text="Theme" />
+                                                <ComboBox fx:id="settingsTheneComboBox" prefWidth="150.0" />
                                                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                                     <children>
                                                         <VBox prefHeight="100.0" prefWidth="278.0">
                                                             <children>
-                                                                <Label text="Font"/>
-                                                                <TextField fx:id="settingsFontTextField"/>
+                                                                <Label text="Font" />
+                                                                <TextField fx:id="settingsFontTextField" />
                                                             </children>
                                                         </VBox>
                                                         <VBox>
                                                             <children>
-                                                                <Label text="Size"/>
-                                                                <TextField fx:id="settingsFontSizeTextField"
-                                                                           minWidth="30.0"/>
+                                                                <Label text="Size" />
+                                                                <TextField fx:id="settingsFontSizeTextField" minWidth="30.0" />
                                                             </children>
                                                         </VBox>
                                                     </children>
                                                 </HBox>
                                             </children>
                                         </VBox>
-                                        <VBox prefHeight="466.0" prefWidth="181.0" spacing="5.0">
+                                        <VBox prefHeight="202.0" prefWidth="436.0" spacing="5.0">
                                             <children>
-                                                <Label text="Global font size"/>
+                                    <Label layoutX="10.0" layoutY="10.0" prefHeight="64.0" prefWidth="436.0" text="JRE Executable (java.exe or javaw.exe in the jre folder), will default &#10;to &quot;java&quot; or use the bundledjre on windows and linux(deb)" />
+                                    <HBox alignment="CENTER_LEFT" prefHeight="0.0" prefWidth="436.0" spacing="5.0">
+                                       <children>
+                                          <TextField fx:id="generalJrePathField" prefHeight="3.0" prefWidth="382.0" />
+                                          <Button fx:id="generalJrePathButton" mnemonicParsing="false" text="..." />
+                                       </children>
+                                    </HBox>
+                                                <Label text="Global font size" />
                                                 <HBox prefHeight="14.0" prefWidth="182.0">
                                                     <children>
-                                                        <TextField fx:id="globalFontSize" prefHeight="26.0"
-                                                                   prefWidth="33.0"/>
+                                                        <TextField fx:id="globalFontSize" prefHeight="26.0" prefWidth="33.0" />
                                                     </children>
                                                 </HBox>
-                                                <CheckBox fx:id="updateCheck" mnemonicParsing="false"
-                                                          text="Check for updates"/>
-                                                <CheckBox fx:id="betaUpdateCheck" mnemonicParsing="false"
-                                                          text="Update from Beta Channel"/>
+                                                <CheckBox fx:id="updateCheck" mnemonicParsing="false" text="Check for updates" />
+                                                <CheckBox fx:id="betaUpdateCheck" mnemonicParsing="false" text="Update from Beta Channel" />
                                             </children>
                                         </VBox>
                                     </children>
                                     <padding>
-                                        <Insets left="10.0" top="10.0"/>
+                                        <Insets left="10.0" top="10.0" />
                                     </padding>
                                 </HBox>
-                                <Label text="Color Themes"/>
+                                <Label text="Color Themes" />
                                 <HBox prefHeight="414.0" prefWidth="1010.0" spacing="5.0">
                                     <children>
                                         <VBox prefHeight="411.0" prefWidth="1011.0">
                                             <children>
                                                 <HBox prefHeight="11.0" prefWidth="1011.0" spacing="5.0">
                                                     <children>
-                                                        <ComboBox fx:id="schemesSelectComboBox" prefWidth="150.0"/>
-                                                        <TextField fx:id="schemesNewTextField" prefHeight="26.0"
-                                                                   prefWidth="210.0"/>
-                                                        <Button fx:id="schemesNewBtn" mnemonicParsing="false"
-                                                                text="New"/>
-                                                        <Button fx:id="schemesDeleteBtn" mnemonicParsing="false"
-                                                                text="Delete"/>
+                                                        <ComboBox fx:id="schemesSelectComboBox" prefWidth="150.0" />
+                                                        <TextField fx:id="schemesNewTextField" prefHeight="26.0" prefWidth="210.0" />
+                                                        <Button fx:id="schemesNewBtn" mnemonicParsing="false" text="New" />
+                                                        <Button fx:id="schemesDeleteBtn" mnemonicParsing="false" text="Delete" />
                                                     </children>
                                                 </HBox>
                                                 <HBox prefHeight="394.0" prefWidth="1011.0" spacing="5.0">
                                                     <children>
                                                         <VBox prefHeight="353.0" prefWidth="327.0">
                                                             <children>
-                                                                <Label text="General Colors"/>
-                                                                <ListView fx:id="schemesColorsList" prefHeight="348.0"
-                                                                          prefWidth="326.0"/>
+                                                                <Label text="General Colors" />
+                                                                <ListView fx:id="schemesColorsList" prefHeight="348.0" prefWidth="326.0" />
                                                             </children>
                                                         </VBox>
-                                                        <VBox layoutX="10.0" layoutY="10.0" prefHeight="314.0"
-                                                              prefWidth="250.0">
+                                                        <VBox layoutX="10.0" layoutY="10.0" prefHeight="314.0" prefWidth="250.0">
                                                             <children>
-                                                                <Label text="Editor "/>
-                                                                <ListView fx:id="schemesRulesList" prefHeight="368.0"
-                                                                          prefWidth="326.0"/>
+                                                                <Label text="Editor " />
+                                                                <ListView fx:id="schemesRulesList" prefHeight="368.0" prefWidth="326.0" />
                                                             </children>
                                                         </VBox>
                                                         <VBox prefHeight="314.0" prefWidth="413.0">
                                                             <children>
-                                                                <Label text="Preview"/>
-                                                                <WebView fx:id="schemesPreviewView" prefHeight="342.0"
-                                                                         prefWidth="361.0"/>
+                                                                <Label text="Preview" />
+                                                                <WebView fx:id="schemesPreviewView" prefHeight="342.0" prefWidth="361.0" />
                                                             </children>
                                                         </VBox>
                                                     </children>
                                                     <VBox.margin>
-                                                        <Insets/>
+                                                        <Insets />
                                                     </VBox.margin>
                                                 </HBox>
                                             </children>
                                         </VBox>
                                     </children>
                                     <VBox.margin>
-                                        <Insets bottom="5.0"/>
+                                        <Insets bottom="5.0" />
                                     </VBox.margin>
                                 </HBox>
                             </children>
@@ -149,16 +143,12 @@
                                             <children>
                                                 <HBox prefHeight="31.0" prefWidth="222.0" spacing="5.0">
                                                     <children>
-                                                        <TextField fx:id="serverNewServerNameTextField"
-                                                                   prefHeight="25.0" prefWidth="199.0"/>
-                                                        <Button fx:id="serverNewServerCreateBtn" mnemonicParsing="false"
-                                                                prefHeight="25.0" prefWidth="91.0" text="New"/>
+                                                        <TextField fx:id="serverNewServerNameTextField" prefHeight="25.0" prefWidth="199.0" />
+                                                        <Button fx:id="serverNewServerCreateBtn" mnemonicParsing="false" prefHeight="25.0" prefWidth="91.0" text="New" />
                                                     </children>
                                                 </HBox>
-                                                <ListView fx:id="serverServerList" prefHeight="149.0"
-                                                          prefWidth="200.0"/>
-                                                <Button fx:id="serverServerDeleteBtn" mnemonicParsing="false"
-                                                        text="Delete Server"/>
+                                                <ListView fx:id="serverServerList" prefHeight="149.0" prefWidth="200.0" />
+                                                <Button fx:id="serverServerDeleteBtn" mnemonicParsing="false" text="Delete Server" />
                                             </children>
                                         </VBox>
                                         <VBox prefHeight="190.0" prefWidth="543.0">
@@ -167,9 +157,8 @@
                                                     <children>
                                                         <VBox>
                                                             <children>
-                                                                <Label text="Name"/>
-                                                                <TextField fx:id="serverServerNameTextField"
-                                                                           editable="false"/>
+                                                                <Label text="Name" />
+                                                                <TextField fx:id="serverServerNameTextField" editable="false" />
                                                             </children>
                                                         </VBox>
                                                     </children>
@@ -178,39 +167,34 @@
                                                     <children>
                                                         <VBox prefHeight="43.0" prefWidth="266.0">
                                                             <children>
-                                                                <Label text="JVM Start Args"/>
-                                                                <TextField fx:id="jvmStartAgsTextField"/>
+                                                                <Label text="JVM Start Args" />
+                                                                <TextField fx:id="jvmStartAgsTextField" />
                                                             </children>
                                                         </VBox>
                                                         <VBox prefHeight="43.0" prefWidth="266.0">
                                                             <children>
-                                                                <Label text="Server Start arguments"/>
-                                                                <TextField fx:id="serverStartAgsTextField"/>
+                                                                <Label text="Server Start arguments" />
+                                                                <TextField fx:id="serverStartAgsTextField" />
                                                             </children>
                                                         </VBox>
                                                     </children>
                                                 </HBox>
-                                                <Label text="Server Folder"/>
+                                                <Label text="Server Folder" />
                                                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                                     <children>
-                                                        <TextField fx:id="serverServerFolderPathTextField"
-                                                                   editable="false" prefHeight="25.0"
-                                                                   prefWidth="382.0"/>
-                                                        <Button fx:id="serverServerFolderPathChooseBtn"
-                                                                mnemonicParsing="false" text="..."/>
+                                                        <TextField fx:id="serverServerFolderPathTextField" editable="false" prefHeight="25.0" prefWidth="382.0" />
+                                                        <Button fx:id="serverServerFolderPathChooseBtn" mnemonicParsing="false" text="..." />
                                                     </children>
                                                 </HBox>
-                                                <Label text="Server JAR (Bukkit/Spigot/Paper)"/>
+                                                <Label text="Server JAR (Bukkit/Spigot/Paper)" />
                                                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                                     <children>
-                                                        <TextField fx:id="serverServerPathTextField" editable="false"
-                                                                   prefHeight="25.0" prefWidth="382.0"/>
-                                                        <Button fx:id="serverServertPathChooseBtn"
-                                                                mnemonicParsing="false" text="..."/>
+                                                        <TextField fx:id="serverServerPathTextField" editable="false" prefHeight="25.0" prefWidth="382.0" />
+                                                        <Button fx:id="serverServertPathChooseBtn" mnemonicParsing="false" text="..." />
                                                     </children>
                                                 </HBox>
-                                                <Label text="Skript version"/>
-                                                <ComboBox fx:id="serverSkriptVersionComboBox" prefWidth="150.0"/>
+                                                <Label text="Skript version" />
+                                                <ComboBox fx:id="serverSkriptVersionComboBox" prefWidth="150.0" />
                                             </children>
                                         </VBox>
                                     </children>
@@ -219,49 +203,42 @@
                                     <children>
                                         <VBox prefHeight="221.0" prefWidth="293.0" spacing="5.0">
                                             <children>
-                                                <Label text="Addons"/>
-                                                <ListView fx:id="serverAddonList" prefHeight="169.0" prefWidth="200.0"/>
-                                                <Button fx:id="serverAddonDeleteBtn" mnemonicParsing="false"
-                                                        text="Remove Addon"/>
+                                                <Label text="Addons" />
+                                                <ListView fx:id="serverAddonList" prefHeight="169.0" prefWidth="200.0" />
+                                                <Button fx:id="serverAddonDeleteBtn" mnemonicParsing="false" text="Remove Addon" />
                                             </children>
                                         </VBox>
                                         <VBox spacing="5.0">
                                             <children>
-                                                <Label text="Add Addon from file"/>
+                                                <Label text="Add Addon from file" />
                                                 <HBox spacing="5.0">
                                                     <children>
-                                                        <TextField fx:id="serverAddAddonFromFileTextField"
-                                                                   editable="false" prefHeight="25.0"
-                                                                   prefWidth="382.0"/>
-                                                        <Button fx:id="serverAddAddonFromFileChooseBtn"
-                                                                mnemonicParsing="false" text="..."/>
+                                                        <TextField fx:id="serverAddAddonFromFileTextField" editable="false" prefHeight="25.0" prefWidth="382.0" />
+                                                        <Button fx:id="serverAddAddonFromFileChooseBtn" mnemonicParsing="false" text="..." />
                                                     </children>
                                                 </HBox>
-                                                <Button fx:id="serverAddAddonFromFileBtn" alignment="CENTER"
-                                                        contentDisplay="CENTER" mnemonicParsing="false" text="Add"/>
+                                                <Button fx:id="serverAddAddonFromFileBtn" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" text="Add" />
                                                 <Label text="Add from presets">
                                                     <padding>
-                                                        <Insets top="5.0"/>
+                                                        <Insets top="5.0" />
                                                     </padding>
                                                 </Label>
-                                                <ComboBox fx:id="serverAddAddonFromPresetComboBox" disable="true"
-                                                          prefHeight="25.0" prefWidth="383.0">
+                                                <ComboBox fx:id="serverAddAddonFromPresetComboBox" disable="true" prefHeight="25.0" prefWidth="383.0">
                                                     <VBox.margin>
-                                                        <Insets/>
+                                                        <Insets />
                                                     </VBox.margin>
                                                 </ComboBox>
-                                                <Button fx:id="serverAddAddonFromPresetBtn" disable="true"
-                                                        mnemonicParsing="false" text="Add"/>
+                                                <Button fx:id="serverAddAddonFromPresetBtn" disable="true" mnemonicParsing="false" text="Add" />
                                             </children>
                                             <padding>
-                                                <Insets top="5.0"/>
+                                                <Insets top="5.0" />
                                             </padding>
                                         </VBox>
                                     </children>
                                 </HBox>
                             </children>
                             <padding>
-                                <Insets left="10.0" top="10.0"/>
+                                <Insets left="10.0" top="10.0" />
                             </padding>
                         </VBox>
                     </content>
@@ -272,36 +249,34 @@
                             <children>
                                 <HBox spacing="5.0">
                                     <children>
-                                        <TextField fx:id="snippetNewField" prefHeight="26.0" prefWidth="203.0"/>
-                                        <Button fx:id="snippetNewBtn" mnemonicParsing="false" text="New"/>
+                                        <TextField fx:id="snippetNewField" prefHeight="26.0" prefWidth="203.0" />
+                                        <Button fx:id="snippetNewBtn" mnemonicParsing="false" text="New" />
                                     </children>
                                 </HBox>
                                 <HBox prefHeight="190.0" prefWidth="1001.0" spacing="5.0">
                                     <children>
                                         <VBox prefHeight="190.0" prefWidth="218.0">
                                             <children>
-                                                <ListView fx:id="snippetListView" prefHeight="200.0" prefWidth="200.0"/>
-                                                <Button fx:id="snippetDeleteBtn" mnemonicParsing="false" text="Delete"/>
+                                                <ListView fx:id="snippetListView" prefHeight="200.0" prefWidth="200.0" />
+                                                <Button fx:id="snippetDeleteBtn" mnemonicParsing="false" text="Delete" />
                                             </children>
                                         </VBox>
                                         <VBox prefHeight="190.0" prefWidth="806.0">
                                             <children>
-                                                <Label text="Label"/>
-                                                <TextField fx:id="snippetLabelField"/>
-                                                <Label text="Content"/>
-                                                <TextArea fx:id="snippetContentArea" prefHeight="87.0"
-                                                          prefWidth="793.0"/>
-                                                <CheckBox fx:id="snippetTriggerReplaceSequence" mnemonicParsing="false"
-                                                          text="Trigger Replace Sequence"/>
+                                                <Label text="Label" />
+                                                <TextField fx:id="snippetLabelField" />
+                                                <Label text="Content" />
+                                                <TextArea fx:id="snippetContentArea" prefHeight="87.0" prefWidth="793.0" />
+                                                <CheckBox fx:id="snippetTriggerReplaceSequence" mnemonicParsing="false" text="Trigger Replace Sequence" />
                                             </children>
                                         </VBox>
                                     </children>
                                 </HBox>
-                                <Label text="Conditions"/>
-                                <HBox fx:id="snippetRulesContainer" prefHeight="373.0" spacing="10.0"/>
+                                <Label text="Conditions" />
+                                <HBox fx:id="snippetRulesContainer" prefHeight="373.0" spacing="10.0" />
                             </children>
                             <padding>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </padding>
                         </VBox>
                     </content>
@@ -312,12 +287,12 @@
     <bottom>
         <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="826.0" spacing="10.0" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="applyBtn" mnemonicParsing="false" text="Apply"/>
-                <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel"/>
-                <Button fx:id="okBtn" mnemonicParsing="false" text="Ok"/>
+                <Button fx:id="applyBtn" mnemonicParsing="false" text="Apply" />
+                <Button fx:id="cancelBtn" mnemonicParsing="false" text="Cancel" />
+                <Button fx:id="okBtn" mnemonicParsing="false" text="Ok" />
             </children>
             <padding>
-                <Insets bottom="5.0" right="5.0"/>
+                <Insets bottom="5.0" right="5.0" />
             </padding>
         </HBox>
     </bottom>

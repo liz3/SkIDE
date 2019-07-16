@@ -46,6 +46,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         coreManager.configManager.set("webview_debug", "${ctrl.webViewDebuggerCheck.isSelected}")
         coreManager.configManager.set("analytics", "${ctrl.analyiticsCheck.isSelected}")
         coreManager.configManager.set("global_font_size", ctrl.globalFontSize.text)
+        coreManager.configManager.set("jre_path", ctrl.generalJrePathField.text)
 
 
         if (Info.prodMode && !Info.indpendentInstall) coreManager.configManager.writeUpdateFile(ctrl.updateCheck.isSelected, ctrl.betaUpdateCheck.isSelected)
@@ -182,7 +183,12 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
             clearValues()
             ctrl.serverServerNameTextField.text = name
         }
-
+        ctrl.generalJrePathButton.setOnAction {
+            val file = getFile("Java Runtime executable", false)
+            if(file != null) {
+                ctrl.generalJrePathField.text = file.absolutePath
+            }
+        }
         ctrl.settingsTheneComboBox.items.addAll("Light", "Dark")
         serverManager.servers.forEach {
             ctrl.serverServerList.items.add(it.value)
@@ -201,6 +207,7 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
         ctrl.settingsUpdateDataCheck.isSelected = coreManager.configManager.get("meta_update") == "true"
         ctrl.webViewDebuggerCheck.isSelected = coreManager.configManager.get("webview_debug") == "true"
         ctrl.analyiticsCheck.isSelected = coreManager.configManager.get("analytics") == "true"
+        ctrl.generalJrePathField.text = coreManager.configManager.get("jre_path").toString()
         if (coreManager.configManager.get("global_font_size").toString().isNotEmpty())
             ctrl.globalFontSize.text = coreManager.configManager.get("global_font_size").toString()
 
@@ -274,12 +281,12 @@ class SettingsGUIHandler(val ctrl: GeneralSettingsGUIController, val coreManager
     }
 
 
-    private fun getFile(name: String): File? {
+    private fun getFile(name: String, limit:Boolean = true): File? {
 
         val fileChooserWindow = Stage()
         val dirChooser = FileChooser()
         dirChooser.title = name
-        dirChooser.extensionFilters.addAll(
+       if(limit) dirChooser.extensionFilters.addAll(
                 FileChooser.ExtensionFilter("JAR", "*.jar")
         )
         return dirChooser.showOpenDialog(fileChooserWindow)

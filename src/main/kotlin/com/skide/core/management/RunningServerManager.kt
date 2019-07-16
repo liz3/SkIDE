@@ -2,6 +2,8 @@ package com.skide.core.management
 
 import com.skide.CoreManager
 import com.skide.include.Server
+import com.skide.utils.OperatingSystemType
+import com.skide.utils.getOS
 import com.skide.utils.writeFile
 import javafx.application.Platform
 import javafx.scene.control.TextArea
@@ -23,15 +25,26 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
 
             area.isEditable = false
             val builder = ProcessBuilder()
-            val javaPath = File(File(System.getProperty("java.home"), "bin"), "java").absolutePath
+            val javaPath = {
+                if(coreManager.configManager.get("jre_path") != null) {
+                    coreManager.configManager.get("jre_path").toString()
+                } else {
+                    if(getOS() === OperatingSystemType.MAC_OS) {
+                        "java"
+                    } else{
+                        File(File(System.getProperty("java.home"), "bin"), "java").absolutePath
+                    }
+                }
+
+            }.invoke()
             val serverFile = File(server.configuration.folder, "server.jar").absolutePath
-            val list = arrayListOf(javaPath, "-jar")
+            val list = arrayListOf(javaPath)
             if (server.configuration.jvmArgs.isNotEmpty()) {
                 server.configuration.jvmArgs.split(" ").forEach {
                     list += it
                 }
             }
-            list.add("-jar")
+           if(!list.contains("-jar")) list.add("-jar")
             list.add(serverFile)
             if (server.configuration.startArgs.isNotEmpty()) {
                 server.configuration.startArgs.split(" ").forEach {
@@ -42,7 +55,7 @@ class RunningServerManager(val server: Server, val coreManager: CoreManager) {
             builder.directory(server.configuration.folder)
             process = builder.start()
             server.running = true
-
+            area.appendText("> ${list.joinToString(" ")}\nIn directory(WD): ${server.configuration.folder}\n\n")
             Thread {
                 var msg: String?
                 val reader = BufferedReader(InputStreamReader(process.inputStream, "UTF-8"))
