@@ -12,5 +12,4 @@ stage
 prime
 *.snap
 snap/.snapcraft
-
 .DS_Store

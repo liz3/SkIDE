@@ -13,6 +13,7 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
 
     var isExluded = false
     lateinit var externStage: Stage
+    lateinit var externTabPane:TabPane
     var edited = false
 
     init {
@@ -41,27 +42,40 @@ class OpenProjectManager(val openProject: OpenFileHolder) {
     fun toggleExclude() {
 
         if (isExluded) {
-
-            (externStage.scene.root as TabPane).tabs.forEach {
-                it.onCloseRequest.handle(null)
-            }
             isExluded = false
-            externStage.close()
+
+           Platform.runLater {
+               if(externTabPane.tabs.size == 0) {
+                   (externStage.scene.root as TabPane).tabs.forEach {
+                       it.onCloseRequest.handle(null)
+                   }
+                   externStage.close()
+               }
+           }
 
         } else {
 
+            externTabPane = TabPane()
             externStage = Stage()
-            val tabPane = TabPane()
+            val tabPane = externTabPane
             tabPane.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
 
                 if (newValue == null) {
-                    isExluded = false
-                    externStage.close()
+                    Platform.runLater {
+                        if(externTabPane.tabs.size == 0) {
+                            (externStage.scene.root as TabPane).tabs.forEach {
+                                it.onCloseRequest.handle(null)
+                            }
+                            externStage.close()
+                        }
+                    }
                 }
             }
             MouseDragHandler(tabPane, openProject.openProject.guiHandler).setup()
             val oldPane = openProject.tab.tabPane
             oldPane?.tabs?.remove(openProject.tab)
+            if(openProject.tabPane.tabs.contains(openProject.tab))
+                openProject.tabPane.tabs.remove(openProject.tab)
             tabPane.tabs.add(openProject.tab)
             externStage.title = openProject.name
             externStage.icons.add(Image(javaClass.getResource("/images/icon.png").toExternalForm()))

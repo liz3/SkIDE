@@ -75,6 +75,7 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
         val modeBefore = this.mode
         if (mode == EditorMode.NORMAL) {
             if (modeBefore != EditorMode.NORMAL) {
+                println("switching to normal")
                 val mainTabPane = openProject.eventManager.controller.editorMainTabPane
                 val root = openProject.eventManager.controller.mainCenterAnchorPane
                 otherTabPanes.forEach {
@@ -191,19 +192,22 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                     }
                 }
                 if (otherTabPanes.size == 1) {
-                    val mainTabPane = openProject.eventManager.controller.editorMainTabPane
-                    val root = openProject.eventManager.controller.mainCenterAnchorPane
-                    otherTabPanes.forEach {
-                        mainTabPane.tabs.addAll(it.tabs)
-                    }
-                    otherTabPanes.clear()
-                    root.children.clear()
-                    root.children.add(mainTabPane)
-                    AnchorPane.setTopAnchor(mainTabPane, 0.0)
-                    AnchorPane.setRightAnchor(mainTabPane, 0.0)
-                    AnchorPane.setBottomAnchor(mainTabPane, 0.0)
-                    AnchorPane.setLeftAnchor(mainTabPane, 0.0)
-                    this.mode = EditorMode.NORMAL
+                 Platform.runLater {
+                     println("resetting to normal mode")
+                     val mainTabPane = openProject.eventManager.controller.editorMainTabPane
+                     val root = openProject.eventManager.controller.mainCenterAnchorPane
+                     otherTabPanes.forEach {
+                         mainTabPane.tabs.addAll(it.tabs)
+                     }
+                     otherTabPanes.clear()
+                     root.children.clear()
+                     root.children.add(mainTabPane)
+                     AnchorPane.setTopAnchor(mainTabPane, 0.0)
+                     AnchorPane.setRightAnchor(mainTabPane, 0.0)
+                     AnchorPane.setBottomAnchor(mainTabPane, 0.0)
+                     AnchorPane.setLeftAnchor(mainTabPane, 0.0)
+                     this.mode = EditorMode.NORMAL
+                 }
                 }
             }
             val total = box.width
@@ -238,19 +242,21 @@ class OpenProjectGuiManager(val openProject: OpenProject, val coreManager: CoreM
                         }
                     }
                     if (otherTabPanes.size == 1) {
-                        val mainTabPane = openProject.eventManager.controller.editorMainTabPane
-                        val root = openProject.eventManager.controller.mainCenterAnchorPane
-                        otherTabPanes.forEach {
-                            mainTabPane.tabs.addAll(it.tabs)
-                        }
-                        otherTabPanes.clear()
-                        root.children.clear()
-                        root.children.add(mainTabPane)
-                        AnchorPane.setTopAnchor(mainTabPane, 0.0)
-                        AnchorPane.setRightAnchor(mainTabPane, 0.0)
-                        AnchorPane.setBottomAnchor(mainTabPane, 0.0)
-                        AnchorPane.setLeftAnchor(mainTabPane, 0.0)
-                        this.mode = EditorMode.NORMAL
+                       Platform.runLater {
+                           val mainTabPane = openProject.eventManager.controller.editorMainTabPane
+                           val root = openProject.eventManager.controller.mainCenterAnchorPane
+                           otherTabPanes.forEach {
+                               mainTabPane.tabs.addAll(it.tabs)
+                           }
+                           otherTabPanes.clear()
+                           root.children.clear()
+                           root.children.add(mainTabPane)
+                           AnchorPane.setTopAnchor(mainTabPane, 0.0)
+                           AnchorPane.setRightAnchor(mainTabPane, 0.0)
+                           AnchorPane.setBottomAnchor(mainTabPane, 0.0)
+                           AnchorPane.setLeftAnchor(mainTabPane, 0.0)
+                           this.mode = EditorMode.NORMAL
+                       }
                     }
                 }
                 val total = box.height
@@ -788,7 +794,6 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 val lastActive = openProjectGuiManager.lastActive
                 val count = lastActive?.area?.getLineCount() ?: 0
 
-
                 val box = SearchPopUp(openProjectGuiManager.window.stage) { text ->
                     items.clear()
                     if (text.startsWith("@") && text.length > 1) {
@@ -1041,7 +1046,7 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             }
         }
 
-        controller.editorMainTabPane.selectionModel.selectedItemProperty().addListener { _, _, _ ->
+        controller.editorMainTabPane.selectionModel.selectedItemProperty().addListener { _, _, newValue ->
 
             if (controller.editorMainTabPane.selectionModel.selectedItem != null) {
 
@@ -1058,12 +1063,18 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                             }
                         }
             } else {
-                Platform.runLater {
-                    openProjectGuiManager.updateProjectTitle("")
-                }
-                controller.browserTabPane.selectionModel.select(0)
-                structureTab.first.isDisable = true
+
+                   Platform.runLater {
+                      if(controller.editorMainTabPane.selectionModel.selectedItem == null && openProjectGuiManager.mode == EditorMode.NORMAL && openProjectGuiManager.otherTabPanes.size == 0) {
+                          openProjectGuiManager.updateProjectTitle("")
+                          setupPreview()
+                          controller.browserTabPane.selectionModel.select(0)
+                          structureTab.first.isDisable = true
+                      }
+                   }
+
+               }
+
             }
         }
     }
-}
