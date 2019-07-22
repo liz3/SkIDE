@@ -88,7 +88,7 @@ class SocketManager(val core: CoreManager) {
 }
 
 fun handle(path: String) {
-    val lockfile = File(File(CoreManager::class.java.protectionDomain.codeSource.location.toURI()).parent, "lockfile")
+    val lockfile = File(System.getProperty("user.home"), ".skide_lockfile")
     if (lockfile.exists()) {
 
         val result = readFile(lockfile).second
