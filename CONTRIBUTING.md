@@ -1,4 +1,4 @@
-## How to contribute to SavageFactions
+## How to contribute to SkIDE
 
 #### **Did you find a bug?**
 
