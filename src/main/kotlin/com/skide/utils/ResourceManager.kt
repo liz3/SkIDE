@@ -103,6 +103,7 @@ class ResourceManager(val coreManager: CoreManager) {
             cb(json)
             return true
         } catch (e: Exception) {
+            f1.delete()
             if (f2.exists()) {
                 println("falling back to copy : ${f2.name}")
                 try {
@@ -114,7 +115,7 @@ class ResourceManager(val coreManager: CoreManager) {
                 }
             }
             Platform.runLater {
-                Prompts.infoCheck("Error", "SkIDE  error", "SkIDE failed to read the syntax file and cant continue, please retry or report an error on discord", Alert.AlertType.ERROR)
+                Prompts.infoCheck("Error", "SkIDE  error", "SkIDE failed to read ${f1.name} and cant continue, please retry or report an error on discord", Alert.AlertType.ERROR)
                 exitProcess(0)
             }
         }
@@ -126,7 +127,7 @@ class ResourceManager(val coreManager: CoreManager) {
         val total = 5
         callback(total, 1, "https://liz3.net/sk/depot/")
         if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
-        if (!skHubFile.exists() || coreManager.configManager.get("meta_update") == "true") {
+        if (!skHubFile.exists() || !addonsFile.exists() || !skriptVersionsFile.exists() || coreManager.configManager.get("meta_update") == "true") {
             try {
                 callback(total, 2, "Downloading: https://skripthub.net/api/v1/addon/")
                 downloadFile("https://skripthub.net/api/v1/addon/", addonsFile.absolutePath)
