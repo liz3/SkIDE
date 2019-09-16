@@ -131,11 +131,12 @@ class CoreManager {
                         serverManager.init()
                         updateProgress(40.0, 100.0)
                         updateMessage("Downloading latest Resources")
-                        resourceManager.loadResources { _, current, name ->
+                        val resourcesLoaded = resourceManager.loadResources { _, current, name ->
                             val amount = current * 5
                             updateProgress(50.0 + amount, 100.0)
                             updateMessage(name)
                         }
+                        if(!resourcesLoaded) return null
                         updateProgress(75.0, 100.0)
                         updateMessage("Starting insights")
 

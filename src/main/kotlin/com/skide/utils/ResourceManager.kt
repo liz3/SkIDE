@@ -5,13 +5,17 @@ import com.skide.gui.Prompts
 import com.skide.include.Addon
 import com.skide.include.AddonItem
 import com.skide.include.DocType
+import javafx.application.Platform
 import javafx.scene.control.Alert
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.net.URLEncoder
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.system.exitProcess
 
 
 class ResourceManager(val coreManager: CoreManager) {
@@ -20,19 +24,22 @@ class ResourceManager(val coreManager: CoreManager) {
     val addons = HashMap<String, Addon>()
     val skriptVersions = Vector<String>()
     private val addonsFile = File(coreManager.configManager.rootFolder, "addons.json")
+    private val addonsCopyFile = File(coreManager.configManager.rootFolder, "addons-copy.json")
     private val skriptVersionsFile = File(coreManager.configManager.rootFolder, "skript-vers.json")
+    private val skriptVersionsCopyFile = File(coreManager.configManager.rootFolder, "skript-vers-copy.json")
     private val skriptVersionsFolder = File(coreManager.configManager.rootFolder, "skript-versions")
 
     private val skHubFile = File(coreManager.configManager.rootFolder, "skHub.json")
+    private val skHubCopyFile = File(coreManager.configManager.rootFolder, "skHub-copy.json")
 
 
-    private fun parseSkriptVersions() {
-        JSONArray(readFile(skriptVersionsFile).second).forEach { skriptVersions.add(it as String) }
+    private fun parseSkriptVersions(arr: JSONArray) {
+        arr.forEach { skriptVersions.add(it as String) }
     }
 
-    private fun readAddons() {
+    private fun readAddons(arr: JSONArray) {
 
-        for (entry in JSONArray(readFile(addonsFile).second)) {
+        for (entry in arr) {
             entry as JSONObject
             val name = entry.getString("name")
             if (name == "Skript") continue
@@ -89,7 +96,33 @@ class ResourceManager(val coreManager: CoreManager) {
         addons[name]?.loaded = true
     }
 
-    fun loadResources(callback: (Int, Int, String) -> Unit) {
+    private fun processWithBackUp(f1: File, f2: File, array: Boolean, cb: (Any) -> Unit): Boolean {
+        try {
+            val json = if (array) JSONArray(readFile(f1).second) else JSONObject(readFile(f1).second)
+            Files.copy(f1.toPath(), f2.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            cb(json)
+            return true
+        } catch (e: Exception) {
+            if (f2.exists()) {
+                println("falling back to copy : ${f2.name}")
+                try {
+                    val json = if (array) JSONArray(readFile(f2).second) else JSONObject(readFile(f2).second)
+                    cb(json)
+                    return true
+                } catch (e: Exception) {
+
+                }
+            }
+            Platform.runLater {
+                Prompts.infoCheck("Error", "SkIDE  error", "SkIDE failed to read the syntax file and cant continue, please retry or report an error on discord", Alert.AlertType.ERROR)
+                exitProcess(0)
+            }
+        }
+
+        return false
+    }
+
+    fun loadResources(callback: (Int, Int, String) -> Unit): Boolean {
         val total = 5
         callback(total, 1, "https://liz3.net/sk/depot/")
         if (!skriptVersionsFolder.exists()) skriptVersionsFolder.mkdir()
@@ -108,15 +141,22 @@ class ResourceManager(val coreManager: CoreManager) {
             }
         }
         callback(total, 6, "Reading script versions")
-        parseSkriptVersions()
-        readAddons()
-        readSkript()
+        if (!processWithBackUp(skriptVersionsFile, skriptVersionsCopyFile, true) {
+                    parseSkriptVersions(it as JSONArray)
+                }) return false
+        if (!processWithBackUp(addonsFile, addonsCopyFile, true) {
+                    readAddons(it as JSONArray)
+                }) return false
+        if (!processWithBackUp(skHubFile, skHubCopyFile, true) {
+                    readSkript(it as JSONArray)
+                }) return false
         callback(total, 8, "Parsing Addons...")
+        return true
     }
 
-    private fun readSkript() {
+    private fun readSkript(obj: JSONArray) {
         val l = Vector<AddonItem>()
-        val obj = JSONArray(readFile(skHubFile.absolutePath).second)
+
         for (entry in obj) {
             entry as JSONObject
             val addonObj = entry.getJSONObject("addon")
