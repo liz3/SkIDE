@@ -407,7 +407,8 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
             disablePreview()
             CodeArea(coreManager, f) {
                 try {
-                    val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
+                    val folderRoot = openProjectGuiManager.openProject.project.folder.absolutePath
+                    val holder = OpenFileHolder(openProjectGuiManager.openProject, f, f.name, Tab(if(f.absolutePath.contains(folderRoot)) f.absolutePath.substring(folderRoot.length) else f.name), if (openProjectGuiManager.mode == EditorMode.NORMAL) controller.editorMainTabPane else openProjectGuiManager.otherTabPanes.firstElement(), BorderPane(), it, coreManager, isExternal = isExternal)
                     it.openFileHolder = holder
                     it.codeManager = holder.codeManager
                     openProjectGuiManager.openFiles[f] = holder
@@ -466,13 +467,14 @@ class ProjectGuiEventListeners(private val openProjectGuiManager: OpenProjectGui
                 openView.fitWidth = 15.0
                 openView.fitHeight = 15.0
                 item.graphic = openView
-            }
-            if (name.endsWith(".yml")) {
+            } else if (name.endsWith(".yml")) {
                 val openIcon = Image(javaClass.getResource("/images/yaml.png").toExternalForm())
                 val openView = ImageView(openIcon)
                 openView.fitWidth = 25.0
                 openView.fitHeight = 15.0
                 item.graphic = openView
+            } else {
+                continue
             }
             rootItem.children.add(item)
         }

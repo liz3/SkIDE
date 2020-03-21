@@ -13,3 +13,9 @@ prime
 *.snap
 snap/.snapcraft
 .DS_Store
+
+.settings
+bin
+.project
+.classpath
+

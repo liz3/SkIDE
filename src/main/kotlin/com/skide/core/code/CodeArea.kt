@@ -7,6 +7,7 @@ import com.skide.gui.ListViewPopUp
 import com.skide.gui.WebViewDebugger
 import com.skide.include.OpenFileHolder
 import com.skide.utils.*
+import javafx.scene.Cursor;
 import javafx.application.Platform
 import javafx.concurrent.Worker
 import javafx.event.EventHandler
@@ -87,11 +88,9 @@ class EventHandler(private val area: CodeArea) {
         val pos = position as JSObject
         val lineNumber = pos.getMember("lineNumber") as Int
         val column = pos.getMember("column") as Int
-
         val result = area.openFileHolder.codeManager.definitonFinder.search(lineNumber, area.getWordAtPosition(lineNumber, column))
         val obj = area.getObject()
         if (!result.success) return obj
-
         if (result.fName != "") {
             area.openFileHolder.openProject.project.fileManager.projectFiles.values.forEach { f ->
                 if (f.name.endsWith(".sk") && f.name == result.fName && token as Boolean)
@@ -317,8 +316,12 @@ class CodeArea(val coreManager: CoreManager, val file: File, val rdy: (CodeArea)
                 }.start()
             }
         }
+        try {
         engine.load(this.javaClass.getResource("/www/index.html").toString())
 
+        }catch(err:Exception) {
+            err.printStackTrace()
+        }
 
     }
 

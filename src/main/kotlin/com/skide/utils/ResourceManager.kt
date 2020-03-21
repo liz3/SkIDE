@@ -147,10 +147,11 @@ class ResourceManager(val coreManager: CoreManager) {
                 }) return false
         if (!processWithBackUp(addonsFile, addonsCopyFile, true) {
                     readAddons(it as JSONArray)
+
                 }) return false
         if (!processWithBackUp(skHubFile, skHubCopyFile, true) {
                     readSkript(it as JSONArray)
-                }) return false
+            }) return false
         callback(total, 8, "Parsing Addons...")
         return true
     }

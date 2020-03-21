@@ -19,6 +19,10 @@ enum class ProjectConfigurationLoadResult {
     NOT_FOUND,
     ERROR
 }
+enum class ProjectFileType {
+    DIRECTORY,
+    FILE
+}
 
 class ProjectManager(val coreManager: CoreManager) {
 
@@ -100,6 +104,7 @@ class ProjectManager(val coreManager: CoreManager) {
         obj.put("name", name)
         obj.put("skript_version", skriptVersion)
         obj.put("project_id", id)
+        obj.put("project_version", 0)
         obj.put("files", JSONArray())
         obj.put("addons", JSONArray())
         obj.put("primary_server_id", -1)
@@ -124,13 +129,20 @@ class ProjectManager(val coreManager: CoreManager) {
         obj.put("name", name)
         obj.put("skript_version", skriptVersion)
         obj.put("project_id", id)
+        obj.put("project_version", 0)
         obj.put("addons", JSONArray())
         obj.put("primary_server_id", -1)
         val filesArr = JSONArray()
-        projectFolder.listFiles().forEach {
+
+        fun traverse(folder:File) {
+          folder.listFiles().forEach {
             if (!it.isDirectory)
-                filesArr.put(it.absolutePath)
+              filesArr.put(it.absolutePath)
+            else
+              traverse(it)
+          }
         }
+        traverse(projectFolder)
         obj.put("files", filesArr)
         val configFile = File(projectFolder, ".project.skide")
         writeFile(obj.toString().toByteArray(), configFile, false, true)
@@ -155,7 +167,6 @@ class ProjectManager(val coreManager: CoreManager) {
     }
 
 }
-
 class ProjectFileManager(val project: Project) {
 
     val configFile = File(project.folder, ".project.skide")
@@ -172,7 +183,7 @@ class ProjectFileManager(val project: Project) {
         project.files.forEach {
             val f = File(it as String)
             if (f.exists()) {
-                projectFiles[f.name] = f
+                projectFiles[f.absolutePath.substring(project.folder.absolutePath.length)] = f
             }
         }
         project.addons.forEach {
@@ -363,39 +374,40 @@ class ProjectFileManager(val project: Project) {
         rewriteConfig()
     }
 
-    fun addFile(name: String): Boolean {
+    fun addFile(name: String): String {
         val rName = if (name.contains(".")) name else "$name.sk"
-        if (projectFiles.containsKey(rName)) return false
+        if (projectFiles.containsKey(rName)) return ""
         val file = File(project.folder, rName)
+        file.parentFile.mkdirs()
         file.createNewFile()
         if (GUIManager.settings.get("generate_meta_data") == "true" && file.name.endsWith(".sk", true)) {
             writeFile("#Project: ${project.name}\n#File: $rName\n#Author: ${System.getProperty("user.name")}".toByteArray(), file, true, false)
         }
-        projectFiles[rName] = file
+        projectFiles[file.absolutePath.substring(project.folder.absolutePath.length)] = file
         compileOptions.values.forEach {
             it.includedFiles.add(file)
         }
         rewriteConfig()
         writeCompileOptions()
-        return true
+        return file.absolutePath.substring(project.folder.absolutePath.length)
     }
 
-    fun addFile(name: String, content: String): Boolean {
+    fun addFile(name: String, content: String): String {
         val rName = if (name.contains(".")) name else "$name.sk"
-        if (projectFiles.containsKey(rName)) return false
+        if (projectFiles.containsKey(rName)) return ""
         val file = File(project.folder, rName)
         file.createNewFile()
         if (GUIManager.settings.get("generate_meta_data") == "true" && file.name.endsWith(".sk", true)) {
             writeFile("#Project: ${project.name}\n#File: $rName\n#Author: ${System.getProperty("user.name")}".toByteArray(), file, true, false)
         }
         writeFile(content.toByteArray(), file, true, false)
-        projectFiles[rName] = file
+        projectFiles[file.absolutePath.substring(project.folder.absolutePath.length)] = file
         compileOptions.values.forEach {
             it.includedFiles.add(file)
         }
         rewriteConfig()
         writeCompileOptions()
-        return true
+        return file.absolutePath.substring(project.folder.absolutePath.length)
     }
 
     fun deleteFile(rName: String): Boolean {

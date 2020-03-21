@@ -56,7 +56,7 @@ class ServerManager(val coreManager: CoreManager) {
                 e.printStackTrace()
                 deleteServerByName(it.id)
                 Platform.runLater {
-                    Prompts.infoCheck("Error", "Error while loading serer", "An error occurred while loading server ${it.name} at ${it.path}", Alert.AlertType.ERROR)
+                    Prompts.infoCheck("Error", "Error while loading Server", "An error occurred while loading server ${it.name} at ${it.path}", Alert.AlertType.ERROR)
                 }
             }
 
