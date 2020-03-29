@@ -129,7 +129,7 @@ object Menus {
             val name = Prompts.textPrompt("Rename File", "Enter the new File name Here")
             if (name.isNotEmpty()) {
                 val newName = if (name.contains(".")) name else "$name.sk"
-                project.reName(holder.name, newName, holder.absolutePath)
+                project.reName(holder.absolutePath.substring(project.project.folder.absolutePath.length), newName, holder.absolutePath)
             }
         }
         deleteItem.setOnAction {

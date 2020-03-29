@@ -410,8 +410,13 @@ class ProjectFileManager(val project: Project) {
         return file.absolutePath.substring(project.folder.absolutePath.length)
     }
 
-    fun deleteFile(rName: String): Boolean {
-        if (!projectFiles.containsKey(rName)) return false
+    fun deleteFile(targetFile:File): Boolean {
+        if (!projectFiles.containsValue(targetFile)) return false
+        var rName = ""
+        projectFiles.keys.forEach {key ->
+                 if(projectFiles[key] == targetFile) rName = key
+         }
+        if(rName.length == 0) return false
         val file = projectFiles[rName]
         if (file?.exists()!!) file.delete() else return false
         projectFiles.remove(rName)
@@ -424,17 +429,18 @@ class ProjectFileManager(val project: Project) {
         return true
     }
 
-    fun reNameFile(rName: String, newNameRaw: String): Boolean {
+    fun reNameFile(rName: String, newNameRaw: String): String {
+        println(rName)
         val newName = if (newNameRaw.contains(".")) newNameRaw else newNameRaw + ".sk"
-        if (!projectFiles.containsKey(rName)) return false
+        if (!projectFiles.containsKey(rName)) return ""
         val file = projectFiles[rName]
-        if (!file?.exists()!!) return false
+        if (!file?.exists()!!) return ""
         projectFiles.remove(rName)
         Files.move(file.toPath(), file.toPath().resolveSibling(newName))
         val nFile = File(project.folder, newName)
-        projectFiles.put(newName, nFile)
+        projectFiles.put(nFile.absolutePath.substring(project.folder.absolutePath.length), nFile)
         rewriteConfig()
-        return true
+        return nFile.absolutePath.substring(project.folder.absolutePath.length)
     }
 
 }

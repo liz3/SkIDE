@@ -185,7 +185,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         val tName = project.fileManager.addFile(name)
         if(tName.isNotEmpty()) {
             eventManager.updateProjectFilesTreeView()
-            eventManager.openFile(project.fileManager.projectFiles[name]!!)
+            eventManager.openFile(project.fileManager.projectFiles[tName]!!)
         }
     }
 
@@ -194,13 +194,13 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         val tName = project.fileManager.addFile(name, content)
         if(tName.isNotEmpty()) {
             eventManager.updateProjectFilesTreeView()
-            eventManager.openFile(project.fileManager.projectFiles[name]!!)
+            eventManager.openFile(project.fileManager.projectFiles[tName]!!)
         }
     }
 
     fun reName(oldName: String, newName: String, path: String) {
 
-        project.fileManager.reNameFile(oldName, newName)
+        val finalNewName = project.fileManager.reNameFile(oldName, newName)
 
         val toReplace = Vector<OpenFileHolder>()
         for ((file, holder) in guiHandler.openFiles) {
@@ -212,8 +212,8 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
             guiHandler.openFiles.remove(it.f)
 
             it.tab.text = newName
-            val holder = OpenFileHolder(this, project.fileManager.projectFiles[newName]!!, it.name, it.tab, it.tabPane, it.borderPane, it.area, coreManager, it.codeManager)
-            guiHandler.openFiles.put(project.fileManager.projectFiles[newName]!!, holder)
+            val holder = OpenFileHolder(this, project.fileManager.projectFiles[finalNewName]!!, it.name, it.tab, it.tabPane, it.borderPane, it.area, coreManager, it.codeManager)
+            guiHandler.openFiles.put(project.fileManager.projectFiles[finalNewName]!!, holder)
             eventManager.registerEventsForNewFile(holder)
         }
         toReplace.clear()
@@ -235,7 +235,7 @@ class OpenProject(val project: Project, val coreManager: CoreManager) {
         if (guiHandler.openFiles.size == 0) {
             guiHandler.openProject.eventManager.setupPreview()
         }
-        project.fileManager.deleteFile(f.name)
+        project.fileManager.deleteFile(f)
         eventManager.updateProjectFilesTreeView()
         System.gc()
     }
