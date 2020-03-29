@@ -130,7 +130,7 @@ class SystemErr : PrintStream(System.err) {
                         Desktop.getDesktop().browse(URI("https://discordapp.com/invite/V4qFVnh"))
                     }
                     ctrl.githubLink.setOnAction {
-                        Desktop.getDesktop().browse(URI("https://gitlab.com/sk-ide/SkIDE/issues"))
+                        Desktop.getDesktop().browse(URI("https://github.com/liz3/SkIDE/issues"))
                     }
                     ctrl.copyToClipBoard.setOnAction {
                         val stringSelection = StringSelection(theError)
