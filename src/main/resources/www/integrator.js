@@ -99,7 +99,10 @@ function registerSkript() {
         },
     });
     monaco.languages.setLanguageConfiguration('skript', {
-
+      comments: {
+        lineComment: "#",
+        blockComment: ['#', '']
+      },
         autoClosingPairs: [
             {open: "{", close: "}"},
             {open: "[", close: "]"},
