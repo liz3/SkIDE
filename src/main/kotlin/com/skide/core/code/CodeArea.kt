@@ -53,7 +53,7 @@ class EventHandler(private val area: CodeArea) {
      * removed ev
      */
     fun eventNotify(name: String) {
-        if (name == "onDidChangeCursorPosition") {
+       if (name == "onDidChangeCursorPosition") {
             val currentLine = area.getCurrentLine()
             if (area.line != currentLine) {
                 if (area.openFileHolder.codeManager.sequenceReplaceHandler.computing || area.getLineContent(currentLine).isBlank())

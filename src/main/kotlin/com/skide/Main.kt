@@ -1,7 +1,7 @@
 package com.skide
 
 object Info {
-    const val version = "2020.1.2"
+    const val version = "2020.1.3"
     var prodMode = false
     var indpendentInstall = false
 }
