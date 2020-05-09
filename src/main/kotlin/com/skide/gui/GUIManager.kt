@@ -75,7 +75,7 @@ object GUIManager {
         val controller = win.controller as AboutController
 
         controller.discordBtn.setIcon("discord", 35.0, 35.0)
-        controller.gitlabBtn.setIcon("gitlab", 35.0, 35.0, false)
+        controller.gitlabBtn.setIcon("github", 35.0, 35.0, false)
         controller.donateBtn.setIcon("donate", 35.0, 35.0)
         controller.imageView.image = Image(javaClass.getResource("/images/icon.png").toExternalForm())
         controller.versionLabel.text = Info.version
@@ -86,7 +86,7 @@ object GUIManager {
             LinkOpener().open("https://discord.gg/Ex8d34E")
         }
         controller.gitlabBtn.setOnAction {
-            LinkOpener().open("https://github.com/SavageLLC/SkIDE/issues")
+            LinkOpener().open("https://github.com/liz3/SkIDE/issues")
 
         }
         controller.donateBtn.setOnAction {

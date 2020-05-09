@@ -106,7 +106,7 @@ class StartGUIController {
         aboutLabel.setOnMouseReleased {
             GUIManager.showAbout()
         }
-        versionLabel.text = "SkIDE v${Info.version} Copyright 21Xayah.com ${if (!Info.prodMode) "dev-mode" else ""}"
+        versionLabel.text = "SkIDE v${Info.version} skide.liz3.net ${if (!Info.prodMode) "dev-mode" else ""}"
         settings.setOnMouseReleased {
 
             val window = GUIManager.getWindow("fxml/GeneralSettingsGui.fxml", "Settings", false)
