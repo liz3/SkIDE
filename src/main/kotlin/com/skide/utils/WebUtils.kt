@@ -1,5 +1,6 @@
 package com.skide.utils
 
+import com.skide.Info
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -12,7 +13,11 @@ import javax.net.ssl.HttpsURLConnection
 
 fun downloadFile(target: String, path: String) {
     val url = URL(target)
-    val bis = BufferedInputStream(url.openStream())
+    val conn = url.openConnection() as HttpsURLConnection
+    conn.doInput = true
+    conn.doOutput = true
+    conn.setRequestProperty("User-agent", "skide/${Info.version}")
+    val bis = BufferedInputStream(conn.inputStream)
     val fis = FileOutputStream(File(path))
     val buffer = ByteArray(1024)
     var count: Int
@@ -23,6 +28,7 @@ fun downloadFile(target: String, path: String) {
     }
     fis.close()
     bis.close()
+    conn.disconnect()
 }
 
 fun encodeHTTPParams(params: Map<String, String>): String {
