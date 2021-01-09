@@ -138,7 +138,7 @@ class ResourceManager(val coreManager: CoreManager) {
                 callback(total, 5, "Downloading: https://skripthub.net/api/v1/addonsyntaxlist/")
                 downloadFile("https://skripthub.net/api/v1/addonsyntaxlist/", skHubFile.absolutePath)
             } catch (e: Exception) {
-
+                e.printStackTrace()
             }
         }
         callback(total, 6, "Reading script versions")
